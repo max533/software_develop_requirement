@@ -1,0 +1,19 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+isort = "*"
+"flake8" = "*"
+django-extensions = "*"
+django-debug-toolbar = "*"
+
+[packages]
+django = ">=2.2,<3"
+django-environ = ">=0.4,<1"
+djangorestframework = ">=3.11,<4"
+"psycopg2-binary" = ">=2.8,<3"
+
+[requires]
+python_version = "3.7"
