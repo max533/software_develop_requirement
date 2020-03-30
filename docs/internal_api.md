@@ -1,8 +1,8 @@
-# DRS API Document
+# Develop Requirement System API Document
 
 ## Outline
 
-- [DRS API Document](#drs-api-document)
+- [Develop Requirement System API Document](#develop-requirement-system-api-document)
   - [Outline](#outline)
   - [Orders Operation](#orders-operation)
     - [`GET` Fetch Orders Collection](#get-fetch-orders-collection)
@@ -15,15 +15,16 @@
   - [Documents Operation](#documents-operation)
     - [`GET` Fetch a Specific Documents](#get-fetch-a-specific-documents)
     - [`PATCH` Update a Partially Specific Documents](#patch-update-a-partially-specific-documents)
-  - [Assigner Operation](#assigner-operation)
+  - [Assigners Operation](#assigners-operation)
     - [`GET` Fetch a Specific Assigner by department](#get-fetch-a-specific-assigner-by-department)
-  - [Developer Group Operation](#developer-group-operation)
-    - [`GET` Fetch a Specific Developer Group](#get-fetch-a-specific-developer-group)
+  - [Developer Groups Operation](#developer-groups-operation)
+    - [`GET` Fetch a Specific Developer Groups](#get-fetch-a-specific-developer-groups)
     - [`PUT` Update a Specific Developer Group](#put-update-a-specific-developer-group)
-  - [Person Operation](#person-operation)
-    - [`GET` Search a Specific Person](#get-search-a-specific-person)
-  - [Label Operation](#label-operation)
-    - [`GET`  Fetch Label Collections](#get-fetch-label-collections)
+  - [Users Operation](#users-operation)
+    - [`GET` Search Users](#get-search-users)
+    - [`GET` Fetch Current Users Information](#get-fetch-current-users-information)
+  - [Categories Operation](#categories-operation)
+    - [`GET`  Fetch Categories Collections](#get-fetch-categories-collections)
 
 ## Orders Operation
 
@@ -570,12 +571,12 @@ Update partial details of a specific documents by `id`
 
 ---
 
-## Assigner Operation
+## Assigners Operation
 
 ### `GET` Fetch a Specific Assigner by department
 
 ```text
-{{service_url}}/assigner/?param1=value1
+{{service_url}}/assigners/?param1=value1
 ```
 
 Fetch a specific assigner resource via query string
@@ -621,9 +622,9 @@ Fetch a specific assigner resource via query string
 
 ---
 
-## Developer Group Operation
+## Developer Groups Operation
 
-### `GET` Fetch a Specific Developer Group
+### `GET` Fetch a Specific Developer Groups
 
 ```text
 {{service_url}}/developer_groups/:id/
@@ -745,15 +746,15 @@ Update partial details of a specific documents by `id`
 
 ---
 
-## Person Operation
+## Users Operation
 
-### `GET` Search a Specific Person
+### `GET` Search Users
 
 ```text
-{{service_url}}/person/?param1=value1&param2=value2...
+{{service_url}}/users/?param1=value1&param2=value2...
 ```
 
-Fetch a specific developer resource
+Search user resource
 
 - PARAMS
 
@@ -796,19 +797,51 @@ Fetch a specific developer resource
     }
     ```
 
+### `GET` Fetch Current Users Information
+
+```text
+{{service_url}}/users/current/
+```
+
+Fetch current user detail
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {}
+    ```
+
+    Example response
+
+    ```json
+    {
+        "employee_id": "Z10612704",
+        "display_name": "David Wang/WHQ/Wistron",
+        "avatar": "http://abc.com/xxx.jpg",
+    }
+    ```
+
 ---
 
 TODO wait for customer & project list 2.0
 
-## Label Operation
+## Categories Operation
 
-### `GET`  Fetch Label Collections
+### `GET`  Fetch Categories Collections
 
 ```text
-{{service_url}}/label/?param1=value1&param2=value2...
+{{service_url}}/categories/?param1=value1&param2=value2...
 ```
 
-Fetch a specific developer resource
+Fetch a specific category
 
 - PARAMS
 
