@@ -7,6 +7,7 @@
   - [Orders Operation](#orders-operation)
     - [`GET` Fetch Orders Collection](#get-fetch-orders-collection)
     - [`GET` Fetch a Specific Orders](#get-fetch-a-specific-orders)
+    - [`GET` Fetch Order's Ancestor Collection by Order Id](#get-fetch-orders-ancestor-collection-by-order-id)
     - [`POST` Create an Orders](#post-create-an-orders)
     - [`PATCH` Update Partially Specific Orders](#patch-update-partially-specific-orders)
   - [Histories Operation](#histories-operation)
@@ -19,19 +20,19 @@
     - [`POST` Create a Documents](#post-create-a-documents)
     - [`PUT` Update Documents Detail](#put-update-documents-detail)
     - [`DEL` Delete Documents Detail](#del-delete-documents-detail)
-  - [Schedulers Operation](#schedulers-operation)
-    - [`GET` Filter Schedulers Collection by Order Id](#get-filter-schedulers-collection-by-order-id)
-    - [`POST` Create a Schedulers](#post-create-a-schedulers)
-    - [`PUT` Update Schedulers Detail](#put-update-schedulers-detail)
-    - [`DEL` Delete Schedulers Detail](#del-delete-schedulers-detail)
+  - [Schedules Operation](#schedules-operation)
+    - [`GET` Filter Schedules Collection by Order Id](#get-filter-schedules-collection-by-order-id)
+    - [`POST` Create a Schedules](#post-create-a-schedules)
+    - [`PUT` Update Schedules Detail](#put-update-schedules-detail)
+    - [`DEL` Delete Schedules Detail](#del-delete-schedules-detail)
   - [Assigners Operation](#assigners-operation)
     - [`GET` Filter Assigner by Sub Funciton & Project Id](#get-filter-assigner-by-sub-funciton--project-id)
-  - [Developer Groups Operation](#developer-groups-operation)
-    - [`GET` Fetch Developer Groups by Order Id](#get-fetch-developer-groups-by-order-id)
-    - [`PUT` Update Developer Group Detail](#put-update-developer-group-detail)
+  - [Developers Operation](#developers-operation)
+    - [`GET` Fetch Developers by Order Id](#get-fetch-developers-by-order-id)
+    - [`PUT` Update Developers Detail](#put-update-developers-detail)
   - [Employees Operation](#employees-operation)
     - [`GET` Search Employees with Site / Employee Id / English Name / Extension](#get-search-employees-with-site--employee-id--english-name--extension)
-    - [`GET` Fetch Current My Employee's information](#get-fetch-current-my-employees-information)
+    - [`GET` Fetch Current Employee](#get-fetch-current-employee)
   - [Accounts Operation](#accounts-operation)
     - [`GET` Fetch Accounts Collection](#get-fetch-accounts-collection)
   - [Projects Operation](#projects-operation)
@@ -84,58 +85,58 @@ Fetch all orders resource
     {
         "total": 100,
         "totalNotFilter": 20,
-        "rows":{
-            [
-                {
-                    "id": 2,
-                    "account_name": "R360",
-                    "project_name": "R360xxxxx",
-                    "develop_team_function": "QT",
-                    "develop_team_sub_function": "DQMS",
-                    "status": {"p3_initiator_": "Approve"},
-                    "initiator": {
-                        "emplotee_id": 10612704,
-                        "display_name": "Jeff SH Wang/WHQ/Wistron"
-                    },
-                    "assigner": {
-                        "employee_id": 10612704,
-                        "display_name": "Jeff SH Wang/WHQ/Wistron"
-                    },
-                    "title": "DQMS develope requirement system",
-                    "description": "<br> Three is description </br>",
-                    "form_begin_time": "2020-03-10T08:26:38.093183Z",
-                    "form_end_time": "2020-04-10T08:26:38.093183Z",
-                    "expected_develop_duration_day": 10.5,
-                    "actual_develop_duration_day": 20.0,
-                    "repository_url": "www.gitlab.com",
-                    "parent": 10,
+        "rows":[
+            {
+                "id": 2,
+                "account_name": "R360",
+                "project_name": "R360xxxxx",
+                "develop_team_function": "QT",
+                "develop_team_sub_function": "DQMS",
+                "status": {"p3_initiator_": "Approve"},
+                "initiator": {
+                    "employee_id": 10612704,
+                    "display_name": "Jeff SH Wang/WHQ/Wistron",
                 },
-                {
-                    "id": 3,
-                    "account_name": "R360",
-                    "project_name": "R360xxxxx",
-                    "develop_team_function": "QT",
-                    "develop_team_sub_function": "DQMS",
-                    "status": {"p3_initiator_": "Approve"},
-                    "initiator": {
-                        "emplotee_id": 10612704,
-                        "display_name": "Jeff SH Wang/WHQ/Wistron"
-                    },
-                    "assigner": {
-                        "employee_id": 10612704,
-                        "display_name": "Jeff SH Wang/WHQ/Wistron"
-                    },
-                    "title": "DQMS develope requirement system",
-                    "description": "<br> Three is description </br>",
-                    "form_begin_time": "2020-03-10T08:26:38.093183Z",
-                    "form_end_time": "2020-04-10T08:26:38.093183Z",
-                    "expected_develop_duration_day": 10.5,
-                    "actual_develop_duration_day": 20.0,
-                    "repository_url": "www.gitlab.com",
-                    "parent": 10,
-                }
-            ]
-        }
+                "assigner": {
+                    "employee_id": 10612704,
+                    "display_name": "Jeff SH Wang/WHQ/Wistron",
+                },
+                "title": "DQMS develope requirement system",
+                "description": "<br> Three is description </br>",
+                "form_begin_time": "2020-03-10T08:26:38.093183Z",
+                "form_end_time": "2020-04-10T08:26:38.093183Z",
+                "expected_develop_duration_day": 10.5,
+                "actual_develop_duration_day": 20.0,
+                "repository_url": "www.gitlab.com",
+                "parent": 10,
+            },
+            {
+                "id": 3,
+                "account_name": "R360",
+                "project_name": "R360xxxxx",
+                "develop_team_function": "QT",
+                "develop_team_sub_function": "DQMS",
+                "status": {"p3_initiator_": "Approve"},
+                "initiator": {
+                    "employee_id": 10612704,
+                    "display_name": "Jeff SH Wang/WHQ/Wistron",
+                    "avatar": "http://www.abc.com/123.jpg"
+                },
+                "assigner": {
+                    "employee_id": 10612704,
+                    "display_name": "Jeff SH Wang/WHQ/Wistron",
+                    "avatar": "http://www.abc.com/123.jpg"
+                },
+                "title": "DQMS develope requirement system",
+                "description": "<br> Three is description </br>",
+                "form_begin_time": "2020-03-10T08:26:38.093183Z",
+                "form_end_time": "2020-04-10T08:26:38.093183Z",
+                "expected_develop_duration_day": 10.5,
+                "actual_develop_duration_day": 20.0,
+                "repository_url": "www.gitlab.com",
+                "parent": 10,
+            }
+        ]
     }
 
     ```
@@ -179,12 +180,14 @@ Fetch a specific orders resource by `id`
         "develop_team_sub_function": "DQMS",
         "status": {"p3_initiator_": "Approve"},
         "initiator": {
-            "emplotee_id": 10612704,
-            "emplyee_name": "Jeff SH Wang"
+            "employee_id": 10612704,
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
+            "avatar": "http://www.abc.com/123.jpg"
         },
         "assigner": {
             "employee_id": 10612704,
-            "employee_name": "Jeff SH Wang"
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
+            "avatar": "http://www.abc.com/123.jpg"
         },
         "title": "DQMS develope requirement system",
         "description": "<br> Three is description </br>",
@@ -195,6 +198,91 @@ Fetch a specific orders resource by `id`
         "repository_url": "www.gitlab.com",
         "parent": 10,
     }
+    ```
+
+### `GET` Fetch Order's Ancestor Collection by Order Id
+
+```text
+{{service_url}}/orders/:id/ancestors/
+```
+
+Fetch order's ancestor collection by orders `id`
+
+- PATH VARIABLES
+
+    Variable|Description
+    :---: | :---:
+    `id` | Order id
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {}
+    ```
+
+    Example response
+
+    ```json
+    [
+        {
+            "id": 2,
+            "account_name": "R360",
+            "project_name": "R360xxxxx",
+            "develop_team_function": "QT",
+            "develop_team_sub_function": "DQMS",
+            "status": {"p3_initiator_": "Approve"},
+            "initiator": {
+                "employee_id": 10612704,
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+            },
+            "assigner": {
+                "employee_id": 10612704,
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+            },
+            "title": "DQMS develope requirement system",
+            "description": "<br> Three is description </br>",
+            "form_begin_time": "2020-03-10T08:26:38.093183Z",
+            "form_end_time": "2020-04-10T08:26:38.093183Z",
+            "expected_develop_duration_day": 10.5,
+            "actual_develop_duration_day": 20.0,
+            "repository_url": "www.gitlab.com",
+            "parent": null,
+        },
+        {
+            "id": 3,
+            "account_name": "R360",
+            "project_name": "R360xxxxx",
+            "develop_team_function": "QT",
+            "develop_team_sub_function": "DQMS",
+            "status": {"p3_initiator_": "Approve"},
+            "initiator": {
+                "employee_id": 10612704,
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "avatar": "http://www.abc.com/123.jpg"
+            },
+            "assigner": {
+                "employee_id": 10612704,
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "avatar": "http://www.abc.com/123.jpg"
+            },
+            "title": "DQMS develope requirement system",
+            "description": "<br> Three is description </br>",
+            "form_begin_time": "2020-03-10T08:26:38.093183Z",
+            "form_end_time": "2020-04-10T08:26:38.093183Z",
+            "expected_develop_duration_day": 10.5,
+            "actual_develop_duration_day": 20.0,
+            "repository_url": "www.gitlab.com",
+            "parent": 2,
+        }
+    ]
     ```
 
 ### `POST` Create an Orders
@@ -230,12 +318,14 @@ Create a new orders
         "develop_team_sub_function": "DQMS",
         "status": {"p3_initiator": "Approve"},
         "initiator": {
-            "emplotee_id": 10612704,
-            "emplyee_name": "Jeff SH Wang"
+            "employee_id": 10612704,
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
+            "avatar": "http://www.abc.com/123.jpg"
         },
         "assigner": {
             "employee_id": 10612704,
-            "employee_name": "Jeff SH Wang"
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
+            "avatar": "http://www.abc.com/123.jpg"
         },
         "title": "DQMS develope requirement system",
         "description": "<br> Three is description </br>",
@@ -257,12 +347,14 @@ Create a new orders
         "develop_team_sub_function": "DQMS",
         "status": {"p3_initiator_": "Approve"},
         "initiator": {
-            "emplotee_id": 10612704,
-            "emplyee_name": "Jeff SH Wang"
+            "employee_id": 10612704,
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
+            "avatar": "http://www.abc.com/123.jpg"
         },
         "assigner": {
             "employee_id": 10612704,
-            "employee_name": "Jeff SH Wang"
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
+            "avatar": "http://www.abc.com/123.jpg"
         },
         "title": "DQMS develope requirement system",
         "description": "<br> Three is description </br>",
@@ -315,12 +407,12 @@ Update partial details of specific orders by `id`
         "develop_team_sub_function": "DQMS",
         "status": {"p3_initiator_": "Approve"},
         "initiator": {
-            "emplotee_id": 10612704,
-            "emplyee_name": "Jeff SH Wang"
+            "employee_id": 10612704,
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
         },
         "assigner": {
             "employee_id": 10612704,
-            "employee_name": "Jeff SH Wang"
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
         },
         "title": "DQMS develope requirement system",
         "description": "<br> Three is description </br>",
@@ -339,11 +431,13 @@ Update partial details of specific orders by `id`
         "status": {"p3_initiator_": "Approve"},
         "initiator": {
             "emplotee_id": 10612704,
-            "emplyee_name": "Jeff SH Wang"
+            "emplyee_name": "Jeff SH Wang",
+            "avatar": "http://www.abc.com/123.jpg"
         },
         "assigner": {
             "employee_id": 10612704,
-            "employee_name": "Jeff SH Wang"
+            "employee_name": "Jeff SH Wang",
+            "avatar": "http://www.abc.com/123.jpg"
         },
         "title": "DQMS develope requirement system",
         "description": "<br> Three is description </br>",
@@ -391,32 +485,30 @@ Filter histories resource by order_id
     Example response
 
     ```json
-    {
-        [
-            {
-                "id": 2,
-                "comment": "<br>There is a comment</br>",
-                "editor": {
-                    "employee_id": 10612704,
-                    "display_name": "Jeff SH Wang/WHQ/Wistron",
-                    "avatar": "http://www.abc.com/123.jpg"
-                },
-                "timestamp": "2020-03-20T08:26:38.093183Z",
-                "orders_id": 10,
+    [
+        {
+            "id": 2,
+            "comment": "<br>There is a comment</br>",
+            "editor": {
+                "employee_id": 10612704,
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "avatar": "http://www.abc.com/123.jpg"
             },
-            {
-                "id": 3,
-                "comment": "<br>There is a comment</br>",
-                "editor": {
-                    "employee_id": 10612704,
-                    "display_name": "Jeff SH Wang/WHQ/Wistron",
-                    "avatar": "http://www.abc.com/123.jpg"
-                },
-                "timestamp": "2020-03-21T08:26:38.093183Z",
-                "orders_id": 10,
+            "timestamp": "2020-03-20T08:26:38.093183Z",
+            "orders_id": 10,
+        },
+        {
+            "id": 3,
+            "comment": "<br>There is a comment</br>",
+            "editor": {
+                "employee_id": 10612704,
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "avatar": "http://www.abc.com/123.jpg"
             },
-        ]
-    }
+            "timestamp": "2020-03-21T08:26:38.093183Z",
+            "orders_id": 10,
+        },
+    ]
     ```
 
 ### `POST` Create User's Comment Histories
@@ -536,28 +628,26 @@ Filter documents resource by order_id
     Example response
 
     ```json
-    {
-        [
-            {
-                "id": 1,
-                "name": "filename1.txt",
-                "path": "http://dqms.wistron.com/document_1.pdf",
-                "order_id": 1,
-                "description": "There is document1 description",
-                "size": "1024000",
-                "created_time": "2020-03-21T08:26:38.093183Z",
-            },
-            {
-                "id": 2,
-                "name": "filename2.txt",
-                "path": "http://dqms.wistron.com/document_2.pdf",
-                "order_id": 1,
-                "description": "There is document2 description",
-                "size": "2048000",
-                "created_time": "2020-03-21T08:26:38.093183Z",
-            },
-        ]
-    }
+    [
+        {
+            "id": 1,
+            "name": "filename1.txt",
+            "path": "http://dqms.wistron.com/document_1.pdf",
+            "order_id": 1,
+            "description": "There is document1 description",
+            "size": "1024000",
+            "created_time": "2020-03-21T08:26:38.093183Z",
+        },
+        {
+            "id": 2,
+            "name": "filename2.txt",
+            "path": "http://dqms.wistron.com/document_2.pdf",
+            "order_id": 1,
+            "description": "There is document2 description",
+            "size": "2048000",
+            "created_time": "2020-03-21T08:26:38.093183Z",
+        },
+    ]
     ```
 
 ### `GET` Fetch a Specific Documents
@@ -729,21 +819,22 @@ Delete a documents detail by `id`
 
 ---
 
-## Schedulers Operation
+## Schedules Operation
 
-### `GET` Filter Schedulers Collection by Order Id
+### `GET` Filter Schedules Collection by Order Id
 
 ```text
-{{service_url}}/schedulers/?param1=value1
+{{service_url}}/schedules/?param1=value1&param2=value2
 ```
 
-Filter schedulers resource by order_id
+Filter schedules resource by order_id
 
 - PARAMS
 
     Key|Value|Description
     :---:|:---:|:---:
     order_id | 1 | order id
+    editor_role | assigner / developer | editor_role
 
 - HEADERS
 
@@ -759,52 +850,87 @@ Filter schedulers resource by order_id
     {}
     ```
 
-    Example response
+    Example response 1
 
     ```json
-    {
-        [
-            {
-                "id": 1,
-                "event_name": "MVP Time",
-                "current_time": "2020-03-21T08:49:38.093183Z",
-                "expected_time": "2020-03-21T08:59:38.093183Z",
-                "complete_rate": "15",
-                "time_tracker": [
-                    "2020-03-21T08:26:38.093183Z",
-                    "2020-03-21T08:37:38.093183Z",
-                    "2020-03-21T08:49:38.093183Z",
-                ],
-                "order_id": 1,
-            },
-            {
-                "id": 2,
-                "event_name": "MVP Time2",
-                "current_time": "2020-03-21T08:49:38.093183Z",
-                "expected_time": "2020-03-21T08:59:38.093183Z",
-                "complete_rate": "15",
-                "time_tracker": [
-                    "2020-03-21T08:26:38.093183Z",
-                    "2020-03-21T08:37:38.093183Z",
-                    "2020-03-21T08:49:38.093183Z",
-                ],
-                "order_id": 1,
-            },
-        ]
-    }
+    [
+        {
+            "id": 1,
+            "event_name": "MVP Time",
+            "current_time": "2020-03-21T08:49:38.093183Z",
+            "expected_time": "2020-03-21T08:59:38.093183Z",
+            "complete_rate": "15",
+            "editor_role": "developer",
+            "time_tracker": [
+                "2020-03-21T08:26:38.093183Z",
+                "2020-03-21T08:37:38.093183Z",
+                "2020-03-21T08:49:38.093183Z",
+            ],
+            "order_id": 1,
+        },
+        {
+            "id": 2,
+            "event_name": "MVP Time2",
+            "current_time": "2020-03-21T08:49:38.093183Z",
+            "expected_time": "2020-03-21T08:59:38.093183Z",
+            "complete_rate": "15",
+            "editor_role": "developer",
+            "time_tracker": [
+                "2020-03-21T08:26:38.093183Z",
+                "2020-03-21T08:37:38.093183Z",
+                "2020-03-21T08:49:38.093183Z",
+            ],
+            "order_id": 1,
+        },
+    ],
+    ```
+
+    Example response 2
+
+    ```json
+    [
+        {
+            "id": 1,
+            "event_name": "MVP Time",
+            "current_time": "2020-03-21T08:49:38.093183Z",
+            "expected_time": "2020-03-21T08:59:38.093183Z",
+            "complete_rate": "15",
+            "editor_role": "assigner",
+            "time_tracker": [
+                "2020-03-21T08:26:38.093183Z",
+                "2020-03-21T08:37:38.093183Z",
+                "2020-03-21T08:49:38.093183Z",
+            ],
+            "order_id": 1,
+        },
+        {
+            "id": 2,
+            "event_name": "MVP Time2",
+            "current_time": "2020-03-21T08:49:38.093183Z",
+            "expected_time": "2020-03-21T08:59:38.093183Z",
+            "complete_rate": "15",
+            "editor_role": "assigner",
+            "time_tracker": [
+                "2020-03-21T08:26:38.093183Z",
+                "2020-03-21T08:37:38.093183Z",
+                "2020-03-21T08:49:38.093183Z",
+            ],
+            "order_id": 1,
+        },
+    ],
     ```
 
 - Default
 
     event_name : mvp_time, expected_develop_begin_time, expected_develop_end_time
 
-### `POST` Create a Schedulers
+### `POST` Create a Schedules
 
 ```text
-{{service_url}}/schedulers/
+{{service_url}}/schedules/
 ```
 
-Create a new schedulers
+Create a new schedules
 
 - HEADERS
 
@@ -836,24 +962,25 @@ Create a new schedulers
         "current_time": "2020-03-21T08:49:38.093183Z",
         "expected_time": "",
         "complete_rate": "15",
+        "editor_role": "assigner",
         "time_tracker": [],
         "order_id": 1
     }
     ```
 
-### `PUT` Update Schedulers Detail
+### `PUT` Update Schedules Detail
 
 ```text
-{{service_url}}/schedulers/:id/
+{{service_url}}/schedules/:id/
 ```
 
-Update details of schedulers by `id`
+Update details of schedules by `id`
 
 - PATH VARIABLES
 
     Variable|Description
     :---: | :---:
-    id | schedulers id
+    id | schedules id
 
 - HEADERS
 
@@ -885,6 +1012,7 @@ Update details of schedulers by `id`
         "event_name": "MVP Time",
         "current_time": "2020-03-21T08:49:38.093183Z",
         "expected_time": "2020-03-21T08:59:38.093183Z",
+        "editor_role": "assigner",
         "complete_rate": "15",
         "time_tracker": [],
         "order_id": 1
@@ -913,24 +1041,25 @@ Update details of schedulers by `id`
         "current_time": "2020-03-21T08:59:38.093183Z",
         "expected_time": "",
         "complete_rate": "15",
+        "editor_role": "assigner",
         "time_tracker": ["2020-03-21T08:49:38.093183Z"],
         "order_id": 1
     }
     ```
 
-### `DEL` Delete Schedulers Detail
+### `DEL` Delete Schedules Detail
 
 ```text
-{{service_url}}/schedulers/:id/
+{{service_url}}/schedules/:id/
 ```
 
-Delete a schedulers detail by `id`
+Delete a schedules detail by `id`
 
 - PATH VARIABLES
 
     Variable|Description
     :---: | :---:
-    id | schedulers id
+    id | schedules id
 
 - HEADERS
 
@@ -989,37 +1118,35 @@ Filter a specific assigner resource via develop_team_sub_function amd project_id
     Example response
 
     ```json
-    {
-        [
-            {
-                "employee_id": 10612704,
-                "display_name": "Jeff SH Wang/WHQ/Wistron",
-                "extension": "85014815",
-                "job_title": "工程師",
-                "avatar": "http://www.abc.com/123.jpg"
-            },
-            {
-                "employee_id": 10712714,
-                "display_name": "Leo Tu/WHQ/Wistron",
-                "extension": "85014817",
-                "job_title": "工程師",
-                "avatar": "http://www.abc.com/123.jpg"
-            },
-        ]
-    }
+    [
+        {
+            "employee_id": 10612704,
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
+            "extension": "85014815",
+            "job_title": "工程師",
+            "avatar": "http://www.abc.com/123.jpg"
+        },
+        {
+            "employee_id": 10712714,
+            "display_name": "Leo Tu/WHQ/Wistron",
+            "extension": "85014817",
+            "job_title": "工程師",
+            "avatar": "http://www.abc.com/123.jpg"
+        },
+    ]
     ```
 
 ---
 
-## Developer Groups Operation
+## Developers Operation
 
-### `GET` Fetch Developer Groups by Order Id
+### `GET` Fetch Developers by Order Id
 
 ```text
-{{service_url}}/developer_groups/:id/
+{{service_url}}/developers/:id/
 ```
 
-Fetch a developer_groups resource by order_id
+Fetch a developers resource by order_id
 
 - PATH VARIABLES
 
@@ -1045,7 +1172,7 @@ Fetch a developer_groups resource by order_id
 
     ```json
     {
-        "developer":[
+        "developers":[
             {
                 "employee_id": 10612704,
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
@@ -1061,7 +1188,7 @@ Fetch a developer_groups resource by order_id
                 "avatar": "http://www.abc.com/123.jpg"
             },
         ],
-        "developer_contacter":{
+        "developers_contacter":{
                 "employee_id": 9505005,
                 "display_name": "Luis Liao/WHQ/Wistron",
                 "extension": "85014833",
@@ -1075,7 +1202,7 @@ Fetch a developer_groups resource by order_id
 
     ```json
     {
-        "developer":[
+        "developers":[
             {
                 "employee_id": 10612704,
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
@@ -1091,7 +1218,7 @@ Fetch a developer_groups resource by order_id
                 "avatar": null
             },
         ],
-        "developer_contacter":{
+        "developers_contacter":{
                 "employee_id": 9505005,
                 "display_name": "Luis Liao/WHQ/Wistron",
                 "extension": null,
@@ -1101,19 +1228,19 @@ Fetch a developer_groups resource by order_id
     }
     ```
 
-### `PUT` Update Developer Group Detail
+### `PUT` Update Developers Detail
 
 ```text
-{{service_url}}/developer_groups/:id/
+{{service_url}}/developers/:id/
 ```
 
-Update partial details of a specific documents by `id`
+Update partial details of a specific developers by `id`
 
 - PATH VARIABLES
 
     Variable|Description
     :---: | :---:
-    id | developer_groups id (which is same as orders id)
+    id | developers id (which is same as orders id)
 
 - HEADERS
 
@@ -1128,7 +1255,7 @@ Update partial details of a specific documents by `id`
 
     ```json
     {
-        "developer":[
+        "developers":[
             {
                 "employee_id": 10612704,
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
@@ -1138,7 +1265,7 @@ Update partial details of a specific documents by `id`
                 "display_name": "Leo Tu/WHQ/Wistron",
             },
         ],
-        "developer_contacter":{
+        "developers_contacter":{
                 "employee_id": 9505005,
                 "display_name": "Luis Liao/WHQ/Wistron",
         }
@@ -1149,7 +1276,7 @@ Update partial details of a specific documents by `id`
 
     ```json
     {
-        "developer":[
+        "developers":[
             {
                 "employee_id": 10612704,
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
@@ -1165,7 +1292,7 @@ Update partial details of a specific documents by `id`
                 "avatar": "http://www.abc.com/123.jpg"
             },
         ],
-        "developer_contacter":{
+        "developers_contacter":{
                 "employee_id": 9505005,
                 "display_name": "Luis Liao/WHQ/Wistron",
                 "extension": "85014833",
@@ -1179,7 +1306,7 @@ Update partial details of a specific documents by `id`
 
     ```json
     {
-        "developer":[
+        "developers":[
             {
                 "employee_id": 10612704,
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
@@ -1195,7 +1322,7 @@ Update partial details of a specific documents by `id`
                 "avatar": null
             },
         ],
-        "developer_contacter":{
+        "developers_contacter":{
                 "employee_id": 9505005,
                 "display_name": "Luis Liao/WHQ/Wistron",
                 "extension": null,
@@ -1215,7 +1342,7 @@ Update partial details of a specific documents by `id`
 {{service_url}}/employees/?param1=value1&param2=value2...
 ```
 
-Search employees resource with site/employee_id/english_name/extension
+Search employees resource with site / employee_id / english_name / extension
 
 - PARAMS
 
@@ -1246,34 +1373,32 @@ Search employees resource with site/employee_id/english_name/extension
     {
         "total": 2,
         "totalNotFilter": 3336,
-        "rows":{
-            [
-                {
-                    "employee_id": 10612704,
-                    "display_name": "Jeff SH Wang/WHQ/Wistron",
-                    "extension": "85014815",
-                    "job_title": "工程師",
-                    "avatar": "http://www.abc.com/123.jpg"
-                },
-                {
-                    "employee_id": 10712714,
-                    "display_name": "Leo Tu/WHQ/Wistron",
-                    "extension": "85014817",
-                    "job_title": "工程師",
-                    "avatar": "http://www.abc.com/123.jpg"
-                },
-            ]
-        }
+        "rows":[
+            {
+                "employee_id": 10612704,
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "extension": "85014815",
+                "job_title": "工程師",
+                "avatar": "http://www.abc.com/123.jpg"
+            },
+            {
+                "employee_id": 10712714,
+                "display_name": "Leo Tu/WHQ/Wistron",
+                "extension": "85014817",
+                "job_title": "工程師",
+                "avatar": "http://www.abc.com/123.jpg"
+            },
+        ]
     }
     ```
 
-### `GET` Fetch Current My Employee's information
+### `GET` Fetch Current Employee
 
 ```text
 {{service_url}}/employees/me/
 ```
 
-Fetch current user detail
+Fetch current employees detail
 
 - HEADERS
 
@@ -1292,13 +1417,13 @@ Fetch current user detail
     Example response 1
 
     ```json
-        {
-            "employee_id": 10612704,
-            "display_name": "Jeff SH Wang/WHQ/Wistron",
-            "extension": "85014815",
-            "job_title": "工程師",
-            "avatar": "http://www.abc.com/123.jpg"
-        }
+    {
+        "employee_id": 10612704,
+        "display_name": "Jeff SH Wang/WHQ/Wistron",
+        "extension": "85014815",
+        "job_title": "工程師",
+        "avatar": "http://www.abc.com/123.jpg"
+    }
     ```
 
 ---
@@ -1330,52 +1455,36 @@ Fetch accounts collection resource
     Example response
 
     ```json
-    {
-        [
-            {
-                "id": 1,
-                "name": "HPI",
-                "code": "Astro",
-                "business_unit": 2,
-                "project_count": 0
-            },
-            {
-                "id": 2,
-                "name": "HPE",
-                "code": "Apollo",
-                "business_unit": 2,
-                "project_count": 1
-            },
-            {
-                "id": 3,
-                "name": "Inspur",
-                "code": "Irma",
-                "business_unit": 3,
-                "project_count": 0
-            },
-            {
-                "id": 4,
-                "name": "Cisco",
-                "code": "Cindy",
-                "business_unit": 1,
-                "project_count": 1
-            },
-            {
-                "id": 5,
-                "name": "Sugon",
-                "code": "Sami",
-                "business_unit": 3,
-                "project_count": 0
-            },
-            {
-                "id": 6,
-                "name": "Intel",
-                "code": "Iris",
-                "business_unit": 3,
-                "project_count": 0
-            },
-        ]
-    }
+    [
+        {
+            "id": 1,
+            "name": "HPI",
+            "code": "Astro",
+            "business_unit": 2,
+            "project_count": 0
+        },
+        {
+            "id": 2,
+            "name": "HPE",
+            "code": "Apollo",
+            "business_unit": 2,
+            "project_count": 1
+        },
+        {
+            "id": 3,
+            "name": "Inspur",
+            "code": "Irma",
+            "business_unit": 3,
+            "project_count": 0
+        },
+        {
+            "id": 4,
+            "name": "Cisco",
+            "code": "Cindy",
+            "business_unit": 1,
+            "project_count": 1
+        },
+    ]
     ```
 
 ---
@@ -1413,67 +1522,65 @@ Fetch projects collection resource by account id
     Example response
 
     ```json
-    {
-        [
-            {
-                "id": 1,
-                "wistron_name": null,
-                "customer_name": "Trinity 1U",
-                "wistron_code": "C182TR2",
-                "plm_code_1": "QRQY00000137",
-                "plm_code_2": "6PD02A010001",
-                "deleted_at": null,
-                "type": "NPI",
-                "status": "On-going",
-                "product_line": "Server",
-                "business_model": "ODM",
-                "account": {
-                    "id": 4,
-                    "name": "Cisco",
-                    "code": "Cindy",
-                    "business_unit": 1
-                }
-            },
-            {
-                "id": 3,
-                "wistron_name": null,
-                "customer_name": "Anders4",
-                "wistron_code": "A191TB1",
-                "plm_code_1": "QRQY00000718",
-                "plm_code_2": "5PD05L010001",
-                "deleted_at": null,
-                "type": "NPI",
-                "status": "On-going",
-                "product_line": "Server",
-                "business_model": "JDM",
-                "account": {
-                    "id": 2,
-                    "name": "HPE",
-                    "code": "Apollo",
-                    "business_unit": 2
-                }
-            },
-            {
+    [
+        {
+            "id": 1,
+            "wistron_name": null,
+            "customer_name": "Trinity 1U",
+            "wistron_code": "C182TR2",
+            "plm_code_1": "QRQY00000137",
+            "plm_code_2": "6PD02A010001",
+            "deleted_at": null,
+            "type": "NPI",
+            "status": "On-going",
+            "product_line": "Server",
+            "business_model": "ODM",
+            "account": {
                 "id": 4,
-                "wistron_name": "CX 2U4N",
-                "customer_name": "CX400 M6",
-                "wistron_code": "G182TR3",
-                "plm_code_1": "5RDZ54010001",
-                "plm_code_2": "5PD05H010001",
-                "deleted_at": null,
-                "type": "NPI",
-                "status": "On-going",
-                "product_line": "Server",
-                "business_model": "ODM",
-                "account": {
-                    "id": 14,
-                    "name": "Fujitsu",
-                    "code": "Yama",
-                    "business_unit": 2
-                }
-            },
-        ]
-    }
+                "name": "Cisco",
+                "code": "Cindy",
+                "business_unit": 1
+            }
+        },
+        {
+            "id": 3,
+            "wistron_name": null,
+            "customer_name": "Anders4",
+            "wistron_code": "A191TB1",
+            "plm_code_1": "QRQY00000718",
+            "plm_code_2": "5PD05L010001",
+            "deleted_at": null,
+            "type": "NPI",
+            "status": "On-going",
+            "product_line": "Server",
+            "business_model": "JDM",
+            "account": {
+                "id": 2,
+                "name": "HPE",
+                "code": "Apollo",
+                "business_unit": 2
+            }
+        },
+        {
+            "id": 4,
+            "wistron_name": "CX 2U4N",
+            "customer_name": "CX400 M6",
+            "wistron_code": "G182TR3",
+            "plm_code_1": "5RDZ54010001",
+            "plm_code_2": "5PD05H010001",
+            "deleted_at": null,
+            "type": "NPI",
+            "status": "On-going",
+            "product_line": "Server",
+            "business_model": "ODM",
+            "account": {
+                "id": 14,
+                "name": "Fujitsu",
+                "code": "Yama",
+                "business_unit": 2
+            }
+        },
+    ]
     ```
 
 ---
@@ -1543,7 +1650,7 @@ Fetch dept_categorys collection resource
 
 ---
 
-`Orders Table`
+`Order Table`
 
 id: IntegerField
 
@@ -1581,7 +1688,7 @@ parent: ForeignKey
 
 ---
 
-`Histories Table`
+`History Table`
 
 id: IntegerField
 
