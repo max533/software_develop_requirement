@@ -13,27 +13,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-import django_cas_ng.views
-
-from django.conf import settings
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('cas/login', django_cas_ng.views.LoginView.as_view(), name='cas_ng_login'),
-    path('cas/logout', django_cas_ng.views.LogoutView.as_view(), name='cas_ng_logout'),
-    path('cas/callback', django_cas_ng.views.CallbackView.as_view(), name='cas_ng_proxy_callback')
 ]
-
-# API URLS
-urlpatterns += [
-    path("api/", include("config.api_router")),
-]
-
-if settings.DEBUG:
-
-    if "debug_toolbar" in settings.INSTALLED_APPS:
-        import debug_toolbar
-
-        urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
