@@ -18,7 +18,9 @@ from .base import env
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
-SECRET_KEY = env("DJANGO_SECRET_KEY")
+SECRET_KEY = env(
+    "DJANGO_SECRET_KEY", default="yhawcz6=fv1^qme^c(5c+4qfh6j2a%#uq*bwegk-#^apzq+#@t"
+)
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["example.com"])
 

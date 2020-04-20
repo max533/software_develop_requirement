@@ -25,9 +25,6 @@ env = environ.Env()
 
 # GENERAL
 # ------------------------------------------------------------------------------
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("DJANGO_SECRET_KEY")
-
 # SECURITY WARNING: don't run with debug turned on in production!
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = env.bool("DJANGO_DEBUG", False)
@@ -48,7 +45,8 @@ USE_TZ = True
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
-    "default": env.db("DATABASE_URL", default="postgres://username:password@hots:port/db_name")
+    "default": env.db("DJANGO_DATABASE_DEFAULT_URL", default="postgres://username:password@hots:port/db_name"),
+    "hr": env.db("DJANGO_DATABASE_HR_URL", default="oracle://username:password@hots:port/service_name")
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
@@ -73,11 +71,13 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    "rest_framework",
+    'rest_framework',
+    'django_cas_ng',
 ]
 
 LOCAL_APPS = [
-    "develop_requirement_proj.users",
+    'develop_requirement_proj.users',
+    'develop_requirement_proj.employee'
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -94,6 +94,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_cas_ng.middleware.CASMiddleware',
 ]
 
 
@@ -120,7 +121,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
 AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
+    'django.contrib.auth.backends.ModelBackend',
+    'django_cas_ng.backends.CASBackend',
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 AUTH_USER_MODEL = "users.CustomUser"
@@ -141,13 +143,19 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
-        'APP_DIRS': True,
+        # 'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+            ],
+            # https://docs.djangoproject.com/en/dev/ref/settings/#template-loaders
+            # https://docs.djangoproject.com/en/dev/ref/templates/api/#loader-types
+            "loaders": [
+                "django.template.loaders.filesystem.Loader",
+                "django.template.loaders.app_directories.Loader",
             ],
         },
     },
@@ -173,9 +181,34 @@ ADMIN_URL = "admin/"
 # -------------------------------------------------------------------------------
 # django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.TokenAuthentication",
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 100,
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.AcceptHeaderVersioning',
 }
+
+
+# Central Authentication Service(CAS) Client Setting
+# -------------------------------------------------------------------------------
+# django-cas-ng - https://djangocas.dev/docs/latest/configuration.html
+# https://djangocas.dev/docs/latest/configuration.html#cas-server-url-required
+CAS_SERVER_URL = env("DJANGO_CAS_SERVER_URL")
+# https://djangocas.dev/docs/latest/configuration.html#cas-create-user-optional
+CAS_CREATE_USER = True
+# https://djangocas.dev/docs/latest/configuration.html#cas-version-optional
+CAS_VERSION = '3'
+# https://djangocas.dev/docs/latest/configuration.html#cas-apply-attributes-to-user-optional
+CAS_APPLY_ATTRIBUTES_TO_USER = True
+# https://djangocas.dev/docs/latest/configuration.html#cas-redirect-url-optional
+CAS_REDIRECT_URL = "/"
+
+
+# Third-Party API Setting
+# -------------------------------------------------------------------------------
+# TeamRoster 2.0
+TEAMROSTER_URI = env("DJANGO_TEAMROSTER_URI")
+TEAMROSTER_TOKEN = env("DJANGO_TEAMROSTER_TOKEN")
