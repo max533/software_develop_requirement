@@ -1,6 +1,7 @@
 """employee app's api viewsets.py"""
 import logging
 
+from develop_requirement_proj.utils.mixins import QueryDataMixin
 from django_filters import rest_framework as filters
 
 from django.shortcuts import get_object_or_404
@@ -11,7 +12,6 @@ from rest_framework.response import Response
 
 from ..models import Employee
 from .serializers import EmployeeSerializer
-from .utils import QueryDataMixin
 
 logger = logging.getLogger(__name__)
 
