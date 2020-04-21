@@ -9,11 +9,11 @@ logger = logging.getLogger(__name__)
 
 class QueryDataMixin:
     """
-    Use 3rd-party api to get employee, customer, project information.
+    Use 3rd-party api to get employee, department, account, project information.
     """
     def get_employee_via_query(self, employee_id):
         """
-        Get avatar via employee_id from TeamRoster.
+        Get employee info via employee_id from TeamRoster 2.0 System.
         employee_id : str / list
         """
         uri = settings.TEAMROSTER_URI + 'api/query/profile'
@@ -36,10 +36,28 @@ class QueryDataMixin:
         r = requests.get(uri, params=params, headers=headers, timeout=3)
 
         if r.status_code != 200:
-            error_message = [
+            error_message = (
                 f"Status Code : {r.status_code}. Error Message : " +
-                f"{r.text}. It can't get user information by TeamRoster."
-            ]
+                f"{r.text}. It can't get user information by TeamRoster 2.0 System."
+            )
+            logger.warn(error_message)
+            return False, None
+
+        return True, r.json()
+
+    def get_account_via_search(self, **params):
+        """
+        Get account info via search from Account Project System.
+        """
+        uri = settings.ACCOUNT_PROJECT_URI + 'api/search/accounts'
+        headers = {'X-Authorization': settings.ACCOUNT_PROJECT_TOKEN}
+        r = requests.get(uri, params=params, headers=headers, timeout=3)
+
+        if r.status_code != 200:
+            error_message = (
+                f"Status Code : {r.status_code}. Error Message : " +
+                f"{r.text}. It can't get account information by Account Project System."
+            )
             logger.warn(error_message)
             return False, None
 
