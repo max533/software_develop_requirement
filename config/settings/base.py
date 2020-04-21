@@ -209,6 +209,10 @@ CAS_REDIRECT_URL = "/"
 
 # Third-Party API Setting
 # -------------------------------------------------------------------------------
-# TeamRoster 2.0
+# TeamRoster 2.0 System
 TEAMROSTER_URI = env("DJANGO_TEAMROSTER_URI")
 TEAMROSTER_TOKEN = env("DJANGO_TEAMROSTER_TOKEN")
+
+# Account Project System
+ACCOUNT_PROJECT_URI = env("DJANGO_ACCOUNT_PROJECT_URI")
+ACCOUNT_PROJECT_TOKEN = env("DJANGO_ACCOUNT_PROJECT_TOKEN")

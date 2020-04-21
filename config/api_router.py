@@ -1,5 +1,6 @@
-""" develop_requirement_proj API URL Configuration"""
+""" develop_requirement_proj API URL Configuration """
 from develop_requirement_proj.employee.api.viewsets import EmployeeViewSet
+from develop_requirement_proj.signature.api.viewsets import AccountViewSet
 
 from django.conf import settings
 
@@ -13,5 +14,6 @@ else:
 app_name = 'api'
 
 router.register('employees', EmployeeViewSet)
+router.register('accounts', AccountViewSet, basename='account')
 
 urlpatterns = router.urls
