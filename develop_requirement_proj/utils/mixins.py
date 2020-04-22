@@ -56,7 +56,24 @@ class QueryDataMixin:
         if r.status_code != 200:
             error_message = (
                 f"Status Code : {r.status_code}. Error Message : " +
-                f"{r.text}. It can't get account information by Account Project System."
+                f"{r.text}. It can't get account info by Account Project System."
+            )
+            logger.warn(error_message)
+            return False, None
+
+        return True, r.json()
+
+    def get_project_via_search(seld, **params):
+        """
+        Get Project info via search from Account Project System.
+        """
+        uri = settings.ACCOUNT_PROJECT_URI + 'api/search/projects'
+        headers = {'X-Authorization': settings.ACCOUNT_PROJECT_TOKEN}
+        r = requests.get(uri, params=params, headers=headers, timeout=3)
+        if r.status_code != 200:
+            error_message = (
+                f"Status Code : {r.status_code}. Error Message : " +
+                f"{r.text}. It can't get project info by Account Project System."
             )
             logger.warn(error_message)
             return False, None
