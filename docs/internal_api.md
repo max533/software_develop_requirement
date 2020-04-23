@@ -31,21 +31,21 @@
     - [`GET` Fetch Developers by Order Id](#get-fetch-developers-by-order-id)
     - [`PUT` Update Developers Detail](#put-update-developers-detail)
   - [Employees Operation](#employees-operation)
-    - [`GET` Search Employees with Site / Employee Id / English Name / Extension](#get-search-employees-with-site--employee-id--english-name--extension)
+    - [`GET` Search Employees with Site / Employee Id / English Name / Extension / Department ID](#get-search-employees-with-site--employee-id--english-name--extension--department-id)
     - [`GET` Fetch Current Employee](#get-fetch-current-employee)
   - [Accounts Operation](#accounts-operation)
     - [`GET` Fetch Accounts Collection](#get-fetch-accounts-collection)
   - [Projects Operation](#projects-operation)
     - [`GET` Filter Projects Collection by Account Id](#get-filter-projects-collection-by-account-id)
-  - [Department Categorys Operation](#department-categorys-operation)
-    - [`GET` Fetch Department Categorys Collection](#get-fetch-department-categorys-collection)
+  - [Options Operation](#options-operation)
+    - [`GET` Fetch Options Value](#get-fetch-options-value)
 
 ## Orders Operation
 
 ### `GET` Fetch Orders Collection
 
 ```text
-{{service_url}}/orders/?param1=value1&param2=value2...
+{{service_url}}/api/orders/?param1=value1&param2=value2...
 ```
 
 Fetch all orders resource
@@ -144,7 +144,7 @@ Fetch all orders resource
 ### `GET` Fetch a Specific Orders
 
 ```text
-{{service_url}}/orders/:id/
+{{service_url}}/api/orders/:id/
 ```
 
 Fetch a specific orders resource by `id`
@@ -203,7 +203,7 @@ Fetch a specific orders resource by `id`
 ### `GET` Fetch Order's Ancestor Collection by Order Id
 
 ```text
-{{service_url}}/orders/:id/ancestors/
+{{service_url}}/api/orders/:id/ancestors/
 ```
 
 Fetch order's ancestor collection by orders `id`
@@ -288,7 +288,7 @@ Fetch order's ancestor collection by orders `id`
 ### `POST` Create an Orders
 
 ```text
-{{service_url}}/orders/?fields=develop_team,label,status,initiator,assigner,title,description,form_begin_time,form_end_time,expected_develop_duration_day,repository_url,parent
+{{service_url}}/api/orders/?fields=develop_team,label,status,initiator,assigner,title,description,form_begin_time,form_end_time,expected_develop_duration_day,repository_url,parent
 ```
 
 Create a new orders
@@ -370,7 +370,7 @@ Create a new orders
 ### `PATCH` Update Partially Specific Orders
 
 ```text
-{{service_url}}/orders/:id/?fields=account_name/project_name/develop_team_function/develop_team_sub_function/status/initiator/assigner/title/description/expected_develop_duration_day/actual_develop_duration_day/repository_url/parent
+{{service_url}}/api/orders/:id/?fields=account_name/project_name/develop_team_function/develop_team_sub_function/status/initiator/assigner/title/description/expected_develop_duration_day/actual_develop_duration_day/repository_url/parent
 ```
 
 Update partial details of specific orders by `id`
@@ -457,7 +457,7 @@ Update partial details of specific orders by `id`
 ### `GET` Filter Histories Collection by Order Id
 
 ```text
-{{service_url}}/histories/?orders_id=10
+{{service_url}}/api/histories/?orders_id=10
 ```
 
 Filter histories resource by order_id
@@ -514,7 +514,7 @@ Filter histories resource by order_id
 ### `POST` Create User's Comment Histories
 
 ```text
-{{service_url}}/histories/
+{{service_url}}/api/histories/
 ```
 
 Create a new user's comment histories
@@ -555,7 +555,7 @@ Create a new user's comment histories
 ### `POST` Create User's Activity Histories
 
 ```text
-{{service_url}}/histories/system/
+{{service_url}}/api/histories/system/
 ```
 
 Create a new user's activity histories
@@ -600,7 +600,7 @@ Create a new user's activity histories
 ### `GET` Filter Documents Collection by Order Id
 
 ```text
-{{service_url}}/documents/?param1=value1
+{{service_url}}/api/documents/?param1=value1
 ```
 
 Filter documents resource by order_id
@@ -653,7 +653,7 @@ Filter documents resource by order_id
 ### `GET` Fetch a Specific Documents
 
 ```text
-{{service_url}}/documents/:id/
+{{service_url}}/api/documents/:id/
 ```
 
 Fetch a specific documents resource by `id`
@@ -694,7 +694,7 @@ Fetch a specific documents resource by `id`
 ### `POST` Create a Documents
 
 ```text
-{{service_url}}/documents/
+{{service_url}}/api/documents/
 ```
 
 Create a new documents
@@ -736,7 +736,7 @@ Create a new documents
 ### `PUT` Update Documents Detail
 
 ```text
-{{service_url}}/documents/:id/
+{{service_url}}/api/documents/:id/
 ```
 
 Update details of a documents by `id`
@@ -785,7 +785,7 @@ Update details of a documents by `id`
 ### `DEL` Delete Documents Detail
 
 ```text
-{{service_url}}/documents/:id/
+{{service_url}}/api/documents/:id/
 ```
 
 Delete a documents detail by `id`
@@ -824,7 +824,7 @@ Delete a documents detail by `id`
 ### `GET` Filter Schedules Collection by Order Id
 
 ```text
-{{service_url}}/schedules/?param1=value1&param2=value2
+{{service_url}}/api/schedules/?param1=value1&param2=value2
 ```
 
 Filter schedules resource by order_id
@@ -927,7 +927,7 @@ Filter schedules resource by order_id
 ### `POST` Create a Schedules
 
 ```text
-{{service_url}}/schedules/
+{{service_url}}/api/schedules/
 ```
 
 Create a new schedules
@@ -971,7 +971,7 @@ Create a new schedules
 ### `PUT` Update Schedules Detail
 
 ```text
-{{service_url}}/schedules/:id/
+{{service_url}}/api/schedules/:id/
 ```
 
 Update details of schedules by `id`
@@ -1050,7 +1050,7 @@ Update details of schedules by `id`
 ### `DEL` Delete Schedules Detail
 
 ```text
-{{service_url}}/schedules/:id/
+{{service_url}}/api/schedules/:id/
 ```
 
 Delete a schedules detail by `id`
@@ -1089,7 +1089,7 @@ Delete a schedules detail by `id`
 ### `GET` Filter Assigner by Sub Funciton & Project Id
 
 ```text
-{{service_url}}/assigners/?param1=value1&param2=value2
+{{service_url}}/api/assigners/?param1=value1&param2=value2
 ```
 
 Filter a specific assigner resource via develop_team_sub_function amd project_id
@@ -1143,7 +1143,7 @@ Filter a specific assigner resource via develop_team_sub_function amd project_id
 ### `GET` Fetch Developers by Order Id
 
 ```text
-{{service_url}}/developers/:id/
+{{service_url}}/api/developers/:id/
 ```
 
 Fetch a developers resource by order_id
@@ -1231,7 +1231,7 @@ Fetch a developers resource by order_id
 ### `PUT` Update Developers Detail
 
 ```text
-{{service_url}}/developers/:id/
+{{service_url}}/api/developers/:id/
 ```
 
 Update partial details of a specific developers by `id`
@@ -1336,13 +1336,13 @@ Update partial details of a specific developers by `id`
 
 ## Employees Operation
 
-### `GET` Search Employees with Site / Employee Id / English Name / Extension
+### `GET` Search Employees with Site / Employee Id / English Name / Extension / Department ID
 
 ```text
-{{service_url}}/employees/?param1=value1&param2=value2...
+{{service_url}}/api/employees/?param1=value1&param2=value2...
 ```
 
-Search employees resource with site / employee_id / english_name / extension
+Search employees resource with site / employee_id / english_name / extension / department_id
 
 - PARAMS
 
@@ -1352,6 +1352,7 @@ Search employees resource with site / employee_id / english_name / extension
     employee_id__icontains (option)| 10612704 | employee id
     english_name__icontains (option)| Jeff SH Wang | employee english_name
     extension__icontains (option)| 4815556 | employee extension
+    department_id__icontains (option)| ESQ | department id
 
 - HEADERS
 
@@ -1395,7 +1396,7 @@ Search employees resource with site / employee_id / english_name / extension
 ### `GET` Fetch Current Employee
 
 ```text
-{{service_url}}/employees/me/
+{{service_url}}/api/employees/me/
 ```
 
 Fetch current employees detail
@@ -1433,7 +1434,7 @@ Fetch current employees detail
 ### `GET` Fetch Accounts Collection
 
 ```text
-{{service_url}}/accounts/
+{{service_url}}/api/accounts/
 ```
 
 Fetch accounts collection resource
@@ -1494,7 +1495,7 @@ Fetch accounts collection resource
 ### `GET` Filter Projects Collection by Account Id
 
 ```text
-{{service_url}}/projects/?param1=value1
+{{service_url}}/api/projects/?param1=value1
 ```
 
 Fetch projects collection resource by account id
@@ -1585,15 +1586,21 @@ Fetch projects collection resource by account id
 
 ---
 
-## Department Categorys Operation
+## Options Operation
 
-### `GET` Fetch Department Categorys Collection
+### `GET` Fetch Options Value
 
 ```text
-{{service_url}}/dept_categorys/
+{{service_url}}/api/options/?field=value1
 ```
 
-Fetch dept_categorys collection resource
+Fetch option value resource via field value
+
+- PARAMS
+
+    Key|Value|Description
+    :---:|:---:|:---:
+    field (option)| dept_category / dept_role / business_unit / project_type / project_status / product_line / business_model | field value
 
 - HEADERS
 
@@ -1654,9 +1661,9 @@ Fetch dept_categorys collection resource
 
 id: IntegerField
 
-account: CharField i.e.
+account_id: IntegerField i.e.
 
-project: CharField
+project_id: IntegerField
 
 develop_team_function: CharField i.e. EE/SW/QT/BU
 
@@ -1740,7 +1747,7 @@ order_id: ForeignKey
 
 `Employee Table` (managed=False)
 
-employee_id: CharField
+employee_id: CharField (primary_key=True)
 
 english_name: CharField
 
