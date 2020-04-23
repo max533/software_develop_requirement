@@ -88,8 +88,8 @@ Fetch all orders resource
         "rows":[
             {
                 "id": 2,
-                "account_name": "R360",
-                "project_name": "R360xxxxx",
+                "account_id": 1,
+                "project_id": 2,
                 "develop_team_function": "QT",
                 "develop_team_sub_function": "DQMS",
                 "status": {"p3_initiator_": "Approve"},
@@ -112,20 +112,18 @@ Fetch all orders resource
             },
             {
                 "id": 3,
-                "account_name": "R360",
-                "project_name": "R360xxxxx",
+                "account_id": 1,
+                "project_id": 2,
                 "develop_team_function": "QT",
                 "develop_team_sub_function": "DQMS",
                 "status": {"p3_initiator_": "Approve"},
                 "initiator": {
                     "employee_id": 10612704,
                     "display_name": "Jeff SH Wang/WHQ/Wistron",
-                    "avatar": "http://www.abc.com/123.jpg"
                 },
                 "assigner": {
                     "employee_id": 10612704,
                     "display_name": "Jeff SH Wang/WHQ/Wistron",
-                    "avatar": "http://www.abc.com/123.jpg"
                 },
                 "title": "DQMS develope requirement system",
                 "description": "<br> Three is description </br>",
@@ -174,20 +172,18 @@ Fetch a specific orders resource by `id`
     ```json
     {
         "id": 2,
-        "account_name": "R360",
-        "project_name": "R360xxxxx",
+        "account_id": 1,
+        "project_id": 2,
         "develop_team_function": "QT",
         "develop_team_sub_function": "DQMS",
         "status": {"p3_initiator_": "Approve"},
         "initiator": {
             "employee_id": 10612704,
             "display_name": "Jeff SH Wang/WHQ/Wistron",
-            "avatar": "http://www.abc.com/123.jpg"
         },
         "assigner": {
             "employee_id": 10612704,
             "display_name": "Jeff SH Wang/WHQ/Wistron",
-            "avatar": "http://www.abc.com/123.jpg"
         },
         "title": "DQMS develope requirement system",
         "description": "<br> Three is description </br>",
@@ -234,8 +230,8 @@ Fetch order's ancestor collection by orders `id`
     [
         {
             "id": 2,
-            "account_name": "R360",
-            "project_name": "R360xxxxx",
+            "account_id": 1,
+            "project_id": 2,
             "develop_team_function": "QT",
             "develop_team_sub_function": "DQMS",
             "status": {"p3_initiator_": "Approve"},
@@ -258,20 +254,18 @@ Fetch order's ancestor collection by orders `id`
         },
         {
             "id": 3,
-            "account_name": "R360",
-            "project_name": "R360xxxxx",
+            "account_id": 1,
+            "project_id": 2,
             "develop_team_function": "QT",
             "develop_team_sub_function": "DQMS",
             "status": {"p3_initiator_": "Approve"},
             "initiator": {
                 "employee_id": 10612704,
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
-                "avatar": "http://www.abc.com/123.jpg"
             },
             "assigner": {
                 "employee_id": 10612704,
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
-                "avatar": "http://www.abc.com/123.jpg"
             },
             "title": "DQMS develope requirement system",
             "description": "<br> Three is description </br>",
@@ -312,20 +306,18 @@ Create a new orders
 
     ```json
     {
-        "account_name": "R360",
-        "project_name": "R360xxxxx",
+        "account_id": 1,
+        "project_id": 2,
         "develop_team_function": "QT",
         "develop_team_sub_function": "DQMS",
         "status": {"p3_initiator": "Approve"},
         "initiator": {
             "employee_id": 10612704,
             "display_name": "Jeff SH Wang/WHQ/Wistron",
-            "avatar": "http://www.abc.com/123.jpg"
         },
         "assigner": {
             "employee_id": 10612704,
             "display_name": "Jeff SH Wang/WHQ/Wistron",
-            "avatar": "http://www.abc.com/123.jpg"
         },
         "title": "DQMS develope requirement system",
         "description": "<br> Three is description </br>",
@@ -341,20 +333,18 @@ Create a new orders
     ```json
     {
         "id": 2,
-        "account_name": "R360",
-        "project_name": "R360xxxxx",
+        "account_id": 1,
+        "project_id": 2,
         "develop_team_function": "QT",
         "develop_team_sub_function": "DQMS",
         "status": {"p3_initiator_": "Approve"},
         "initiator": {
             "employee_id": 10612704,
             "display_name": "Jeff SH Wang/WHQ/Wistron",
-            "avatar": "http://www.abc.com/123.jpg"
         },
         "assigner": {
             "employee_id": 10612704,
             "display_name": "Jeff SH Wang/WHQ/Wistron",
-            "avatar": "http://www.abc.com/123.jpg"
         },
         "title": "DQMS develope requirement system",
         "description": "<br> Three is description </br>",
@@ -401,8 +391,8 @@ Update partial details of specific orders by `id`
     ```json
     {
         "id": 2,
-        "account_name": "R360",
-        "project_name": "R360xxxxx",
+        "account_id": 1,
+        "project_id": 2,
         "develop_team_function": "QT",
         "develop_team_sub_function": "DQMS",
         "status": {"p3_initiator_": "Approve"},
@@ -424,20 +414,18 @@ Update partial details of specific orders by `id`
     ```json
     {
         "id": 2,
-        "account_name": "R360",
-        "project_name": "R360xxxxx",
+        "account_id": 1,
+        "project_id": 2,
         "develop_team_function": "QT",
         "develop_team_sub_function": "DQMS",
         "status": {"p3_initiator_": "Approve"},
         "initiator": {
             "emplotee_id": 10612704,
-            "emplyee_name": "Jeff SH Wang",
-            "avatar": "http://www.abc.com/123.jpg"
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
         },
         "assigner": {
             "employee_id": 10612704,
-            "employee_name": "Jeff SH Wang",
-            "avatar": "http://www.abc.com/123.jpg"
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
         },
         "title": "DQMS develope requirement system",
         "description": "<br> Three is description </br>",
@@ -492,7 +480,6 @@ Filter histories resource by order_id
             "editor": {
                 "employee_id": 10612704,
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
-                "avatar": "http://www.abc.com/123.jpg"
             },
             "timestamp": "2020-03-20T08:26:38.093183Z",
             "orders_id": 10,
@@ -503,7 +490,6 @@ Filter histories resource by order_id
             "editor": {
                 "employee_id": 10612704,
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
-                "avatar": "http://www.abc.com/123.jpg"
             },
             "timestamp": "2020-03-21T08:26:38.093183Z",
             "orders_id": 10,
@@ -1124,14 +1110,12 @@ Filter a specific assigner resource via develop_team_sub_function amd project_id
             "display_name": "Jeff SH Wang/WHQ/Wistron",
             "extension": "85014815",
             "job_title": "工程師",
-            "avatar": "http://www.abc.com/123.jpg"
         },
         {
             "employee_id": 10712714,
             "display_name": "Leo Tu/WHQ/Wistron",
             "extension": "85014817",
             "job_title": "工程師",
-            "avatar": "http://www.abc.com/123.jpg"
         },
     ]
     ```
@@ -1178,14 +1162,12 @@ Fetch a developers resource by order_id
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
                 "extension": "85014815",
                 "job_title": "工程師",
-                "avatar": "http://www.abc.com/123.jpg"
             },
             {
                 "employee_id": 10712714,
                 "display_name": "Leo Tu/WHQ/Wistron",
                 "extension": "85014817",
                 "job_title": "工程師",
-                "avatar": "http://www.abc.com/123.jpg"
             },
         ],
         "developers_contacter":{
@@ -1193,7 +1175,6 @@ Fetch a developers resource by order_id
                 "display_name": "Luis Liao/WHQ/Wistron",
                 "extension": "85014833",
                 "job_title": "功能經理",
-                "avatar": "http://www.abc.com/123.jpg"
         }
     }
     ```
@@ -1208,14 +1189,12 @@ Fetch a developers resource by order_id
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
                 "extension": null,
                 "job_title": null,
-                "avatar": null
             },
             {
                 "employee_id": 10712714,
                 "display_name": "Leo Tu/WHQ/Wistron",
                 "extension": null,
                 "job_title": null,
-                "avatar": null
             },
         ],
         "developers_contacter":{
@@ -1223,7 +1202,6 @@ Fetch a developers resource by order_id
                 "display_name": "Luis Liao/WHQ/Wistron",
                 "extension": null,
                 "job_title": null,
-                "avatar": null
         }
     }
     ```
@@ -1282,14 +1260,12 @@ Update partial details of a specific developers by `id`
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
                 "extension": "85014815",
                 "job_title": "工程師",
-                "avatar": "http://www.abc.com/123.jpg"
             },
             {
                 "employee_id": 10712714,
                 "display_name": "Leo Tu/WHQ/Wistron",
                 "extension": "85014817",
                 "job_title": "工程師",
-                "avatar": "http://www.abc.com/123.jpg"
             },
         ],
         "developers_contacter":{
@@ -1297,7 +1273,6 @@ Update partial details of a specific developers by `id`
                 "display_name": "Luis Liao/WHQ/Wistron",
                 "extension": "85014833",
                 "job_title": "功能經理",
-                "avatar": "http://www.abc.com/123.jpg"
         }
     }
     ```
@@ -1312,14 +1287,12 @@ Update partial details of a specific developers by `id`
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
                 "extension": null,
                 "job_title": null,
-                "avatar": null
             },
             {
                 "employee_id": 10712714,
                 "display_name": "Leo Tu/WHQ/Wistron",
                 "extension": null,
                 "job_title": null,
-                "avatar": null
             },
         ],
         "developers_contacter":{
@@ -1327,7 +1300,6 @@ Update partial details of a specific developers by `id`
                 "display_name": "Luis Liao/WHQ/Wistron",
                 "extension": null,
                 "job_title": null,
-                "avatar": null
         }
     }
     ```
@@ -1380,14 +1352,12 @@ Search employees resource with site / employee_id / english_name / extension / d
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
                 "extension": "85014815",
                 "job_title": "工程師",
-                "avatar": "http://www.abc.com/123.jpg"
             },
             {
                 "employee_id": 10712714,
                 "display_name": "Leo Tu/WHQ/Wistron",
                 "extension": "85014817",
                 "job_title": "工程師",
-                "avatar": "http://www.abc.com/123.jpg"
             },
         ]
     }
@@ -1423,7 +1393,6 @@ Fetch current employees detail
         "display_name": "Jeff SH Wang/WHQ/Wistron",
         "extension": "85014815",
         "job_title": "工程師",
-        "avatar": "http://www.abc.com/123.jpg"
     }
     ```
 
