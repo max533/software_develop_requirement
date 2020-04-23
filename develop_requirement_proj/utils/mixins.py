@@ -79,3 +79,32 @@ class QueryDataMixin:
             return False, None
 
         return True, r.json()
+
+    def get_option_value(seld, **params):
+        """
+        Get options value from TeamRoster 2.0 System and Account Project System.
+        """
+        field = params.get('field', None)
+        teamroster_options = ['dept_category', 'dept_role']
+        account_project_options = ['business_unit', 'project_type', 'project_status', 'product_line', 'business_model']
+        # Choose the uri what will send request
+        if field in teamroster_options:
+            uri = settings.TEAMROSTER_URI + 'api/get/options'
+            headers = {'X-Authorization': settings.TEAMROSTER_TOKEN}
+        elif field in account_project_options:
+            uri = settings.ACCOUNT_PROJECT_URI + 'api/get/options'
+            headers = {'X-Authorization': settings.ACCOUNT_PROJECT_TOKEN}
+        else:
+            return False, None
+
+        r = requests.get(uri, params=params, headers=headers, timeout=3)
+
+        if r.status_code != 200:
+            error_message = (
+                f"Status Code : {r.status_code}. Error Message : " +
+                f"{r.text}. It can't get options info by {r.url}."
+            )
+            logger.warn(error_message)
+            return False, None
+
+        return True, r.json()

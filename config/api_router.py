@@ -1,10 +1,11 @@
 """ develop_requirement_proj API URL Configuration """
 from develop_requirement_proj.employee.api.viewsets import EmployeeViewSet
 from develop_requirement_proj.signature.api.viewsets import (
-    AccountViewSet, ProjectViewSet,
+    AccountViewSet, OptionView, ProjectViewSet,
 )
 
 from django.conf import settings
+from django.urls import path
 
 from rest_framework import routers
 
@@ -19,4 +20,9 @@ router.register('employees', EmployeeViewSet)
 router.register('accounts', AccountViewSet, basename='account')
 router.register('projects', ProjectViewSet, basename='project')
 
-urlpatterns = router.urls
+
+urlpatterns = [
+    path('options/', OptionView.as_view(), name='option')
+]
+
+urlpatterns += router.urls
