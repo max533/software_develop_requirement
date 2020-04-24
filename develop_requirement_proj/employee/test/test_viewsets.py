@@ -30,7 +30,6 @@ class EmployeeViewSetTestCase(APITestCase):
             'employee_id': 'Z10612777',
             'extension': '17885432',
             'display_name': 'David Wang/WNH/Wistron',
-            'avatar': None
         }
         self.select_employee_info = {
             "employee_id": "Z10612777",
