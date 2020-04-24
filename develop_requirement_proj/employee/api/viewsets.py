@@ -1,4 +1,4 @@
-"""employee app's api viewsets.py"""
+""" Employee app's api viewsets.py """
 import logging
 
 from develop_requirement_proj.utils.mixins import QueryDataMixin
@@ -6,32 +6,16 @@ from django_filters import rest_framework as filters
 
 from django.shortcuts import get_object_or_404
 
-from rest_framework import mixins, pagination, response, viewsets
+from rest_framework import mixins, response, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ..models import Employee
+from .filters import EmployeeFilter
+from .paginations import EmployeePagination
 from .serializers import EmployeeSerializer
 
 logger = logging.getLogger(__name__)
-
-
-class EmployeeFilter(filters.FilterSet):
-    class Meta:
-        model = Employee
-        fields = {
-            'employee_id': ['icontains'],
-            'english_name': ['icontains'],
-            'department_id': ['icontains'],
-            'extension': ['icontains'],
-            'site': ['exact'],
-        }
-
-
-class EmployeePagination(pagination.PageNumberPagination):
-    page_size = 10
-    page_size_query_param = 'page_size'
-    max_page_size = 50
 
 
 class EmployeeViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -65,27 +49,6 @@ class EmployeeViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.RetrieveMode
         self.check_object_permissions(self.request, obj)
 
         return obj
-
-    def get_serializer_context(self):
-        """
-        Provide the employee avatar from TeamRoster
-        """
-        context = super(EmployeeViewSet, self).get_serializer_context()
-        if self.action in ['list']:
-            employee_id_list = []
-            if self.pagination_class is not None:
-                querysets = self.paginator.page.object_list
-            else:
-                querysets = self.queryset
-            for qs in querysets:
-                if qs.employee_id:
-                    employee_id_list.append(qs.employee_id)
-            if employee_id_list:
-                status, result = self.get_employee_via_query(employee_id_list)
-                if status and result:
-                    for employee_id, content in result.items():
-                        context[employee_id] = content['avatar']
-        return context
 
     def get_paginated_response(self, data):
         """
