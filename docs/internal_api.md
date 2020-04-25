@@ -45,7 +45,7 @@
 ### `GET` Fetch Orders Collection
 
 ```text
-{{service_url}}/api/orders/?param1=value1&param2=value2...
+{{service_url}}/api/orders/?page=value1&page_size=value2&filter={"param1"="value1", "param2"="value"}
 ```
 
 Fetch all orders resource
@@ -54,15 +54,16 @@ Fetch all orders resource
 
     Key|Value|Description
     :---:|:---:|:---:
-    filter (option) | {'id':1}  | order id
-    " | {"initiator": "Jeff SH Wang"} | initator name
-    " | {"title": "There is title"} | title
-    " | {"expected_develop_end_time__before":"2020-03-10T08:26:38.093183Z"}| the begin time of expected_develop_end_time
-    " |{"expected_develop_end_time__after": "2020-03-10T08:26:38.093183Z"} | the end time of expected_develop_end_time
-    " | { "form_begin_time__before":"2020-03-10T08:26:38.093183Z"} | the begin time of expected_develop_begin_time(option) | {"form_begin_time__after": "2020-03-10T08:26:38.093183Z"}| the end time of expected_develop_begin_time
-    " | {"developer":"Leo Tu/WHQ/Wistron"} | developer name
-    " | {"parent":20} | parent order id
-    page (option) | 10 | page (which it indicate what is page number)
+    filter (option) | {'id':1}  | order id (exact search)
+    " | {"account_id": 1} | account id (exact search)
+    " | {"project_id": 3} | project id (exact search)
+    " | {"initiator": "Jeff SH Wang"} | initator name (fuzzy search and case insensitive)
+    " | {"assinger ":"Leo Tu"} | developer name (fuzzy search and case insensitive)
+    " | {"title": "There is title"} | title (fuzzy search and case insensitive)
+    " | { "form_begin_time__before":"2020-03-10T08:26:38.093183Z"} | the begin time of form_begin_time (range search)
+    " | {"form_begin_time__after": "2020-03-10T08:26:38.093183Z"}| the end time of form_begin_time (range search)
+    " | {"parent":20} | parent order id (exact search)
+    page (option) | 5 | page (it indicate what page number is )
     page_size (option) | 10 | page size
 
 - HEADERS
@@ -88,7 +89,14 @@ Fetch all orders resource
         "rows":[
             {
                 "id": 2,
-                "account_id": 1,
+                "account": {
+                    "id": 1,
+                    "code": "Lily",
+                },
+                "project": {
+                    "id": 2,
+                    "name": "Stark"
+                },
                 "project_id": 2,
                 "develop_team_function": "QT",
                 "develop_team_sub_function": "DQMS",
@@ -112,8 +120,14 @@ Fetch all orders resource
             },
             {
                 "id": 3,
-                "account_id": 1,
-                "project_id": 2,
+                "account": {
+                    "id": 1,
+                    "code": "Lily",
+                },
+                "project": {
+                    "id": 2,
+                    "name": "Stark"
+                },
                 "develop_team_function": "QT",
                 "develop_team_sub_function": "DQMS",
                 "status": {"p3_initiator_": "Approve"},
@@ -172,8 +186,14 @@ Fetch a specific orders resource by `id`
     ```json
     {
         "id": 2,
-        "account_id": 1,
-        "project_id": 2,
+        "account": {
+            "id": 1,
+            "code": "Lily",
+        },
+        "project": {
+            "id": 2,
+            "name": "Stark"
+        },
         "develop_team_function": "QT",
         "develop_team_sub_function": "DQMS",
         "status": {"p3_initiator_": "Approve"},
@@ -230,8 +250,14 @@ Fetch order's ancestor collection by orders `id`
     [
         {
             "id": 2,
-            "account_id": 1,
-            "project_id": 2,
+            "account": {
+                "id": 1,
+                "code": "Lily",
+            },
+            "project": {
+                "id": 2,
+                "name": "Stark"
+            },
             "develop_team_function": "QT",
             "develop_team_sub_function": "DQMS",
             "status": {"p3_initiator_": "Approve"},
@@ -254,8 +280,14 @@ Fetch order's ancestor collection by orders `id`
         },
         {
             "id": 3,
-            "account_id": 1,
-            "project_id": 2,
+            "account": {
+                "id": 1,
+                "code": "Lily",
+            },
+            "project": {
+                "id": 2,
+                "name": "Stark"
+            },
             "develop_team_function": "QT",
             "develop_team_sub_function": "DQMS",
             "status": {"p3_initiator_": "Approve"},
@@ -282,7 +314,7 @@ Fetch order's ancestor collection by orders `id`
 ### `POST` Create an Orders
 
 ```text
-{{service_url}}/api/orders/?fields=develop_team,label,status,initiator,assigner,title,description,form_begin_time,form_end_time,expected_develop_duration_day,repository_url,parent
+{{service_url}}/api/orders/?fields=develop_team_function,develop_team_sub_function,status,initiator,assigner,title,description,form_begin_time,form_end_time,expected_develop_duration_day,repository_url,parent
 ```
 
 Create a new orders
@@ -291,7 +323,7 @@ Create a new orders
 
     Key|Value|Description
     :---:|:---:|:---:
-    fields (require)| account_name/project_name/develop_team_function/develop_team_sub_function/status/initiator/assigner/title/description/expected_develop_duration_day/actual_develop_duration_day/repository_url/parent| which fields need to be validate
+    fields (require)| account_id/project_id/develop_team_function/develop_team_sub_function/status/initiator/assigner/title/description/expected_develop_duration_day/actual_develop_duration_day/repository_url/parent| which fields need to be validate
 
 - HEADERS
 
@@ -333,8 +365,14 @@ Create a new orders
     ```json
     {
         "id": 2,
-        "account_id": 1,
-        "project_id": 2,
+        "account": {
+            "id": 1,
+            "code": "Lily",
+        },
+        "project": {
+            "id": 2,
+            "name": "Stark"
+        },
         "develop_team_function": "QT",
         "develop_team_sub_function": "DQMS",
         "status": {"p3_initiator_": "Approve"},
@@ -360,7 +398,7 @@ Create a new orders
 ### `PATCH` Update Partially Specific Orders
 
 ```text
-{{service_url}}/api/orders/:id/?fields=account_name/project_name/develop_team_function/develop_team_sub_function/status/initiator/assigner/title/description/expected_develop_duration_day/actual_develop_duration_day/repository_url/parent
+{{service_url}}/api/orders/:id/?fields=account_id/project_id/develop_team_function/develop_team_sub_function/status/initiator/assigner/title/description/expected_develop_duration_day/actual_develop_duration_day/repository_url/parent
 ```
 
 Update partial details of specific orders by `id`
@@ -375,7 +413,7 @@ Update partial details of specific orders by `id`
 
     Key|Value|Description
     :---:|:---:|:---:
-    fields (require)| account_name/project_name/develop_team_function/develop_team_sub_function/status/initiator/assigner/title/description/expected_develop_duration_day/actual_develop_duration_day/repository_url/parent| which fields need to be validate
+    fields (require)| account_id/project_id/develop_team_function/develop_team_sub_function/status/initiator/assigner/title/description/expected_develop_duration_day/actual_develop_duration_day/repository_url/parent| which fields need to be validate
 
 - HEADERS
 
@@ -391,8 +429,8 @@ Update partial details of specific orders by `id`
     ```json
     {
         "id": 2,
-        "account_id": 1,
-        "project_id": 2,
+        "account_id": 3,
+        "project_id": 5,
         "develop_team_function": "QT",
         "develop_team_sub_function": "DQMS",
         "status": {"p3_initiator_": "Approve"},
@@ -414,8 +452,14 @@ Update partial details of specific orders by `id`
     ```json
     {
         "id": 2,
-        "account_id": 1,
-        "project_id": 2,
+        "account": {
+            "id": 3,
+            "code": "Lily",
+        },
+        "project": {
+            "id": 5,
+            "name": "Stark"
+        },
         "develop_team_function": "QT",
         "develop_team_sub_function": "DQMS",
         "status": {"p3_initiator_": "Approve"},
@@ -819,8 +863,8 @@ Filter schedules resource by order_id
 
     Key|Value|Description
     :---:|:---:|:---:
-    order_id | 1 | order id
-    editor_role | assigner / developer | editor_role
+    order_id (option) | 1 | order id
+    editor_role (option) | assigner / developer | editor_role
 
 - HEADERS
 
@@ -1156,7 +1200,7 @@ Fetch a developers resource by order_id
 
     ```json
     {
-        "developers":[
+        "member":[
             {
                 "employee_id": 10612704,
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
@@ -1170,7 +1214,7 @@ Fetch a developers resource by order_id
                 "job_title": "工程師",
             },
         ],
-        "developers_contacter":{
+        "contacter":{
                 "employee_id": 9505005,
                 "display_name": "Luis Liao/WHQ/Wistron",
                 "extension": "85014833",
@@ -1183,7 +1227,7 @@ Fetch a developers resource by order_id
 
     ```json
     {
-        "developers":[
+        "member":[
             {
                 "employee_id": 10612704,
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
@@ -1197,7 +1241,7 @@ Fetch a developers resource by order_id
                 "job_title": null,
             },
         ],
-        "developers_contacter":{
+        "contacter":{
                 "employee_id": 9505005,
                 "display_name": "Luis Liao/WHQ/Wistron",
                 "extension": null,
@@ -1233,7 +1277,7 @@ Update partial details of a specific developers by `id`
 
     ```json
     {
-        "developers":[
+        "member":[
             {
                 "employee_id": 10612704,
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
@@ -1243,7 +1287,7 @@ Update partial details of a specific developers by `id`
                 "display_name": "Leo Tu/WHQ/Wistron",
             },
         ],
-        "developers_contacter":{
+        "contacter":{
                 "employee_id": 9505005,
                 "display_name": "Luis Liao/WHQ/Wistron",
         }
@@ -1254,7 +1298,7 @@ Update partial details of a specific developers by `id`
 
     ```json
     {
-        "developers":[
+        "mebmer":[
             {
                 "employee_id": 10612704,
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
@@ -1268,7 +1312,7 @@ Update partial details of a specific developers by `id`
                 "job_title": "工程師",
             },
         ],
-        "developers_contacter":{
+        "contacter":{
                 "employee_id": 9505005,
                 "display_name": "Luis Liao/WHQ/Wistron",
                 "extension": "85014833",
@@ -1281,7 +1325,7 @@ Update partial details of a specific developers by `id`
 
     ```json
     {
-        "developers":[
+        "member":[
             {
                 "employee_id": 10612704,
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
@@ -1295,7 +1339,7 @@ Update partial details of a specific developers by `id`
                 "job_title": null,
             },
         ],
-        "developers_contacter":{
+        "contacter":{
                 "employee_id": 9505005,
                 "display_name": "Luis Liao/WHQ/Wistron",
                 "extension": null,
@@ -1320,11 +1364,11 @@ Search employees resource with site / employee_id / english_name / extension / d
 
     Key|Value|Description
     :---:|:---:|:---:
-    site__exact (option)| WNH\WZS..... | employee location
-    employee_id__icontains (option)| 10612704 | employee id
-    english_name__icontains (option)| Jeff SH Wang | employee english_name
-    extension__icontains (option)| 4815556 | employee extension
-    department_id__icontains (option)| ESQ | department id
+    site__exact (option)| WNH | employee location (exact search)
+    employee_id__icontains (option)| 10612704 | employee id (fuzzy search and case insensitive)
+    english_name__icontains (option)| Jeff SH Wang | employee english_name (fuzzy search and case insensitive)
+    extension__icontains (option)| 4815556 | employee extension (fuzzy search and case insensitive)
+    department_id__icontains (option)| ESQ | department id (fuzzy search and case insensitive)
 
 - HEADERS
 
@@ -1473,7 +1517,7 @@ Fetch projects collection resource by account id
 
     Key|Value|Description
     :---:|:---:|:---:
-    acct_id (required)| 1 | account id
+    acct_id (option) | 1 | account id (exact search)
 
 - HEADERS
 
@@ -1630,7 +1674,7 @@ Fetch option value resource via field value
 
 id: IntegerField
 
-account_id: IntegerField i.e.
+account_id: IntegerField
 
 project_id: IntegerField
 
@@ -1644,7 +1688,7 @@ initator: JSONField
 
 assigner: JSONField
 
-develop_group: JSONField
+developers: JSONField
 
 title: CharField
 
