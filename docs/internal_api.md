@@ -109,6 +109,22 @@ Fetch all orders resource
                     "employee_id": 10612704,
                     "display_name": "Jeff SH Wang/WHQ/Wistron",
                 },
+                "developer": {
+                    "member": [
+                        {
+                            "employee_id": 10612704,
+                            "display_name": "Jeff SH Wang/WHQ/Wistron",
+                        },
+                        {
+                            "employee_id": 10712714,
+                            "display_name": "Leo Tu/WHQ/Wistron",
+                        }
+                    ],
+                    "contactor":{
+                        "employee_id": 9505005,
+                        "display_name": "Luis Liao/WHQ/Wistron",
+                    }
+                },
                 "title": "DQMS develope requirement system",
                 "description": "<br> Three is description </br>",
                 "form_begin_time": "2020-03-10T08:26:38.093183Z",
@@ -138,6 +154,22 @@ Fetch all orders resource
                 "assigner": {
                     "employee_id": 10612704,
                     "display_name": "Jeff SH Wang/WHQ/Wistron",
+                },
+                "developer": {
+                    "member": [
+                        {
+                            "employee_id": 10612704,
+                            "display_name": "Jeff SH Wang/WHQ/Wistron",
+                        },
+                        {
+                            "employee_id": 10712714,
+                            "display_name": "Leo Tu/WHQ/Wistron",
+                        }
+                    ],
+                    "contactor":{
+                        "employee_id": 9505005,
+                        "display_name": "Luis Liao/WHQ/Wistron",
+                    }
                 },
                 "title": "DQMS develope requirement system",
                 "description": "<br> Three is description </br>",
@@ -205,6 +237,22 @@ Fetch a specific orders resource by `id`
             "employee_id": 10612704,
             "display_name": "Jeff SH Wang/WHQ/Wistron",
         },
+        "developer": {
+            "member": [
+                {
+                    "employee_id": 10612704,
+                    "display_name": "Jeff SH Wang/WHQ/Wistron",
+                },
+                {
+                    "employee_id": 10712714,
+                    "display_name": "Leo Tu/WHQ/Wistron",
+                }
+            ],
+            "contactor":{
+                "employee_id": 9505005,
+                "display_name": "Luis Liao/WHQ/Wistron",
+            }
+        },
         "title": "DQMS develope requirement system",
         "description": "<br> Three is description </br>",
         "form_begin_time": "2020-03-10T08:26:38.093183Z",
@@ -269,6 +317,22 @@ Fetch order's ancestor collection by orders `id`
                 "employee_id": 10612704,
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
             },
+            "developer": {
+                "member": [
+                    {
+                        "employee_id": 10612704,
+                        "display_name": "Jeff SH Wang/WHQ/Wistron",
+                    },
+                    {
+                        "employee_id": 10712714,
+                        "display_name": "Leo Tu/WHQ/Wistron",
+                    }
+                ],
+                "contactor":{
+                    "employee_id": 9505005,
+                    "display_name": "Luis Liao/WHQ/Wistron",
+                }
+            },
             "title": "DQMS develope requirement system",
             "description": "<br> Three is description </br>",
             "form_begin_time": "2020-03-10T08:26:38.093183Z",
@@ -298,6 +362,22 @@ Fetch order's ancestor collection by orders `id`
             "assigner": {
                 "employee_id": 10612704,
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
+            },
+            "developer": {
+                "member": [
+                    {
+                        "employee_id": 10612704,
+                        "display_name": "Jeff SH Wang/WHQ/Wistron",
+                    },
+                    {
+                        "employee_id": 10712714,
+                        "display_name": "Leo Tu/WHQ/Wistron",
+                    }
+                ],
+                "contactor":{
+                    "employee_id": 9505005,
+                    "display_name": "Luis Liao/WHQ/Wistron",
+                }
             },
             "title": "DQMS develope requirement system",
             "description": "<br> Three is description </br>",
@@ -351,6 +431,22 @@ Create a new orders
             "employee_id": 10612704,
             "display_name": "Jeff SH Wang/WHQ/Wistron",
         },
+        "developer": {
+            "member": [
+                {
+                    "employee_id": 10612704,
+                    "display_name": "Jeff SH Wang/WHQ/Wistron",
+                },
+                {
+                    "employee_id": 10712714,
+                    "display_name": "Leo Tu/WHQ/Wistron",
+                }
+            ],
+            "contactor":{
+                "employee_id": 9505005,
+                "display_name": "Luis Liao/WHQ/Wistron",
+            }
+        },
         "title": "DQMS develope requirement system",
         "description": "<br> Three is description </br>",
         "expected_develop_duration_day": 10.5,
@@ -383,6 +479,22 @@ Create a new orders
         "assigner": {
             "employee_id": 10612704,
             "display_name": "Jeff SH Wang/WHQ/Wistron",
+        },
+        "developer": {
+            "member": [
+                {
+                    "employee_id": 10612704,
+                    "display_name": "Jeff SH Wang/WHQ/Wistron",
+                },
+                {
+                    "employee_id": 10712714,
+                    "display_name": "Leo Tu/WHQ/Wistron",
+                }
+            ],
+            "contactor":{
+                "employee_id": 9505005,
+                "display_name": "Luis Liao/WHQ/Wistron",
+            }
         },
         "title": "DQMS develope requirement system",
         "description": "<br> Three is description </br>",
@@ -470,6 +582,22 @@ Update partial details of specific orders by `id`
         "assigner": {
             "employee_id": 10612704,
             "display_name": "Jeff SH Wang/WHQ/Wistron",
+        },
+        "developer": {
+            "member": [
+                {
+                    "employee_id": 10612704,
+                    "display_name": "Jeff SH Wang/WHQ/Wistron",
+                },
+                {
+                    "employee_id": 10712714,
+                    "display_name": "Leo Tu/WHQ/Wistron",
+                }
+            ],
+            "contactor":{
+                "employee_id": 9505005,
+                "display_name": "Luis Liao/WHQ/Wistron",
+            }
         },
         "title": "DQMS develope requirement system",
         "description": "<br> Three is description </br>",
@@ -1214,7 +1342,7 @@ Fetch a developers resource by order_id
                 "job_title": "工程師",
             },
         ],
-        "contacter":{
+        "contactor":{
                 "employee_id": 9505005,
                 "display_name": "Luis Liao/WHQ/Wistron",
                 "extension": "85014833",
@@ -1241,7 +1369,7 @@ Fetch a developers resource by order_id
                 "job_title": null,
             },
         ],
-        "contacter":{
+        "contactor":{
                 "employee_id": 9505005,
                 "display_name": "Luis Liao/WHQ/Wistron",
                 "extension": null,
@@ -1287,7 +1415,7 @@ Update partial details of a specific developers by `id`
                 "display_name": "Leo Tu/WHQ/Wistron",
             },
         ],
-        "contacter":{
+        "contactor":{
                 "employee_id": 9505005,
                 "display_name": "Luis Liao/WHQ/Wistron",
         }
@@ -1312,7 +1440,7 @@ Update partial details of a specific developers by `id`
                 "job_title": "工程師",
             },
         ],
-        "contacter":{
+        "contactor":{
                 "employee_id": 9505005,
                 "display_name": "Luis Liao/WHQ/Wistron",
                 "extension": "85014833",
@@ -1339,7 +1467,7 @@ Update partial details of a specific developers by `id`
                 "job_title": null,
             },
         ],
-        "contacter":{
+        "contactor":{
                 "employee_id": 9505005,
                 "display_name": "Luis Liao/WHQ/Wistron",
                 "extension": null,
@@ -1517,7 +1645,7 @@ Fetch projects collection resource by account id
 
     Key|Value|Description
     :---:|:---:|:---:
-    acct_id (option) | 1 | account id (exact search)
+    acct_id (option) | 4 | account id (exact search)
 
 - HEADERS
 
@@ -1545,6 +1673,8 @@ Fetch projects collection resource by account id
             "plm_code_1": "QRQY00000137",
             "plm_code_2": "6PD02A010001",
             "deleted_at": null,
+            "name": "Trinity 1U",
+            "plm_code": "QRQY00000137",
             "type": "NPI",
             "status": "On-going",
             "product_line": "Server",
@@ -1557,43 +1687,26 @@ Fetch projects collection resource by account id
             }
         },
         {
-            "id": 3,
+            "id": 2,
             "wistron_name": null,
-            "customer_name": "Anders4",
-            "wistron_code": "A191TB1",
-            "plm_code_1": "QRQY00000718",
-            "plm_code_2": "5PD05L010001",
+            "customer_name": "Trinity 2U",
+            "wistron_code": "C182TR3",
+            "plm_code_1": "QRQY00000154",
+            "plm_code_2": "6PD022010001",
             "deleted_at": null,
-            "type": "NPI",
-            "status": "On-going",
-            "product_line": "Server",
-            "business_model": "JDM",
-            "account": {
-                "id": 2,
-                "name": "HPE",
-                "code": "Apollo",
-                "business_unit": 2
-            }
-        },
-        {
-            "id": 4,
-            "wistron_name": "CX 2U4N",
-            "customer_name": "CX400 M6",
-            "wistron_code": "G182TR3",
-            "plm_code_1": "5RDZ54010001",
-            "plm_code_2": "5PD05H010001",
-            "deleted_at": null,
+            "name": "Trinity 2U",
+            "plm_code": "QRQY00000154",
             "type": "NPI",
             "status": "On-going",
             "product_line": "Server",
             "business_model": "ODM",
             "account": {
-                "id": 14,
-                "name": "Fujitsu",
-                "code": "Yama",
-                "business_unit": 2
+                "id": 4,
+                "name": "Cisco",
+                "code": "Cindy",
+                "business_unit": 1
             }
-        },
+        }
     ]
     ```
 
