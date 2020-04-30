@@ -76,8 +76,9 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    'develop_requirement_proj.users',
-    'develop_requirement_proj.employee'
+    'develop_requirement_proj.users.apps.UsersConfig',
+    'develop_requirement_proj.employee.apps.EmployeeConfig',
+    'develop_requirement_proj.signature.apps.SignatureConfig'
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -135,14 +136,20 @@ AUTH_USER_MODEL = "users.CustomUser"
 STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-root
 STATIC_ROOT = str(ROOT_DIR("staticfiles"))
-
+# https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
+STATICFILES_DIRS = [str(APPS_DIR.path("static"))]
+# https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
 
 # TEMPLATES
 # ------------------------------------------------------------------------------
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [str(APPS_DIR.path('templates'))],
         # 'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

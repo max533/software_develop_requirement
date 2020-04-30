@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class SignatureConfig(AppConfig):
-    name = 'signature'
+    name = 'develop_requirement_proj.signature'

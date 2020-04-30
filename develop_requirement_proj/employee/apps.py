@@ -2,5 +2,4 @@ from django.apps import AppConfig
 
 
 class EmployeeConfig(AppConfig):
-    name = 'employee'
-    app_label = 'employee'
+    name = 'develop_requirement_proj.employee'
