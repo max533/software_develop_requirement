@@ -59,3 +59,11 @@ INTERNAL_IPS = ["127.0.0.1", "10.32.20.123"]
 # ------------------------------------------------------------------------------
 # https://django-extensions.readthedocs.io/en/latest/installation_instructions.html#configuration
 INSTALLED_APPS += ["django_extensions"]  # noqa F405
+
+
+# Migrations Settings
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
+MIGRATION_MODULES = {
+    'employee': 'develop_requirement_proj.employee.migrations.0001_initial',
+}
