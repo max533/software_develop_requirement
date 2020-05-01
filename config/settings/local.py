@@ -10,16 +10,17 @@ from .base import env
 # GENERAL
 # ------------------------------------------------------------------------------
 # SECURITY WARNING: keep the secret key used in production secret!
+# https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env("DJANGO_SECRET_KEY", default="&&0&0ir50svj3m7dp-lx5i5wm_a0@-$-ov^j76woh5af-(de_o")
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
-SECRET_KEY = env("DJANGO_SECRET_KEY")
-
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]
 
 DEVELOP_HOST = env('DJANGO_DEVELOP_HOST', default="0.0.0.0")
+
+ALLOWED_HOSTS.append(DEVELOP_HOST)
+
 
 # CACHES
 # ------------------------------------------------------------------------------
@@ -52,7 +53,9 @@ DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TEMPLATE_CONTEXT": True,
 }
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#internal-ips
-INTERNAL_IPS = ["127.0.0.1", "10.32.20.123"]
+INTERNAL_IPS = ["127.0.0.1"]
+
+INTERNAL_IPS.append(DEVELOP_HOST)
 
 
 # django-extensions
