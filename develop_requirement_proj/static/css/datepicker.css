@@ -1,0 +1,121 @@
+/*  date range picker start */
+    .daterangepicker{
+        border-radius: 2rem;
+        box-shadow: 0.05rem 0.05rem 0.45rem 0.08rem rgba(0,0,0,.09); 
+    }
+    .daterangepicker:before {
+        display: none !important;
+    }
+    .daterangepicker::after {
+        display: none !important;
+    }
+    .applyBtn{
+        margin-right: 2rem;
+    }
+    .drp-calendar th,.drp-calendar td{
+        font-weight: 600;
+        font-size: .9rem;
+        color: var(--secondary);
+    }
+    .daterangepicker td.start-date {
+        border-radius: 2em 0 0 2em;
+    }
+    .daterangepicker td.end-date {
+        border-radius: 0 2em 2em 0;
+    }
+    .daterangepicker td.in-range {
+        background-color: var(--warning);
+        color: var(--info);
+        border-color: transparent;
+    }
+    .daterangepicker td.active, .daterangepicker td.active:hover {
+        background-color: var(--secondary);
+        border-color: transparent;
+        color: var(--light);
+    }
+
+/*  date range picker end */
+    .progress{
+        border-radius: 2em;
+    }
+    .dropdown-menu .selected{
+        background-color: var(--secondary);
+        color: var(--primary) !important;
+    }
+    .disabled .filter-option .filter-option-inner .filter-option-inner-inner{
+        color:var(--deepdark) !important;
+    }
+    .opcityDisabled{
+        opacity: .7;
+    }
+
+
+/*  Datepicker */
+    .ui-datepicker { 
+        /* 選擇器寬度 */
+        width: 14em !important;
+        background: var(--light) !important;
+    }
+    .ui-widget-content{
+        border: none !important;
+        border-radius: .5em;
+        box-shadow: 0.08rem 0.08rem 0.45rem rgba(14, 14, 14, 0.295);
+    }
+    .ui-datepicker-week-end { 
+        /* 週末隱藏 */
+        display: none;
+        color: var(--secondary);
+    }
+    .ui-datepicker table{
+        font-size: .92em;
+    }
+    .ui-widget-header{
+        font-family: 'Rubik', sans-serif;
+    }
+    .ui-datepicker th {
+        padding: 0.1em 0em;
+        font-size: .85em;
+        padding-top: .5em;
+        color: var(--secondary);
+        }
+    .ui-widget-header {
+        border: none !important;
+        background: var(--light) !important;
+        color: var(--secondary) !important;
+    }
+    .ui-datepicker-prev, .ui-datepicker-next {
+        top: 4px !important;
+        border: none !important;
+        background: var(--primary) !important;
+    }
+    .ui-state-default {
+        margin: 1px 2px;
+        border: 2px solid rgb(190, 229, 235) !important;
+        border-radius: 5em !important;
+        background: var(--lightprimary) !important;
+        color: var(--secondary) !important;
+    }
+    .ui-state-highlight {
+        border: 3px solid var(--info) !important;
+        border-radius: 5em!important;
+        background: rgb(190, 229, 235) !important;
+        color: var(--secondary) !important;
+    }
+    .ui-state-active {
+        border: 2px solid rgb(23, 162, 184) !important;
+        border-radius: 5em !important;
+        background: var(--infohover) !important;
+        color: rgb(252, 253, 253) !important;
+    }
+    .ui-state-disabled, .ui-datepicker-unselectable {
+        opacity: .4 !important;
+    }
+    .ui-datepicker-other-month {
+        opacity: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        color: transparent !important;
+    }
+    .ui-datepicker-month {
+        margin-right: .3em;
+    }

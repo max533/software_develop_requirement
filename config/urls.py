@@ -19,11 +19,15 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
+from develop_requirement_proj.signature.views import IndexView
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('cas/login', django_cas_ng.views.LoginView.as_view(), name='cas_ng_login'),
     path('cas/logout', django_cas_ng.views.LogoutView.as_view(), name='cas_ng_logout'),
-    path('cas/callback', django_cas_ng.views.CallbackView.as_view(), name='cas_ng_proxy_callback')
+    path('cas/callback', django_cas_ng.views.CallbackView.as_view(), name='cas_ng_proxy_callback'),
+    path('', IndexView.as_view() ,name='index'),
 ]
 
 # API URLS

@@ -8,6 +8,8 @@ isort = "*"
 "flake8" = "*"
 django-extensions = "*"
 django-debug-toolbar = "*"
+mptt = "*"
+v = {editable = true,version = "*"}
 
 [packages]
 django = ">=2.2,<3"
@@ -20,6 +22,9 @@ requests = "~=2.23"
 django-filter = "~=2.2"
 django-cas-ng = ">=4.1,<5"
 factory-boy = "~=2.12"
+mptt = "*"
+django-mptt-admin = "*"
+django-mptt = "*"
 
 [requires]
 python_version = "3.7"

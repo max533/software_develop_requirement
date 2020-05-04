@@ -1,0 +1,677 @@
+{% load static %}
+<!DOCTYPE html> 
+<head> 
+	<meta name="Author" content="Leo Tu" />
+	<meta name="Copyright" content="&copy; 2020 Leo Tu" />
+	<meta http-equiv="Content-Type" content="text/html"; charset="uft-8" />
+	<meta http-equiv="Content-Language" content="en-US" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no" />
+
+	<title>Wistron DQMS/DRS</title>
+	  
+	<link rel="shortcut icon" href="{% static '/images/logoico.ico' %}" type="image/x-icon">
+	<link rel="icon" href="{% static '/images/logoico.ico' %}" type="image/x-icon">
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
+	<!-- Bootstrap XXL CSS --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xbrain-bootstrap-xxl@1.0.1/css/xbrain-bootstrap-xxl.min.css">
+
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css">
+	<link href="https://fonts.googleapis.com/css?family=Nunito:700i&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Nunito:400i&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karla" >
+	<link href="https://fonts.googleapis.com/css?family=Fredoka+One&display=swap" rel="stylesheet">
+
+	<!--plugin datepicker--><link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/redmond/jquery-ui.css" />
+	<!--Plugin Animate--><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+	<!--plugin select--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+	<!-- Plugin date rangepicker --><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+	<!-- Plugin summernote -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote.min.css" rel="stylesheet">
+	<link href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/filter-control/bootstrap-table-filter-control.css">
+	
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<!-- Plugin date rangepicker -->
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+	<!-- jquery validate -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/additional-methods.min.js"></script>	<!--Plugin tabDrable--><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+	<!--Plugin easeFunction--><script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+	<!--plugin datepicker--><script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+	<!--plugin filesize.js--><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/filesize/4.1.2/filesize.js"></script>
+	<!--plugin numerator--><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-numerator@0.2.1/jquery-numerator.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<!--plugin select-->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+
+	<script src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.js"></script>
+	<script src="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+	<!-- Plugin summernote -->
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote.min.js"></script>
+	<script type="text/javascript">
+		let images={
+			"logoportrait":"{% static '/images/logoportrait.svg' %}",
+			"defaultavatar":"{% static '/images/defaultsticker.png' %}",
+			"loadinggif_path":"{% static '/images/loading.gif' %}",
+			"404":"{% static '/images/404.png' %}",
+			"upload":"{% static '/images/upload.svg' %}",
+			"document":"{% static '/images/document.svg' %}",
+			"status":"{% static '/images/service.png' %}",
+		};
+	</script>
+	<script type="text/javascript">
+		// $.ajaxSetup({
+		// 	headers: {'X-CSRFToken': "{{ csrf_token }}"}
+		// });	
+		//	imagesrc "{% static 'drs/images/' %}"
+	</script>
+	<link rel="stylesheet" href="{% static '/css/basic.css' %}"/>
+	<link rel="stylesheet" href="{% static '/css/datepicker.css' %}"/>
+	<link rel="stylesheet" href="{% static '/css/timeline.css' %}"/>
+	<link rel="stylesheet" href="{% static '/css/drs.css' %}"/>
+	<link rel="stylesheet" href="{% static '/css/rwd.css' %}"/>
+	<script type="text/javascript" src="{% static '/js/fakedata.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/component.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/backend.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/basic.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/tag_modal.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/dev_modal.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/drs.js' %}"></script>
+</head>
+
+<body class="bg-white">
+    <div class="container bg-white">
+        <nav class="mt-1 text-secondary align-items-center d-flex justify-content-end" id="navbar">					
+            <div class="d-inline-flex align-items-baseline " id="navBTNs">
+                <form class="form-inline my-2 my-lg-0" >
+                    <div class="dropdown" id="navSelectUser">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" id="navUser"> 
+						<!-- <img class="sticker" onerror="this.src='{% static '/images/defaultsticker.png' %}'" > -->
+                            <img class="sticker" onerror="{% static '/images/defaultsticker.png' %}" >
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item align-items-center d-flex" id ="user" target="_blank"> 
+								<img class="sticker mr-2" >
+								<span><!-- Leo Tu/WHQ/Wistron  --></span>
+                            </a>
+                            <a class="dropdown-divider"></a>
+                            <a class="dropdown-item" id ="logout"> <i class="fas fa-sign-out-alt fa-fw"></i> Log Out </i></a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </nav>
+        <div class="pb-2">
+			<div class="col-12">
+				<!-- title -->
+				<h3 class="text-secondary pl-1" id="pagetitle"> Development Requirement List </h3>
+				<div id="chartDiv" class="mb-5 mt-3" style="display: none;">
+					<iframe class="chart-container" id="chart" frameborder="0" allowFullScreen="true" responsive="true" maintainAspectRatio="false" ></iframe>
+				</div>
+				<!-- main table -->
+				<table class="table table-hover" id="table">
+				</table>
+			</div>
+        </div>
+	</div>
+	
+	<!-- RequestModal form -->
+	<div class="modal fade" id="requestModal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">						
+				<div class="modal-body row">
+					<div class="col-12 col-lg-4 d-flex align-items-center bg-water-gradient">
+						<div id="image_status" class="animated zoomInDown faster">
+							<div class="d-flex justify-content-center" id="imgage_dev">
+								<img>
+							</div>
+							<div class="text-center mt-3" id="image_label_dev">
+								<h3 class="text-bluegray font-weight-bold">Initialize request</h3>
+								<p class="text-bluegray font-weight-bold">
+									Progress status -- start --
+								</p>
+							</div>
+							<hr>
+							<button type="button" id="toggle-commentarea" class="btn btn-secondary btn-sm position-absolute" data-toggle="button">
+								<i class="fas fa-chevron-up"></i>
+							</button>
+							<!-- One comment content include:who/ avatar/ time/ comment content/ -->
+							<div class="col-12" id="comment_area">
+								<!-- Load comments history -->
+							</div>
+							<hr>
+							<div>
+							</div>
+							<button id="sendcomment_btn" type="button" class="btn btn-info btn-sm position-absolute">
+								<i class="fas fa-pencil-alt"></i>
+							</button>
+							<textarea id="comment" class="summernote" data-postion="comment" placeholder="Comment ..."></textarea>
+						</div>
+					</div>
+					
+
+					<div class="col-12 col-lg-8 px-5 py-3 bg-white" id="FormRequest_div">	
+						<div class="d-inline-flex justify-content-between align-items-baseline w-100">
+							<div>
+								<h6 class="modal-title text-secondary text-center font-weight-bold" id=""> New Request </h6>
+							</div>
+							<button type="button" class="close" data-dismiss="modal">
+								<span> &times; </span>
+							</button>
+						</div>
+<!-- authors initiator assigner developers -->
+						<div id="authors" class="mt-2">			
+							<div class="d-inline-flex align-items-center w-100 author">
+								<span class="text-grey mr-2"> Initiator </span>
+								<div class="d-inline-flex align-items-center" id="form_initiator">
+									<img class="sticker mr-2" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+									<span class="text-grey"></span>
+								</div>	
+							</div>
+							<div class="d-inline-flex align-items-center w-100 mt-2 author" style="display: none !important;">
+								<span class="text-grey mr-2"> Form receiver </span>
+								<div class="d-inline-flex align-items-center mr-3" id="form_assigner">
+									<img class="sticker mr-2" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+									<span class="text-grey">
+										<strong class="mr-2">
+											<!-- DQMS/MMS -->
+										</strong>
+										<!-- Luis Liao/WHQ -->
+									</span>
+								</div>
+							</div>
+							<div class="d-inline-flex align-items-top w-100 mt-2 author" style="display: none !important;">
+								<span class="text-grey mr-2 mt-1"> Assigned developer </span>
+								<div class="" id="form_owner">
+									<img class="sticker mr-2" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+									<span class="text-grey mr-2" title="Contact window">
+										<!-- Jeff SH Wang/WHQ  -->
+										<strong class="ml-2">&#x22EF;</strong>
+									</span>
+									<button class="btn btn-outline-secondary btn-sm toggle-dev-list" data-toggle="button"><i class="fa fa-list mr-1"></i></button>
+									<button class="btn btn-info btn-sm" data-toggle="modal" data-target="#developersModal">
+										<i class="fa fa-users"></i>
+										Edit
+									</button>
+									<div class="dev-list">
+										<ul class="text-grey">
+											//TODO 2020  04/29
+											<!-- <li class="mt-1">Kevin SJ Huang/WHQ</li>
+											<li class="mt-1">Leo Tu/WHQ</li>
+											<li class="mt-1">Peter Hsien/WHQ</li>
+											<li class="mt-1">Jeff SH Wang/WHQ</li>
+											<li class="mt-1">Kevin SJ Huang/WHQ</li>
+											<li class="mt-1">Leo Tu/WHQ</li>
+											<li class="mt-1">Peter Hsien/WHQ</li>
+											<li class="mt-1">Jeff SH Wang/WHQ</li> -->
+										</ul>	
+									</div>
+								</div>
+							</div>
+						</div>	
+						<hr>
+<!-- Form Request -->
+						<form id="FormRequest" enctype="multipart/form-data">
+							<!-- Assign which team -->
+							<h6 class="text-secondary font-weight-bold"> Request which team </h6>
+							<div class="row align-items-center mt-3">
+								<label class="col-4"> &#9733 Assign which/ Team </label>
+								<select type="select" class="selectpicker col-8" name="function" id="sel_function" data-width="auto" data-size="5" data-live-search="true" required>
+									<option value=""> Select... </option>
+								</select>
+							</div>
+							<div class="row align-items-center mt-3">
+								<label class="col-4"> &#9733 Account </label>
+								<select type="select" class="selectpicker col-8" name="account_id" id="sel_accounts" data-width="auto" data-live-search="true" title="Select" required>
+									<option value=""> Select... </option>
+								</select>
+							</div>				
+							<div class="row align-items-center mt-3">
+								<label class="col-4"> &#9733 Project </label>
+								<select type="select" class="selectpicker col-8" name="project_id" id="sel_projects" data-width="auto" title="Select account first" required>
+									<option value=""> Select... </option>
+								</select>
+							</div>
+							<div class="row align-items-center mt-3">
+								<label class="col-4"> &#9733 Assign which/ Who </label>
+								<select type="select" class="selectpicker col-8" name="assigner"  data-width="auto" title="Select project & team first" id="sel_assigners" required>
+									<option value=""> Select... </option>
+								</select>
+							</div>
+							<hr>
+							<!-- Assign content -->
+							<h6 class="text-secondary font-weight-bold mt-3"> Request content </h6>
+
+							
+
+							<div class="row align-items-center mt-2">
+								<label class="col-4"> &#9733 Title </label>
+								<div class="col-8 mb-2">
+									<input type="text" class="field-style" name="title" placeholder="Develop what" required>
+								</div>
+							</div>
+
+							<div class="row align-items-top mt-2">
+								<label class="col-4 mt-2"> &#9733 Request description </label>
+								<div class="col-8">
+									<textarea type="text" class="summernote" name="description" data-postion="requestform" placeholder="Develop deatail or purpose" required></textarea>
+								</div>
+							</div>
+							<div class="row align-items-center mt-2" id="tag_div">
+								<label class="col-4"> Depend on which form </label>
+								<div class="input-group mb-2 col-8">
+									<input type="text" class="field-style form-control" placeholder="Tag last form." disabled>
+									<div class="input-group-append">
+										<button class="btn btn-success" type="button" data-toggle="modal" data-target="#ezinfoModal"> <i class="fa fa-external-link-alt"></i> </button>
+										<button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#tagModal">
+											<i class="fa fa-tag"></i> Edit tag
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<div class="row align-items-top mt-2 file">
+								<div class="col-4 pt-4">
+									<label> Upload Files/<label>
+									<div class="ml-2">
+										<button type="button" class="fa fa-question btn btn-secondary btn-sm"></button>
+										<!-- <button type="button" class="far fa-sticky-note btn btn-warning" title="summarynote"></button> -->
+									</div>
+								</div>
+								
+								<div class="col-8">
+									<label for="file" class="mt-2 upload-style form-control d-flex align-items-center justify-content-between">											
+										<input type="file" class="custom-file-input" id="files" name="files[]" multiple size="5" title="No file selected.">
+									</label>
+									<h6 class="text-grey caption ellipsis"> Drag&Drop or Click to choose your file.<i class="fa fa-cloud-upload-alt fa-lg ml-2"></i> </h6>
+									<small class="ml-3 text-secondary">Restrict number of files limit less than <strong id="restrict_file_num"></strong>.
+											and size of file limit less than <strong id="restrict_file_size">10 Mb</strong>.
+									</small>
+									<div class="table-responsive" id="filelist">
+										<table class="table mt-2">
+											<tbody></tbody>
+										</table>
+									</div>					
+								</div>
+							</div>
+							<hr>
+							<div class="d-flex justify-content-end mt-4">
+								<button type="button" class="btn btn-info" id="initialize_btn">
+									<i class="fa fa-paper-plane"></i>
+									<span> Initialize request </span>
+								</button>
+							</div>
+							<small class="position-absolute text-secondary" style="bottom: 1rem; right:3rem">
+								&#9733 is required field. Need to fill out before requesting.
+							</small>
+						</form>	
+					</div>
+					<!-- Request form -->
+					<div id="Request" class="w-100 d-none"></div>
+				</div>				
+			</div>
+		</div>
+	</div>
+
+	<!-- tagModal -->
+	<div class="modal fade" id="tagModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		  	<div class="modal-content p-3">
+				<div class="modal-body">
+					<div class="col-12 bg-white">	
+						<div class="d-flex justify-content-between align-items-start">
+							<div class="">
+								<h5 class="text-bluegray"> Depending on which form</h5>
+							</div>
+							<button type="button" class="close" data-dismiss="modal">
+								<span> &times; </span>
+							</button>
+						</div>
+						
+						<div class="d-inline-flex align-items-baseline w-100 " id="present_tag_func">
+							<h6 class="modal-title text-secondary text-center font-weight-bold"> At present, depened-on form record </h6>
+						</div>
+						<div id="present_tag_table_div">
+							<table class="table table-borderless mt-1" id="present_tag_table"></table>
+						</div>
+
+						<hr>
+						<form id="FormTag" class="w-100">
+							<!-- Assign which team -->
+							<h6 class="text-secondary font-weight-bold"> Search depend-on form </h6>
+
+							<div class="row align-items-baseline mt-3">
+								<label class="col-3"> Search field </label>
+								<div class="btn-group btn-group-toggle col-9" data-toggle="buttons" id="search_tag_field">
+									<label class="btn btn-outline-secondary">
+										<input type="radio" name="field" value="title" required> Title
+									</label>
+									<label class="btn btn-outline-secondary">
+										<input type="radio" name="field" value="initator" required> Initator
+									</label>
+									<label class="btn btn-outline-secondary">
+										<input type="radio" name="field" value="assigner" required> Form receiver
+									</label>
+									<label class="btn btn-outline-secondary">
+										<input type="radio" name="field" value="developers" required> Developers
+									</label>
+								</div>
+							</div>
+							<div class="row align-items-center mt-3">
+								<label class="col-3"> Search </label>
+								<div class="input-group mb-2 col-9">
+									<input type="text" class="field-style form-control" name="search_keywords" placeholder="Search..." id="search_tag">
+									<div class="input-group-append">
+										<button class="btn btn-secondary" type="button" id="search_tag_btn"> <i class="fa fa-search"></i> </button>
+									</div>
+								</div>
+							</div>
+							<hr class="devsearch_fade" style="display: none;">
+							<!-- Assign content -->
+							<h6 class="text-secondary font-weight-bold mt-3 devsearch_fade" style="display: none;"> Search result </h6>
+							<div id="result_tag_table_div">			
+								<table class="table table-borderless mt-1 devsearch_fade" id="result_tag_table" style="display: none;"></table>
+							</div>	
+							<hr>
+							<div class="d-flex justify-content-end mt-4">
+								<button type="button" class="btn btn-info" id="tagBTN"> <i class="far fa-paper-plane mr-1"></i> Save </button>
+							</div>
+						</form>	
+					</div>						
+				</div>		
+		  	</div>
+		</div>
+	</div>
+
+	<!-- record tag_info_Modal -->
+	<div class="modal fade" id="ezinfoModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-lg pl-5" role="document">
+			<div class="modal-content p-3">
+				<div class="modal-body">
+					<div class="col-12">	
+						<div class="d-flex justify-content-between align-items-start">
+							<div class="">
+								<h5 class="text-bluegray"> Form infotmation</h5>
+							</div>
+							<button type="button" class="close" data-dismiss="modal">
+								<span> &times; </span>
+							</button>
+						</div>
+						
+						<form id="" class="w-100">
+							<h6 class="text-secondary font-weight-bold"> Basic info </h6>
+							<div class="row align-items-baseline mt-3">
+								<label class="col-3 text-grey"> Form id </label>
+								<div class="col-9 bg-light bd-radius-8 p-1">
+									<span class="text-secondary font-weight-bold">12</span>
+								</div>		
+							</div>
+							<div class="row align-items-baseline mt-1">
+								<label class="col-3 text-grey"> Initiator </label>
+								<div class="col-9 bg-light bd-radius-8 p-1">
+									<img class="sticker" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+									<span class="text-secondary font-weight-bold ml-1">Jeff SH Wang/WHQ</span>
+								</div>
+							</div>
+							<div class="row align-items-baseline mt-1">
+								<label class="col-3 text-grey"> PO/PM </label>
+								<div class="col-9 bg-light bd-radius-8 p-1">
+									<img class="sticker" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+									<span class="text-secondary font-weight-bold ml-1">Jeff SH Wang/WHQ</span>
+								</div>
+							</div>
+							<div class="row align-items-baseline mt-1">
+								<label class="col-3 text-grey"> Developers </label>
+								<div class="col-9 bg-light bd-radius-8 p-1">
+									<img class="sticker" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+									<span class="text-secondary font-weight-bold mr-3">Peter Hsien/WHQ <strong>...</strong></span>
+									<button type="button" class="btn btn-outline-secondary btn-sm toggle-dev-list" data-toggle="button">
+										<i class="fa fa-list"></i>
+									</button>
+									<div class="col-12 dev-list" style="display: none;">
+										<ul class="text-grey">
+											<!-- <li class="mt-1">Kevin SJ Huang/WHQ</li>
+											<li class="mt-1">Leo Tu/WHQ</li>
+											<li class="mt-1">Peter Hsien/WHQ</li>
+											<li class="mt-1">Jeff SH Wang/WHQ</li>
+											<li class="mt-1">Kevin SJ Huang/WHQ</li>
+											<li class="mt-1">Leo Tu/WHQ</li>
+											<li class="mt-1">Peter Hsien/WHQ</li>
+											<li class="mt-1">Jeff SH Wang/WHQ</li> -->
+										</ul>
+									</div>
+								</div>
+							</div>
+
+							<hr>
+							<h6 class="text-secondary font-weight-bold"> Form content </h6>
+							<div class="row align-items-baseline mt-3">
+								<label class="col-3 text-grey"> Title </label>
+								<div class="col-9 bg-light bd-radius-8 p-1">
+									<span class="text-secondary font-weight-bold">DQMS develope requirement system</span>
+								</div>
+							</div>
+							<div class="row align-items-baseline mt-1">
+								<label class="col-3 text-grey"> Description </label>
+								<div class="col-9 bg-light bd-radius-8 p-1">
+									<br> Three is description </br>
+								</div>
+							</div>
+							<div class="row align-items-baseline mt-1">
+								<label class="col-3 text-grey"> Result </label>
+								<div class="col-9 bg-light bd-radius-8 p-1">
+									<span class="text-secondary font-weight-bold">www.gitlab.com</span>
+								</div>
+							</div>
+							<div class="row align-items-top mt-1">
+								<label class="col-3 text-grey"> Files </label>
+								<!-- <div class="col-9 bg-light bd-radius-8 p-1" id="ezmodal_download_div">			
+									<div class="bd-radius-8 px-2 py-1" style="cursor: pointer;">
+										<a class="text-secondary font-weight-bold bd-radius-8" ></a>
+									</div>	
+								</div> -->
+								<table class="table table-borderless col-9 bg-light bd-radius-8 table-hover" style="overflow:hidden;">
+									<tbody>
+										<tr>
+											<td>xxx.xml</td>
+											<td>22.00Mb</td>
+											<td>
+												<a class="fa fa-cloud-download-alt btn btn-info btn-sm p-1 text-light" style="cursor: pointer;"></a>
+											</td>
+										</tr>
+										<tr>
+											<td>xxx.xml</td>
+											<td>22.00Mb</td>
+											<td>
+												<a class="fa fa-cloud-download-alt btn btn-info btn-sm p-1 text-light" style="cursor: pointer;"></a>
+											</td>
+										</tr>
+									</tbody>
+								  </table>
+							</div>
+
+							<hr>
+							<h6 class="text-secondary font-weight-bold"> Time schedule </h6>
+							<div class="row align-items-baseline mt-1">
+								<label class="col-3 text-grey"> Expected Working time </label>
+								<div class="col-9 bg-light bd-radius-8 p-1">
+									<span class="text-secondary font-weight-bold">10hr</span>
+								</div>
+							</div>
+							<div>
+								<label class="text-grey"> Timeline </label>
+								<div id="ezinfoModal_timeline">
+									<div id="lineTime" class="lineTime"></div>
+									<div id="lineTimePoint" class="lineTimePoint"></div>
+								</div>
+							</div>
+						</form>	
+					</div>						
+				</div>		
+			</div>
+		</div>
+	</div>
+
+	<!-- developersModal -->
+	<div class="modal fade" id="developersModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content p-3">
+				<div class="modal-body">
+					<div class="col-12 bg-white">	
+						<div class="d-flex justify-content-between align-items-start">
+							<div class="">
+								<h5 class="text-bluegray"> Assign developers </h5>
+							</div>
+							<button type="button" class="close" data-dismiss="modal">
+								<span> &times; </span>
+							</button>
+						</div>
+						<hr>
+						<div class="mt-2">
+							<h6 class="modal-title text-secondary font-weight-bold"> At present, Developer team member list </h6>
+							<div class="row align-items-baseline mt-3">
+								<label class="col-3">&#9733 Developers contact windaw </label>
+								<div class="btn-group btn-group-toggle col-9" data-toggle="buttons" id="sel_devcontacter_div">
+									<select class="field-style form-control selectpicker" title="Select contact window...">
+									</select>
+								</div>
+							</div>
+						</div>
+						<hr>
+						<div id="present_dev_table_div">
+							<table class="table table-borderless mt-1" id="present_dev_table">
+								<thead>
+									<tr></tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+						<hr>
+						<form id="FormDevelopers" class="w-100">
+							<!-- Assign which team -->
+							<h6 class="text-secondary font-weight-bold"> Search developer to add </h6>
+							<small class="font-weight-bold text-secondary mr-2 mt-2" id="developers_limit"> Current team member 
+								<span class="badge badge-light badge-pill p-1 pr-2 font-weight-bold">
+									<i class="fa fa-users mr-1 ml-2 text-secondary"></i><!-- current developers number -->
+								</span>
+								<span class="badge badge-light badge-pill p-1 pr-2"><!-- Limitation 15 --></span>
+							</small>
+							<div class="row align-items-baseline mt-3">
+								<label class="col-3">&#9733 Which site </label>
+								<div class="btn-group btn-group-toggle col-9" data-toggle="buttons" id="search_dev_site">
+									<select class="field-style form-control selectpicker" name="site__exact" title="Select site..." required>
+										<option value=""> Select... </option>
+										<option value="WHQ"> WHQ </option>
+										<option value="WZS"> WZS </option>
+										<option value="WNH"> WNH </option>
+									</select>
+								</div>
+							</div>
+							<div class="row align-items-baseline mt-3">
+								<label class="col-3">&#9733 Search field </label>
+								<div class="btn-group btn-group-toggle col-9" data-toggle="buttons" id="search_dev_field">
+									<label class="btn btn-outline-secondary">
+										<input type="radio" name="field" value="employee_id" required> Id
+									</label>
+									<label class="btn btn-outline-secondary">
+										<input type="radio" name="field" value="english_name" required> Name
+									</label>
+									<label class="btn btn-outline-secondary">
+										<input type="radio" name="field" value="department_id" required> Department
+									</label>
+								</div>
+							</div>
+							<div class="row align-items-center mt-3">
+								<label class="col-3">&#9733 Search </label>
+								<div class="input-group mb-2 col-9">
+									<input type="text" class="field-style form-control" name="search_keywords" placeholder="Search..." id="search_dev" required>
+									<div class="input-group-append">
+										<button class="btn btn-secondary" type="button" id="search_dev_btn"><i class="fa fa-search"></i></button>
+									</div>
+								</div>
+							</div>
+							<hr class="devsearch_fade">
+							<!-- Assign content -->
+							<h6 class="text-secondary font-weight-bold mt-3 devsearch_fade"> Search result </h6>
+							<div id="result_tag_table_div">
+								<table class="table table-borderless mt-1 devsearch_fade" id="result_dev_table">
+								</table>
+							<hr>
+						</form>	
+					</div>
+					<div class="d-flex justify-content-end mt-2">
+						<button type="button" class="btn btn-info"> <i class="far fa-paper-plane mr-1"></i> Save </button>
+					</div>						
+				</div>		
+			</div>
+		</div>
+	</div>
+
+
+	<!--Alert Modal -- permission denied-->
+	<div class="modal fade" id="alertModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content modal-content-body bg-grey">
+				<div class="mt-2 mb-3">
+					<div class="cover mx-auto">
+						<img>
+					</div>
+					<h3 class="ml-3 text-secondary text-center"> -- Upload Denied -- </h3>
+					<hr class="text-secondary">
+					<p class="ml-3 text-secondary">
+						<i class="fa fa-bullhorn text-danger mr-2"></i>
+						Upload file selected is oversize. Max-allowed-uploaded-file size is <strong>10 Mb</strong>.</br>
+					</p>
+					<div class="col-6">
+						<small class="mt-2 text-grey">
+							Free to contact:</br>
+							Luis Liao    #5610</br>
+							Jeff SH Wang #4815</br>
+							Leo Tu       #6207
+						</small>
+					</div>
+					<div class="text-center mt-3 mb-3">
+						<button class="btn btn-outline-secondary" type="button" data-dismiss="modal"> <i class="fa fa-exclamation-triangle"></i> Cancel </button>
+					</div>
+					<small class="text-grey d-flex justify-content-center"> Copyright © 2019 Wistron </small>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade bg-light" id="errorModal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content modal-content-transparent">
+				<div class="mt-2 mb-2 d-flex justify-content-between align-items-baseline">
+					<h6 class="modal-title text-secondary" id="error"> Error | <span></span> </h6>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade bg-light" id="emailModal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content modal-content-transparent">
+				<div class="wrapper">
+					<svg class="plane" viewBox="0 0 139 139">
+						<defs>
+							<linearGradient id="a" x1="147.152%" x2="0%" y1="-47.397%" y2="100%">
+								<stop offset="0%" stop-color="#4b586e"/><stop offset="100%" stop-color="#4b586e"/>
+							</linearGradient>
+						</defs>
+						<path fill="#4b586e" stroke="url(#a)" stroke-width="1" d="M171.1455 37.3577l-131.69 71.251a2.7136 2.7136 0 0 0-1.4535 2.5092 2.7138 2.7138 0 0 0 1.6436 2.3892l22.4823 8.4671a5.2937 5.2937 0 0 1 2.9597 2.7138l17.4183 35.9715c.3259 1.5876 3.2583 2.0083 3.299.3935l-2.7152-29.7026c.157-2.2004.997-4.297 2.403-5.9975L153.795 58.471a1.6162 1.6162 0 0 1 1.4798-.4207c.526.1172.9531.4993 1.1277 1.0088a1.5462 1.5462 0 0 1-.2724 1.488l-58.8803 71.9973a13.1443 13.1443 0 0 0-2.308 5.9297l-3.5298 25.659c.2986 2.239 2.05 3.0938 3.462 1.0855l12.6802-14.926c.8703-1.1836 2.525-1.4602 3.7334-.624l32.6917 23.8136a2.635 2.635 0 0 0 2.5231.3387 2.6328 2.6328 0 0 0 1.6313-1.9534l26.8131-131.6197a2.713 2.713 0 0 0-1.004-2.6831 2.7164 2.7164 0 0 0-2.8516-.2886l.0543.0815z" transform="translate(-37 -36)"/>
+					</svg>
+				</div>
+				<hr class="line">
+				<div class="mr-3 pl-5 text-right">
+					<h6 class="text-secondary"> <span> This request is closed.</span> Successfully email to </h6>
+					<span class="text-secondary" id="emailwho"> Luis Liao/ Leo Tu/ Helen Chang</span></br>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
