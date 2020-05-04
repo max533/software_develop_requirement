@@ -1,0 +1,34 @@
+{
+    "EBG": {
+        "BU": [
+            "AM",
+            "PCC",
+            "PM"
+        ],
+        "EE": [
+            "CE",
+            "CPLD",
+            "EA",
+            "EE",
+            "Power",
+            "SI"
+        ],
+        "ME": [
+            "ME",
+            "Packing",
+            "Structure",
+            "Thermal"
+        ],
+        "QT": [
+            "DQMS",
+            "MQT",
+            "PQT"
+        ],
+        "SW": [
+            "BIOS",
+            "BMC",
+            "PM",
+            "TSC"
+        ]
+    }
+}

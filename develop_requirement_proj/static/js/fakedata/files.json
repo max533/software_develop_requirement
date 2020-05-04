@@ -1,0 +1,16 @@
+{
+    "id": 1,
+    "documents":{
+        "document_1": {
+            "link": "/static/images/404.png",
+            "last_modified": "2020-05-20T20:26:38.093183Z",
+            "size_byte": "787894"
+        },
+        "document_5": {
+            "link": "/static/images/service.png",
+            "last_modified": "2020-05-20T20:26:38.093183Z",
+            "size_byte": "787894"
+        }
+    },
+    "document_summary": "<br>There is document summary</br>"
+}
