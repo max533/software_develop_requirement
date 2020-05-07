@@ -1,9 +1,9 @@
 """employee app's api serializers.py"""
 import logging
 
-from rest_framework import serializers
+from develop_requirement_proj.employee.models import Employee
 
-from ..models import Employee
+from rest_framework import serializers
 
 logger = logging.getLogger(__name__)
 
