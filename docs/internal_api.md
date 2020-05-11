@@ -4,12 +4,15 @@
 
 - [Develop Requirement System API Document](#develop-requirement-system-api-document)
   - [Outline](#outline)
+  - [API Development Progress](#api-development-progress)
   - [Orders Operation](#orders-operation)
     - [`GET` Fetch Orders Collection](#get-fetch-orders-collection)
     - [`GET` Fetch a Specific Orders](#get-fetch-a-specific-orders)
-    - [`GET` Fetch Order's Ancestor Collection by Order Id](#get-fetch-orders-ancestor-collection-by-order-id)
     - [`POST` Create an Orders](#post-create-an-orders)
     - [`PATCH` Update Partially Specific Orders](#patch-update-partially-specific-orders)
+    - [`GET` Fetch Order's Ancestor Collection by Order Id](#get-fetch-orders-ancestor-collection-by-order-id)
+    - [`GET` Fetch Order's Signature Collection by Order Id](#get-fetch-orders-signature-collection-by-order-id)
+    - [`PUT` Update Order's Signature Deatail by Order Id and Signature Id](#put-update-orders-signature-deatail-by-order-id-and-signature-id)
   - [Histories Operation](#histories-operation)
     - [`GET` Filter Histories Collection by Order Id](#get-filter-histories-collection-by-order-id)
     - [`POST` Create User's Comment Histories](#post-create-users-comment-histories)
@@ -24,6 +27,9 @@
     - [`POST` Create a Schedules](#post-create-a-schedules)
     - [`PUT` Update Schedules Detail](#put-update-schedules-detail)
     - [`DEL` Delete Schedules Detail](#del-delete-schedules-detail)
+  - [Notifications Operation](#notifications-operation)
+    - [`GET` Fetch Notifications Collection by Current User](#get-fetch-notifications-collection-by-current-user)
+    - [`PUT` Update Notifications Detail](#put-update-notifications-detail)
   - [Assigners Operation](#assigners-operation)
     - [`GET` Filter Assigner by Develop Team Sub Funciton & Project Id](#get-filter-assigner-by-develop-team-sub-funciton--project-id)
   - [Employees Operation](#employees-operation)
@@ -35,6 +41,47 @@
     - [`GET` Filter Projects Collection by Account Id](#get-filter-projects-collection-by-account-id)
   - [Options Operation](#options-operation)
     - [`GET` Fetch Options Value](#get-fetch-options-value)
+
+## API Development Progress
+
+- [Develop Requirement System API Document](#develop-requirement-system-api-document)
+
+  - [Orders Operation](#orders-operation)
+    - [ ] [`GET` Fetch Orders Collection](#get-fetch-orders-collection)
+    - [ ] [`GET` Fetch a Specific Orders](#get-fetch-a-specific-orders)
+    - [ ] [`GET` Fetch Order's Ancestor Collection by Order Id](#get-fetch-orders-ancestor-collection-by-order-id)
+    - [ ] [`GET` Fetch Order's Signature Collection by Order Id](#get-fetch-orders-signature-collection-by-order-id)
+    - [ ] [`PUT` Update Order's Signature Deatail by Order Id and Signature Id](#put-update-orders-signature-deatail-by-order-id-and-signature-id)
+    - [ ] [`POST` Create an Orders](#post-create-an-orders)
+    - [ ] [`PATCH` Update Partially Specific Orders](#patch-update-partially-specific-orders)
+  - [Histories Operation](#histories-operation)
+    - [ ] [`GET` Filter Histories Collection by Order Id](#get-filter-histories-collection-by-order-id)
+    - [ ] [`POST` Create User's Comment Histories](#post-create-users-comment-histories)
+  - [Documents Operation](#documents-operation)
+    - [ ] [`GET` Filter Documents Collection by Order Id](#get-filter-documents-collection-by-order-id)
+    - [ ] [`GET` Fetch a Specific Documents](#get-fetch-a-specific-documents)
+    - [ ] [`POST` Create a Documents](#post-create-a-documents)
+    - [ ] [`PUT` Update Documents Detail](#put-update-documents-detail)
+    - [ ] [`DEL` Delete Documents Detail](#del-delete-documents-detail)
+  - [Schedules Operation](#schedules-operation)
+    - [ ] [`GET` Filter Schedules Collection by Order Id and Editor Role](#get-filter-schedules-collection-by-order-id-and-editor-role)
+    - [ ] [`POST` Create a Schedules](#post-create-a-schedules)
+    - [ ] [`PUT` Update Schedules Detail](#put-update-schedules-detail)
+    - [ ] [`DEL` Delete Schedules Detail](#del-delete-schedules-detail)
+  - [Notification Operation](#notification-operation)
+    - [ ] [`GET` Fetch Notification Collection by Current User](#get-fetch-notification-collection-by-current-user)
+    - [ ] [`PUT` Update Notification Detail](#put-update-notification-detail)
+  - [Assigners Operation](#assigners-operation)
+    - [x] [`GET` Filter Assigner by Develop Team Sub Funciton & Project Id](#get-filter-assigner-by-develop-team-sub-funciton--project-id)
+  - [Employees Operation](#employees-operation)
+    - [x] [`GET` Search Employees with Site / Employee Id / English Name / Extension / Department ID](#get-search-employees-with-site--employee-id--english-name--extension--department-id)
+    - [x] [`GET` Fetch Current Employee](#get-fetch-current-employee)
+  - [Accounts Operation](#accounts-operation)
+    - [x] [`GET` Filter Accounts Collection by Develop Team Sub Function](#get-fiter-accounts-collection-by-develop-team-sub-function)
+  - [Projects Operation](#projects-operation)
+    - [x] [`GET` Filter Projects Collection by Account Id](#get-filter-projects-collection-by-account-id)
+  - [Options Operation](#options-operation)
+    - [x] [`GET` Fetch Options Value](#get-fetch-options-value)
 
 ## Orders Operation
 
@@ -54,7 +101,7 @@ Fetch all orders resource
     " | {"account": 1} | account id (exact search)
     " | {"project": 3} | project id (exact search)
     " | {"initiator": "Jeff SH Wang"} | initator name (fuzzy search and case insensitive)
-    " | {"assinger ": "Leo Tu"} | assigner name (fuzzy search and case insensitive)
+    " | {"assigner ": "Leo Tu"} | assigner name (fuzzy search and case insensitive)
     " | {"title": "There is title"} | title (fuzzy search and case insensitive)
     " | {"form_begin_time__before": "2020-03-10T08:26:38.093183Z"} | the begin time of form_begin_time (range search)
     " | {"form_begin_time__after": "2020-03-10T08:26:38.093183Z"}| the end time of form_begin_time (range search)
@@ -301,161 +348,6 @@ Fetch a specific orders resource by `id`
     }
     ```
 
-### `GET` Fetch Order's Ancestor Collection by Order Id
-
-```text
-{{service_url}}/api/orders/:id/ancestors/
-```
-
-Fetch order's ancestor collection by orders `id`
-
-- PATH VARIABLES
-
-    Variable|Description
-    :---: | :---:
-    `id` | Order id
-
-- HEADERS
-
-    Key|Value
-    :---: | :---:
-    Content-Type | application/json
-
-- BODY (raw)
-
-    Example request
-
-    ```json
-    {}
-    ```
-
-    Example response
-
-    ```json
-    [
-        {
-            "id": 2,
-            "account": {
-                "id": 1,
-                "code": "Lily",
-            },
-            "project": {
-                "id": 2,
-                "name": "Stark"
-            },
-            "develop_team_function": "QT",
-            "develop_team_sub_function": "DQMS",
-            "status": {
-                "p3": {
-                    "initiator": "Approve"
-                },
-            },
-            "initiator": {
-                "employee_id": "10612704",
-                "display_name": "Jeff SH Wang/WHQ/Wistron",
-                "extension": "85014815",
-                "job_title": "工程師",
-            },
-            "assigner": {
-                "employee_id": "10612704",
-                "display_name": "Jeff SH Wang/WHQ/Wistron",
-                "extension": "85014815",
-                "job_title": "工程師",
-            },
-            "developers": {
-                "mebmer":[
-                    {
-                        "employee_id": "10612704",
-                        "display_name": "Jeff SH Wang/WHQ/Wistron",
-                        "extension": "85014815",
-                        "job_title": "工程師",
-                    },
-                    {
-                        "employee_id": "10712714",
-                        "display_name": "Leo Tu/WHQ/Wistron",
-                        "extension": "85014817",
-                        "job_title": "工程師",
-                    },
-                ],
-                "contactor":{
-                        "employee_id": "9505005",
-                        "display_name": "Luis Liao/WHQ/Wistron",
-                        "extension": "85014833",
-                        "job_title": "功能經理",
-                }
-            },
-            "title": "DQMS develope requirement system",
-            "description": "<br> Three is description </br>",
-            "form_begin_time": "2020-03-10T08:26:38.093183Z",
-            "form_end_time": "2020-04-10T08:26:38.093183Z",
-            "expected_develop_duration_day": 10.5,
-            "actual_develop_duration_day": 20.0,
-            "repository_url": "www.gitlab.com",
-            "parent": null,
-        },
-        {
-            "id": 3,
-            "account": {
-                "id": 1,
-                "code": "Lily",
-            },
-            "project": {
-                "id": 2,
-                "name": "Stark"
-            },
-            "develop_team_function": "QT",
-            "develop_team_sub_function": "DQMS",
-            "status": {
-                "p3": {
-                    "initiator": "Approve"
-                },
-            },
-            "initiator": {
-                "employee_id": "10612704",
-                "display_name": "Jeff SH Wang/WHQ/Wistron",
-                "extension": "85014815",
-                "job_title": "工程師",
-            },
-            "assigner": {
-                "employee_id": "10612704",
-                "display_name": "Jeff SH Wang/WHQ/Wistron",
-                "extension": "85014815",
-                "job_title": "工程師",
-            },
-            "developers": {
-                "mebmer":[
-                    {
-                        "employee_id": "10612704",
-                        "display_name": "Jeff SH Wang/WHQ/Wistron",
-                        "extension": "85014815",
-                        "job_title": "工程師",
-                    },
-                    {
-                        "employee_id": "10712714",
-                        "display_name": "Leo Tu/WHQ/Wistron",
-                        "extension": "85014817",
-                        "job_title": "工程師",
-                    },
-                ],
-                "contactor":{
-                        "employee_id": "9505005",
-                        "display_name": "Luis Liao/WHQ/Wistron",
-                        "extension": "85014833",
-                        "job_title": "功能經理",
-                }
-            },
-            "title": "DQMS develope requirement system",
-            "description": "<br> Three is description </br>",
-            "form_begin_time": "2020-03-10T08:26:38.093183Z",
-            "form_end_time": "2020-04-10T08:26:38.093183Z",
-            "expected_develop_duration_day": 10.5,
-            "actual_develop_duration_day": 20.0,
-            "repository_url": "www.gitlab.com",
-            "parent": 2,
-        }
-    ]
-    ```
-
 ### `POST` Create an Orders
 
 ```text
@@ -694,6 +586,284 @@ Update partial details of specific orders by `id`
         "expected_develop_duration_day": 10.5,
         "actual_develop_duration_day": 20.0,
         "repository_url": "www.gitlab.com",
+    }
+    ```
+
+### `GET` Fetch Order's Ancestor Collection by Order Id
+
+```text
+{{service_url}}/api/orders/:id/ancestors/
+```
+
+Fetch order's ancestor collection by orders `id`
+
+- PATH VARIABLES
+
+    Variable|Description
+    :---: | :---:
+    `id` | Order id
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {}
+    ```
+
+    Example response
+
+    ```json
+    [
+        {
+            "id": 2,
+            "account": {
+                "id": 1,
+                "code": "Lily",
+            },
+            "project": {
+                "id": 2,
+                "name": "Stark"
+            },
+            "develop_team_function": "QT",
+            "develop_team_sub_function": "DQMS",
+            "status": {
+                "p3": {
+                    "initiator": "Approve"
+                },
+            },
+            "initiator": {
+                "employee_id": "10612704",
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "extension": "85014815",
+                "job_title": "工程師",
+            },
+            "assigner": {
+                "employee_id": "10612704",
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "extension": "85014815",
+                "job_title": "工程師",
+            },
+            "developers": {
+                "mebmer":[
+                    {
+                        "employee_id": "10612704",
+                        "display_name": "Jeff SH Wang/WHQ/Wistron",
+                        "extension": "85014815",
+                        "job_title": "工程師",
+                    },
+                    {
+                        "employee_id": "10712714",
+                        "display_name": "Leo Tu/WHQ/Wistron",
+                        "extension": "85014817",
+                        "job_title": "工程師",
+                    },
+                ],
+                "contactor":{
+                        "employee_id": "9505005",
+                        "display_name": "Luis Liao/WHQ/Wistron",
+                        "extension": "85014833",
+                        "job_title": "功能經理",
+                }
+            },
+            "title": "DQMS develope requirement system",
+            "description": "<br> Three is description </br>",
+            "form_begin_time": "2020-03-10T08:26:38.093183Z",
+            "form_end_time": "2020-04-10T08:26:38.093183Z",
+            "expected_develop_duration_day": 10.5,
+            "actual_develop_duration_day": 20.0,
+            "repository_url": "www.gitlab.com",
+            "parent": null,
+        },
+        {
+            "id": 3,
+            "account": {
+                "id": 1,
+                "code": "Lily",
+            },
+            "project": {
+                "id": 2,
+                "name": "Stark"
+            },
+            "develop_team_function": "QT",
+            "develop_team_sub_function": "DQMS",
+            "status": {
+                "p3": {
+                    "initiator": "Approve"
+                },
+            },
+            "initiator": {
+                "employee_id": "10612704",
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "extension": "85014815",
+                "job_title": "工程師",
+            },
+            "assigner": {
+                "employee_id": "10612704",
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "extension": "85014815",
+                "job_title": "工程師",
+            },
+            "developers": {
+                "mebmer":[
+                    {
+                        "employee_id": "10612704",
+                        "display_name": "Jeff SH Wang/WHQ/Wistron",
+                        "extension": "85014815",
+                        "job_title": "工程師",
+                    },
+                    {
+                        "employee_id": "10712714",
+                        "display_name": "Leo Tu/WHQ/Wistron",
+                        "extension": "85014817",
+                        "job_title": "工程師",
+                    },
+                ],
+                "contactor":{
+                        "employee_id": "9505005",
+                        "display_name": "Luis Liao/WHQ/Wistron",
+                        "extension": "85014833",
+                        "job_title": "功能經理",
+                }
+            },
+            "title": "DQMS develope requirement system",
+            "description": "<br> Three is description </br>",
+            "form_begin_time": "2020-03-10T08:26:38.093183Z",
+            "form_end_time": "2020-04-10T08:26:38.093183Z",
+            "expected_develop_duration_day": 10.5,
+            "actual_develop_duration_day": 20.0,
+            "repository_url": "www.gitlab.com",
+            "parent": 2,
+        }
+    ]
+    ```
+
+### `GET` Fetch Order's Signature Collection by Order Id
+
+```text
+{{service_url}}/api/orders/:order_id/signatures/
+```
+
+Fetch order's signature collection by order's `id`
+
+- PATH VARIABLES
+
+    Variable|Description
+    :---: | :---:
+    `order_id` | Order id
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {}
+    ```
+
+    Example response
+
+    ```json
+    [
+        {
+            "id": 1,
+            "sequence": 1,
+            "employee": {
+                "employee_id": "10612704",
+                "display_name": "Jeff SH Wang/WNH/Wistron",
+                "extension": "85014602",
+                "job_title": "工程師",
+            },
+            "status": "Accept",
+            "comment": "OK",
+            "timestamp": "2020-03-10T08:26:38.093183Z",
+            "role_group": "initiator",
+            "order_id": 1,
+        },
+        {
+            "id": 2,
+            "sequence": 2,
+            "employee": {
+                "employee_id": "Z10712718",
+                "display_name": "David Wang/WNH/Wistron",
+                "extension": "85015752",
+                "job_title": "部門主管",
+            },
+            "status": "",
+            "comment": "",
+            "timestamp": null,
+            "role_group": "initiator",
+            "order_id": 1,
+        },
+        {
+            "id": 3,
+            "sequence": 3,
+            "employee": {
+                "employee_id": "9505005",
+                "display_name": "Luis Liao/WNH/Wistron",
+                "extension": "85014686",
+                "job_title": "處長",
+            },
+            "status": "",
+            "comment": "",
+            "timestamp": null,
+            "role_group": "developers",
+            "order_id": 1,
+        },
+    ]
+    ```
+
+### `PUT` Update Order's Signature Deatail by Order Id and Signature Id
+
+```text
+{{service_url}}/api/orders/:order_id/signatures/:signature_id/
+```
+
+Fetch order's signature collection by order's `id` and signature's `id`
+
+- PATH VARIABLES
+
+    Variable|Description
+    :---: | :---:
+    `order_id` | Order id
+    `signature_id` | Signature id
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {
+        "id": 1,
+        "status": "Accept",
+        "comment": "It's a good proposal",
+    }
+    ```
+
+    Example response
+
+    ```json
+    {
+        "id": 1,
+        "status": "Accept",
+        "comment": "It's a good proposal",
     }
     ```
 
@@ -1316,6 +1486,118 @@ Delete a schedules detail by `id`
 
 ---
 
+## Notifications Operation
+
+### `GET` Fetch Notifications Collection by Current User
+
+```url
+{{service_url}}/api/notifications/
+```
+
+Fetch notifications collection resource by current user
+
+- PARAMS
+
+    Key|Value|Description
+    :---:|:---:|:---:
+    read | True/False | notifications read status  (exact search)
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {}
+    ```
+
+    Example response
+
+    ```json
+    [
+        {
+            "id": 1,
+            "link": "http://xxx.xxx.xxx.xxx/?abc=123",
+            "title": "As Title 1",
+            "read": false,
+            "created_time": "2020-03-10T08:26:38.093183Z",
+            "owner": "10612704",
+        },
+        {
+            "id": 2,
+            "link": "http://xxx.xxx.xxx.xxx/?def=123",
+            "title": "As Title 2",
+            "read": false,
+            "created_time": "2020-03-10T08:26:38.093183Z",
+            "owner": "10612704",
+        },
+        {
+            "id": 3,
+            "link": "http://xxx.xxx.xxx.xxx/?def=123",
+            "title": "As Title 3",
+            "read": true,
+            "created_time": "2020-03-10T08:26:38.093183Z",
+            "owner": "10612704",
+        },
+    ]
+    ```
+
+### `PUT` Update Notifications Detail
+
+```text
+{{service_url}}/api/notifications/:id/
+```
+
+Update detail of notifications by `id`
+
+- PERMISSSION
+
+    Only owner can use
+
+- PATH VARIABLES
+
+    Variable|Description
+    :---: | :---:
+    id | notification id
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+    X-CSRFToken | {{ CSRF_COOKIE_NAME }}
+
+- BODY (raw)
+
+    Example request 1
+
+    ```json
+    {
+        "id": 1,
+        "read": true,
+    }
+    ```
+
+    Example response 1
+
+    ```json
+    {
+        "id": 1,
+        "link": "http://xxx.xxx.xxx.xxx/?abc=123",
+        "title": "As Title 1",
+        "read": true,
+        "created_time": "2020-03-10T08:26:38.093183Z",
+        "owner": "10612704",
+    }
+    ```
+
+---
+
 ## Assigners Operation
 
 ### `GET` Filter Assigner by Develop Team Sub Funciton & Project Id
@@ -1681,7 +1963,7 @@ Fetch option value resource via field value
 
 `Order Table`
 
-id: IntegerField
+id: IntegerField (primary_key=True)
 
 account: IntegerField
 
@@ -1719,7 +2001,7 @@ parent: ForeignKey
 
 `History Table`
 
-id: IntegerField
+id: IntegerField (primary_key=True)
 
 editor: JSONField
 
@@ -1733,7 +2015,7 @@ orders_id: ForeignKey
 
 `Document Table`
 
-id: IntegerField
+id: IntegerField (primary_key=True)
 
 path: FileField
 
@@ -1751,7 +2033,7 @@ order_id: ForeignKey
 
 `Schedule Table`
 
-id: IntegerField
+id: IntegerField (primary_key=True)
 
 event_name: CharField
 
@@ -1788,3 +2070,39 @@ extension: CharField
 supervisor_id: CharField
 
 site: CharField
+
+---
+
+`Signature Table`
+
+id: IntegerField (primary_key=True)
+
+sequence: PositiveIntegerField
+
+employee: CharField
+
+status: CharField
+
+comment: CharField
+
+signed_time: DateTimeField
+
+role_group: CharField
+
+order_id: ForeignKey
+
+---
+
+`Notification Table`
+
+id: IntegerField (primary_key=True)
+
+link: URLField
+
+title: CharField
+
+read: BoolField (true, false, null)
+
+created_time: DateTimeField
+
+owner: CharField
