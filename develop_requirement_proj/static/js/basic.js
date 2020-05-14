@@ -3,7 +3,7 @@ $(function(){
     img_h = $('#image_status').find('img').first().css('height').split('px')[0];
 
 //  General setting 
-    //  modal basic setting  
+    //  modal basic setting mutli-modal
     $(document).on('hidden.bs.modal','.modal',function(){
             //  Focus the modal -css -ovwrflow-y
         $('.modal.show').removeClass('blur');
@@ -13,7 +13,6 @@ $(function(){
             if($('body').hasClass('modal-open')==false) $('body').addClass('modal-open');
         }
     });
-
     $(document).on('show.bs.modal', '.modal', function() {
         var zIndex = 1040 + (10 * $('.modal:visible').length);
         $(this).css('z-index', zIndex);
@@ -139,18 +138,15 @@ $(function(){
                 filterControl:'input',
                 filterControlPlaceholder:'Search id',
                 filterDataCollector:function(value, row, index){
-                    // let rowlist = [];
-                    // rowlist.push(value)
-                    // return rowlist;
                     return value;
                 },
                 formatter:function(value, row, index){
                     let html=''
                     if(value!==null||value!==''){
-                        html = `
-                                <span class="ellipsis col-6">`+value+`</span>
-                                <i class="fa fa-external-link-alt col-6" data-depend_id="`+value+`"></i>
-                                `;
+                        html = `<div class="ellipsis">
+                                    <span class="col-6">`+value+`</span>
+                                    <i class="ml-2 btn btn-success btn-sm fa fa-file-alt ezinfoModal_trigger"  data-id="`+value+`"></i>
+                                </div>`;
                     }
                     return html;
                 },
@@ -335,7 +331,7 @@ $(function(){
 
     //  Create toolbar btn
     $(document).find('.fixed-table-toolbar').addClass('d-flex align-items-center justify-content-end');
-    $('<button class="btn btn-warning text-secondary ml-2" data-toggle="modal" data-target="#requestModal" id="addRequestBtn"><i class="fa fa-plus mr-1"></i>Add Request</button>').insertAfter($(document).find('.fixed-table-toolbar .btn-group')[0]);
+    $('<button class="btn btn-warning text-secondary ml-2" id="addRequestBtn"><i class="fa fa-plus mr-1"></i>Add Request</button>').insertAfter($(document).find('.fixed-table-toolbar .btn-group')[0]);
     $('<button class="btn btn-outline-secondary" id="chart_list" title="Chart"><i class="fa fa-chart-bar"></i></button>').insertAfter($(document).find('.fixed-table-toolbar .btn-group').last()[0]);
 
 

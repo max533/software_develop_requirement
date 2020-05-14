@@ -15,8 +15,8 @@
 
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
 	<!-- Bootstrap XXL CSS --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xbrain-bootstrap-xxl@1.0.1/css/xbrain-bootstrap-xxl.min.css">
-
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css">
+	
 	<link href="https://fonts.googleapis.com/css?family=Nunito:700i&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Nunito:400i&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karla" >
@@ -30,6 +30,7 @@
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote.min.css" rel="stylesheet">
 	<link href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/filter-control/bootstrap-table-filter-control.css">
+	
 	
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	<!-- Plugin date rangepicker -->
@@ -81,13 +82,71 @@
 	<script type="text/javascript" src="{% static '/js/tag_modal.js' %}"></script>
 	<script type="text/javascript" src="{% static '/js/dev_modal.js' %}"></script>
 	<script type="text/javascript" src="{% static '/js/drs.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/flow.js' %}"></script>
 </head>
-
 <body class="bg-white">
     <div class="container bg-white">
         <nav class="mt-1 text-secondary align-items-center d-flex justify-content-end" id="navbar">					
-            <div class="d-inline-flex align-items-baseline " id="navBTNs">
+            <div class="d-inline-flex align-items-center" id="navBTNs">
                 <form class="form-inline my-2 my-lg-0" >
+					<div class="dropdown ml-3" id="navSelectMessage">
+						<button class="btn btn-outline-light dropdown-toggle" type="button" data-toggle="dropdown" id="message" aria-expanded="false"> <i class="fa fa-bell fa-lg"></i> </button>
+						<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(-135px, 41px, 0px); top: 0px; left: 0px; will-change: transform;">
+							<div class="dropdown-item d-inline-flex align-items-center">
+								<i class="text-light fa fa-signature fa-lg ml-1"></i>
+								<div class="ml-3">
+									<img class="sticker" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+									<span class="text-grey">Jeff SH Wang/</span><small class="text-grey ml-2">2020-08-26</small>
+									<h6 class="ellipsis text-grey">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</h6>
+								</div>
+							</div>
+							<div class="dropdown-item d-inline-flex align-items-center">
+								<i class="text-primary fas fa-puzzle-piece fa-lg ml-1"></i>
+								<div class="ml-3">
+									<img class="sticker" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+									<span>Jeff SH Wang/</span><small class="text-grey ml-2">2020-08-26</small>
+									<h6 class="ellipsis">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</h6>
+								</div>
+							</div>
+							<div class="dropdown-item d-inline-flex align-items-center">
+								<i class="text-primary fa fa-pen fa-lg ml-1"></i>
+								<div class="ml-3">
+									<img class="sticker" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+									<span>Jeff SH Wang/</span><small class="text-grey ml-2">2020-08-26</small>
+									<h6 class="ellipsis">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</h6>
+								</div>
+							</div>
+							<div class="dropdown-item d-inline-flex align-items-center">
+								<i class="text-primary fa fa-pen fa-lg ml-1"></i>
+								<div class="ml-3">
+									<img class="sticker" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+									<span>Jeff SH Wang/</span><small class="text-grey ml-2">2020-08-26</small>
+									<h6 class="ellipsis">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</h6>
+								</div>
+							</div>
+							<div class="dropdown-item d-inline-flex align-items-center">
+								<i class="text-primary fa fa-signature fa-lg ml-1"></i>
+								<div class="ml-3">
+									<img class="sticker" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+									<span>Jeff SH Wang/</span><small class="text-grey ml-2">2020-08-26</small>
+									<h6 class="ellipsis">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</h6>
+								</div>
+							</div>
+							<div class="dropdown-item d-inline-flex align-items-center">
+								<i class="text-light fa fa-signature fa-lg ml-1"></i>
+								<div class="ml-3">
+									<img class="sticker" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+									<span class="text-grey">Jeff SH Wang/</span><small class="text-grey ml-2">2020-08-26</small>
+									<h6 class="ellipsis text-grey">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</h6>
+								</div>
+							</div>
+							<div class="dropdown-item text-center align-items-baseline">
+								<h6>Read more <i class="fa fa-ellipsis-h ml-1"></i> </h6>
+							</div>
+						</div>
+						<span id="messageCount">9357</span>
+					</div>
+
                     <div class="dropdown" id="navSelectUser">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" id="navUser"> 
 						<!-- <img class="sticker" onerror="this.src='{% static '/images/defaultsticker.png' %}'" > -->
@@ -101,7 +160,8 @@
                             <a class="dropdown-divider"></a>
                             <a class="dropdown-item" id ="logout"> <i class="fas fa-sign-out-alt fa-fw"></i> Log Out </i></a>
                         </div>
-                    </div>
+					</div>
+					
                 </form>
             </div>
         </nav>
@@ -119,14 +179,14 @@
         </div>
 	</div>
 	
-	<!-- RequestModal form -->
+<!-- RequestModal form -->
 	<div class="modal fade" id="requestModal" tabindex="-1" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 			<div class="modal-content">						
 				<div class="modal-body row">
-					<div class="col-12 col-lg-4 d-flex align-items-center bg-water-gradient">
+					<div class="col-12 col-lg-4 d-flex justify-content-center align-items-center bg-water-gradient">
 						<div id="image_status" class="animated zoomInDown faster">
-							<div class="d-flex justify-content-center" id="imgage_dev">
+							<div class="text-center" id="imgage_dev">
 								<img>
 							</div>
 							<div class="text-center mt-3" id="image_label_dev">
@@ -136,25 +196,24 @@
 								</p>
 							</div>
 							<hr>
-							<button type="button" id="toggle-commentarea" class="btn btn-secondary btn-sm position-absolute" data-toggle="button">
-								<i class="fas fa-chevron-up"></i>
-							</button>
-							<!-- One comment content include:who/ avatar/ time/ comment content/ -->
-							<div class="col-12" id="comment_area">
-								<!-- Load comments history -->
-							</div>
-							<hr>
 							<div>
+								<button type="button" id="toggle-commentarea" class="btn btn-secondary btn-sm position-absolute" data-toggle="button">
+									<i class="fas fa-chevron-up"></i>
+								</button>
+								<!-- One comment content include:who/ avatar/ time/ comment content/ -->
+								<div class="col-12" id="comment_area">
+									<!-- Load comments history -->
+								</div>
+								<hr>
+								<button id="sendcomment_btn" type="button" class="btn btn-info btn-sm position-absolute">
+									<i class="fas fa-pencil-alt"></i>
+								</button>
+								<textarea id="comment" class="summernote" data-postion="comment" placeholder="Comment ..."></textarea>
 							</div>
-							<button id="sendcomment_btn" type="button" class="btn btn-info btn-sm position-absolute">
-								<i class="fas fa-pencil-alt"></i>
-							</button>
-							<textarea id="comment" class="summernote" data-postion="comment" placeholder="Comment ..."></textarea>
 						</div>
 					</div>
 					
-
-					<div class="col-12 col-lg-8 px-5 py-3 bg-white" id="FormRequest_div">	
+					<div class="col-lg-8 px-5 py-3 bg-white" id="FormRequest_div">	
 						<div class="d-inline-flex justify-content-between align-items-baseline w-100">
 							<div>
 								<h6 class="modal-title text-secondary text-center font-weight-bold" id=""> New Request </h6>
@@ -172,24 +231,24 @@
 									<span class="text-grey"></span>
 								</div>	
 							</div>
-							<div class="d-inline-flex align-items-center w-100 mt-2 author" style="display: none !important;">
+							<div class="d-inline-flex align-items-center w-100 mt-2 author">
 								<span class="text-grey mr-2"> Form receiver </span>
 								<div class="d-inline-flex align-items-center mr-3" id="form_assigner">
 									<img class="sticker mr-2" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
 									<span class="text-grey">
 										<strong class="mr-2">
-											<!-- DQMS/MMS -->
+											DQMS/MMS
 										</strong>
-										<!-- Luis Liao/WHQ -->
+										Luis Liao/WHQ
 									</span>
 								</div>
 							</div>
-							<div class="d-inline-flex align-items-top w-100 mt-2 author" style="display: none !important;">
+							<div class="d-inline-flex align-items-top w-100 mt-2 author">
 								<span class="text-grey mr-2 mt-1"> Assigned developer </span>
-								<div class="" id="form_owner">
+								<div id="form_owner">
 									<img class="sticker mr-2" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
 									<span class="text-grey mr-2" title="Contact window">
-										<!-- Jeff SH Wang/WHQ  -->
+										Jeff SH Wang/WHQ 
 										<strong class="ml-2">&#x22EF;</strong>
 									</span>
 									<button class="btn btn-outline-secondary btn-sm toggle-dev-list" data-toggle="button"><i class="fa fa-list mr-1"></i></button>
@@ -199,7 +258,6 @@
 									</button>
 									<div class="dev-list">
 										<ul class="text-grey">
-											//TODO 2020  04/29
 											<!-- <li class="mt-1">Kevin SJ Huang/WHQ</li>
 											<li class="mt-1">Leo Tu/WHQ</li>
 											<li class="mt-1">Peter Hsien/WHQ</li>
@@ -214,40 +272,89 @@
 							</div>
 						</div>	
 						<hr>
+						<div class="d-inline-flex align-items-top w-100">
+							<span class="text-grey mr-2 mt-1"> DesignateList </span>
+							<div>
+								<img class="sticker mr-2" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+								<span class="text-grey mr-2">
+									Jeff SH Wang/WHQ  <h5 class="badge badge-success badge-pill"><i class="fa fa-check-double text-secondary"></i></h5>
+								</span>
+							</div>
+							<div>
+								<img class="sticker mr-2" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+								<span class="text-grey mr-2">
+									Jeff SH Wang/WHQ 
+								</span>
+							</div>
+						</div>
+						<div class="d-inline-flex align-items-top w-100 mt-2 author">
+							<span class="text-grey mr-2 mt-1"> DesignateList </span>
+							<div>
+								<img class="sticker mr-2" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+								<span class="text-grey mr-2">
+									Jeff SH Wang/WHQ 
+								</span>
+							</div>
+							<div>
+								<img class="sticker mr-2" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+								<span class="text-grey mr-2">
+									Jeff SH Wang/WHQ 
+								</span>
+							</div>
+						</div>
+						<hr>
 <!-- Form Request -->
 						<form id="FormRequest" enctype="multipart/form-data">
 							<!-- Assign which team -->
 							<h6 class="text-secondary font-weight-bold"> Request which team </h6>
+							<div class="row align-items-center mt-2" id="tag_div">
+								<label class="col-4"> Depend on which form </label>
+								<div class="mb-2 col-8 d-inline-flex align-items-baseline">
+
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<button class="btn btn-light ezinfoModal_trigger font-weight-bold" type="button" data-id=""> 
+												<i class="fa fa-file-alt"></i> 
+												<span></span>
+											</button>
+										</div>
+										<div class="input-group-append">
+											<button class="btn btn-info" type="button" data-toggle="modal" data-target="#tagModal">
+												<i class="fa fa-tag"></i> Edit tag
+											</button>
+										</div>
+									</div>
+								</div>
+							
+								<!-- <input type="text" class="field-style form-control" style="display: none;" placeholder="Tag last form." disabled> -->
+							</div>
 							<div class="row align-items-center mt-3">
 								<label class="col-4"> &#9733 Assign which/ Team </label>
-								<select type="select" class="selectpicker col-8" name="function" id="sel_function" data-width="auto" data-size="5" data-live-search="true" required>
+								<select type="select" class="selectpicker col-8" name="function" id="sel_function" data-width="auto" data-size="7" data-live-search="true" title="Select..." required>
 									<option value=""> Select... </option>
 								</select>
 							</div>
 							<div class="row align-items-center mt-3">
 								<label class="col-4"> &#9733 Account </label>
-								<select type="select" class="selectpicker col-8" name="account_id" id="sel_accounts" data-width="auto" data-live-search="true" title="Select" required>
+								<select type="select" class="selectpicker col-8" name="account_id" id="sel_accounts" data-width="auto" data-size="7" data-live-search="true" title="Select..." required>
 									<option value=""> Select... </option>
 								</select>
 							</div>				
 							<div class="row align-items-center mt-3">
 								<label class="col-4"> &#9733 Project </label>
-								<select type="select" class="selectpicker col-8" name="project_id" id="sel_projects" data-width="auto" title="Select account first" required>
+								<select type="select" class="selectpicker col-8" name="project_id" id="sel_projects" data-width="auto" data-size="7" title="Select account first" required>
 									<option value=""> Select... </option>
 								</select>
 							</div>
 							<div class="row align-items-center mt-3">
 								<label class="col-4"> &#9733 Assign which/ Who </label>
-								<select type="select" class="selectpicker col-8" name="assigner"  data-width="auto" title="Select project & team first" id="sel_assigners" required>
+								<select type="select" class="selectpicker col-8" name="assigner"  data-width="auto" data-size="7" title="Select project & team first" id="sel_assigners" required>
 									<option value=""> Select... </option>
 								</select>
 							</div>
 							<hr>
 							<!-- Assign content -->
 							<h6 class="text-secondary font-weight-bold mt-3"> Request content </h6>
-
-							
-
 							<div class="row align-items-center mt-2">
 								<label class="col-4"> &#9733 Title </label>
 								<div class="col-8 mb-2">
@@ -261,57 +368,48 @@
 									<textarea type="text" class="summernote" name="description" data-postion="requestform" placeholder="Develop deatail or purpose" required></textarea>
 								</div>
 							</div>
-							<div class="row align-items-center mt-2" id="tag_div">
-								<label class="col-4"> Depend on which form </label>
-								<div class="input-group mb-2 col-8">
-									<input type="text" class="field-style form-control" placeholder="Tag last form." disabled>
-									<div class="input-group-append">
-										<button class="btn btn-success" type="button" data-toggle="modal" data-target="#ezinfoModal"> <i class="fa fa-external-link-alt"></i> </button>
-										<button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#tagModal">
-											<i class="fa fa-tag"></i> Edit tag
-										</button>
-									</div>
-								</div>
-							</div>
-
-							<div class="row align-items-top mt-2 file">
-								<div class="col-4 pt-4">
-									<label> Upload Files/<label>
-									<div class="ml-2">
-										<button type="button" class="fa fa-question btn btn-secondary btn-sm"></button>
-										<!-- <button type="button" class="far fa-sticky-note btn btn-warning" title="summarynote"></button> -->
-									</div>
-								</div>
-								
-								<div class="col-8">
-									<label for="file" class="mt-2 upload-style form-control d-flex align-items-center justify-content-between">											
-										<input type="file" class="custom-file-input" id="files" name="files[]" multiple size="5" title="No file selected.">
-									</label>
-									<h6 class="text-grey caption ellipsis"> Drag&Drop or Click to choose your file.<i class="fa fa-cloud-upload-alt fa-lg ml-2"></i> </h6>
-									<small class="ml-3 text-secondary">Restrict number of files limit less than <strong id="restrict_file_num"></strong>.
-											and size of file limit less than <strong id="restrict_file_size">10 Mb</strong>.
-									</small>
-									<div class="table-responsive" id="filelist">
-										<table class="table mt-2">
-											<tbody></tbody>
-										</table>
-									</div>					
-								</div>
-							</div>
+							
 							<hr>
-							<div class="d-flex justify-content-end mt-4">
+							<div class="d-flex justify-content-end mt-4 mb-4">
 								<button type="button" class="btn btn-info" id="initialize_btn">
 									<i class="fa fa-paper-plane"></i>
 									<span> Initialize request </span>
 								</button>
 							</div>
-							<small class="position-absolute text-secondary" style="bottom: 1rem; right:3rem">
+							<small class="position-absolute text-secondary" style="bottom: .7rem; right:3rem">
 								&#9733 is required field. Need to fill out before requesting.
 							</small>
 						</form>	
+						<hr>
+						<!-- Assign content -->
+						<h6 class="text-secondary font-weight-bold mt-3"> Attached files <i class="ml-2 fa fa fa-angle-down btn btn-light btn-sm" title="Expand"></i></h6>
+						<div class="row align-items-top mt-2 mb-4 file">
+							<div class="col-4 pt-4">
+								<label> Upload Files/<label>
+								<div class="ml-2">
+									<button type="button" class="fa fa-question btn btn-secondary btn-sm"></button>
+									<!-- <button type="button" class="far fa-sticky-note btn btn-warning" title="summarynote"></button> -->
+								</div>
+							</div>
+							<div class="col-8">
+								<label for="file" class="mt-2 upload-style form-control d-flex align-items-center justify-content-between">											
+									<input type="file" class="custom-file-input" id="files" name="files[]" multiple size="5" title="No file selected.">
+								</label>
+								<h6 class="text-grey caption"> Drag&Drop or Click to choose your file.<i class="fa fa-cloud-upload-alt fa-lg ml-2"></i></h6>
+								<span class="text-info caption" style="display: none;" id="selected_file"></span>
+								<textarea class="form-control field-style" rows="4" placeholder="File description..." id="file_description"></textarea>
+								<div class="d-flex justify-content-end mt-2">
+									<button class="btn btn-info btn-sm" id="attached_file_btn"><i class="fa fa-paperclip"></i> Attached file</button>
+								</div>
+								<hr>
+								<small class="ml-3 text-secondary">Restrict number of files limit less than <strong id="restrict_file_num"></strong>.
+										and size of file limit less than <strong id="restrict_file_size">10 Mb</strong>.
+								</small>
+								<table class="w-100" id="filelist"></table>
+							</div>
+							<hr>
+						</div>
 					</div>
-					<!-- Request form -->
-					<div id="Request" class="w-100 d-none"></div>
 				</div>				
 			</div>
 		</div>
@@ -332,8 +430,9 @@
 							</button>
 						</div>
 						
-						<div class="d-inline-flex align-items-baseline w-100 " id="present_tag_func">
-							<h6 class="modal-title text-secondary text-center font-weight-bold"> At present, depened-on form record </h6>
+						<div class="d-inline-flex align-items-baseline w-100 ">
+							<h6 class="modal-title text-secondary text-center font-weight-bold"> At present, depened-on form parents record </h6>
+							<button type="button" class="btn btn-danger btn-sm ml-2" id="remove_tag"><i class="fas fa-trash-alt"></i> Remove parent tag</button>
 						</div>
 						<div id="present_tag_table_div">
 							<table class="table table-borderless mt-1" id="present_tag_table"></table>
@@ -343,7 +442,6 @@
 						<form id="FormTag" class="w-100">
 							<!-- Assign which team -->
 							<h6 class="text-secondary font-weight-bold"> Search depend-on form </h6>
-
 							<div class="row align-items-baseline mt-3">
 								<label class="col-3"> Search field </label>
 								<div class="btn-group btn-group-toggle col-9" data-toggle="buttons" id="search_tag_field">
@@ -376,10 +474,10 @@
 							<div id="result_tag_table_div">			
 								<table class="table table-borderless mt-1 devsearch_fade" id="result_tag_table" style="display: none;"></table>
 							</div>	
-							<hr>
+							<!-- <hr>
 							<div class="d-flex justify-content-end mt-4">
 								<button type="button" class="btn btn-info" id="tagBTN"> <i class="far fa-paper-plane mr-1"></i> Save </button>
-							</div>
+							</div> -->
 						</form>	
 					</div>						
 				</div>		
@@ -536,17 +634,13 @@
 							<div class="row align-items-baseline mt-3">
 								<label class="col-3">&#9733 Developers contact windaw </label>
 								<div class="btn-group btn-group-toggle col-9" data-toggle="buttons" id="sel_devcontacter_div">
-									<select class="field-style form-control selectpicker" title="Select contact window...">
-									</select>
+									<select class="field-style form-control selectpicker" title="Select contact window..."></select>
 								</div>
 							</div>
 						</div>
 						<hr>
 						<div id="present_dev_table_div">
 							<table class="table table-borderless mt-1" id="present_dev_table">
-								<thead>
-									<tr></tr>
-								</thead>
 								<tbody></tbody>
 							</table>
 						</div>
@@ -598,8 +692,8 @@
 							<!-- Assign content -->
 							<h6 class="text-secondary font-weight-bold mt-3 devsearch_fade"> Search result </h6>
 							<div id="result_tag_table_div">
-								<table class="table table-borderless mt-1 devsearch_fade" id="result_dev_table">
-								</table>
+								<table class="table table-borderless mt-1 devsearch_fade" id="result_dev_table"></table>
+							</div>
 							<hr>
 						</form>	
 					</div>
@@ -610,7 +704,6 @@
 			</div>
 		</div>
 	</div>
-
 
 	<!--Alert Modal -- permission denied-->
 	<div class="modal fade" id="alertModal" tabindex="-1" role="dialog">

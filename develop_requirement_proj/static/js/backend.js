@@ -1,14 +1,14 @@
 // Orders Operation
     // GET Fetch Order's Ancestor Collection by Order Id
     function get_tag_record(order_id){
+        let path=fakedata_path+'tagtable.json';//  測試完請刪除
+
         let res='';
         //  測試完請刪除
-        let url_select=randomnum(0,2);
-        let urls=[fakedata_path+'tagtable.json',fakedata_path+'empty_table.json'][url_select];
-        let url='./api/orders/'+order_id+'/ancestors/';  
-        urls=fakedata_path+'tagtable.json';
+        let urls=[fakedata_path+'tagtable.json',fakedata_path+'empty_table.json'][randomnum(0,2)];
+        let url='./api/orders/'+order_id+'/ancestors/';
         $.ajax({
-            url:urls, // {{service_url}}/api/orders/:id/ancestors/  
+            url:path, // {{service_url}}/api/orders/:id/ancestors/  
             method:"GET",
             dataType: "json",
             async: false,
@@ -21,17 +21,51 @@
         });
         return res;
     }
+
+
+
+
+    // GET Fetch a Specific Orders
+    function get_single_order(id){
+        let path=fakedata_path+'singleform_info.json';//  測試完請刪除
+        let res='';
+        $.ajax({
+            // url:'./api/orders/id/,
+            url:path,
+            method:"GET",
+            data:formdata,
+            dataType: "json",
+            async: false,
+            timeout: 5000,
+            beforeSend: function ( XMLHttpRequest ){},
+            error: function ( result, textStatus, XMLHttpRequest ){ console.log( result );  console.log( textStatus ); },
+            success: function ( result, textStatus, XMLHttpRequest ){
+                res=result;
+            }    
+        });
+        return res;
+    }
+
+
+
+
+
+
+
+
+
+
     //  POST Create an Orders
     function post_order(formdata){
         //  backend check field
         let field=backend_check_fields(formdata).join();
         formdata['field']=field;
 
-        //  測試完請刪除
+        let path='#';//  測試完請刪除
         $.ajax({
-            // url:'./api/orders/',//{{service_url}}/api/orders/
-            url:'#',//{{service_url}}/api/orders/
-            method:"GET",
+            url:'./api/orders/',
+            // url:path,//{{service_url}}/api/orders/
+            method:"POST",//  測試完請刪除
             data:formdata,
             dataType: "json",
             async: false,
@@ -87,9 +121,11 @@
 
     // GET Filter Histories Collection by Order Id
     function get_record_history(orders_id){
+        let path=fakedata_path+'comment_history.json';//  測試完請刪除
+
         let res='';
         $.ajax({
-            url:fakedata_path+'comment_history.json',
+            url:path,
             method:'GET',
             dataType: "json",
             data: {'orders_id':orders_id},
@@ -129,10 +165,36 @@
 
 
 //  Documents Operation
-    function get_documents(){
+    //  GET Filter Documents Collection by Order Id
+    function get_documents(order_id){
+        let path=fakedata_path+'files.json';//  測試完請刪除
+
         let res='';   
         $.ajax({
-            url:fakedata_path+'files.json',
+            url:path,
+            method:"GET",
+            dataType: "json",
+            data: {
+                'order_id':order_id
+            },
+            async: false,
+            timeout: 5000,
+            beforeSend: function ( XMLHttpRequest ){},
+            error: function ( result, textStatus, XMLHttpRequest ){ console.log( result );  console.log( textStatus ); },
+            success: function ( result, textStatus, XMLHttpRequest ){
+                res=result;
+            }    
+        });
+        return res;
+    }
+    // GET Fetch a Specific Documents
+
+    // POST Create a Documents
+    function post_document(){
+        let path=fakedata_path+'files.json';//  測試完請刪除
+        let res='';   
+        $.ajax({
+            url:path,
             method:"GET",
             dataType: "json",
             data: {},
@@ -146,13 +208,36 @@
         });
         return res;
     }
-    function patch_documents(){
+
+
+    // PATCH Update Documents Detail
+    function update_document_detail(){
+        let path=fakedata_path+'patch_files.json';//  測試完請刪除
         let res='';   
         $.ajax({
-            url:fakedata_path+'patch_files.json',
+            url:path,
             method:"GET",
             dataType: "json",
             data: {},
+            async: false,
+            timeout: 5000,
+            beforeSend: function ( XMLHttpRequest ){},
+            error: function ( result, textStatus, XMLHttpRequest ){ console.log( result );  console.log( textStatus ); },
+            success: function ( result, textStatus, XMLHttpRequest ){
+                res=result;
+            }    
+        });
+        return res;
+    }
+
+    // PATCH Update Documents Detail
+    function delete_document(id){
+        let path=fakedata_path+'patch_files.json';//  測試完請刪除
+        // let path='/api/documents/'+id+'/';
+        $.ajax({
+            url:path,
+            method:"GET",
+            dataType: "json",
             async: false,
             timeout: 5000,
             beforeSend: function ( XMLHttpRequest ){},
@@ -170,9 +255,11 @@
 
 //  Developer Groups Operation
     function get_developers(){
+        let path=fakedata_path+'developers.json';//  測試完請刪除
+
         let res='';
         $.ajax({
-            url:fakedata_path+'developers.json',
+            url:path,
             method:'GET',
             dataType: 'json',
             data: '',
@@ -191,9 +278,11 @@
 
 //  Employees Operation
     function get_employees(data){
+        let path=fakedata_path+'developers.json';//  測試完請刪除
+
         let res='';
         $.ajax({
-            url:fakedata_path+'employees.json', //測試後請刪除
+            url:path,
             // url:'/api/employees/',
             method:'GET',
             dataType: 'json',
@@ -210,16 +299,21 @@
     }
 
 
-
+    // sub_function
  
 //  Accounts Operation
-    function get_accounts(data){
+    function get_accounts(sub_function){
+        let path=fakedata_path+'accounts.json';//  測試完請刪除
+
         let res='';
         $.ajax({
-            url:fakedata_path+'accounts.json', //測試後請刪除
+            // url:path, //測試後請刪除
+            url:'/api/accounts/',
             method:'GET',
             dataType: 'json',
-            data: data,
+            data: {
+                'sub_function':sub_function,
+            },
             async: false,
             timeout: 5000,
             beforeSend: function ( XMLHttpRequest ){},
@@ -235,9 +329,12 @@
 
 //  Projects Operation
     function get_projects(acct_id){
+        let path=fakedata_path+'projects.json';//  測試完請刪除
+
         let res='';
         $.ajax({
-            url:fakedata_path+'projects.json', //測試後請刪除
+            // url:path, 
+            url:'/api/projects/',
             method:'GET',
             dataType: 'json',
             data: {'acct_id':acct_id},
@@ -257,9 +354,12 @@
 
 //  Options Operation(function team)
     function get_options(){
+        let path=fakedata_path+'options.json';//  測試完請刪除
+
         let res='';
         $.ajax({
-            url:'/static/js/fakedata/options.json',
+            // url:path,
+            url:'/api/options/?field=dept_category',
             method:"GET",
             dataType: "json",
             data: {},
@@ -278,9 +378,12 @@
 
 //  Assigners Operation
     function get_assigners(sub_function,project_id){
+        let path=fakedata_path+'assigners.json';//  測試完請刪除
+
         let assigners='';
         $.ajax({
-            url:fakedata_path+'assigners.json',
+            // url:path,
+            url:'/api/assigners/',
             method:'GET',
             dataType: 'json',
             data: {
