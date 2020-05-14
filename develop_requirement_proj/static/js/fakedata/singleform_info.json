@@ -1,25 +1,46 @@
 {
     "id": 2,
-    "develop_team": "DQMS",
-    "label": "R360xxxxx",
+    "account": {
+        "id": 1,
+        "code": "Lily",
+    },
+    "project": {
+        "id": 2,
+        "name": "Stark"
+    },
+    "develop_team_function": "QT",
+    "develop_team_sub_function": "DQMS",
     "status": {"p3_initiator_": "Approve"},
     "initiator": {
-        "emplotee_id": 10612704,
-        "emplyee_name": "Jeff SH Wang"
+        "employee_id": "10612704",
+        "display_name": "Jeff SH Wang/WHQ/Wistron",
     },
     "assigner": {
-        "employee_id": 10612704,
-        "employee_name": "Jeff SH Wang"
+        "employee_id": "10612704",
+        "display_name": "Jeff SH Wang/WHQ/Wistron",
+    },
+    "developer": {
+        "member": [
+            {
+                "employee_id": "10612704",
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+            },
+            {
+                "employee_id": "10712714",
+                "display_name": "Leo Tu/WHQ/Wistron",
+            }
+        ],
+        "contactor":{
+            "employee_id": "9505005",
+            "display_name": "Luis Liao/WHQ/Wistron",
+        }
     },
     "title": "DQMS develope requirement system",
     "description": "<br> Three is description </br>",
     "form_begin_time": "2020-03-10T08:26:38.093183Z",
     "form_end_time": "2020-04-10T08:26:38.093183Z",
-    "mvp_time": "2020-03-20T08:26:38.093183Z",
-    "expected_develop_begin_time": "2020-03-150T08:26:38.093183Z",
-    "expected_develop_end_time": "2020-04-05T08:26:38.093183Z",
     "expected_develop_duration_day": 10.5,
     "actual_develop_duration_day": 20.0,
     "repository_url": "www.gitlab.com",
-    "parent": 10
+    "parent": 10,
 }

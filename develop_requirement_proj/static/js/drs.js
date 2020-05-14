@@ -1,43 +1,88 @@
-$(function(){    
-    $('#requestModal').modal('show');
+$(function(){
+//  Add Request
+    //  Reset modal
+    $(document).on('click','#addRequestBtn',function(){
+        $('#requestModal').data('order_id','New').modal('show');
+    });
 
     $('#requestModal').find('.selectpicker').selectpicker('render');
 //  Form fields - Select Options
     let Obj=get_options();
+    let disabledarr=['BU','EE','ME'];
     let optionsValue=Object.values(Obj)[0];
     $.each(optionsValue,function(groupname,options){
-        $('#sel_function').append('<optgroup label="'+groupname+'"></optgroup>');
-        $.each(options,function(i,subfunc){
-            let el=$('#sel_function').find('optgroup').last()[0];
-            let func_subfunc=groupname+"_"+subfunc;
-            $("<option>").text(subfunc).val(func_subfunc).appendTo(el);            
-        })
+        if(disabledarr.includes(groupname)){}
+        else{
+            $('#sel_function').append('<optgroup label="'+groupname+'"></optgroup>');
+            $.each(options,function(i,subfunc){
+                let el=$('#sel_function').find('optgroup').last()[0];
+                let func_subfunc=groupname+"_"+subfunc;
+                $("<option>").text(subfunc).val(func_subfunc).appendTo(el);            
+            })
+        }
     });
     $('#sel_function').selectpicker('refresh');
 
 
 
-//  Form fields - Select accounts
-    let accounts=get_accounts();
-    $('#sel_accounts').empty();
-    $('#sel_accounts').append('<option value=""> Select... </option>');
-    $.each(accounts,function(){
-        let account_info=$(this)[0];
-        $('#sel_accounts').append('<option value="'+account_info['id']+'">'+account_info['code']+'</option>');
+//  Global application
+    $(document).on('click','.ezinfoModal_trigger',function(){
+        let id=$(this).data('id');
+        // $('#ezinfoModal').modal('show');
+
     });
-    $('#sel_accounts').selectpicker('refresh');
+
+
+
+
+//  Form fields - Select accounts
+    $('#sel_function').on('change',function(){
+        let sub_function=$('#sel_function').val();
+        let accounts=get_accounts(sub_function);
+
+        $('#sel_accounts').empty();
+        $('#sel_accounts').append('<option value=""> Select... </option>');
+
+        //  DQMS tricky rule
+        if(sub_function=='QT_DQMS'){
+            $.each(accounts,function(){
+                let account_info=$(this)[0];
+                if(account_info['code']=='WT-EBG') $('#sel_accounts').append('<option value="'+account_info['id']+'" selected>'+account_info['code']+'</option>'); 
+            });
+        }else{
+            $.each(accounts,function(){
+                let account_info=$(this)[0];
+                $('#sel_accounts').append('<option value="'+account_info['id']+'">'+account_info['code']+'</option>');
+            });
+        }
+       
+        $('#sel_accounts').selectpicker('refresh');
+    });
+
+
+
 
 //  Form fields - Select projects
     $('#sel_accounts').on('change',function(){
+        let sub_function=$('#sel_function').val();
         let acc_id=$('#sel_accounts').val();
         let projects=get_projects(acc_id);
         $('#sel_projects').empty();
         $('#sel_projects').append('<option value=""> Select... </option>');
-        $.each(projects,function(){
-            let project_info=$(this)[0];
-            $('#sel_projects').append('<option value="'+project_info['id']+'">'+project_info['name']+'</option>');
-        });
-        $('#sel_projects').selectpicker('refresh');
+        
+        //  DQMS tricky rule
+        if(sub_function=='QT_DQMS'){
+            $.each(projects,function(){
+                let project_info=$(this)[0];
+                $('#sel_projects').append('<option value="'+project_info['id']+'">'+project_info['name']+'</option>');
+            });
+        }else{
+            $.each(projects,function(){
+                let project_info=$(this)[0];
+                $('#sel_projects').append('<option value="'+project_info['id']+'">'+project_info['name']+'</option>');
+            });
+        }
+        $('#sel_projects').selectpicker('refresh');        
     });
 
 
@@ -50,9 +95,11 @@ $(function(){
             $('#sel_assigners').empty();
             $('#sel_assigners').append('<option value=""> Select... </option>');
             $.each(assigners,function(){
+                console.log($(this)[0]);
                 let name=$(this)[0]['display_name'].split('/Wistron')[0];
+                let phone_extension=$(this)[0]['extension'];
                 let id=$(this)[0]['employee_id'];
-                $('#sel_assigners').append('<option value="'+id+'">'+name+'</option>');
+                $('#sel_assigners').append('<option value="'+id+'" data-subtext=" #'+phone_extension+'">'+name+'</option>');
             });
             $('#sel_assigners').selectpicker('refresh');
         }
@@ -92,139 +139,157 @@ $(function(){
     $('#restrict_file_num').text(fileslimit);  
     //  Upload file ui layout
         $('#files').on('change', function(event) {
-            let files;
-            files=$('#files')[0].files;    //重新取得[input type='file']資料
-            files=Array.prototype.slice.call(files);  //將偽數組轉成陣列
-            fileLists=fileLists.concat(files);   //重複的圖片還是會加在後面
-
-            let fileindex = fileLists.length-1;
-            let filename = fileLists[fileindex].name;
-            let filesize = fileLists[fileindex].size;
-            let filetype = files[0].type.split("/")[1].toLowerCase();
-            let imgsrc = images['upload'];
-            let template = file_downloading_template('new',filename,filesize);
-
-            // if(filesize<=file_size_limit){
-            if(true){
-                $('#filelist').find('tbody').append(template);
-                let thisrow=$(document).find('#filelist').find('tr').last();
-                thisrow.find('img').prop('src',imgsrc).addClass('bg-grey animated flash infinite');
-                comment_area_height('imgage_dev','image_label_dev','authors','FormRequest','comment_area',img_h)
-                
-                //  document key name rule 測試中~等spec後會再更動
-                let key;
-                for(i=1;i<=fileslimit; i++){
-                    if(documentkeys_exited.includes(i)) console.log(i+'exited');
-                    else {
-                        key='document_'+i;
-                        break;
-                    }
-                }
-                let formData = new FormData();
-                formData.append(key,files);
-    
-                let transmit_time_start;
-                let transmit_time_end;
-                let transmit_time_last = 0;
-                let transmit_loaded_last = 0;
-                let upload_start_time; // 開始上傳的時間(毫秒)
-    
-                $.ajax({
-                    url:fakedata_path+'patch_files.json',
-                    method:'POST',
-                    dataType: 'json',
-                    data: formData,
-                    timeout:310000,
-                    cache: false,
-                    processData: false, 
-                    contentType : false,
-                    beforeSend: function ( XMLHttpRequest ){
-                        formdata_console(formData);
-                    },
-                    error: function ( result, textStatus, XMLHttpRequest ){ console.log( result );  console.log( textStatus ); },
-                    // success: function ( result, textStatus, XMLHttpRequest ){
-                    complete: function ( result, textStatus, XMLHttpRequest ){// 測試後請刪除
-                        res=patch_documents();
-    
-                        let url=res['documents'][key]['link'];
-                        let filename=res['documents'][key]['link'].split('/').pop();
-                        let filetype=filename.split('.')[1];
-                        let imgsrc='';
-    
-                        if(isImage(filetype)) imgsrc=url;
-                        else imgsrc=images['document'];
-                        //  Remove progress bar and animation
-                        thisrow.find('.progress').remove();
-                        thisrow.find('.loadedpercent').remove();
-                        thisrow.find('img').prop('src',imgsrc).removeClass('bg-grey animated flash infinite');
-                    },
-                    xhr: function() {
-                        let xhr = $.ajaxSettings.xhr();
-                        xhr.upload.onloadstart = function(e) {
-                            transmit_time_start = e.timeStamp;
-                            thisrow.find('.loadedpercent').text('0%');
-                            upload_start_time = new Date().getTime();   //設置上傳開始時間(毫秒)
-                            upload_rate = 0; // 設置上傳速率(KB/秒)
-                            upload_file_loaded = 0;// 設置上傳開始時，以上傳的文件大小爲0%
-                            upload_estimate_time = 0; // 設置估算剩餘上傳完成的時間(秒)
-                        };
-                        xhr.upload.onloadend = function(e) {
-                            transmit_time_end = e.timeStamp;
-                            if( e.loaded == e.total ) {
-                                transmit_speed_avg = e.total / ((transmit_time_end - transmit_time_start) / 1000);
-                            } else {
-                                transmit_speed_avg = e.loaded / ((transmit_time_end - transmit_time_start) / 1000);
-                            }
-                        };
-                        xhr.upload.onprogress = function(e) {
-                            if( e.lengthComputable ) {
-                                let Percentage = Math.round((e.loaded * 100) / e.total);
-                                transmit_speed = (e.loaded - transmit_loaded_last) / 1024 / 1024 / ((e.timeStamp - transmit_time_last) / 1000);
-                                transmit_loaded_last = e.loaded;
-                                transmit_time_last = e.timeStamp;
-                                
-                                let upload_now_time = new Date().getTime(); // 獲取當前時間
-                                let time = (upload_now_time - upload_start_time) / 1000; // 毫秒 轉 秒
-                                let data = e.total - e.loaded; // 剩餘上傳的數據有多少B, 後面 轉 KB 轉 MB
-    
-                                thisrow.find('.progress-bar').css('width', Percentage + '%');
-                                thisrow.find('.loadedpercent').numerator({
-                                    toValue	: (Percentage <= 1 ? Percentage : Percentage-1),
-                                    easing	: 'linear',
-                                    duration: 100, //default 500
-                                    onStart	: function() {
-                                        thisrow.find('.loadedpercent').text('0%');
-                                    },
-                                    onStep	: function() {
-                                        thisrow.find('.loadedpercent').text(Percentage + '%' );
-                                    }
-                                });
-                            }
-                        };
-                        return xhr;
-                    }
-                });
+            let tr_num=$('#filelist').find('tbody').find('tr').length;
+            if(tr_num>=fileslimit) {
+                //  upload file input disabled
+                $('#selected_file').fadeOut(0);
+                $('#files').prop('disabled',true);
+                $('#files').parent('label').addClass('upload-style_disabled');
+                $('#files').parent('label').siblings('h6').html('Uploaded number limited less than<span class="ml-2 font-weight-bold">'+fileslimit+'</span>.').fadeIn(0);
             }else{
-                $('#alertModal').find('img').prop('src',images['404']);
-                $('#alertModal').modal('show');
-            }
+                if($(this).val().length!==0){
+                    let file=$('#files')[0].files[0];    //重新取得[input type='file']資料
+                    let file_name=file['name'];
+                    let file_size=bytesChange(file['size']);
+                    if(file['size']<=file_size_limit){
+                        let template='<i class="fa fa-file-alt fa-lg mr-1"></i>'+file_name+' - '+file_size
 
-            // not renove tr total
-            let tr_num=$('#filelist').find('tr:not(.animated)').length;
+                        $('#selected_file').siblings('.caption').fadeOut(0);
+                        $('#selected_file').html(template).fadeIn(0);
+                    }else{
+                        $('#alertModal').find('img').prop('src',images['404']);
+                        $('#alertModal').modal('show');
+                    }
+                }else{
+                    $('#selected_file').siblings('.caption').fadeIn(0);
+                    $('#selected_file').html('').fadeOut(0);
+                }
+            }
+        });       
+        $('#attached_file_btn').off().on('click',function(){
+            let tr_num=$('#filelist').find('tbody').find('tr').length;
             if(tr_num>=fileslimit) {
                 //  upload file input disabled
                 $('#files').prop('disabled',true);
                 $('#files').parent('label').addClass('upload-style_disabled');
                 $('#files').parent('label').siblings('h6').html('Uploaded number limited less than<span class="ml-2 font-weight-bold">'+fileslimit+'</span>.');
-            }
+            }else{
+                if($('#files').val().length!==0){
+                    let transmit_time_start;
+                    let transmit_time_end;
+                    let transmit_time_last = 0;
+                    let transmit_loaded_last = 0;
+                    let upload_start_time; // 開始上傳的時間(毫秒)
 
-            //  remove #files value --> so the change event can continue    
-            $(this).val('');
+                    let file=$('#files')[0].files[0]; //重新取得[input type='file']資料
+                    let file_name=file['name'];
+                    let description=$('#file_description').val();
+                    let order_id=$('#requestModal').data('order_id');
+
+                    let formdata=new FormData;
+                    formdata.append('path',file);
+                    formdata.append('name',file_name);
+                    formdata.append('description',description);
+                    formdata.append('order_id',order_id);
+                    let target;
+                    $.ajax({
+                        url:fakedata_path+'patch_files.json',
+                        method:'GET',
+                        dataType: 'json',
+                        data: formdata,
+                        timeout:50000,
+                        cache: false,
+                        processData: false, 
+                        contentType : false,
+                        beforeSend: function ( XMLHttpRequest ){
+                            formdata_console(formdata);
+                            let newfile={
+                                "id": 'New',
+                                "name": file_name,
+                                "path": images['upload'],
+                                "order_id": order_id,
+                                "description": description,
+                                "size": file['size'],
+                                "created_time": ""
+                            };
+                            $('#filelist').bootstrapTable('append',newfile);
+                            target=$('#filelist').find('tbody').find('tr').last().find('td').eq(1);
+                            let loadinghtml=`<div class="loadingbar">
+                                                <div class="progress mx-auto">
+                                                    <div class="progress-bar progress-bar-striped bg-success font-weight-bold progress-bar-animated" style="width: 20%;"></div>
+                                                </div>
+                                                <div class="mr-2 mb-2 text-right font-weight-bold text-secondary loadedpercent"></div>
+                                            </div>`;
+                            target.append(loadinghtml);
+                        },
+                        error: function ( result, textStatus, XMLHttpRequest ){ console.log( result );  console.log( textStatus ); },
+                        // success: function ( result, textStatus, XMLHttpRequest ){ },
+                        complete: function ( result, textStatus, XMLHttpRequest ){// 測試後請刪除
+                            //  Remove progress bar and animation
+                            target.find('.loadingbar').remove();
+                            //  remove #files value --> so the change event can continue    
+                            $('#files').val('');
+                            $('#file_description').val('');
+                            $('#files').trigger('change');
+                        },
+                        xhr: function() {
+                            let xhr = $.ajaxSettings.xhr();
+                            xhr.upload.onloadstart = function(e) {
+                                transmit_time_start = e.timeStamp;
+                                target.find('.loadedpercent').text('0%');
+                                upload_start_time = new Date().getTime();   //設置上傳開始時間(毫秒)
+                                upload_rate = 0; // 設置上傳速率(KB/秒)
+                                upload_file_loaded = 0;// 設置上傳開始時，以上傳的文件大小爲0%
+                                upload_estimate_time = 0; // 設置估算剩餘上傳完成的時間(秒)
+                            };
+                            xhr.upload.onloadend = function(e) {
+                                transmit_time_end = e.timeStamp;
+                                if( e.loaded == e.total ) {
+                                    transmit_speed_avg = e.total / ((transmit_time_end - transmit_time_start) / 1000);
+                                } else {
+                                    transmit_speed_avg = e.loaded / ((transmit_time_end - transmit_time_start) / 1000);
+                                }
+                            };
+                            xhr.upload.onprogress = function(e) {
+                                if( e.lengthComputable ) {
+                                    let Percentage = Math.round((e.loaded * 100) / e.total);
+                                    transmit_speed = (e.loaded - transmit_loaded_last) / 1024 / 1024 / ((e.timeStamp - transmit_time_last) / 1000);
+                                    transmit_loaded_last = e.loaded;
+                                    transmit_time_last = e.timeStamp;
+                                    let upload_now_time = new Date().getTime(); // 獲取當前時間
+                                    let time = (upload_now_time - upload_start_time) / 1000; // 毫秒 轉 秒
+                                    let data = e.total - e.loaded; // 剩餘上傳的數據有多少B, 後面 轉 KB 轉 MB
+
+                                    target.find('.progress-bar').css('width', Percentage + '%');
+                                    target.find('.loadedpercent').numerator({
+                                        toValue	: (Percentage <= 1 ? Percentage : Percentage-1),
+                                        easing	: 'linear',
+                                        duration: 100, //default 500
+                                        onStart	: function() {
+                                            target.find('.loadedpercent').text('0%');
+                                        },
+                                        onStep	: function() {
+                                            target.find('.loadedpercent').text(Percentage + '%' );
+                                        }
+                                    });
+                                }
+                            };
+                            return xhr;
+                        }
+                    });
+                }
+            }
         });
-        $(document).on('click','#filelist button.btn-danger',function(){
+
+    //  filelist table button action    
+        $('#filelist').on('click','button.btn-danger',function(){
+            let id=$(this).parents('tr').data('id');
+
             $(this).parents('tr').addClass('animated zoomOutRight',function(){
                 $(this).fadeOut(function(){
+                    delete_document(id);
                     comment_area_height('imgage_dev','image_label_dev','authors','FormRequest','comment_area',img_h);
+                    $('#filelist').bootstrapTable('remove',{field:'id',values:[parseInt(id)]});
                 });
                 if($('#files').prop('disabled')) {
                     //  upload file input cancel disabled
@@ -233,52 +298,59 @@ $(function(){
                     $('#files').parent('label').siblings('h6').html(' Drag&Drop or Click to choose your file.<i class="fa fa-cloud-upload-alt fa-lg ml-2"></i> ');
                 }
             });
+            
+            
+        });
+        $('#filelist').on('click','.file_description_edit',function(){
+            let target=$(this).parents('.detail-view')
+            //  Show Textarea allow to edit
+            target.find('textarea').fadeIn(0);
+            target.find('.description_alert').fadeIn(0);
+            target.find('button').not('.file_description_edit').fadeIn(0);
+            target.find('p').fadeOut(0);
+            target.find('.file_description_edit').fadeOut(0);
+        });
+        function collapse_description(detail_view){
+            detail_view.find('p').fadeIn(0);
+            detail_view.find('.file_description_edit').fadeIn(0);
+            detail_view.find('textarea').fadeOut(0);
+            detail_view.find('button').not('.file_description_edit').fadeOut(0);
+            detail_view.find('.description_alert').fadeOut(0);
+        }
+        $('#filelist').on('click','.file_description_save',function(){
+            let target=$(this).parents('.detail-view');
+            let row_index=target.prev('tr').data('index');
+            // let contentTarget=$(this).parents('.detail-view').find('p');
+            let editcontent=$(this).parents('.detail-view').find('textarea').val();
+            $('#filelist').bootstrapTable('updateRow',{
+                index: row_index, 
+                row: {
+                    description: editcontent,
+                },
+            }); 
+            $('#filelist').find('tr[data-index='+row_index+']').find('td').first().find('.detail-icon').trigger('click');
+            collapse_description(target);
+        });
+        $('#filelist').on('click','.file_description_cancel',function(){
+            let target=$(this).parents('.detail-view');
+            collapse_description(target);
+        });
+        $('#filelist').on('change','.detail-view textarea.bd-none',function(){
+            let target=$(this).parents('.detail-view');
+            let alerthtml=`<small class="pl-1 text-info font-weight-bold description_alert">Last edit not completed yet~</small>`;
+            let cancelbtn=target.find('.file_description_cancel');
+            cancelbtn.on('click',function(){
+                target.find('textarea.bd-none').addClass('bd-info').removeClass('bd-none');
+                if(target.find('.description_alert').length==0) $(alerthtml).insertAfter(target.find('textarea'));
+            });
         });
 
 
 
+ 
 
 
 
-    $('#requestModal').on('shown.bs.modal',function(){
-        $('#toggle-commentarea').removeClass('active');
-        $('#toggle-commentarea').find('i').removeClass('active fa-chevron-down').addClass('fa-chevron-up');
-
-        // Load comments history
-        let comments=get_record_history();
-        $.each(comments,function(){
-            let comment_obj=$(this)[0];
-            append_comment_template('#comment_area',comment_obj)
-        });
-
-
-        //  Get fields
-        let documents=get_documents()['documents'];
-        documentkeys_exited=[];
-        $.each(documents,function(keyname,doc_obj){
-
-            let url=doc_obj['link'];
-            let filesize=Number(doc_obj['size_byte']);
-            let filename=[...doc_obj['link'].split('/')].pop();
-            let filetype=filename.split('.')[1];
-            let imgsrc='';
-            let keynum=Number(keyname.split('_')[1]);
-
-            //  Store exited document key --> arrary
-            documentkeys_exited.push(keynum);
-
-            if(isImage(filetype)) imgsrc=url;
-            else imgsrc=images['document'];
-
-            let template = file_render_template(keyname,url,filesize);
-            $('#filelist').find('tbody').append(template);
-            $('#filelist').find('tr').last().find('img').prop('src',imgsrc);
-
-        });
-
-        // reset condition
-        comment_area_height('imgage_dev','image_label_dev','authors','FormRequest','comment_area',img_h);
-    });
 
     //  Comment area
         $(document).on('click','#toggle-commentarea',function(){ 
@@ -312,44 +384,6 @@ $(function(){
                 scrollToBottom($('#comment_area'),position_tar);
             }
         });
-
-    //  Form request validate setting
-        $('#FormRequest').validate({
-            rule:{
-                description:{
-                    required: true,
-                    summernote_validated:true
-                }
-            }
-        });
-
-    //  Validate fields - init request
-        $( "#initialize_btn" ).on( "click",function(){
-            if($('#FormRequest').validate().form()){
-                // let formData=new FormData();
-                // let fields=$(this).find('[name]');
-                // packageData('#FormRequest',formData);
-
-                let statusObj={"p1_initiator": "Approve"}
-                let init_data=package_data('#FormRequest');
-                init_data['status']=JSON.stringify(statusObj)
-                init_data['initiator']=$('#form_initiator').data('id');
-                post_order(init_data);
-            }else console.log('#FormRequest valid false');     
-        });
-
-
-
-
-
-
-
-
-
-
-    
-
-
 });
 
 

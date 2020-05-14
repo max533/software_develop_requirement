@@ -44,6 +44,8 @@
     .bg-lightwarning { background-color:  #ffd19a !important; }
     .bg-danger{ background-color:  var(--danger) !important; }
     .bd-danger{ border: 2px solid var(--danger) !important; }
+    .bd-info{ border: 2px solid var(--info) !important; }
+    .bd-none{ border: none !important; }
     .btn-outline-secondary{ color: var(--secondary); border-color: var(--secondary); }
     .badge-danger { color: var(--light); background-color: var(--danger); }
     .badge-grey { color: var(--light); background-color: var(--grey); }
@@ -61,7 +63,7 @@
     .btn-info:hover{ background-color: var(--info); border-color: var(--info);}
     .bd-radius-8{border-radius: .8rem;}
 
-    
+
 /*  general */
     body{ font-size: .9rem; }
     .sticker{
@@ -105,8 +107,16 @@
     .b-radius-8{
         border-radius: .8em;
     }
-
+    .fade {
+        /* opacity: 0; */
+        -webkit-transition: opacity 0.1s linear;
+           -moz-transition: opacity 0.1s linear;
+            -ms-transition: opacity 0.1s linear;
+             -o-transition: opacity 0.1s linear;
+                transition: opacity 0.1s linear;
+      }
 /* button */
+    i.btn{ cursor: pointer; }
     .btn-group label{ cursor: pointer; }
     label.btn{ box-shadow:none; }
     .btn {
@@ -141,7 +151,6 @@
         color: var(--secondary);
     }
     .dropdown-item {font-size: .9rem; }
-
 
 /*  field style */
     textarea{ border-radius:.2rem; }
@@ -250,7 +259,7 @@
         box-shadow: 0.05rem 0.05rem 0.45rem 0.08rem rgba(0,0,0,.09); 
         border: 1px solid var(--gray); 
         min-width: fit-content;
-        padding: 0;
+        padding: 0rem;
         border-radius: 1rem;
         width: 100%;
         margin-left: 1.2rem;
@@ -261,5 +270,6 @@
         /* max-width: max-content; */
         width: 80%;
     }
+    .dropdown-item{padding: .5rem;}
     .dropdown-item.active, .dropdown-item:active {  background-color: #fff;color: var(--secondary) !important; }
-    .dropdown-item:focus, .dropdown-item:hover { background-color: var(--secondary); color: var(--info) !important; padding-left: 2em;}
+    .dropdown-item:focus, .dropdown-item:hover { background-color: var(--secondary); color: var(--info) !important;}

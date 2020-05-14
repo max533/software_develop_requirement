@@ -1,3 +1,7 @@
+//  Param rule
+    // order_id will store requestModal datat-order_id >> $('#requestModal').data('order_id'
+
+
 //  Global param
     loginInfo = {
         'employee_id' : Object.keys(profile)[0],
@@ -6,60 +10,60 @@
         'projectRole': Object.values(profile)[0][ 'project' ]
     };
     loginInfo['avatar']=avatar_get(loginInfo.employee_id);  
+
+
     
-    // defaultavatar=images.defaultavatar;
-    // loadinggif_path=images.loadinggif_path;
 
 //  Basic
     //  File template
-    function file_downloading_template(key,url,filesize){
-        let filename=[...url.split('/')].pop();
-        let template =  `<tr data-key="`+key+`">
-                            <td width="30%">
-                                <img title="`+filename+`"/>
-                                <a class="btn btn-info mt-1 position-absolute btn-sm" href="`+url+`" style="display:none !important;" download >
-                                    <i class="fa fa-cloud-download-alt "></i>
-                                </a>
-                                <div class="progress mx-auto">
-                                    <div class="progress-bar progress-bar-striped bg-success font-weight-bold progress-bar-animated" style="width: 20%;"></div>
-                                </div>
-                                <div class="mr-2 mb-2 text-right font-weight-bold text-secondary loadedpercent">
-                                <div>
-                            </td>
-                            <td width="60%">
-                                <p class="font-weight-bold ellipsis pl-2 pr-2 mb-0">`+filename+`</p>
-                                <small class="pl-2">`+bytesChange(filesize)+`</small>									
-                            </td>
-                            <td width="10%">
-                                <button type="button" class="btn btn-danger mt-1">
-                                    <i class="fas fa-trash-alt"></i>
-                                </buton>
-                            </td>
-                        </tr>`;
-        return template;
-    }
+    // function file_downloading_template(key,url,filesize){
+    //     let filename=[...url.split('/')].pop();
+    //     let template =  `<tr data-key="`+key+`">
+    //                         <td width="5%">
+    //                             <img title="`+filename+`"/>
+    //                             <a class="btn btn-info mt-1 position-absolute btn-sm" href="`+url+`" style="display:none !important;" download >
+    //                                 <i class="fa fa-cloud-download-alt "></i>
+    //                             </a>
+    //                             <div class="progress mx-auto">
+    //                                 <div class="progress-bar progress-bar-striped bg-success font-weight-bold progress-bar-animated" style="width: 20%;"></div>
+    //                             </div>
+    //                             <div class="mr-2 mb-2 text-right font-weight-bold text-secondary loadedpercent">
+    //                             </div>
+    //                         </td>
+    //                         <td width="90%">
+    //                             <p class="font-weight-bold ellipsis pl-2 pr-2 mb-0">`+filename+`</p>
+    //                             <small class="pl-2">`+bytesChange(filesize)+`</small>									
+    //                         </td>
+    //                         <td width="5%">
+    //                             <button type="button" class="btn btn-danger btn-sm mt-1">
+    //                                 <i class="fas fa-trash-alt"></i>
+    //                             </buton>
+    //                         </td>
+    //                     </tr>`;
+    //     return template;
+    // }
     //  File template
-    function file_render_template(key,url,filesize){
-        let filename=[...url.split('/')].pop();
-        let template =  `<tr data-key="`+key+`">
-                            <td width="30%">
-                                <img title="`+filename+`"/>
-                                <a class="btn btn-info mt-1 position-absolute btn-sm" href="`+url+`" style="display:none !important;" download >
-                                    <i class="fa fa-cloud-download-alt "></i>
-                                </a>
-                            </td>
-                            <td width="60%">
-                                <p class="font-weight-bold ellipsis pl-2 pr-2 mb-0">`+filename+`</p>
-                                <small class="pl-2">`+bytesChange(filesize)+`</small>									
-                            </td>
-                            <td width="10%">
-                                <button type="button" class="btn btn-danger mt-1">
-                                    <i class="fas fa-trash-alt"></i>
-                                </buton>
-                            </td>
-                        </tr>`;
-        return template;
-    }
+    // function file_render_template(key,url,filesize){
+    //     let filename=[...url.split('/')].pop();
+    //     let template =  `<tr data-key="`+key+`">
+    //                         <td width="5%">
+    //                             <img title="`+filename+`"/>
+    //                             <a class="btn btn-info mt-1 position-absolute btn-sm" href="`+url+`" style="display:none !important;" download >
+    //                                 <i class="fa fa-cloud-download-alt "></i>
+    //                             </a>
+    //                         </td>
+    //                         <td width="90%">
+    //                             <p class="font-weight-bold ellipsis pl-2 pr-2 mb-0">`+filename+`</p>
+    //                             <small class="pl-2">`+bytesChange(filesize)+`</small>									
+    //                         </td>
+    //                         <td width="5%">
+    //                             <button type="button" class="btn btn-danger btn-sm mt-1">
+    //                                 <i class="fas fa-trash-alt"></i>
+    //                             </buton>
+    //                         </td>
+    //                     </tr>`;
+    //     return template;
+    // }
     function isImage(filetype){
         let imageFile=['tiff','tif','png','gif','jpg','jpeg']
         if( imageFile.includes(filetype) ) return true;
@@ -82,6 +86,9 @@
             console.log(pair[0]+ ', '+ pair[1]); 
         }
     }
+
+
+
     //  Modal package data
     function package_data(form){
         let formdata={};
@@ -137,34 +144,6 @@
         }else console.log('Data is empty!!')
     }
 
-    // Package data for ajax
-    // function packageData(targetForm,formData) {
-    //     $(targetForm).find('[name]').each( function () {
-    //         if($(this).prop('required')){
-    //             switch( $(this).attr('type') ){
-    //                 case 'radio':
-    //                     if( $(this).prop('checked') ){
-    //                         formData.append( ''+$(this).attr('name')+'',$(this).val() );
-    //                     }
-    //                     break;    
-    //                 case 'file':
-    //                     console.log('file no action');
-    //                     // formData.append( $(this).attr('name'),$(this)[0].files[0]);
-    //                     break;
-    //                 case 'select':
-    //                     if ($(this).val()!==null){
-    //                         formData.append( $(this).attr('name'),$(this).val() );
-    //                     }
-    //                     break;
-    //                 default:
-    //                     formData.append( $(this).attr('name'),$(this).val() );
-    //                     break;
-    //             }
-    //         }
-    //     });
-    // }
-    //  Initator check
-
 
 //  Table setting 
     //  click btn to collapse down the more information
@@ -184,6 +163,20 @@
                         </div>`
         return html;
     }
+    function filedetailFormatter(index, row) {
+        let html = `<h6 class="badge badge-secondary badge-pill mt-2">
+                        <i class="fas fa-sticky-note mr-2"></i>Description
+                    </h6>
+                    <p class="font-weight-bold bd-radius-8 p-1">`+row['description']+`</p>
+                    <textarea class="w-100 font-weight-bold bd-radius-8 bg-white p-1 bd-none" style="display:none;">`+row['description']+`</textarea>
+                    <div class="text-right mb-2 mt-1">
+                        <button type="button" class="btn btn-info btn-sm file_description_edit"><i class="fa fa-edit mr-1"></i>Edit</button>
+                        <button type="button" class="btn btn-success btn-sm file_description_save" style="display:none;"><i class="fa fa-check-double mr-1"></i>Save</button>
+                        <button type="button" class="ml-2 btn btn-secondary btn-sm file_description_cancel" style="display:none;"><i class="fa fa-times mr-1"></i>Cancel</button>
+                    </div>`;
+        return html;
+    }
+
     //  Set the key and value sent to backend
     function queryParams(params) { 
         //這裡的鍵的名字和控制器的變量名必須一直，這邊改動，控制器也需要改成一樣的 
@@ -227,9 +220,14 @@
     function NoMatches(messages) {
         let html=`<div class="d-flex justify-content-center bg-grey mt-2 tag_404_result">
                     <img src="`+images['404']+`" class="mt-3">
-                    <h5 class="text-secondary position-absolute mt-3 bg-grey animated flash hingedown">FIND NOTHING!</h5>
+                    <h5 class="text-secondary position-absolute mt-3 bg-grey animated">FIND NOTHING!</h5>
                     <small class="text-secondary position-absolute mt-5 font-weight-bold">`+messages+`</small>
                 </div>`;
+        // let html=`<div class="d-flex justify-content-center bg-grey mt-2 tag_404_result">
+        //             <img src="`+images['404']+`" class="mt-3">
+        //             <h5 class="text-secondary position-absolute mt-3 bg-grey animated flash hingedown">FIND NOTHING!</h5>
+        //             <small class="text-secondary position-absolute mt-5 font-weight-bold">`+messages+`</small>
+        //         </div>`;
         return html;
     }
     //  Table-formatLoadingMessage

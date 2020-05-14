@@ -1,11 +1,16 @@
 [
     {
-        "employee_id": 10612704,
-        "display_name": "Jeff SH Wang/WHQ/Wistron"
+        "employee_id": "10612704",
+        "display_name": "Jeff SH Wang/WHQ/Wistron",
+        "extension": "85014815",
+        "job_title": "工程師"
     },
     {
-        "employee_id": 10712714,
-        "display_name": "Leo Tu/WHQ/Wistron"
-    }
+        "employee_id": "10712714",
+        "display_name": "Leo Tu/WHQ/Wistron",
+        "extension": "85014817",
+        "job_title": "工程師"
+    },
 ]
+
 
