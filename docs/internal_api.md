@@ -9,7 +9,7 @@
     - [`GET` Fetch Orders Collection](#get-fetch-orders-collection)
     - [`GET` Fetch a Specific Orders](#get-fetch-a-specific-orders)
     - [`POST` Create an Orders](#post-create-an-orders)
-    - [`PATCH` Update Partially Specific Orders](#patch-update-partially-specific-orders)
+    - [`PATCH` Update Partially Specific Orders Detail](#patch-update-partially-specific-orders-detail)
     - [`GET` Fetch Order's Ancestor Collection by Order Id](#get-fetch-orders-ancestor-collection-by-order-id)
     - [`GET` Fetch Order's Signature Collection by Order Id](#get-fetch-orders-signature-collection-by-order-id)
     - [`PUT` Update Order's Signature Deatail by Order Id and Signature Id](#put-update-orders-signature-deatail-by-order-id-and-signature-id)
@@ -20,21 +20,25 @@
     - [`GET` Filter Documents Collection by Order Id](#get-filter-documents-collection-by-order-id)
     - [`GET` Fetch a Specific Documents](#get-fetch-a-specific-documents)
     - [`POST` Create a Documents](#post-create-a-documents)
-    - [`PUT` Update Documents Detail](#put-update-documents-detail)
+    - [`PATCH` Update Partially Specific Documents Detail](#patch-update-partially-specific-documents-detail)
     - [`DEL` Delete Documents Detail](#del-delete-documents-detail)
   - [Schedules Operation](#schedules-operation)
-    - [`GET` Filter Schedules Collection by Order Id and Editor Role](#get-filter-schedules-collection-by-order-id-and-editor-role)
+    - [`GET` Filter Schedules Collection by Order Id](#get-filter-schedules-collection-by-order-id)
+    - [`GET` Filter Schedules Group Tracker by Order Id](#get-filter-schedules-group-tracker-by-order-id)
     - [`POST` Create a Schedules](#post-create-a-schedules)
-    - [`PUT` Update Schedules Detail](#put-update-schedules-detail)
+    - [`PATCH` Update Partially Schedules Detail](#patch-update-partially-schedules-detail)
     - [`DEL` Delete Schedules Detail](#del-delete-schedules-detail)
+  - [Development Progress Operation](#development-progress-operation)
+    - [`GET` Filter Development Progress Collection by Order Id](#get-filter-development-progress-collection-by-order-id)
+    - [`POST` Create Development Progress](#post-create-development-progress)
   - [Notifications Operation](#notifications-operation)
     - [`GET` Fetch Notifications Collection by Current User](#get-fetch-notifications-collection-by-current-user)
     - [`PUT` Update Notifications Detail](#put-update-notifications-detail)
-  - [Assigners Operation](#assigners-operation)
-    - [`GET` Filter Assigner by Develop Team Sub Funciton & Project Id](#get-filter-assigner-by-develop-team-sub-funciton--project-id)
   - [Employees Operation](#employees-operation)
     - [`GET` Search Employees with Site / Employee Id / English Name / Extension / Department ID](#get-search-employees-with-site--employee-id--english-name--extension--department-id)
     - [`GET` Fetch Current Employee](#get-fetch-current-employee)
+  - [Assigners Operation](#assigners-operation)
+    - [`GET` Filter Assigner by Develop Team Sub Funciton & Project Id](#get-filter-assigner-by-develop-team-sub-funciton--project-id)
   - [Accounts Operation](#accounts-operation)
     - [`GET` Fiter Accounts Collection by Develop Team Sub Function](#get-fiter-accounts-collection-by-develop-team-sub-function)
   - [Projects Operation](#projects-operation)
@@ -49,11 +53,11 @@
   - [Orders Operation](#orders-operation)
     - [ ] [`GET` Fetch Orders Collection](#get-fetch-orders-collection)
     - [ ] [`GET` Fetch a Specific Orders](#get-fetch-a-specific-orders)
+    - [ ] [`POST` Create an Orders](#post-create-an-orders)
+    - [ ] [`PATCH` Update Partially Specific Orders Detail](#patch-update-partially-specific-orders-detail)
     - [ ] [`GET` Fetch Order's Ancestor Collection by Order Id](#get-fetch-orders-ancestor-collection-by-order-id)
     - [ ] [`GET` Fetch Order's Signature Collection by Order Id](#get-fetch-orders-signature-collection-by-order-id)
     - [ ] [`PUT` Update Order's Signature Deatail by Order Id and Signature Id](#put-update-orders-signature-deatail-by-order-id-and-signature-id)
-    - [ ] [`POST` Create an Orders](#post-create-an-orders)
-    - [ ] [`PATCH` Update Partially Specific Orders](#patch-update-partially-specific-orders)
   - [Histories Operation](#histories-operation)
     - [ ] [`GET` Filter Histories Collection by Order Id](#get-filter-histories-collection-by-order-id)
     - [ ] [`POST` Create User's Comment Histories](#post-create-users-comment-histories)
@@ -61,23 +65,27 @@
     - [ ] [`GET` Filter Documents Collection by Order Id](#get-filter-documents-collection-by-order-id)
     - [ ] [`GET` Fetch a Specific Documents](#get-fetch-a-specific-documents)
     - [ ] [`POST` Create a Documents](#post-create-a-documents)
-    - [ ] [`PUT` Update Documents Detail](#put-update-documents-detail)
+    - [ ] [`PATCH` Update Partially Specific Documents Detail](#patch-update-partially-specific-documents-detail)
     - [ ] [`DEL` Delete Documents Detail](#del-delete-documents-detail)
   - [Schedules Operation](#schedules-operation)
-    - [ ] [`GET` Filter Schedules Collection by Order Id and Editor Role](#get-filter-schedules-collection-by-order-id-and-editor-role)
+    - [ ] [`GET` Filter Schedules Collection by Order Id](#get-filter-schedules-collection-by-order-id)
+    - [ ] [`GET` Filter Schedules Group Tracker by Order Id](#get-filter-schedules-group-tracker-by-order-id)
     - [ ] [`POST` Create a Schedules](#post-create-a-schedules)
-    - [ ] [`PUT` Update Schedules Detail](#put-update-schedules-detail)
+    - [ ] [`PATCH` Update Partially Schedules Detail](#patch-update-partially-schedules-detail)
     - [ ] [`DEL` Delete Schedules Detail](#del-delete-schedules-detail)
-  - [Notification Operation](#notification-operation)
-    - [ ] [`GET` Fetch Notification Collection by Current User](#get-fetch-notification-collection-by-current-user)
-    - [ ] [`PUT` Update Notification Detail](#put-update-notification-detail)
-  - [Assigners Operation](#assigners-operation)
-    - [x] [`GET` Filter Assigner by Develop Team Sub Funciton & Project Id](#get-filter-assigner-by-develop-team-sub-funciton--project-id)
+  - [Development Progress Operation](#development-progress-operation)
+    - [ ] [`GET` Filter Development Progress Collection by Order Id](#get-filter-development-progress-collection-by-order-id)
+    - [ ] [`POST` Create Development Progress](#post-create-development-progress)
+  - [Notifications Operation](#notifications-operation)
+    - [ ] [`GET` Fetch Notifications Collection by Current User](#get-fetch-notifications-collection-by-current-user)
+    - [ ] [`PUT` Update Notifications Detail](#put-update-notifications-detail)
   - [Employees Operation](#employees-operation)
     - [x] [`GET` Search Employees with Site / Employee Id / English Name / Extension / Department ID](#get-search-employees-with-site--employee-id--english-name--extension--department-id)
     - [x] [`GET` Fetch Current Employee](#get-fetch-current-employee)
+  - [Assigners Operation](#assigners-operation)
+    - [x] [`GET` Filter Assigner by Develop Team Sub Funciton & Project Id](#get-filter-assigner-by-develop-team-sub-funciton--project-id)
   - [Accounts Operation](#accounts-operation)
-    - [x] [`GET` Filter Accounts Collection by Develop Team Sub Function](#get-fiter-accounts-collection-by-develop-team-sub-function)
+    - [x] [`GET` Fiter Accounts Collection by Develop Team Sub Function](#get-fiter-accounts-collection-by-develop-team-sub-function)
   - [Projects Operation](#projects-operation)
     - [x] [`GET` Filter Projects Collection by Account Id](#get-filter-projects-collection-by-account-id)
   - [Options Operation](#options-operation)
@@ -87,7 +95,7 @@
 
 ### `GET` Fetch Orders Collection
 
-```text
+```url
 {{service_url}}/api/orders/?page=value1&page_size=value2&filter={"param1":"value1", "param2":"value"}
 ```
 
@@ -257,7 +265,7 @@ Fetch all orders resource
 
 ### `GET` Fetch a Specific Orders
 
-```text
+```url
 {{service_url}}/api/orders/:id/
 ```
 
@@ -350,7 +358,7 @@ Fetch a specific orders resource by `id`
 
 ### `POST` Create an Orders
 
-```text
+```url
 {{service_url}}/api/orders/?fields=develop_team_function,develop_team_sub_function,status,initiator,assigner,developers,title,description,expected_develop_duration_day,repository_url,parent
 ```
 
@@ -392,7 +400,7 @@ Create a new orders
                 "10712717"
             ],
             "contactor": "9505005"
-        }
+        },
         "title": "DQMS develope requirement system",
         "description": "<br> Three is description </br>",
         "expected_develop_duration_day": 10.5,
@@ -465,13 +473,13 @@ Create a new orders
     }
     ```
 
-### `PATCH` Update Partially Specific Orders
+### `PATCH` Update Partially Specific Orders Detail
 
-```text
-{{service_url}}/api/orders/:id/?fields=account,project,developers,develop_team_function,develop_team_sub_function,status,initiator,assigner,title,description,expected_develop_duration_day,actual_develop_duration_day,repository_url
+```url
+{{service_url}}/api/orders/:id/
 ```
 
-Update partial details of specific orders by `id`
+Update partial details of specific orders by order `id`
 
 - PERMISSSION
 
@@ -488,7 +496,20 @@ Update partial details of specific orders by `id`
 
     Key|Value|Description
     :---:|:---:|:---:
-    fields (require)| account/project/developers/develop_team_function/develop_team_sub_function/status/initiator/assigner/title/description/expected_develop_duration_day/actual_develop_duration_day/repository_url/parent| which fields need to be validate
+    account | 3 | account id
+    project | 1 | project id
+    developers | {"memeber": ["10612704", "10712714", "5825225"], "contactor": "D12345685"} | developers group
+    develop_team_function | QT | the function of develop team
+    develop_team_sub_function | PQT | the sub function of develop team
+    status |{ "p1": {"initiator": "Accept"} }| current order status
+    initiator| Z10612704 | employee_id of initiator
+    assigner | Z10752135 | employee_id of assigner
+    title | this is a good title | order's title
+    description | this is a good description | order's description
+    expected_develop_duration_day | 20.5 | the expected develope duration
+    actual_develop_duration_day | 10.5 | the actual develope duration
+    repository_url | www.abc.com | the result repository url
+    parent | 12 | the parent id of order
 
 - HEADERS
 
@@ -591,7 +612,7 @@ Update partial details of specific orders by `id`
 
 ### `GET` Fetch Order's Ancestor Collection by Order Id
 
-```text
+```url
 {{service_url}}/api/orders/:id/ancestors/
 ```
 
@@ -746,7 +767,7 @@ Fetch order's ancestor collection by orders `id`
 
 ### `GET` Fetch Order's Signature Collection by Order Id
 
-```text
+```url
 {{service_url}}/api/orders/:order_id/signatures/
 ```
 
@@ -826,11 +847,15 @@ Fetch order's signature collection by order's `id`
 
 ### `PUT` Update Order's Signature Deatail by Order Id and Signature Id
 
-```text
+```url
 {{service_url}}/api/orders/:order_id/signatures/:signature_id/
 ```
 
 Fetch order's signature collection by order's `id` and signature's `id`
+
+- PERMISSSION
+
+    Only current signaturer can use
 
 - PATH VARIABLES
 
@@ -873,8 +898,8 @@ Fetch order's signature collection by order's `id` and signature's `id`
 
 ### `GET` Filter Histories Collection by Order Id
 
-```text
-{{service_url}}/api/histories/?orders_id=10
+```url
+{{service_url}}/api/histories/?param1=value1
 ```
 
 Filter histories resource by order_id
@@ -883,7 +908,7 @@ Filter histories resource by order_id
 
     Key|Value|Description
     :---:|:---:|:---:
-    orders_id| 10 | orders id
+    order_id| 10 | order id
 
 - HEADERS
 
@@ -911,7 +936,7 @@ Filter histories resource by order_id
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
             },
             "timestamp": "2020-03-20T08:26:38.093183Z",
-            "orders_id": 10,
+            "order_id": 10,
         },
         {
             "id": 3,
@@ -921,14 +946,14 @@ Filter histories resource by order_id
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
             },
             "timestamp": "2020-03-21T08:26:38.093183Z",
-            "orders_id": 10,
+            "order_id": 10,
         },
     ]
     ```
 
 ### `POST` Create User's Comment Histories
 
-```text
+```url
 {{service_url}}/api/histories/
 ```
 
@@ -952,7 +977,7 @@ Create a new user's comment histories
     ```json
     {
         "comment": "<br>There is a user comment</br>",
-        "orders_id": 10
+        "order_id": 10
     }
     ```
 
@@ -967,7 +992,7 @@ Create a new user's comment histories
             "display_name": "Jeff Sh Wang/WHQ/Wistron"
         },
         "timestamp": "2020-03-20T08:26:38.093183Z",
-        "orders_id": 10
+        "order_id": 10
     }
     ```
 
@@ -977,7 +1002,7 @@ Create a new user's comment histories
 
 ### `GET` Filter Documents Collection by Order Id
 
-```text
+```url
 {{service_url}}/api/documents/?param1=value1
 ```
 
@@ -1030,11 +1055,11 @@ Filter documents resource by order_id
 
 ### `GET` Fetch a Specific Documents
 
-```text
+```url
 {{service_url}}/api/documents/:id/
 ```
 
-Fetch a specific documents resource by `id`
+Fetch a specific documents resource by documents `id`
 
 - PATH VARIABLES
     Variable|Description
@@ -1071,7 +1096,7 @@ Fetch a specific documents resource by `id`
 
 ### `POST` Create a Documents
 
-```text
+```url
 {{service_url}}/api/documents/
 ```
 
@@ -1115,13 +1140,13 @@ Create a new documents
     }
     ```
 
-### `PUT` Update Documents Detail
+### `PATCH` Update Partially Specific Documents Detail
 
-```text
+```url
 {{service_url}}/api/documents/:id/
 ```
 
-Update details of a documents by `id`
+Update partial details of specific documents by document `id`
 
 - PERMISSSION
 
@@ -1132,6 +1157,13 @@ Update details of a documents by `id`
     Variable|Description
     :---: | :---:
     id | document id
+
+- PARAMS
+
+    Key|Value|Description
+    :---:|:---:|:---:
+    name | 123.txt | the filename of documents
+    description | This is a good description | the filedescriptionname of documents
 
 - HEADERS
 
@@ -1147,10 +1179,8 @@ Update details of a documents by `id`
     ```json
     {
         "id": 1,
-        "path": (binary),
         "name": "filename.txt",
         "description": "There is document description",
-        "order_id": 1,
     }
     ```
 
@@ -1161,16 +1191,12 @@ Update details of a documents by `id`
         "id": 1,
         "name": "filename.txt",
         "description": "There is document description",
-        "order_id": 1,
-        "path": "http://dqms.wistron.com/document_1.pdf",
-        "size": "1024000",
-        "created_time": "2020-03-21T08:26:38.093183Z",
     }
     ```
 
 ### `DEL` Delete Documents Detail
 
-```text
+```url
 {{service_url}}/api/documents/:id/
 ```
 
@@ -1211,20 +1237,19 @@ Delete a documents detail by `id`
 
 ## Schedules Operation
 
-### `GET` Filter Schedules Collection by Order Id and Editor Role
+### `GET` Filter Schedules Collection by Order Id
 
-```text
-{{service_url}}/api/schedules/?param1=value1&param2=value2
+```url
+{{service_url}}/api/schedules/?param1=value1
 ```
 
-Filter schedules resource by order_id and editor role
+Filter schedules resource by order_id
 
 - PARAMS
 
     Key|Value|Description
     :---:|:---:|:---:
     order_id (option) | 1 | order id
-    editor_role (option) | assigner / developers | editor_role
 
 - HEADERS
 
@@ -1240,83 +1265,119 @@ Filter schedules resource by order_id and editor role
     {}
     ```
 
-    Example response 1
+    Example response
 
     ```json
     [
         {
             "id": 1,
-            "event_name": "MVP Time",
-            "current_time": "2020-03-21T08:49:38.093183Z",
+            "event_name": "Project Begin Time",
+            "description": "This is a milestone.",
             "expected_time": "2020-03-21T08:59:38.093183Z",
             "complete_rate": 15,
-            "editor_role": "developers",
-            "time_tracker": [
-                "2020-03-21T08:26:38.093183Z",
-                "2020-03-21T08:37:38.093183Z",
-                "2020-03-21T08:49:38.093183Z",
-            ],
+            "version": "1",
+            "created_time": "2020-01-20T08:59:38.093183Z",
             "order_id": 1,
         },
         {
             "id": 2,
-            "event_name": "MVP Time2",
-            "current_time": "2020-03-21T08:49:38.093183Z",
+            "event_name": "Project End Time",
+            "description": "This is a milestone.",
             "expected_time": "2020-03-21T08:59:38.093183Z",
             "complete_rate": 15,
-            "editor_role": "developers",
-            "time_tracker": [
-                "2020-03-21T08:26:38.093183Z",
-                "2020-03-21T08:37:38.093183Z",
-                "2020-03-21T08:49:38.093183Z",
-            ],
+            "version": "1",
+            "created_time": "2020-01-20T08:59:38.093183Z",
             "order_id": 1,
         },
-    ],
-    ```
-
-    Example response 2
-
-    ```json
-    [
-        {
-            "id": 1,
-            "event_name": "MVP Time",
-            "current_time": "2020-03-21T08:49:38.093183Z",
-            "expected_time": "2020-03-21T08:59:38.093183Z",
-            "complete_rate": 15,
-            "editor_role": "assigner",
-            "time_tracker": [
-                "2020-03-21T08:26:38.093183Z",
-                "2020-03-21T08:37:38.093183Z",
-                "2020-03-21T08:49:38.093183Z",
-            ],
-            "order_id": 1,
-        },
-        {
-            "id": 2,
-            "event_name": "MVP Time2",
-            "current_time": "2020-03-21T08:49:38.093183Z",
-            "expected_time": "2020-03-21T08:59:38.093183Z",
-            "complete_rate": 15,
-            "editor_role": "assigner",
-            "time_tracker": [
-                "2020-03-21T08:26:38.093183Z",
-                "2020-03-21T08:37:38.093183Z",
-                "2020-03-21T08:49:38.093183Z",
-            ],
-            "order_id": 1,
-        },
-    ],
+    ]
     ```
 
 - Default
 
-    event_name : mvp_time, expected_develop_begin_time, expected_develop_end_time
+    event_name : `Project Begin Time`, `Project End Time`, `MVP Time`
+
+### `GET` Filter Schedules Group Tracker by Order Id
+
+```url
+{{service_url}}/api/schedules/group_tracker/?param1=value1
+```
+
+Filter schedules group_tracker resource by order_id
+
+- PARAMS
+
+    Key|Value|Description
+    :---:|:---:|:---:
+    order_id (required) | 1 | order id
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {}
+    ```
+
+    Example resonse
+
+    ```json
+    {
+        "1":[
+            {
+                "id": 1,
+                "event_name": "Project Begin Time",
+                "description": "This is a milestone.",
+                "expected_time": "2020-03-21T08:59:38.093183Z",
+                "complete_rate": 15,
+                "version": "1",
+                "created_time": "2020-01-20T08:59:38.093183Z",
+                "order_id": 1,
+            },
+            {
+                "id": 2,
+                "event_name": "Project End Time",
+                "description": "This is a milestone.",
+                "expected_time": "2020-03-21T08:59:38.093183Z",
+                "complete_rate": 15,
+                "version": "1",
+                "created_time": "2020-01-20T08:59:38.093183Z",
+                "order_id": 1,
+            },
+        ],
+        "2":[
+            {
+                "id": 1,
+                "event_name": "Project Begin Time",
+                "description": "This is a milestone.",
+                "expected_time": "2020-03-21T08:59:38.093183Z",
+                "complete_rate": 15,
+                "version": "2",
+                "created_time": "2020-01-20T08:59:38.093183Z",
+                "order_id": 1,
+            },
+            {
+                "id": 2,
+                "event_name": "Project End Time",
+                "description": "This is a milestone.",
+                "expected_time": "2020-03-21T08:59:38.093183Z",
+                "complete_rate": 15,
+                "version": "2",
+                "created_time": "2020-01-20T08:59:38.093183Z",
+                "order_id": 1,
+            },
+        ]
+    }
+    ```
 
 ### `POST` Create a Schedules
 
-```text
+```url
 {{service_url}}/api/schedules/
 ```
 
@@ -1339,9 +1400,10 @@ Create a new schedules
 
     ```json
     {
-        "event_name": "MVP Time",
-        "current_time": "2020-03-21T08:49:38.093183Z",
-        "expected_time": "",
+        "event_name": "Project End Time",
+        "description": "This is a milestone.",
+        "expected_time": "2020-03-21T08:59:38.093183Z",
+        "version": "1",
         "complete_rate": 15,
         "order_id": 1,
     }
@@ -1351,34 +1413,44 @@ Create a new schedules
 
     ```json
     {
-        "id": 1,
-        "event_name": "MVP Time",
-        "current_time": "2020-03-21T08:49:38.093183Z",
-        "expected_time": "",
+        "event_name": "Project End Time",
+        "description": "This is a milestone.",
+        "expected_time": "2020-03-21T08:59:38.093183Z",
+        "version": "1",
         "complete_rate": 15,
-        "editor_role": "assigner",
-        "time_tracker": [],
-        "order_id": 1
+        "order_id": 1,
     }
     ```
 
-### `PUT` Update Schedules Detail
+### `PATCH` Update Partially Schedules Detail
 
-```text
+```url
 {{service_url}}/api/schedules/:id/
 ```
 
-Update details of schedules by `id`
+Update partial details of schedules by schedule `id`
 
 - PERMISSSION
 
-    Only assigner and developers can use
+    Only assigner can use
 
 - PATH VARIABLES
 
     Variable|Description
     :---: | :---:
     id | schedules id
+
+- PARAMS
+
+    Key|Value|Description
+    :---:|:---:|:---:
+    event_name| Project Begin Time | the name of schedules
+    description | This is a description | the description of schedules
+    expected_time | 2020-03-21T08:59:38.093183Z | the expected_time of schedules
+    complete_rate | 15 | the complete_rate of schedules
+    version | 2 | the version of schedules group
+    created_time | 2020-01-21T08:59:38.093183Z | the record time of schedules
+    order_id | 2 | it indicate this record belong to which order
 
 - HEADERS
 
@@ -1389,65 +1461,29 @@ Update details of schedules by `id`
 
 - BODY (raw)
 
-    Example request 1
+    Example request
 
     ```json
     {
         "id": 1,
         "event_name": "MVP Time",
-        "current_time": "2020-03-21T08:49:38.093183Z",
         "expected_time": "2020-03-21T08:59:38.093183Z",
-        "complete_rate": "15",
-        "order_id": 1
     }
     ```
 
-    Example response 1
+    Example response
 
     ```json
     {
         "id": 1,
         "event_name": "MVP Time",
-        "current_time": "2020-03-21T08:49:38.093183Z",
         "expected_time": "2020-03-21T08:59:38.093183Z",
-        "editor_role": "assigner",
-        "complete_rate": "15",
-        "time_tracker": [],
-        "order_id": 1
-    }
-    ```
-
-    Example request 2
-
-    ```json
-    {
-        "id": 1,
-        "event_name": "MVP Time",
-        "current_time": "2020-03-21T08:59:38.093183Z",
-        "expected_time": "",
-        "complete_rate": "15",
-        "order_id": 1
-    }
-    ```
-
-    Example response 2
-
-    ```json
-    {
-        "id": 1,
-        "event_name": "MVP Time",
-        "current_time": "2020-03-21T08:59:38.093183Z",
-        "expected_time": "",
-        "complete_rate": "15",
-        "editor_role": "assigner",
-        "time_tracker": ["2020-03-21T08:49:38.093183Z"],
-        "order_id": 1
     }
     ```
 
 ### `DEL` Delete Schedules Detail
 
-```text
+```url
 {{service_url}}/api/schedules/:id/
 ```
 
@@ -1455,7 +1491,7 @@ Delete a schedules detail by `id`
 
 - PERMISSSION
 
-    Only assigner and developers can use
+    Only assigner can use
 
 - PATH VARIABLES
 
@@ -1486,6 +1522,116 @@ Delete a schedules detail by `id`
 
 ---
 
+## Development Progress Operation
+
+### `GET` Filter Development Progress Collection by Order Id
+
+```url
+{{service_url}}/api/progress/?param1=value1
+```
+
+Filter progress resource by order_id
+
+- PARAMS
+
+    Key|Value|Description
+    :---:|:---:|:---:
+    order_id| 10 | order id
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {}
+    ```
+
+    Example response
+
+    ```json
+    [
+        {
+            "id": 2,
+            "develop_time": "2020-03-20T08:26:38.093183Z",
+            "employee": {
+                "employee_id": "10612704",
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+            },
+            "comment": "This is a comment column.",
+            "complete_rate": 10,
+            "created_time": "2020-03-20T08:26:38.093183Z",
+            "order_id": 10,
+        },
+        {
+            "id": 2,
+            "develop_time": "2020-03-20T08:26:38.093183Z",
+            "employee": {
+                "employee_id": "10612704",
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+            },
+            "comment": "This is a comment column.",
+            "complete_rate": 20,
+            "created_time": "2020-03-20T08:26:38.093183Z",
+            "order_id": 10,
+        },
+    ]
+    ```
+
+### `POST` Create Development Progress
+
+```url
+{{service_url}}/api/progress/
+```
+
+Create a new development progress on specific order
+
+- PERMISSSION
+
+    Only developers can use
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+    X-CSRFToken | {{ CSRF_COOKIE_NAME }}
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {
+        "develop_time": "2020-03-20T08:26:38.093183Z",
+        "comment": "<br>There is a user comment</br>",
+        "complete_rate": 20,
+        "order_id": 10
+    }
+    ```
+
+    Example response
+
+    ```json
+    {
+        "id": 2,
+        "comment": "<br>There is a user comment</br>",
+        "employee": {
+            "employee_id": "10612704",
+            "display_name": "Jeff Sh Wang/WHQ/Wistron"
+        },
+        "timestamp": "2020-03-20T08:26:38.093183Z",
+        "order_id": 10
+    }
+    ```
+
+---
+
 ## Notifications Operation
 
 ### `GET` Fetch Notifications Collection by Current User
@@ -1500,7 +1646,7 @@ Fetch notifications collection resource by current user
 
     Key|Value|Description
     :---:|:---:|:---:
-    read | True/False | notifications read status  (exact search)
+    read | true/false | notifications read status  (exact search)
 
 - HEADERS
 
@@ -1549,7 +1695,7 @@ Fetch notifications collection resource by current user
 
 ### `PUT` Update Notifications Detail
 
-```text
+```url
 {{service_url}}/api/notifications/:id/
 ```
 
@@ -1598,63 +1744,11 @@ Update detail of notifications by `id`
 
 ---
 
-## Assigners Operation
-
-### `GET` Filter Assigner by Develop Team Sub Funciton & Project Id
-
-```text
-{{service_url}}/api/assigners/?param1=value1&param2=value2
-```
-
-Filter a specific assigner resource via develop_team_sub_function and project_id
-
-- PARAMS
-
-    Key|Value|Description
-    :---:|:---:|:---:
-    sub_function (require) | BIOS/TSC/PQT/DQMS | develop_team_sub_function
-    project_id (require) | 1 | project id
-
-- HEADERS
-
-    Key|Value
-    :---: | :---:
-    Content-Type | application/json
-
-- BODY (raw)
-
-    Example request
-
-    ```json
-    {}
-    ```
-
-    Example response
-
-    ```json
-    [
-        {
-            "employee_id": "10612704",
-            "display_name": "Jeff SH Wang/WHQ/Wistron",
-            "extension": "85014815",
-            "job_title": "工程師",
-        },
-        {
-            "employee_id": "10712714",
-            "display_name": "Leo Tu/WHQ/Wistron",
-            "extension": "85014817",
-            "job_title": "工程師",
-        },
-    ]
-    ```
-
----
-
 ## Employees Operation
 
 ### `GET` Search Employees with Site / Employee Id / English Name / Extension / Department ID
 
-```text
+```url
 {{service_url}}/api/employees/?param1=value1&param2=value2...
 ```
 
@@ -1709,7 +1803,7 @@ Search employees resource with site / employee_id / english_name / extension / d
 
 ### `GET` Fetch Current Employee
 
-```text
+```url
 {{service_url}}/api/employees/me/
 ```
 
@@ -1742,11 +1836,63 @@ Fetch current employees detail
 
 ---
 
+## Assigners Operation
+
+### `GET` Filter Assigner by Develop Team Sub Funciton & Project Id
+
+```url
+{{service_url}}/api/assigners/?param1=value1&param2=value2
+```
+
+Filter a specific assigner resource via develop_team_sub_function and project_id
+
+- PARAMS
+
+    Key|Value|Description
+    :---:|:---:|:---:
+    sub_function (require) | BIOS/TSC/PQT/DQMS | develop_team_sub_function
+    project_id (require) | 1 | project id
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {}
+    ```
+
+    Example response
+
+    ```json
+    [
+        {
+            "employee_id": "10612704",
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
+            "extension": "85014815",
+            "job_title": "工程師",
+        },
+        {
+            "employee_id": "10712714",
+            "display_name": "Leo Tu/WHQ/Wistron",
+            "extension": "85014817",
+            "job_title": "工程師",
+        },
+    ]
+    ```
+
+---
+
 ## Accounts Operation
 
 ### `GET` Fiter Accounts Collection by Develop Team Sub Function
 
-```text
+```url
 {{service_url}}/api/accounts/?param1=value1
 ```
 
@@ -1813,7 +1959,7 @@ Filter accounts collection resource by develop_team_sub_function
 
 ### `GET` Filter Projects Collection by Account Id
 
-```text
+```url
 {{service_url}}/api/projects/?param1=value1
 ```
 
@@ -1894,7 +2040,7 @@ Fetch projects collection resource by account id
 
 ### `GET` Fetch Options Value
 
-```text
+```url
 {{service_url}}/api/options/?field=value1
 ```
 
@@ -2003,13 +2149,13 @@ parent: ForeignKey
 
 id: IntegerField (primary_key=True)
 
-editor: JSONField
+editor: CharField
 
 comment: TextField
 
 created_time: DateTimeField
 
-orders_id: ForeignKey
+order_id: ForeignKey
 
 ---
 
@@ -2037,13 +2183,55 @@ id: IntegerField (primary_key=True)
 
 event_name: CharField
 
-current_time: DateTimeField
+description: CharField
 
 expected_time: DateTimeField
 
 complete_rate: PositiveIntegerField
 
-time_tracker: ArrayField
+created_time: ArrayField
+
+version: CharField
+
+order_id: ForeignKey
+
+---
+
+`ScheduleGroupTracker Table`
+
+id: IntegerField (primary_key=True)
+
+event_name: CharField
+
+description: CharField
+
+comment: CharField
+
+expected_time: DateTimeField
+
+complete_rate: PositiveIntegerField
+
+created_time: ArrayField
+
+version: CharField
+
+order_id: ForeignKey
+
+---
+
+`ProgressTracker Table`
+
+id: IntegerField (primary_key=True)
+
+employee: CharField
+
+develop_time: DateTimeField
+
+comment: CharField
+
+complete_rate: PositiveIntegerField
+
+created_time: ArrayField
 
 order_id: ForeignKey
 
@@ -2101,7 +2289,7 @@ link: URLField
 
 title: CharField
 
-read: BoolField (true, false, null)
+read: BoolField (true, false)
 
 created_time: DateTimeField
 
