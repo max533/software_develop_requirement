@@ -16,6 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from .views import force_login
+
+app_name = 'users'
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('force_login/', force_login, name='force-login'),
 ]
