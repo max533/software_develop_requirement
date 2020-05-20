@@ -62,11 +62,11 @@
     - [ ] [`GET` Filter Histories Collection by Order Id](#get-filter-histories-collection-by-order-id)
     - [ ] [`POST` Create User's Comment Histories](#post-create-users-comment-histories)
   - [Documents Operation](#documents-operation)
-    - [ ] [`GET` Filter Documents Collection by Order Id](#get-filter-documents-collection-by-order-id)
-    - [ ] [`GET` Fetch a Specific Documents](#get-fetch-a-specific-documents)
-    - [ ] [`POST` Create a Documents](#post-create-a-documents)
-    - [ ] [`PATCH` Update Partially Specific Documents Detail](#patch-update-partially-specific-documents-detail)
-    - [ ] [`DEL` Delete Documents Detail](#del-delete-documents-detail)
+    - [x] [`GET` Filter Documents Collection by Order Id](#get-filter-documents-collection-by-order-id)
+    - [x] [`GET` Fetch a Specific Documents](#get-fetch-a-specific-documents)
+    - [x] [`POST` Create a Documents](#post-create-a-documents)
+    - [x] [`PATCH` Update Partially Specific Documents Detail](#patch-update-partially-specific-documents-detail)
+    - [x] [`DEL` Delete Documents Detail](#del-delete-documents-detail)
   - [Schedules Operation](#schedules-operation)
     - [ ] [`GET` Filter Schedules Collection by Order Id](#get-filter-schedules-collection-by-order-id)
     - [ ] [`GET` Filter Schedules Group Tracker by Order Id](#get-filter-schedules-group-tracker-by-order-id)
@@ -810,7 +810,7 @@ Fetch order's signature collection by order's `id`
             "comment": "OK",
             "timestamp": "2020-03-10T08:26:38.093183Z",
             "role_group": "initiator",
-            "order_id": 1,
+            "order": 1,
         },
         {
             "id": 2,
@@ -825,7 +825,7 @@ Fetch order's signature collection by order's `id`
             "comment": "",
             "timestamp": null,
             "role_group": "initiator",
-            "order_id": 1,
+            "order": 1,
         },
         {
             "id": 3,
@@ -840,7 +840,7 @@ Fetch order's signature collection by order's `id`
             "comment": "",
             "timestamp": null,
             "role_group": "developers",
-            "order_id": 1,
+            "order": 1,
         },
     ]
     ```
@@ -902,13 +902,13 @@ Fetch order's signature collection by order's `id` and signature's `id`
 {{service_url}}/api/histories/?param1=value1
 ```
 
-Filter histories resource by order_id
+Filter histories resource by order
 
 - PARAMS
 
     Key|Value|Description
     :---:|:---:|:---:
-    order_id| 10 | order id
+    order| 10 | order id
 
 - HEADERS
 
@@ -936,7 +936,7 @@ Filter histories resource by order_id
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
             },
             "timestamp": "2020-03-20T08:26:38.093183Z",
-            "order_id": 10,
+            "order": 10,
         },
         {
             "id": 3,
@@ -946,7 +946,7 @@ Filter histories resource by order_id
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
             },
             "timestamp": "2020-03-21T08:26:38.093183Z",
-            "order_id": 10,
+            "order": 10,
         },
     ]
     ```
@@ -977,7 +977,7 @@ Create a new user's comment histories
     ```json
     {
         "comment": "<br>There is a user comment</br>",
-        "order_id": 10
+        "order": 10
     }
     ```
 
@@ -992,7 +992,7 @@ Create a new user's comment histories
             "display_name": "Jeff Sh Wang/WHQ/Wistron"
         },
         "timestamp": "2020-03-20T08:26:38.093183Z",
-        "order_id": 10
+        "order": 10
     }
     ```
 
@@ -1006,13 +1006,13 @@ Create a new user's comment histories
 {{service_url}}/api/documents/?param1=value1
 ```
 
-Filter documents resource by order_id
+Filter documents resource by order
 
 - PARAMS
 
     Key|Value|Description
     :---:|:---:|:---:
-    order_id | 1 | order id
+    order | 1 | order id
 
 - HEADERS
 
@@ -1036,7 +1036,7 @@ Filter documents resource by order_id
             "id": 1,
             "name": "filename1.txt",
             "path": "http://dqms.wistron.com/document_1.pdf",
-            "order_id": 1,
+            "order": 1,
             "description": "There is document1 description",
             "size": "1024000",
             "created_time": "2020-03-21T08:26:38.093183Z",
@@ -1045,7 +1045,7 @@ Filter documents resource by order_id
             "id": 2,
             "name": "filename2.txt",
             "path": "http://dqms.wistron.com/document_2.pdf",
-            "order_id": 1,
+            "order": 1,
             "description": "There is document2 description",
             "size": "2048000",
             "created_time": "2020-03-21T08:26:38.093183Z",
@@ -1087,7 +1087,7 @@ Fetch a specific documents resource by documents `id`
         "id": 1,
         "name": "filename.txt",
         "description": "There is document description",
-        "order_id": 1,
+        "order": 1,
         "path": "http://dqms.wistron.com/document_1.pdf",
         "size": "1024000",
         "created_time": "2020-03-21T08:26:38.093183Z",
@@ -1122,7 +1122,7 @@ Create a new documents
         "path": (binary),
         "name": "filename.txt",
         "description": "There is document description",
-        "order_id": 1,
+        "order": 1,
     }
     ```
 
@@ -1133,7 +1133,7 @@ Create a new documents
         "id": 1,
         "name": "filename.txt",
         "description": "There is document description",
-        "order_id": 1,
+        "order": 1,
         "path": "http://dqms.wistron.com/document_1.pdf",
         "size": "1024000",
         "created_time": "2020-03-21T08:26:38.093183Z",
@@ -1243,13 +1243,13 @@ Delete a documents detail by `id`
 {{service_url}}/api/schedules/?param1=value1
 ```
 
-Filter schedules resource by order_id
+Filter schedules resource by order id
 
 - PARAMS
 
     Key|Value|Description
     :---:|:---:|:---:
-    order_id (option) | 1 | order id
+    order (option) | 1 | order id
 
 - HEADERS
 
@@ -1277,7 +1277,7 @@ Filter schedules resource by order_id
             "complete_rate": 15,
             "version": "1",
             "created_time": "2020-01-20T08:59:38.093183Z",
-            "order_id": 1,
+            "order": 1,
         },
         {
             "id": 2,
@@ -1287,7 +1287,7 @@ Filter schedules resource by order_id
             "complete_rate": 15,
             "version": "1",
             "created_time": "2020-01-20T08:59:38.093183Z",
-            "order_id": 1,
+            "order": 1,
         },
     ]
     ```
@@ -1302,13 +1302,13 @@ Filter schedules resource by order_id
 {{service_url}}/api/schedules/group_tracker/?param1=value1
 ```
 
-Filter schedules group_tracker resource by order_id
+Filter schedules group_tracker resource by order id
 
 - PARAMS
 
     Key|Value|Description
     :---:|:---:|:---:
-    order_id (required) | 1 | order id
+    order (required) | 1 | order id
 
 - HEADERS
 
@@ -1337,7 +1337,7 @@ Filter schedules group_tracker resource by order_id
                 "complete_rate": 15,
                 "version": "1",
                 "created_time": "2020-01-20T08:59:38.093183Z",
-                "order_id": 1,
+                "order": 1,
             },
             {
                 "id": 2,
@@ -1347,7 +1347,7 @@ Filter schedules group_tracker resource by order_id
                 "complete_rate": 15,
                 "version": "1",
                 "created_time": "2020-01-20T08:59:38.093183Z",
-                "order_id": 1,
+                "order": 1,
             },
         ],
         "2":[
@@ -1359,7 +1359,7 @@ Filter schedules group_tracker resource by order_id
                 "complete_rate": 15,
                 "version": "2",
                 "created_time": "2020-01-20T08:59:38.093183Z",
-                "order_id": 1,
+                "order": 1,
             },
             {
                 "id": 2,
@@ -1369,7 +1369,7 @@ Filter schedules group_tracker resource by order_id
                 "complete_rate": 15,
                 "version": "2",
                 "created_time": "2020-01-20T08:59:38.093183Z",
-                "order_id": 1,
+                "order": 1,
             },
         ]
     }
@@ -1405,7 +1405,7 @@ Create a new schedules
         "expected_time": "2020-03-21T08:59:38.093183Z",
         "version": "1",
         "complete_rate": 15,
-        "order_id": 1,
+        "order": 1,
     }
     ```
 
@@ -1418,7 +1418,7 @@ Create a new schedules
         "expected_time": "2020-03-21T08:59:38.093183Z",
         "version": "1",
         "complete_rate": 15,
-        "order_id": 1,
+        "order": 1,
     }
     ```
 
@@ -1450,7 +1450,7 @@ Update partial details of schedules by schedule `id`
     complete_rate | 15 | the complete_rate of schedules
     version | 2 | the version of schedules group
     created_time | 2020-01-21T08:59:38.093183Z | the record time of schedules
-    order_id | 2 | it indicate this record belong to which order
+    order | 2 | it indicate this record belong to which order
 
 - HEADERS
 
@@ -1530,13 +1530,13 @@ Delete a schedules detail by `id`
 {{service_url}}/api/progress/?param1=value1
 ```
 
-Filter progress resource by order_id
+Filter progress resource by order id
 
 - PARAMS
 
     Key|Value|Description
     :---:|:---:|:---:
-    order_id| 10 | order id
+    order| 10 | order id
 
 - HEADERS
 
@@ -1566,7 +1566,7 @@ Filter progress resource by order_id
             "comment": "This is a comment column.",
             "complete_rate": 10,
             "created_time": "2020-03-20T08:26:38.093183Z",
-            "order_id": 10,
+            "order": 10,
         },
         {
             "id": 2,
@@ -1578,7 +1578,7 @@ Filter progress resource by order_id
             "comment": "This is a comment column.",
             "complete_rate": 20,
             "created_time": "2020-03-20T08:26:38.093183Z",
-            "order_id": 10,
+            "order": 10,
         },
     ]
     ```
@@ -1611,7 +1611,7 @@ Create a new development progress on specific order
         "develop_time": "2020-03-20T08:26:38.093183Z",
         "comment": "<br>There is a user comment</br>",
         "complete_rate": 20,
-        "order_id": 10
+        "order": 10
     }
     ```
 
@@ -1626,7 +1626,7 @@ Create a new development progress on specific order
             "display_name": "Jeff Sh Wang/WHQ/Wistron"
         },
         "timestamp": "2020-03-20T08:26:38.093183Z",
-        "order_id": 10
+        "order": 10
     }
     ```
 
@@ -1669,24 +1669,27 @@ Fetch notifications collection resource by current user
         {
             "id": 1,
             "link": "http://xxx.xxx.xxx.xxx/?abc=123",
-            "title": "As Title 1",
             "read": false,
+            "category": "signature",
+            "initiator": "10612704",
             "created_time": "2020-03-10T08:26:38.093183Z",
             "owner": "10612704",
         },
         {
             "id": 2,
             "link": "http://xxx.xxx.xxx.xxx/?def=123",
-            "title": "As Title 2",
             "read": false,
+            "category": "signature",
+            "initiator": "10612704",
             "created_time": "2020-03-10T08:26:38.093183Z",
             "owner": "10612704",
         },
         {
             "id": 3,
             "link": "http://xxx.xxx.xxx.xxx/?def=123",
-            "title": "As Title 3",
             "read": true,
+            "category": "signature",
+            "initiator": "10612704",
             "created_time": "2020-03-10T08:26:38.093183Z",
             "owner": "10612704",
         },
@@ -1734,9 +1737,10 @@ Update detail of notifications by `id`
     ```json
     {
         "id": 1,
-        "link": "http://xxx.xxx.xxx.xxx/?abc=123",
-        "title": "As Title 1",
+        "link": "http://xxx.xxx.xxx.xxx/?order=123",
         "read": true,
+        "category": "signature",
+        "initiator": "10612704",
         "created_time": "2020-03-10T08:26:38.093183Z",
         "owner": "10612704",
     }
@@ -1758,11 +1762,11 @@ Search employees resource with site / employee_id / english_name / extension / d
 
     Key|Value|Description
     :---:|:---:|:---:
-    site__exact (option)| WNH | employee location (exact search)
-    employee_id__icontains (option)| 10612704 | employee id (fuzzy search and case insensitive)
-    english_name__icontains (option)| Jeff SH Wang | employee english_name (fuzzy search and case insensitive)
-    extension__icontains (option)| 4815556 | employee extension (fuzzy search and case insensitive)
-    department_id__icontains (option)| ESQ | department id (fuzzy search and case insensitive)
+    site (option)| WNH | employee location (exact search)
+    employee_id (option)| 10612704 | employee id (fuzzy search and case insensitive)
+    english_name (option)| Jeff SH Wang | employee english_name (fuzzy search and case insensitive)
+    extension (option)| 4815556 | employee extension (fuzzy search and case insensitive)
+    department_id (option)| ESQ | department id (fuzzy search and case insensitive)
 
 - HEADERS
 
@@ -2155,7 +2159,7 @@ comment: TextField
 
 created_time: DateTimeField
 
-order_id: ForeignKey
+order: ForeignKey
 
 ---
 
@@ -2173,7 +2177,7 @@ size: IntegerField
 
 created_time: DateTimeField
 
-order_id: ForeignKey
+order: ForeignKey
 
 ---
 
@@ -2193,7 +2197,7 @@ created_time: ArrayField
 
 version: CharField
 
-order_id: ForeignKey
+order: ForeignKey
 
 ---
 
@@ -2215,7 +2219,7 @@ created_time: ArrayField
 
 version: CharField
 
-order_id: ForeignKey
+order: ForeignKey
 
 ---
 
@@ -2231,9 +2235,9 @@ comment: CharField
 
 complete_rate: PositiveIntegerField
 
-created_time: ArrayField
+created_time: DateTimeField
 
-order_id: ForeignKey
+order: ForeignKey
 
 ---
 
@@ -2277,7 +2281,7 @@ signed_time: DateTimeField
 
 role_group: CharField
 
-order_id: ForeignKey
+order: ForeignKey
 
 ---
 
@@ -2287,9 +2291,11 @@ id: IntegerField (primary_key=True)
 
 link: URLField
 
-title: CharField
-
 read: BoolField (true, false)
+
+category: CharField (Ex/signature, develop, return, close)
+
+initiator: CharField
 
 created_time: DateTimeField
 

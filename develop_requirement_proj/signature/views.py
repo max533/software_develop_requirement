@@ -10,8 +10,8 @@ class IndexView(TemplateView):
     template_name = "drs.html"
 
 
-class DownloadView(View):
-    # login_url = '/cas/login'
+class DownloadView(LoginRequiredMixin, View):
+    login_url = '/cas/login'
 
     def get(self, request, relative_filename, *args, **kwargs):
         """

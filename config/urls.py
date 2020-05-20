@@ -36,7 +36,9 @@ urlpatterns += [
 ]
 
 if settings.DEBUG:
-
+    urlpatterns += [
+        path('users/', include("develop_requirement_proj.users.urls"))
+    ]
     if "debug_toolbar" in settings.INSTALLED_APPS:
         import debug_toolbar
 
