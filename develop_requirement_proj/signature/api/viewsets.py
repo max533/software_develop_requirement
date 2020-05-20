@@ -8,9 +8,11 @@ from employee.api.serializers import EmployeeSerializer
 from rest_framework import mixins, serializers, views, viewsets
 from rest_framework.response import Response
 
-from ..models import Account, Project
+from ..models import Account, Document, Project
 # from .filters import ProjectFilter
-from .serializers import AccountSerializer, ProjectSerializer
+from .serializers import (
+    AccountSerializer, DocumentSerializer, ProjectSerializer,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -131,4 +133,17 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
             # Query the assigner via asssigner_list
             queryset.extend(Employee.objects.using('hr').filter(employee_id__in=assigner_list))
 
+        return queryset
+
+
+class DocumentViewSet(viewsets.ModelViewSet):
+    """ Provide Document resource by order_id """
+    queryset = Document.objects.all()
+    serializer_class = DocumentSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+        order_id = self.request.query_params.get("order_id", None)
+        if order_id is not None:
+            queryset = queryset.filter(order=order_id)
         return queryset

@@ -14,21 +14,21 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 import django_cas_ng.views
+from develop_requirement_proj.signature.views import DownloadView, IndexView
 
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
-from develop_requirement_proj.signature.views import IndexView
-
-
 urlpatterns = [
+    path('', IndexView.as_view(), name='index'),
     path('admin/', admin.site.urls),
     path('cas/login', django_cas_ng.views.LoginView.as_view(), name='cas_ng_login'),
     path('cas/logout', django_cas_ng.views.LogoutView.as_view(), name='cas_ng_logout'),
     path('cas/callback', django_cas_ng.views.CallbackView.as_view(), name='cas_ng_proxy_callback'),
-    path('', IndexView.as_view() ,name='index'),
+    path('download/<str:relative_filename>', DownloadView.as_view(), name='download'),
 ]
+
 
 # API URLS
 urlpatterns += [

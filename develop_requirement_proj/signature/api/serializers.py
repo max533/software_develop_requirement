@@ -1,5 +1,10 @@
 """ signature app's api serializers.py """
+from pathlib import Path
+from urllib.parse import urlparse, urlunparse
+
 from rest_framework import serializers
+
+from ..models import Document
 
 
 class AccountBaseSerializer(serializers.Serializer):
@@ -29,3 +34,25 @@ class ProjectSerializer(serializers.Serializer):
     product_line = serializers.CharField(read_only=True)
     business_model = serializers.CharField(read_only=True)
     account = AccountBaseSerializer()
+
+
+class DocumentSerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+        """ Automatically add file size and uploader """
+        validated_data['size'] = self.context['request'].FILES['path'].size
+        validated_data['uploader'] = self.context['request'].user.username
+        return Document.objects.create(**validated_data)
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        url = urlparse(ret['path'])
+        filepath = str(Path('download') / instance.path.name)
+        parts = (url.scheme, url.netloc, filepath, '', '', '')
+        ret['path'] = urlunparse(parts)
+        return ret
+
+    class Meta:
+        model = Document
+        fields = "__all__"
+        read_only_fields = ['size', 'created_time', 'uploader']
