@@ -1,4 +1,10 @@
 """ signature database model """
+from mptt.models import MPTTModel, TreeForeignKey
+
+from django.conf import settings
+from django.contrib.postgres import fields
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class Account:
@@ -75,3 +81,50 @@ class Project:
             f"{self.account}"
             f")"
         )
+
+
+class Order(MPTTModel):
+    """ Order Model """
+    account = models.IntegerField(_("order's account"))
+    project = models.IntegerField(_("order's project"))
+    develop_team_function = models.CharField(_("developer's function team"), max_length=20)
+    develop_team_sub_function = models.CharField(_("developer's sub function team"), max_length=20)
+    status = fields.JSONField(_("order's current status"), default=dict)
+    initiator = models.CharField(_("initiator's employee_id"), max_length=50)
+    assigner = models.CharField(_("assigner's employee_id"), max_length=50)
+    developers = fields.JSONField(_("employee_ids of the developer's contactor and member"), default=dict)
+    title = models.CharField(max_length=500)
+    description = models.TextField()
+    form_begin_time = models.DateTimeField(_("order's begin time"), auto_now_add=True)
+    form_end_time = models.DateTimeField(_("order's end time"), null=True)
+    expected_develop_duration_day = models.FloatField(_("expected develop duration (days)"), null=True, blank=True)
+    actual_develop_duration_day = models.FloatField(_("actual develop duration (days)"), null=True, blank=True)
+    repository_url = models.URLField(_("repository url of source code"), max_length=1000)
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+
+    class Meta:
+        ordering = ['form_begin_time']
+        verbose_name = _('order')
+        verbose_name_plural = _('orders')
+
+    def __str__(self):
+        return f'id:{self.id}, <{self.title}>'
+
+
+class Document(models.Model):
+    """ Order's Document Model """
+    path = models.FileField(_("document's relative path"), max_length=200, upload_to=settings.MEDIA_ROOT)
+    name = models.CharField(_("docuemnt's name"), max_length=200)
+    description = models.CharField(_("document's description"), max_length=1000)
+    size = models.PositiveIntegerField()
+    created_time = models.DateTimeField(auto_now_add=True)
+    uploader = models.CharField(max_length=20)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['order', 'created_time']
+        verbose_name = _('document')
+        verbose_name_plural = _('documents')
+
+    def __str__(self):
+        return f'Filename:{self.name}, Order_id:{self.order}'
