@@ -128,3 +128,43 @@ class Document(models.Model):
 
     def __str__(self):
         return f'Filename:{self.name}, Order_id:{self.order}'
+
+
+class Schedule(models.Model):
+    """ Order's Current Schedule Model """
+    event_name = models.CharField(max_length=100)
+    description = models.TextField()
+    expected_time = models.DateTimeField(null=True)
+    complete_rate = models.PositiveIntegerField(_('the complete rate of schedule event'), null=True)
+    created_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)
+    version = models.IntegerField(_('current_version'), null=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['order', 'created_time']
+        verbose_name = _('schedule')
+        verbose_name_plural = _('schedules')
+
+    def __str__(self):
+        return f'Name:{self.event_name}, Order:{self.order}'
+
+
+class ScheduleTracker(models.Model):
+    """ Order's Schedule Tracker Model"""
+    event_name = models.CharField(max_length=100)
+    description = models.TextField()
+    version = models.IntegerField(null=True)
+    expected_time = models.DateTimeField(null=True)
+    complete_rate = models.PositiveIntegerField(_('the complete rate of schedule event'), null=True)
+    created_time = models.DateTimeField(null=True)
+    update_time = models.DateTimeField(null=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['order', 'version']
+        verbose_name = _('schedule_tracker')
+        verbose_name_plural = _('schedule_trackers')
+
+    def __str__(self):
+        return f'Name:{self.event_name}, Order:{self.order}, Version:{self.version}'

@@ -5,13 +5,17 @@ from develop_requirement_proj.employee.models import Employee
 from develop_requirement_proj.utils.mixins import QueryDataMixin
 from employee.api.serializers import EmployeeSerializer
 
+from django.db.models import Max
+
 from rest_framework import mixins, serializers, views, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..models import Account, Document, Project
+from ..models import Account, Document, Project, Schedule, ScheduleTracker
 # from .filters import ProjectFilter
 from .serializers import (
     AccountSerializer, DocumentSerializer, ProjectSerializer,
+    ScheduleSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -147,3 +151,93 @@ class DocumentViewSet(viewsets.ModelViewSet):
         if order_id is not None:
             queryset = queryset.filter(order=order_id)
         return queryset
+
+
+class ScheduleViewSet(viewsets.ModelViewSet):
+    """ Provide Schedule resource by order_id """
+    queryset = Schedule.objects.all()
+    serializer_class = ScheduleSerializer
+
+    def get_queryset(self):
+        """ Select queryset depend on which action and filter queryset by order_id """
+        queryset = self.queryset
+
+        if self.action in ['group_tracker']:
+            queryset = ScheduleTracker.objects.all()
+
+        order_id = self.request.query_params.get('order', None)
+        if order_id is None:
+            return queryset
+        queryset = queryset.filter(order=order_id)
+
+        return queryset
+
+    @action(methods=['GET'], detail=False, url_path='group_tracker', url_name='group-tracker')
+    def group_tracker(self, request, *args, **kwargs):
+        """ Provide schedule history resource group by version """
+        queryset = self.filter_queryset(self.get_queryset())
+        result = dict()
+        for obj in queryset.values():
+            if obj['version'] not in result:
+                result[obj['version']] = [obj]
+            else:
+                result[obj['version']].append(obj)
+        return Response(result)
+
+    def perform_create(self, serializer):
+        """
+        After creating new schedule, it will record the current schedule
+        with same version in `ScheduleTracker` table.
+        """
+        serializer.save()
+        # Update `Schedule` current version which filter by order_id
+        objs = Schedule.objects.filter(order=serializer.data['order'])
+        for obj in objs:
+            obj.version += 1
+        Schedule.objects.bulk_update(objs, ['version'])
+        # Create `Schedule` history and set primary key for `ScheduleTracker` Table
+        result = ScheduleTracker.objects.aggregate(Max('id'))
+        count = result['id__max'] if result['id__max'] is not None else 0
+        for obj in objs:
+            count += 1
+            obj.id = count
+        ScheduleTracker.objects.bulk_create(objs)
+
+    def perform_update(self, serializer):
+        """
+        After updating new schedule, it will record the current schedule
+        with same version in `ScheduleTracker` table.
+        """
+        serializer.save()
+        # Update `Schedule` currnet version which filter by order_id
+        objs = Schedule.objects.filter(order=serializer.data['order'])
+        for obj in objs:
+            obj.version += 1
+        Schedule.objects.bulk_update(objs, ['version'])
+        # Create `Schedule` history and set primary key for `ScheduleTracker` Table
+        result = ScheduleTracker.objects.aggregate(Max('id'))
+        count = result['id__max'] if result['id__max'] is not None else 0
+        for obj in objs:
+            count += 1
+            obj.id = count
+        ScheduleTracker.objects.bulk_create(objs)
+
+    def perform_destroy(self, instance):
+        """
+        After deleting new schedule, it will record the current schedule
+        with same version in `ScheduleTracker` table.
+        """
+        # Update `Schedule` currnet version which filter by order_id
+        objs = Schedule.objects.filter(order=instance.order)
+        for obj in objs:
+            obj.version += 1
+        Schedule.objects.bulk_update(objs, ['version'])
+        # Delete instance
+        instance.delete()
+        # Create `Schedule` history and set primary key for `ScheduleTracker` Table
+        result = ScheduleTracker.objects.aggregate(Max('id'))
+        count = result['id__max'] if result['id__max'] is not None else 0
+        for obj in objs:
+            count += 1
+            obj.id = count
+        ScheduleTracker.objects.bulk_create(objs)

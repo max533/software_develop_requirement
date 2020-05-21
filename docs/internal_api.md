@@ -24,7 +24,7 @@
     - [`DEL` Delete Documents Detail](#del-delete-documents-detail)
   - [Schedules Operation](#schedules-operation)
     - [`GET` Filter Schedules Collection by Order Id](#get-filter-schedules-collection-by-order-id)
-    - [`GET` Filter Schedules Group Tracker by Order Id](#get-filter-schedules-group-tracker-by-order-id)
+    - [`GET` Filter Schedules History by Order Id](#get-filter-schedules-history-by-order-id)
     - [`POST` Create a Schedules](#post-create-a-schedules)
     - [`PATCH` Update Partially Schedules Detail](#patch-update-partially-schedules-detail)
     - [`DEL` Delete Schedules Detail](#del-delete-schedules-detail)
@@ -68,11 +68,11 @@
     - [x] [`PATCH` Update Partially Specific Documents Detail](#patch-update-partially-specific-documents-detail)
     - [x] [`DEL` Delete Documents Detail](#del-delete-documents-detail)
   - [Schedules Operation](#schedules-operation)
-    - [ ] [`GET` Filter Schedules Collection by Order Id](#get-filter-schedules-collection-by-order-id)
-    - [ ] [`GET` Filter Schedules Group Tracker by Order Id](#get-filter-schedules-group-tracker-by-order-id)
-    - [ ] [`POST` Create a Schedules](#post-create-a-schedules)
-    - [ ] [`PATCH` Update Partially Schedules Detail](#patch-update-partially-schedules-detail)
-    - [ ] [`DEL` Delete Schedules Detail](#del-delete-schedules-detail)
+    - [x] [`GET` Filter Schedules Collection by Order Id](#get-filter-schedules-collection-by-order-id)
+    - [x] [`GET` Filter Schedules Group Tracker by Order Id](#get-filter-schedules-group-tracker-by-order-id)
+    - [x] [`POST` Create a Schedules](#post-create-a-schedules)
+    - [x] [`PATCH` Update Partially Schedules Detail](#patch-update-partially-schedules-detail)
+    - [x] [`DEL` Delete Schedules Detail](#del-delete-schedules-detail)
   - [Development Progress Operation](#development-progress-operation)
     - [ ] [`GET` Filter Development Progress Collection by Order Id](#get-filter-development-progress-collection-by-order-id)
     - [ ] [`POST` Create Development Progress](#post-create-development-progress)
@@ -1276,6 +1276,7 @@ Filter schedules resource by order id
             "expected_time": "2020-03-21T08:59:38.093183Z",
             "complete_rate": 15,
             "version": "1",
+            "update_time": "2020-01-20T08:59:38.093183Z",
             "created_time": "2020-01-20T08:59:38.093183Z",
             "order": 1,
         },
@@ -1286,6 +1287,7 @@ Filter schedules resource by order id
             "expected_time": "2020-03-21T08:59:38.093183Z",
             "complete_rate": 15,
             "version": "1",
+            "update_time": "2020-01-20T08:59:38.093183Z",
             "created_time": "2020-01-20T08:59:38.093183Z",
             "order": 1,
         },
@@ -1296,13 +1298,13 @@ Filter schedules resource by order id
 
     event_name : `Project Begin Time`, `Project End Time`, `MVP Time`
 
-### `GET` Filter Schedules Group Tracker by Order Id
+### `GET` Filter Schedules History by Order Id
 
 ```url
 {{service_url}}/api/schedules/group_tracker/?param1=value1
 ```
 
-Filter schedules group_tracker resource by order id
+Filter schedules history resource by order id
 
 - PARAMS
 
@@ -1335,7 +1337,8 @@ Filter schedules group_tracker resource by order id
                 "description": "This is a milestone.",
                 "expected_time": "2020-03-21T08:59:38.093183Z",
                 "complete_rate": 15,
-                "version": "1",
+                "version": 1,
+                "update_time": "2020-01-20T08:59:38.093183Z",
                 "created_time": "2020-01-20T08:59:38.093183Z",
                 "order": 1,
             },
@@ -1345,7 +1348,8 @@ Filter schedules group_tracker resource by order id
                 "description": "This is a milestone.",
                 "expected_time": "2020-03-21T08:59:38.093183Z",
                 "complete_rate": 15,
-                "version": "1",
+                "version": 1,
+                "update_time": "2020-01-20T08:59:38.093183Z",
                 "created_time": "2020-01-20T08:59:38.093183Z",
                 "order": 1,
             },
@@ -1357,7 +1361,8 @@ Filter schedules group_tracker resource by order id
                 "description": "This is a milestone.",
                 "expected_time": "2020-03-21T08:59:38.093183Z",
                 "complete_rate": 15,
-                "version": "2",
+                "version": 2,
+                "update_time": "2020-01-20T08:59:38.093183Z",
                 "created_time": "2020-01-20T08:59:38.093183Z",
                 "order": 1,
             },
@@ -1367,7 +1372,8 @@ Filter schedules group_tracker resource by order id
                 "description": "This is a milestone.",
                 "expected_time": "2020-03-21T08:59:38.093183Z",
                 "complete_rate": 15,
-                "version": "2",
+                "version": 2,
+                "update_time": "2020-01-20T08:59:38.093183Z",
                 "created_time": "2020-01-20T08:59:38.093183Z",
                 "order": 1,
             },
@@ -1403,7 +1409,6 @@ Create a new schedules
         "event_name": "Project End Time",
         "description": "This is a milestone.",
         "expected_time": "2020-03-21T08:59:38.093183Z",
-        "version": "1",
         "complete_rate": 15,
         "order": 1,
     }
@@ -1413,6 +1418,7 @@ Create a new schedules
 
     ```json
     {
+        "id": 2,
         "event_name": "Project End Time",
         "description": "This is a milestone.",
         "expected_time": "2020-03-21T08:59:38.093183Z",
@@ -1448,8 +1454,6 @@ Update partial details of schedules by schedule `id`
     description | This is a description | the description of schedules
     expected_time | 2020-03-21T08:59:38.093183Z | the expected_time of schedules
     complete_rate | 15 | the complete_rate of schedules
-    version | 2 | the version of schedules group
-    created_time | 2020-01-21T08:59:38.093183Z | the record time of schedules
     order | 2 | it indicate this record belong to which order
 
 - HEADERS
@@ -2193,7 +2197,9 @@ expected_time: DateTimeField
 
 complete_rate: PositiveIntegerField
 
-created_time: ArrayField
+update_time: DateTimeField
+
+created_time: DateTimeField
 
 version: CharField
 
@@ -2209,13 +2215,13 @@ event_name: CharField
 
 description: CharField
 
-comment: CharField
-
 expected_time: DateTimeField
 
 complete_rate: PositiveIntegerField
 
-created_time: ArrayField
+update_time: DateTimeField
+
+created_time: DateTimeField
 
 version: CharField
 
