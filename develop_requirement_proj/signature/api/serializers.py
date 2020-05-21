@@ -2,9 +2,11 @@
 from pathlib import Path
 from urllib.parse import urlparse, urlunparse
 
+from django.db.models import Max
+
 from rest_framework import serializers
 
-from ..models import Document
+from ..models import Document, Schedule
 
 
 class AccountBaseSerializer(serializers.Serializer):
@@ -56,3 +58,20 @@ class DocumentSerializer(serializers.ModelSerializer):
         model = Document
         fields = "__all__"
         read_only_fields = ['size', 'created_time', 'uploader']
+
+
+class ScheduleSerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+        """
+        Add automatically same version with current max version schedule.
+        If max current version doesn't exist, it will add version value with 1.
+        """
+        result = Schedule.objects.filter(order=validated_data['order']).aggregate(Max('version'))
+        validated_data['version'] = result['version__max'] if result['version__max'] is not None else 1
+        return Schedule.objects.create(**validated_data)
+
+    class Meta:
+        model = Schedule
+        fields = "__all__"
+        read_only_fields = ['created_time', 'update_time', 'version']

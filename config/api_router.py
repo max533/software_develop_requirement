@@ -2,7 +2,7 @@
 from develop_requirement_proj.employee.api.viewsets import EmployeeViewSet
 from develop_requirement_proj.signature.api.viewsets import (
     AccountViewSet, AssginerViewSet, DocumentViewSet, OptionView,
-    ProjectViewSet,
+    ProjectViewSet, ScheduleViewSet,
 )
 
 from django.conf import settings
@@ -22,6 +22,7 @@ router.register('accounts', AccountViewSet, basename='account')
 router.register('projects', ProjectViewSet, basename='project')
 router.register('assigners', AssginerViewSet)
 router.register('documents', DocumentViewSet)
+router.register('schedules', ScheduleViewSet)
 
 urlpatterns = [
     path('options/', OptionView.as_view(), name='option')

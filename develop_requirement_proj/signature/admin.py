@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Document, Order
+from .models import Document, Order, Schedule, ScheduleTracker
 
 
 @admin.register(Order)
@@ -35,5 +35,35 @@ class DocumentAdmin(admin.ModelAdmin):
         'size',
         'created_time',
         'uploader',
+        'order'
+    )
+
+
+@admin.register(Schedule)
+class ScheduleAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'event_name',
+        'description',
+        'expected_time',
+        'complete_rate',
+        'version',
+        'created_time',
+        'update_time',
+        'order'
+    )
+
+
+@admin.register(ScheduleTracker)
+class ScheduleTrackerAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'event_name',
+        'description',
+        'expected_time',
+        'complete_rate',
+        'version',
+        'created_time',
+        'update_time',
         'order'
     )
