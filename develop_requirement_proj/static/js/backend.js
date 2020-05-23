@@ -78,46 +78,6 @@
         });
     }
 
-    
-
-
-
-
-
-
-// Histories Operation
-    function append_comment_template(target,comment_obj){
-        let editor_info=comment_obj['editor']
-        let comment=comment_obj['comment'];
-        let time=isotime_local(comment_obj['timestamp']);
-        let comment_template='';
-
-        if(editor_info['display_name']=='DQMS system'){
-            comment_template=`<div class="mb-2">
-                <div class="mx-auto">
-                    <img class="sticker position-absolute" src="`+images['logoportrait']+`"></img>
-                    <h3 class="ml-2 pl-4 pr-2 p-2 badge badge-dark badge-pill font-weight-bold">
-                        `+editor_info["display_name"]+`
-                        <span>`+comment+`</span>										
-                    </h3>
-                    <small class="text-secondary ml-1 font-weight-bold">`+time+`</small>
-                </div>					
-            </div>`;
-        }else{
-            comment_template=`<div class="mb-2">
-               <div class="d-inline-flex align-items-top">
-                   <img class="sticker mr-2" src="`+editor_info['avatar']+`">
-                   <div><small class="text-dark mb-1 mr-3 font-weight-bold">`+editor_info["display_name"]+`</small></div>
-               </div>
-               <div class="bg-grey comments_shape">
-                   <div class="text-dark p-2">`+comment+`</div>
-               </div>
-               <small class="text-secondary d-flex justify-content-end mr-2 font-weight-bold">`+time+`</small>
-            </div>`;
-        }
-        $(target).append(comment_template);
-    }
-
 
     // GET Filter Histories Collection by Order Id
     function get_record_history(orders_id){
@@ -175,29 +135,8 @@
             method:"GET",
             dataType: "json",
             data: {
-                'order_id':order_id
+                'order':order_id
             },
-            async: false,
-            timeout: 5000,
-            beforeSend: function ( XMLHttpRequest ){},
-            error: function ( result, textStatus, XMLHttpRequest ){ console.log( result );  console.log( textStatus ); },
-            success: function ( result, textStatus, XMLHttpRequest ){
-                res=result;
-            }    
-        });
-        return res;
-    }
-    // GET Fetch a Specific Documents
-
-    // POST Create a Documents
-    function post_document(){
-        let path=fakedata_path+'files.json';//  測試完請刪除
-        let res='';   
-        $.ajax({
-            url:path,
-            method:"GET",
-            dataType: "json",
-            data: {},
             async: false,
             timeout: 5000,
             beforeSend: function ( XMLHttpRequest ){},
@@ -211,20 +150,26 @@
 
 
     // PATCH Update Documents Detail
-    function update_document_detail(){
-        let path=fakedata_path+'patch_files.json';//  測試完請刪除
-        let res='';   
+    function update_document_detail(update_file_data){
+        // let path=fakedata_path+'patch_files.json';//  測試完請刪除
+        let res=false;
+        let id=update_file_data['id'];
         $.ajax({
-            url:path,
+            // url:path,//  測試完請刪除
+            url:'/api/documents/'+id+'/',
             method:"GET",
             dataType: "json",
-            data: {},
+            data: update_file_data,
             async: false,
             timeout: 5000,
             beforeSend: function ( XMLHttpRequest ){},
-            error: function ( result, textStatus, XMLHttpRequest ){ console.log( result );  console.log( textStatus ); },
+            error: function ( result, textStatus, XMLHttpRequest ){ 
+                console.log( result );  console.log( textStatus ); 
+                alertmodal_show(images['404'],title='-- Update description failed --',content=textStatus);
+            },
             success: function ( result, textStatus, XMLHttpRequest ){
-                res=result;
+                console.log('Update file deatil successfully~');
+                res=true;
             }    
         });
         return res;

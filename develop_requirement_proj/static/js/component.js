@@ -11,67 +11,23 @@
     };
     loginInfo['avatar']=avatar_get(loginInfo.employee_id);  
 
-
-    
+    function alertmodal_show(img=images['404'],
+        title='-- Upload Denied --',
+        content='Upload file selected is oversize. Max-allowed-uploaded-file size is <strong>10 Mb</strong>.'){
+        $('#alert_img').prop('src',img);
+        $('#alert_title').text(title);
+        $('#alert_content').html(content);
+        $('#alertModal').modal('show');
+    }
 
 //  Basic
-    //  File template
-    // function file_downloading_template(key,url,filesize){
-    //     let filename=[...url.split('/')].pop();
-    //     let template =  `<tr data-key="`+key+`">
-    //                         <td width="5%">
-    //                             <img title="`+filename+`"/>
-    //                             <a class="btn btn-info mt-1 position-absolute btn-sm" href="`+url+`" style="display:none !important;" download >
-    //                                 <i class="fa fa-cloud-download-alt "></i>
-    //                             </a>
-    //                             <div class="progress mx-auto">
-    //                                 <div class="progress-bar progress-bar-striped bg-success font-weight-bold progress-bar-animated" style="width: 20%;"></div>
-    //                             </div>
-    //                             <div class="mr-2 mb-2 text-right font-weight-bold text-secondary loadedpercent">
-    //                             </div>
-    //                         </td>
-    //                         <td width="90%">
-    //                             <p class="font-weight-bold ellipsis pl-2 pr-2 mb-0">`+filename+`</p>
-    //                             <small class="pl-2">`+bytesChange(filesize)+`</small>									
-    //                         </td>
-    //                         <td width="5%">
-    //                             <button type="button" class="btn btn-danger btn-sm mt-1">
-    //                                 <i class="fas fa-trash-alt"></i>
-    //                             </buton>
-    //                         </td>
-    //                     </tr>`;
-    //     return template;
-    // }
-    //  File template
-    // function file_render_template(key,url,filesize){
-    //     let filename=[...url.split('/')].pop();
-    //     let template =  `<tr data-key="`+key+`">
-    //                         <td width="5%">
-    //                             <img title="`+filename+`"/>
-    //                             <a class="btn btn-info mt-1 position-absolute btn-sm" href="`+url+`" style="display:none !important;" download >
-    //                                 <i class="fa fa-cloud-download-alt "></i>
-    //                             </a>
-    //                         </td>
-    //                         <td width="90%">
-    //                             <p class="font-weight-bold ellipsis pl-2 pr-2 mb-0">`+filename+`</p>
-    //                             <small class="pl-2">`+bytesChange(filesize)+`</small>									
-    //                         </td>
-    //                         <td width="5%">
-    //                             <button type="button" class="btn btn-danger btn-sm mt-1">
-    //                                 <i class="fas fa-trash-alt"></i>
-    //                             </buton>
-    //                         </td>
-    //                     </tr>`;
-    //     return template;
-    // }
     function isImage(filetype){
         let imageFile=['tiff','tif','png','gif','jpg','jpeg']
         if( imageFile.includes(filetype) ) return true;
         else return false;
     }
     function get_now_isotimeformat(){
-        let now=new Date()
-                    .toISOString();
+        let now=new Date().toISOString();
         return now;
     }
     function isotime_local(timestamp){
@@ -87,6 +43,25 @@
         }
     }
 
+    function limit0to100(e,v){    
+        console.log(typeof(v))   
+        let reg = /^(([1-9]\d?(\.\d?[1-9])?)|(0(\.\d?[1-9])?)|100)$/;
+        if(v.match(reg)){
+            return false;
+        }else{
+            return true;
+        }
+    }
+    //  Restrict input number only
+    function ValidateNumber(e, pnumber){
+        let reg = /^(([1-9]\d?(\.\d?[1-9])?)|(0(\.\d?[1-9])?)|100)$/;
+
+        if (!reg.test(pnumber))
+        {
+            $(e).val(reg.exec($(e).val()));
+        }
+        return false;
+    }
 
 
     //  Modal package data
@@ -145,6 +120,26 @@
     }
 
 
+//  UI Flow
+    function author_arr(order_reponse){
+        let initiator=order_reponse['initiator']['employee_id'];
+        let assigner=order_reponse['assigner']['employee_id'];
+        let contactor=order_reponse['developers']['contactor'];
+        let arr=[{initiator:'initiator'},{assigner:'assigner'},{contactor:'contactor'}];
+        return arr;
+    }
+
+    function indentify_user(employee_id,author_arr,){
+
+    }
+
+    function form_display(){
+
+    }
+
+
+
+
 //  Table setting 
     //  click btn to collapse down the more information
     function detailFormatter(index, row) {
@@ -168,7 +163,7 @@
                         <i class="fas fa-sticky-note mr-2"></i>Description
                     </h6>
                     <p class="font-weight-bold bd-radius-8 p-1">`+row['description']+`</p>
-                    <textarea class="w-100 font-weight-bold bd-radius-8 bg-white p-1 bd-none" style="display:none;">`+row['description']+`</textarea>
+                    <textarea class="w-100 font-weight-bold bd-radius-8 bg-white p-1 bd-none" palceholder="File desciption..." style="display:none;">`+row['description']+`</textarea>
                     <div class="text-right mb-2 mt-1">
                         <button type="button" class="btn btn-info btn-sm file_description_edit"><i class="fa fa-edit mr-1"></i>Edit</button>
                         <button type="button" class="btn btn-success btn-sm file_description_save" style="display:none;"><i class="fa fa-check-double mr-1"></i>Save</button>
@@ -281,27 +276,62 @@
         $(target).append(blocTimeline);
     }
     //  comment area height
-    function comment_area_height_expand(imgage_dev,image_label_dev,authors,FormRequest,comment_area){
-            let image = $("#"+imgage_dev).find('img').first();
-            let formauthor_h = parseInt($("#"+authors).css('height').split('px')[0]);
-            let form_h = parseInt($("#"+FormRequest).css('height').split('px')[0]);
-            let imgtext_h = parseInt($("#"+image_label_dev).css('height').split('px')[0]);
-
-            let h = (formauthor_h+form_h-imgtext_h-50)+'px';
-            image.removeClass('animated zoomInDown').addClass('animated zoomOutUp').fadeOut(0);
-            $("#"+comment_area).css('height',h).fadeIn(0);
+    function comment_area_height_expand(){
+        let image = $('#imgage_dev').find('img').first();
+        let form_h=parseInt($('#FormRequest_div').css('height').split('px')[0]);
+        let imgtext_h = parseInt($('#image_label_dev').css('height').split('px')[0]);
+        let comment_h=parseInt($('#comment').parent('div').css('height').split('px')[0]);
+        let h = (form_h-imgtext_h-comment_h-100)+'px';
+        image.removeClass('animated zoomInDown').addClass('animated zoomOutUp').fadeOut(0);
+        $('#comment_area').css('height',h).fadeIn(0);
     }
 
-    function comment_area_height(imgage_dev,image_label_dev,authors,FormRequest,comment_area,global_img_h){
-        let image = $("#"+imgage_dev).find('img').first();
-        let imgtext_h = parseInt($("#"+image_label_dev).css('height').split('px')[0]);
-        let formauthor_h = parseInt($("#"+authors).css('height').split('px')[0]);
-        let form_h = parseInt($("#"+FormRequest).css('height').split('px')[0]);
-        let h = (formauthor_h+form_h-imgtext_h-global_img_h-300)+'px';  
-
-        $("#"+comment_area).css('height',h).fadeIn(0);
+    function comment_area_height(){        
+        let image = $('#imgage_dev').find('img').first();
+        let imgtext_h = parseInt($('#image_label_dev').css('height').split('px')[0]);
+        let formauthor_h = parseInt($('#authors').css('height').split('px')[0]);
+        let global_img_h = parseInt($('#image_status').find('img').first().css('height').split('px')[0]);
+        let form_h=parseInt($('#FormRequest_div').css('height').split('px')[0]);
+        let comment_h=parseInt($('#comment').parent('div').css('height').split('px')[0]);  
+        let h = (form_h-imgtext_h-global_img_h-comment_h-100)+'px';  
+        $('#comment_area').css('height',h).fadeIn(0);
         image.removeClass('animated zoomOutUp').addClass('animated zoomInDown').fadeIn(0);
+        console.log('HERE');
     }
+    // Histories Operation
+    function append_comment_template(target,comment_obj){
+        let editor_info=comment_obj['editor']
+        let comment=comment_obj['comment'];
+        let time=isotime_local(comment_obj['timestamp']);
+        let comment_template='';
+
+        if(editor_info['display_name']=='DQMS system'){
+            comment_template=`<div class="mb-2">
+                <div class="mx-auto">
+                    <img class="sticker position-absolute" src="`+images['logoportrait']+`"></img>
+                    <h3 class="ml-2 pl-4 pr-2 p-2 badge badge-dark badge-pill font-weight-bold">
+                        `+editor_info["display_name"]+`
+                        <span>`+comment+`</span>										
+                    </h3>
+                    <small class="text-secondary ml-1 font-weight-bold">`+time+`</small>
+                </div>					
+            </div>`;
+        }else{
+            comment_template=`<div class="mb-2">
+               <div class="d-inline-flex align-items-top">
+                   <img class="sticker mr-2" src="`+editor_info['avatar']+`">
+                   <div><small class="text-dark mb-1 mr-3 font-weight-bold">`+editor_info["display_name"]+`</small></div>
+               </div>
+               <div class="bg-grey comments_shape">
+                   <div class="text-dark p-2">`+comment+`</div>
+               </div>
+               <small class="text-secondary d-flex justify-content-end mr-2 font-weight-bold">`+time+`</small>
+            </div>`;
+        }
+        $(target).append(comment_template);
+    }
+
+
     //  bytes change to suitable num
     function bytesChange(bytes){
         let num ;
@@ -392,12 +422,29 @@
     }
     
     function avatar_get(employee_id){
-        let teamroaster_path='http://10.32.20.124:50005/img/avatar/'
+        let teamroaster_path='http://10.32.20.124:50005/img/avatar/';
         let time=new Date;
         let timestamp=time.getTime();
         let src_path=teamroaster_path+employee_id+'?'+timestamp;
-        return src_path;
+        return src_path.toString();
     }
+    // function avatar_exchange(defaultimg,employee_id){
+    //     let avatar=avatar_get(employee_id);
+    //     let src=defaultimg;
+    //     $.ajax({
+    //         url:'http://10.32.20.124:50005/img/avatar/10712714?1590030586159',
+    //         method:"GET",
+    //         timeout: 5000,
+    //         crossDomain: true,
+    //         dataType: 'jsonp',
+    //         async:false,
+    //         error: function ( result, textStatus, XMLHttpRequest ){},
+    //         success: function ( result, textStatus, XMLHttpRequest ){
+    //             console.log('here');
+    //         }    
+    //     });
+    //     return src;
+    // }
 
 
 

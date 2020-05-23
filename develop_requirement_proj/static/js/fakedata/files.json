@@ -1,14 +1,5 @@
 [
     {
-        "id": 1,
-        "name": "800x_100_w-573b03bc4caa6.jpg",
-        "path": "https://assets.juksy.com/files/articles/53813/800x_100_w-573b03bc4caa6.jpg",
-        "order_id": 1,
-        "description": " All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary,",
-        "size": "1024000",
-        "created_time": "2022-05-26T08:26:38.093183Z"
-    },
-    {
         "id": 2,
         "name": "filename2.txt",
         "path": "http://dqms.wistron.com/document_2.pdf",

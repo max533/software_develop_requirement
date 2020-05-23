@@ -7,6 +7,7 @@
 	<meta http-equiv="Content-Language" content="en-US" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no" />
+	<meta http-equiv="Access-Control-Allow-Origin" content="*" />
 
 	<title>Wistron DQMS/DRS</title>
 	  
@@ -15,7 +16,7 @@
 
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
 	<!-- Bootstrap XXL CSS --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xbrain-bootstrap-xxl@1.0.1/css/xbrain-bootstrap-xxl.min.css">
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">
 	
 	<link href="https://fonts.googleapis.com/css?family=Nunito:700i&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Nunito:400i&display=swap" rel="stylesheet">
@@ -57,12 +58,15 @@
 		let images={
 			"logoportrait":"{% static '/images/logoportrait.svg' %}",
 			"defaultavatar":"{% static '/images/defaultsticker.png' %}",
-			"loadinggif_path":"{% static '/images/loading.gif' %}",
+			"loadinggif_path":"{% static '/images/loading.svg' %}",
 			"404":"{% static '/images/404.png' %}",
 			"upload":"{% static '/images/upload.svg' %}",
 			"document":"{% static '/images/document.svg' %}",
 			"status":"{% static '/images/service.png' %}",
 		};
+		let modal={
+			request:"{% static '../templates/modal.html' %}",
+		}
 	</script>
 	<script type="text/javascript">
 		// $.ajaxSetup({
@@ -76,6 +80,7 @@
 	<link rel="stylesheet" href="{% static '/css/drs.css' %}"/>
 	<link rel="stylesheet" href="{% static '/css/rwd.css' %}"/>
 	<script type="text/javascript" src="{% static '/js/fakedata.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/modal.js' %}"></script>
 	<script type="text/javascript" src="{% static '/js/component.js' %}"></script>
 	<script type="text/javascript" src="{% static '/js/backend.js' %}"></script>
 	<script type="text/javascript" src="{% static '/js/basic.js' %}"></script>
@@ -158,7 +163,7 @@
 								<span><!-- Leo Tu/WHQ/Wistron  --></span>
                             </a>
                             <a class="dropdown-divider"></a>
-                            <a class="dropdown-item" id ="logout"> <i class="fas fa-sign-out-alt fa-fw"></i> Log Out </i></a>
+                            <a class="dropdown-item" id ="logout" href="./cas/logout"> <i class="fas fa-sign-out-alt fa-fw"></i> Log Out </i></a>
                         </div>
 					</div>
 					
@@ -180,242 +185,9 @@
 	</div>
 	
 <!-- RequestModal form -->
-	<div class="modal fade" id="requestModal" tabindex="-1" data-backdrop="static" data-keyboard="false">
-		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-			<div class="modal-content">						
-				<div class="modal-body row">
-					<div class="col-12 col-lg-4 d-flex justify-content-center align-items-center bg-water-gradient">
-						<div id="image_status" class="animated zoomInDown faster">
-							<div class="text-center" id="imgage_dev">
-								<img>
-							</div>
-							<div class="text-center mt-3" id="image_label_dev">
-								<h3 class="text-bluegray font-weight-bold">Initialize request</h3>
-								<p class="text-bluegray font-weight-bold">
-									Progress status -- start --
-								</p>
-							</div>
-							<hr>
-							<div>
-								<button type="button" id="toggle-commentarea" class="btn btn-secondary btn-sm position-absolute" data-toggle="button">
-									<i class="fas fa-chevron-up"></i>
-								</button>
-								<!-- One comment content include:who/ avatar/ time/ comment content/ -->
-								<div class="col-12" id="comment_area">
-									<!-- Load comments history -->
-								</div>
-								<hr>
-								<button id="sendcomment_btn" type="button" class="btn btn-info btn-sm position-absolute">
-									<i class="fas fa-pencil-alt"></i>
-								</button>
-								<textarea id="comment" class="summernote" data-postion="comment" placeholder="Comment ..."></textarea>
-							</div>
-						</div>
-					</div>
-					
-					<div class="col-lg-8 px-5 py-3 bg-white" id="FormRequest_div">	
-						<div class="d-inline-flex justify-content-between align-items-baseline w-100">
-							<div>
-								<h6 class="modal-title text-secondary text-center font-weight-bold" id=""> New Request </h6>
-							</div>
-							<button type="button" class="close" data-dismiss="modal">
-								<span> &times; </span>
-							</button>
-						</div>
-<!-- authors initiator assigner developers -->
-						<div id="authors" class="mt-2">			
-							<div class="d-inline-flex align-items-center w-100 author">
-								<span class="text-grey mr-2"> Initiator </span>
-								<div class="d-inline-flex align-items-center" id="form_initiator">
-									<img class="sticker mr-2" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
-									<span class="text-grey"></span>
-								</div>	
-							</div>
-							<div class="d-inline-flex align-items-center w-100 mt-2 author">
-								<span class="text-grey mr-2"> Form receiver </span>
-								<div class="d-inline-flex align-items-center mr-3" id="form_assigner">
-									<img class="sticker mr-2" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
-									<span class="text-grey">
-										<strong class="mr-2">
-											DQMS/MMS
-										</strong>
-										Luis Liao/WHQ
-									</span>
-								</div>
-							</div>
-							<div class="d-inline-flex align-items-top w-100 mt-2 author">
-								<span class="text-grey mr-2 mt-1"> Assigned developer </span>
-								<div id="form_owner">
-									<img class="sticker mr-2" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
-									<span class="text-grey mr-2" title="Contact window">
-										Jeff SH Wang/WHQ 
-										<strong class="ml-2">&#x22EF;</strong>
-									</span>
-									<button class="btn btn-outline-secondary btn-sm toggle-dev-list" data-toggle="button"><i class="fa fa-list mr-1"></i></button>
-									<button class="btn btn-info btn-sm" data-toggle="modal" data-target="#developersModal">
-										<i class="fa fa-users"></i>
-										Edit
-									</button>
-									<div class="dev-list">
-										<ul class="text-grey">
-											<!-- <li class="mt-1">Kevin SJ Huang/WHQ</li>
-											<li class="mt-1">Leo Tu/WHQ</li>
-											<li class="mt-1">Peter Hsien/WHQ</li>
-											<li class="mt-1">Jeff SH Wang/WHQ</li>
-											<li class="mt-1">Kevin SJ Huang/WHQ</li>
-											<li class="mt-1">Leo Tu/WHQ</li>
-											<li class="mt-1">Peter Hsien/WHQ</li>
-											<li class="mt-1">Jeff SH Wang/WHQ</li> -->
-										</ul>	
-									</div>
-								</div>
-							</div>
-						</div>	
-						<hr>
-						<div class="d-inline-flex align-items-top w-100">
-							<span class="text-grey mr-2 mt-1"> DesignateList </span>
-							<div>
-								<img class="sticker mr-2" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
-								<span class="text-grey mr-2">
-									Jeff SH Wang/WHQ  <h5 class="badge badge-success badge-pill"><i class="fa fa-check-double text-secondary"></i></h5>
-								</span>
-							</div>
-							<div>
-								<img class="sticker mr-2" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
-								<span class="text-grey mr-2">
-									Jeff SH Wang/WHQ 
-								</span>
-							</div>
-						</div>
-						<div class="d-inline-flex align-items-top w-100 mt-2 author">
-							<span class="text-grey mr-2 mt-1"> DesignateList </span>
-							<div>
-								<img class="sticker mr-2" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
-								<span class="text-grey mr-2">
-									Jeff SH Wang/WHQ 
-								</span>
-							</div>
-							<div>
-								<img class="sticker mr-2" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
-								<span class="text-grey mr-2">
-									Jeff SH Wang/WHQ 
-								</span>
-							</div>
-						</div>
-						<hr>
-<!-- Form Request -->
-						<form id="FormRequest" enctype="multipart/form-data">
-							<!-- Assign which team -->
-							<h6 class="text-secondary font-weight-bold"> Request which team </h6>
-							<div class="row align-items-center mt-2" id="tag_div">
-								<label class="col-4"> Depend on which form </label>
-								<div class="mb-2 col-8 d-inline-flex align-items-baseline">
 
-									<div class="input-group">
-										<div class="input-group-prepend">
-											<button class="btn btn-light ezinfoModal_trigger font-weight-bold" type="button" data-id=""> 
-												<i class="fa fa-file-alt"></i> 
-												<span></span>
-											</button>
-										</div>
-										<div class="input-group-append">
-											<button class="btn btn-info" type="button" data-toggle="modal" data-target="#tagModal">
-												<i class="fa fa-tag"></i> Edit tag
-											</button>
-										</div>
-									</div>
-								</div>
-							
-								<!-- <input type="text" class="field-style form-control" style="display: none;" placeholder="Tag last form." disabled> -->
-							</div>
-							<div class="row align-items-center mt-3">
-								<label class="col-4"> &#9733 Assign which/ Team </label>
-								<select type="select" class="selectpicker col-8" name="function" id="sel_function" data-width="auto" data-size="7" data-live-search="true" title="Select..." required>
-									<option value=""> Select... </option>
-								</select>
-							</div>
-							<div class="row align-items-center mt-3">
-								<label class="col-4"> &#9733 Account </label>
-								<select type="select" class="selectpicker col-8" name="account_id" id="sel_accounts" data-width="auto" data-size="7" data-live-search="true" title="Select..." required>
-									<option value=""> Select... </option>
-								</select>
-							</div>				
-							<div class="row align-items-center mt-3">
-								<label class="col-4"> &#9733 Project </label>
-								<select type="select" class="selectpicker col-8" name="project_id" id="sel_projects" data-width="auto" data-size="7" title="Select account first" required>
-									<option value=""> Select... </option>
-								</select>
-							</div>
-							<div class="row align-items-center mt-3">
-								<label class="col-4"> &#9733 Assign which/ Who </label>
-								<select type="select" class="selectpicker col-8" name="assigner"  data-width="auto" data-size="7" title="Select project & team first" id="sel_assigners" required>
-									<option value=""> Select... </option>
-								</select>
-							</div>
-							<hr>
-							<!-- Assign content -->
-							<h6 class="text-secondary font-weight-bold mt-3"> Request content </h6>
-							<div class="row align-items-center mt-2">
-								<label class="col-4"> &#9733 Title </label>
-								<div class="col-8 mb-2">
-									<input type="text" class="field-style" name="title" placeholder="Develop what" required>
-								</div>
-							</div>
 
-							<div class="row align-items-top mt-2">
-								<label class="col-4 mt-2"> &#9733 Request description </label>
-								<div class="col-8">
-									<textarea type="text" class="summernote" name="description" data-postion="requestform" placeholder="Develop deatail or purpose" required></textarea>
-								</div>
-							</div>
-							
-							<hr>
-							<div class="d-flex justify-content-end mt-4 mb-4">
-								<button type="button" class="btn btn-info" id="initialize_btn">
-									<i class="fa fa-paper-plane"></i>
-									<span> Initialize request </span>
-								</button>
-							</div>
-							<small class="position-absolute text-secondary" style="bottom: .7rem; right:3rem">
-								&#9733 is required field. Need to fill out before requesting.
-							</small>
-						</form>	
-						<hr>
-						<!-- Assign content -->
-						<h6 class="text-secondary font-weight-bold mt-3"> Attached files <i class="ml-2 fa fa fa-angle-down btn btn-light btn-sm" title="Expand"></i></h6>
-						<div class="row align-items-top mt-2 mb-4 file">
-							<div class="col-4 pt-4">
-								<label> Upload Files/<label>
-								<div class="ml-2">
-									<button type="button" class="fa fa-question btn btn-secondary btn-sm"></button>
-									<!-- <button type="button" class="far fa-sticky-note btn btn-warning" title="summarynote"></button> -->
-								</div>
-							</div>
-							<div class="col-8">
-								<label for="file" class="mt-2 upload-style form-control d-flex align-items-center justify-content-between">											
-									<input type="file" class="custom-file-input" id="files" name="files[]" multiple size="5" title="No file selected.">
-								</label>
-								<h6 class="text-grey caption"> Drag&Drop or Click to choose your file.<i class="fa fa-cloud-upload-alt fa-lg ml-2"></i></h6>
-								<span class="text-info caption" style="display: none;" id="selected_file"></span>
-								<textarea class="form-control field-style" rows="4" placeholder="File description..." id="file_description"></textarea>
-								<div class="d-flex justify-content-end mt-2">
-									<button class="btn btn-info btn-sm" id="attached_file_btn"><i class="fa fa-paperclip"></i> Attached file</button>
-								</div>
-								<hr>
-								<small class="ml-3 text-secondary">Restrict number of files limit less than <strong id="restrict_file_num"></strong>.
-										and size of file limit less than <strong id="restrict_file_size">10 Mb</strong>.
-								</small>
-								<table class="w-100" id="filelist"></table>
-							</div>
-							<hr>
-						</div>
-					</div>
-				</div>				
-			</div>
-		</div>
-	</div>
-
-	<!-- tagModal -->
+<!-- tagModal -->
 	<div class="modal fade" id="tagModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 		  	<div class="modal-content p-3">
@@ -490,17 +262,35 @@
 		<div class="modal-dialog modal-dialog-centered modal-lg pl-5" role="document">
 			<div class="modal-content p-3">
 				<div class="modal-body">
-					<div class="col-12">	
+					<div class="col-12">
 						<div class="d-flex justify-content-between align-items-start">
-							<div class="">
-								<h5 class="text-bluegray"> Form infotmation</h5>
+							<div id="signature_alert_content">
+								<h5 class="text-center"> -- <i class="fa fa-user-check mr-1"></i> Please review/approve this leave application -- </h5>
+								<hr>
+								<p class="text-dark bd-radius-8 font-weight-bold">
+									Please review the following form. Remember click the button on bottom of form and leave comments(required field). Once press the button,
+									The information will record in the comments and process will go on.</br></br>
+									<h6 class="badge badge-success badge-pill" style="width: 5.5rem;"><i class="fa fa-check-double mr-1"></i> Approve </h6> - You agree the form content totally.This form will be sent to another stage. </br>
+									<h6 class="badge badge-danger badge-pill" style="width: 5.5rem;"><i class="fa fa-stop mr-1"></i> Close </h6> - You would like to stop this form,and the form will break</br>
+									<h6 class="badge badge-warning badge-pill" style="width: 5.5rem;"><i class="fa fa-reply mr-1"></i> Return </h6> - There are some fields are wrong or ambiguous. The form will back to last stage.
+								</p>
+								<hr>
 							</div>
 							<button type="button" class="close" data-dismiss="modal">
 								<span> &times; </span>
 							</button>
-						</div>
-						
-						<form id="" class="w-100">
+						</div>	
+						<div class="bg-light bd-radius-8 p-1 d-inline-flex align-items-baseline w-100">
+							<span class="ml-2 mr-2 text-grey"> Assign who </span>
+							<div class="font-bold-weight">
+								<h6 class="badge badge-grey badge-pill" title="Initiator">Leo Tu/WHQ</h6> &rsaquo; 
+								<h6 class="badge badge-grey badge-pill" title="Team">DQMS &rsaquo;</h6>  
+								<h6 class="badge badge-grey badge-pill" title="Account">WT-EBG</h6> &rsaquo; 
+								<h6 class="badge badge-grey badge-pill" title="Project">R360-EBG</h6> &rsaquo; 
+								<h6 class="badge badge-grey badge-pill" title="Receiver">Luis Liao/WNH</h6>
+							</div>
+						</div>					
+						<form id="" class="w-100 px-5 py-4 bd-radius-8">
 							<h6 class="text-secondary font-weight-bold"> Basic info </h6>
 							<div class="row align-items-baseline mt-3">
 								<label class="col-3 text-grey"> Form id </label>
@@ -511,37 +301,54 @@
 							<div class="row align-items-baseline mt-1">
 								<label class="col-3 text-grey"> Initiator </label>
 								<div class="col-9 bg-light bd-radius-8 p-1">
-									<img class="sticker" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+									<img class="sticker" src='{% static '/images/defaultsticker.png' %}'">
 									<span class="text-secondary font-weight-bold ml-1">Jeff SH Wang/WHQ</span>
 								</div>
 							</div>
 							<div class="row align-items-baseline mt-1">
 								<label class="col-3 text-grey"> PO/PM </label>
 								<div class="col-9 bg-light bd-radius-8 p-1">
-									<img class="sticker" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+									<img class="sticker" src='{% static '/images/defaultsticker.png' %}'">
 									<span class="text-secondary font-weight-bold ml-1">Jeff SH Wang/WHQ</span>
 								</div>
 							</div>
 							<div class="row align-items-baseline mt-1">
 								<label class="col-3 text-grey"> Developers </label>
 								<div class="col-9 bg-light bd-radius-8 p-1">
-									<img class="sticker" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
+									<img class="sticker" src='{% static '/images/defaultsticker.png' %}'">
 									<span class="text-secondary font-weight-bold mr-3">Peter Hsien/WHQ <strong>...</strong></span>
 									<button type="button" class="btn btn-outline-secondary btn-sm toggle-dev-list" data-toggle="button">
 										<i class="fa fa-list"></i>
 									</button>
 									<div class="col-12 dev-list" style="display: none;">
 										<ul class="text-grey">
-											<!-- <li class="mt-1">Kevin SJ Huang/WHQ</li>
+											<li class="mt-1">Kevin SJ Huang/WHQ</li>
 											<li class="mt-1">Leo Tu/WHQ</li>
 											<li class="mt-1">Peter Hsien/WHQ</li>
 											<li class="mt-1">Jeff SH Wang/WHQ</li>
 											<li class="mt-1">Kevin SJ Huang/WHQ</li>
 											<li class="mt-1">Leo Tu/WHQ</li>
 											<li class="mt-1">Peter Hsien/WHQ</li>
-											<li class="mt-1">Jeff SH Wang/WHQ</li> -->
+											<li class="mt-1">Jeff SH Wang/WHQ</li>
 										</ul>
 									</div>
+								</div>
+							</div>
+							<div class="row align-items-baseline mt-1">
+								<label class="col-3 text-grey"> Signature list </label>
+								<div class="col-9 bg-light bd-radius-8 p-1">
+									<img class="sticker" src='{% static '/images/defaultsticker.png' %}'">
+									<span class="text-success font-weight-bold ml-1">
+										Jeff SH Wang/WHQ
+										<i class="fa fa-check-double text-success" title="Approved"></i>
+									</span>
+									
+									<img class="sticker" src='{% static '/images/defaultsticker.png' %}'">
+									<span class="text-secondary font-weight-bold ml-1">Jeff SH Wang/WHQ</span>
+									<img class="sticker" src='{% static '/images/defaultsticker.png' %}'">
+									<span class="text-secondary font-weight-bold ml-1">Jeff SH Wang/WHQ</span>
+									<img class="sticker" src='{% static '/images/defaultsticker.png' %}'">
+									<span class="text-secondary font-weight-bold ml-1">Jeff SH Wang/WHQ</span>
 								</div>
 							</div>
 
@@ -556,27 +363,17 @@
 							<div class="row align-items-baseline mt-1">
 								<label class="col-3 text-grey"> Description </label>
 								<div class="col-9 bg-light bd-radius-8 p-1">
-									<br> Three is description </br>
-								</div>
-							</div>
-							<div class="row align-items-baseline mt-1">
-								<label class="col-3 text-grey"> Result </label>
-								<div class="col-9 bg-light bd-radius-8 p-1">
-									<span class="text-secondary font-weight-bold">www.gitlab.com</span>
+									<h1><img src="https://s1.thcdn.com/productimg/1600/1600/11489653-1374492597223451.jpg" style="width: 25%; float: left;" class="note-float-left"><b>s<span style="background-color: rgb(255, 255, 0);">as</span>asa</b></h1><h4><b>a</b>adasdasd</h4>
 								</div>
 							</div>
 							<div class="row align-items-top mt-1">
 								<label class="col-3 text-grey"> Files </label>
-								<!-- <div class="col-9 bg-light bd-radius-8 p-1" id="ezmodal_download_div">			
-									<div class="bd-radius-8 px-2 py-1" style="cursor: pointer;">
-										<a class="text-secondary font-weight-bold bd-radius-8" ></a>
-									</div>	
-								</div> -->
 								<table class="table table-borderless col-9 bg-light bd-radius-8 table-hover" style="overflow:hidden;">
 									<tbody>
 										<tr>
 											<td>xxx.xml</td>
 											<td>22.00Mb</td>
+											<td><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p></td>
 											<td>
 												<a class="fa fa-cloud-download-alt btn btn-info btn-sm p-1 text-light" style="cursor: pointer;"></a>
 											</td>
@@ -584,6 +381,7 @@
 										<tr>
 											<td>xxx.xml</td>
 											<td>22.00Mb</td>
+											<td><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p></td>
 											<td>
 												<a class="fa fa-cloud-download-alt btn btn-info btn-sm p-1 text-light" style="cursor: pointer;"></a>
 											</td>
@@ -591,23 +389,64 @@
 									</tbody>
 								  </table>
 							</div>
-
-							<hr>
-							<h6 class="text-secondary font-weight-bold"> Time schedule </h6>
-							<div class="row align-items-baseline mt-1">
-								<label class="col-3 text-grey"> Expected Working time </label>
+							<div class="row align-items-center mt-1">
+								<label class="col-3 text-grey"> Result </label>
 								<div class="col-9 bg-light bd-radius-8 p-1">
-									<span class="text-secondary font-weight-bold">10hr</span>
+									<span class="text-secondary font-weight-bold">www.gitlab.com</span>
 								</div>
 							</div>
-							<div>
-								<label class="text-grey"> Timeline </label>
-								<div id="ezinfoModal_timeline">
-									<div id="lineTime" class="lineTime"></div>
-									<div id="lineTimePoint" class="lineTimePoint"></div>
+							<hr>
+							<h6 class="text-secondary font-weight-bold"> Time schedule </h6>
+							<div class="row align-items-top mt-1">
+								<label class="col-3 text-grey"> Schedule plan </label>
+								<table class="table table-borderless col-9 bg-light bd-radius-8 table-hover" style="overflow:hidden;">
+									<thead>
+										<tr>
+											<td>Milestone</td>
+											<td>Date</td>
+											<td>Description</td>
+											<td>Estimated complete rate</td>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Estimated to begin to develop</td>
+											<td>2020-05-06</td>
+											<td><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p></td>
+											<td>0%</td>
+										</tr>
+										<tr>
+											<td>Estimated to end</td>
+											<td>2020-07-26</td>
+											<td><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p></td>
+											<td>100%</td>
+										</tr>
+							
+									</tbody>
+								  </table>
+							</div>
+							<div class="row align-items-center mt-1">
+								<label class="col-3 text-grey"> Estimated developing time  </label>
+								<div class="col-9 bg-light bd-radius-8 p-1">
+									<span class="text-secondary font-weight-bold">20 days (2020-05-06~2020-07-26)</span>
 								</div>
 							</div>
 						</form>	
+						<hr>
+						<h6 class="text-secondary font-weight-bold">Signature</h6>
+						<div class="row align-items-top mt-1">
+							<label class="col-3 text-grey"> Comment </label>
+							<div class="col-9 p-1">
+								<textarea class="w-100 font-weight-bold bd-radius-8 bg-light p-1 bd-none" rows="5" placeholder="Required to leave comments..."></textarea>
+							</div>
+						</div>
+						<hr>
+						<div class="w-100 d-inline-flex justify-content-end mt-2">
+								<button type="button" class="btn btn-success mr-2"><i class="fa fa-check-double mr-1"></i> Approve </button>
+								<button type="button" class="btn btn-warning mr-5"><i class="fa fa-reply mr-1"></i> Return </button>
+			
+								<button type="button" class="btn btn-danger"><i class="fa fa-stop mr-1"></i> Close </button>
+						</div>
 					</div>						
 				</div>		
 			</div>
@@ -711,13 +550,13 @@
 			<div class="modal-content modal-content-body bg-grey">
 				<div class="mt-2 mb-3">
 					<div class="cover mx-auto">
-						<img>
+						<img id="alert_img">
 					</div>
-					<h3 class="ml-3 text-secondary text-center"> -- Upload Denied -- </h3>
+					<h3 class="ml-3 text-secondary text-center" id="alert_title"> -- Upload Denied -- </h3>
 					<hr class="text-secondary">
 					<p class="ml-3 text-secondary">
 						<i class="fa fa-bullhorn text-danger mr-2"></i>
-						Upload file selected is oversize. Max-allowed-uploaded-file size is <strong>10 Mb</strong>.</br>
+						<span id="alert_content">Upload file selected is oversize. Max-allowed-uploaded-file size is <strong>10 Mb</strong>.</span></br>
 					</p>
 					<div class="col-6">
 						<small class="mt-2 text-grey">

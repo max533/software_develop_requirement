@@ -57,7 +57,7 @@ $(function(){
 
 
 
-    $('#requestModal').on('shown.bs.modal',function(){
+    // $('#requestModal').on('shown.bs.modal',function(){
         // reset_requestModal();
         // $('#toggle-commentarea').removeClass('active');
         // $('#toggle-commentarea').find('i').removeClass('active fa-chevron-down').addClass('fa-chevron-up');
@@ -103,109 +103,8 @@ $(function(){
                 //  if(user=initiator) Reject btn/ Cancel form btn pop
 
 
-        // Comment Area - Load comments history
-        let comments=get_record_history();
-        $.each(comments,function(){
-            let comment_obj=$(this)[0];
-            append_comment_template('#comment_area',comment_obj)
-        });
         //  Files Area - Get fields
-        let documents=get_documents('order_id');
-        // documentkeys_exited=[];
-        // $.each(documents,function(keyname,doc_obj){
-        //     let url=doc_obj['link'];
-        //     let filesize=Number(doc_obj['size_byte']);
-        //     let filename=[...doc_obj['link'].split('/')].pop();
-        //     let filetype=filename.split('.')[1];
-        //     let imgsrc='';
-        //     let keynum=Number(keyname.split('_')[1]);
-
-        //     //  Store exited document key --> arrary
-        //     documentkeys_exited.push(keynum);
-
-        //     if(isImage(filetype)) imgsrc=url;
-        //     else imgsrc=images['document'];
-
-        //     let template = file_render_template(keyname,url,filesize);
-        //     $('#filelist').find('tbody').append(template);
-        //     $('#filelist').find('tr').last().find('img').prop('src',imgsrc);
-        // });
-/* modified */            
-        $('#filelist').bootstrapTable('destroy').bootstrapTable({
-            data:documents,
-            cache: false,
-            classes:'table-no-bordered',
-            iconsPrefix: 'fa',
-            detailView:true,
-            detailFormatter: 'filedetailFormatter',
-            rowAttributes:function(row,index) {
-                return {'data-id':row['id']};
-            },
-            icons: {
-                detailOpen: 'fas fa-list',
-                detailClose: 'fa-angle-up',
-            },
-            columns: [
-                {   
-                    field:'id',
-                    width:100,
-                    formatter:function(value, row, index){
-                        let filename=row['name'];
-                        let filetype=filename.split('.')[1];
-
-                        let imgsrc=row['path'];
-                        if(isImage(filetype)!==true) imgsrc=images['document'];
-                        
-                        let html=`<img title="`+filename+`" src="`+imgsrc+`" /> `;
-                        return html;
-                    }
-                },
-                {
-                    field:'path',
-                    align:'right',
-                    formatter:function(value, row, index){
-                        let url=value;
-
-                        let html=`<a class="btn btn-info btn-sm mt-2" href="`+url+`" download >
-                                    <i class="fa fa-cloud-download-alt "></i>
-                                </a>`
-                        return html;
-                    }
-                },
-                {
-                    field:'name',
-                    formatter:function(value, row, index){
-                        let filesize=Number(row['size']);
-                        let html=` <p class="font-weight-bold ellipsis pl-2 pr-2 mb-0 filename">`+value+`</p>
-                                    <small class="pl-2">`+bytesChange(filesize)+`</small>`;
-                        return html;
-                    }
-                },
-                {
-                    align:'right',
-                    formatter:function(value, row, index){
-                        let html=`<button type="button" class="btn btn-danger btn-sm mt-1">
-                                    <i class="fas fa-trash-alt"></i>
-                                </buton>`
-                        return html;
-                    }
-                },
-            ],
-            formatNoMatches: function () {
-                let html=NoMatches('No parent form record');
-                return html;
-            },
-            formatLoadingMessage: function(){ 
-                let html=LoadingMessage();
-                return html;
-            },
-            onLoadError:function(status, jqXHR) {
-                console.log(status);
-                console.log(jqXHR);
-            },
-            onPostBody:function(name, args){
-            }
-        });
+        
 
 
 
@@ -230,8 +129,9 @@ $(function(){
 
 
         // reset condition
-        comment_area_height('imgage_dev','image_label_dev','authors','FormRequest','comment_area',img_h);
-    });
+        // comment_area_height('imgage_dev','image_label_dev','authors','FormRequest','comment_area',img_h);
+        // comment_area_height();
+    // });
 
 
 
