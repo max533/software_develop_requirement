@@ -2,26 +2,228 @@ $(function(){
 //  Add Request
     //  Reset modal
     $(document).on('click','#addRequestBtn',function(){
+        $('body').append(requestModal);
+        $('#image_status').find('img').first().prop('src',images.status);
+        //  form sticker
+        $('#form_initiator').data('id',loginInfo.employee_id);
+        $('#form_initiator').find('img').prop('src',loginInfo.avatar);
+        $('#form_initiator').find('span').text(loginInfo.dispaly_name.split('/Wistron')[0]);
+
+        //  summernote
+        $('.summernote').summernote({
+            theme: 'journal',
+            placeholder: '...',
+            tabsize: 2,
+            spellCheck: true,     
+            minheight: 40,    // set editor height
+            height: 'fitcontent', 
+            lineHeights: '1.0',
+            disableDragAndDrop: false,  
+            focus: true, 
+            hint: {
+                mentions: ['jeff', 'peter'],
+                    match: /\B@(\w*)$/,
+                    search: function (keyword, callback) {
+                    callback($.grep(this.mentions, function (item) {
+                        return item.indexOf(keyword) == 0;
+                    }));
+                    },
+                    content: function (item) {
+                    return '@' + item;
+                    },    
+            },
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'underline']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['insert', ['link', 'picture']],
+                ['view', ['help']]
+                // ['font', ['bold', 'underline', 'clear']],
+                // ['table', ['table']],
+                // ['insert', ['link', 'picture', 'video']],
+                // ['view', ['fullscreen', 'codeview','help']]
+            ],
+            callbacks: {
+                onInit: function() {
+                    let placeholder=$(this).prop('placeholder');
+                    let target=$(this).siblings('.note-editor').find('.note-placeholder')
+                    target.text(placeholder);
+                },
+                onChange:function(contents, $editable) {},
+                onKeydown: function(e) {
+                    if(e.keyCode==13) console.log('Enter/Return key pressed');
+                },
+                onFocus: function() {
+                    switch ($(this).data('position')) {
+                        case 'comment':
+                            if($('#toggle-commentarea.active').length==0) $('#toggle-commentarea').trigger('click');
+                            break;
+                        default:
+                            break;
+                    }
+                },
+            }
+        });
+
+        // Comment Area - Load comments history
+        // let comments=get_record_history();
+        // $('#comment_area').empty();
+        // $.each(comments,function(){
+        //     let comment_obj=$(this)[0];
+        //     append_comment_template('#comment_area',comment_obj)
+        // });
+
+        
+
+
+
+
+
         $('#requestModal').data('order_id','New').modal('show');
+        comment_area_height();
     });
 
-    $('#requestModal').find('.selectpicker').selectpicker('render');
-//  Form fields - Select Options
-    let Obj=get_options();
-    let disabledarr=['BU','EE','ME'];
-    let optionsValue=Object.values(Obj)[0];
-    $.each(optionsValue,function(groupname,options){
-        if(disabledarr.includes(groupname)){}
-        else{
-            $('#sel_function').append('<optgroup label="'+groupname+'"></optgroup>');
-            $.each(options,function(i,subfunc){
-                let el=$('#sel_function').find('optgroup').last()[0];
-                let func_subfunc=groupname+"_"+subfunc;
-                $("<option>").text(subfunc).val(func_subfunc).appendTo(el);            
-            })
-        }
+
+    //  Request modal show
+    $(document).on('shown.bs.modal','#requestModal', function () {
+
+
+        //  gett filelist
+        // let documents=get_documents('order_id');      
+        // $('#filelist').bootstrapTable('destroy').bootstrapTable({
+        //     data:documents,
+        //     cache: false,
+        //     classes:'table-no-bordered',
+        //     iconsPrefix: 'fa',
+        //     detailView:true,
+        //     detailFormatter: 'filedetailFormatter',
+        //     rowAttributes:function(row,index) {
+        //         return {'data-id':row['id']};
+        //     },
+        //     icons: {
+        //         detailOpen: 'fas fa-list',
+        //         detailClose: 'fa-angle-up',
+        //     },
+        //     columns: [
+        //         {   
+        //             field:'id',
+        //             width:100,
+        //             formatter:function(value, row, index){
+        //                 let filename=row['name'];
+        //                 let filetype=filename.split('.')[1];
+
+        //                 let imgsrc=row['path'];
+        //                 if(isImage(filetype)!==true) imgsrc=images['document'];
+                        
+        //                 let html=`<img title="`+filename+`" src="`+imgsrc+`" /> `;
+        //                 return html;
+        //             }
+        //         },
+        //         {
+        //             field:'path',
+        //             align:'right',
+        //             formatter:function(value, row, index){
+        //                 let url=value;
+
+        //                 let html=`<a class="btn btn-info btn-sm mt-2" href="`+url+`" download >
+        //                             <i class="fa fa-cloud-download-alt "></i>
+        //                         </a>`
+        //                 return html;
+        //             }
+        //         },
+        //         {
+        //             field:'name',
+        //             formatter:function(value, row, index){
+        //                 let filesize=Number(row['size']);
+        //                 let html=` <p class="font-weight-bold ellipsis pl-2 pr-2 mb-0 filename">`+value+`</p>
+        //                             <small class="pl-2">`+bytesChange(filesize)+`</small>`;
+        //                 return html;
+        //             }
+        //         },
+        //         {
+        //             align:'right',
+        //             formatter:function(value, row, index){
+        //                 let html=`<button type="button" class="btn btn-danger btn-sm mt-1">
+        //                             <i class="fas fa-trash-alt"></i>
+        //                         </buton>`
+        //                 return html;
+        //             }
+        //         },
+        //     ],
+        //     formatNoMatches: function () {
+        //         let html=NoMatches('No parent form record');
+        //         return html;
+        //     },
+        //     formatLoadingMessage: function(){ 
+        //         let html=LoadingMessage();
+        //         return html;
+        //     },
+        //     onLoadError:function(status, jqXHR) {
+        //         console.log(status);
+        //         console.log(jqXHR);
+        //     },
+        //     onPostBody:function(name, args){
+        //     }
+        // });
+        comment_area_height();
+        
+
+
     });
-    $('#sel_function').selectpicker('refresh');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    $('#requestModal').find('.selectpicker').selectpicker('render');
+    //  Form fields - Select Options
+        let Obj=get_options();
+        let disabledarr=['BU','EE','ME'];
+        let optionsValue=Object.values(Obj)[0];
+        $.each(optionsValue,function(groupname,options){
+            if(disabledarr.includes(groupname)){}
+            else{
+                $('#sel_function').append('<optgroup label="'+groupname+'"></optgroup>');
+                $.each(options,function(i,subfunc){
+                    let el=$('#sel_function').find('optgroup').last()[0];
+                    let func_subfunc=groupname+"_"+subfunc;
+                    $("<option>").text(subfunc).val(func_subfunc).appendTo(el);            
+                })
+            }
+        });
+        $('#sel_function').selectpicker('refresh');
 
 
 
@@ -29,7 +231,6 @@ $(function(){
     $(document).on('click','.ezinfoModal_trigger',function(){
         let id=$(this).data('id');
         // $('#ezinfoModal').modal('show');
-
     });
 
 
@@ -55,7 +256,6 @@ $(function(){
                 $('#sel_accounts').append('<option value="'+account_info['id']+'">'+account_info['code']+'</option>');
             });
         }
-       
         $('#sel_accounts').selectpicker('refresh');
     });
 
@@ -157,8 +357,7 @@ $(function(){
                         $('#selected_file').siblings('.caption').fadeOut(0);
                         $('#selected_file').html(template).fadeIn(0);
                     }else{
-                        $('#alertModal').find('img').prop('src',images['404']);
-                        $('#alertModal').modal('show');
+                        alertmodal_show();
                     }
                 }else{
                     $('#selected_file').siblings('.caption').fadeIn(0);
@@ -190,11 +389,13 @@ $(function(){
                     formdata.append('path',file);
                     formdata.append('name',file_name);
                     formdata.append('description',description);
-                    formdata.append('order_id',order_id);
+                    // formdata.append('order',order_id);
+                    formdata.append('order',1);
                     let target;
                     $.ajax({
-                        url:fakedata_path+'patch_files.json',
-                        method:'GET',
+                        // url:fakedata_path+'patch_files.json',測試用請刪除
+                        url:'/api/documents/',
+                        method:'POST',
                         dataType: 'json',
                         data: formdata,
                         timeout:50000,
@@ -207,7 +408,7 @@ $(function(){
                                 "id": 'New',
                                 "name": file_name,
                                 "path": images['upload'],
-                                "order_id": order_id,
+                                "order": order_id,
                                 "description": description,
                                 "size": file['size'],
                                 "created_time": ""
@@ -222,8 +423,11 @@ $(function(){
                                             </div>`;
                             target.append(loadinghtml);
                         },
-                        error: function ( result, textStatus, XMLHttpRequest ){ console.log( result );  console.log( textStatus ); },
-                        // success: function ( result, textStatus, XMLHttpRequest ){ },
+                        error: function ( result, textStatus, XMLHttpRequest ){ console.log( result );  console.log( textStatus ); console.log('Uploading fail~') },
+                        success: function ( result, textStatus, XMLHttpRequest ){ 
+                            let id=result.id
+                            $('#filelist').find('tbody').find('tr').last().data('id',id);
+                        },
                         complete: function ( result, textStatus, XMLHttpRequest ){// 測試後請刪除
                             //  Remove progress bar and animation
                             target.find('.loadingbar').remove();
@@ -280,15 +484,29 @@ $(function(){
                 }
             }
         });
+    //  toggle file div
+        $('#file_div_toggle').find('i').off().on('click',function(){
+            let file_div=$('#file_div_toggle').siblings('.file');
+            console.log($('#file_div_toggle').siblings('.file'));
+            $(this).toggleClass('fa-angle-up fa-angle-down');
+            console.log('here');
+            if($(this).hasClass('fa-angle-down')){
+                // Close filediv
+                file_div.slideUp();
+            }else{
+                file_div.slideDown();
+            }
+        });
 
     //  filelist table button action    
-        $('#filelist').on('click','button.btn-danger',function(){
+        $(document).on('click','#filelist button.btn-danger',function(){
             let id=$(this).parents('tr').data('id');
 
             $(this).parents('tr').addClass('animated zoomOutRight',function(){
                 $(this).fadeOut(function(){
                     delete_document(id);
-                    comment_area_height('imgage_dev','image_label_dev','authors','FormRequest','comment_area',img_h);
+                    // comment_area_height('imgage_dev','image_label_dev','authors','FormRequest','comment_area',img_h);
+                    comment_area_height();
                     $('#filelist').bootstrapTable('remove',{field:'id',values:[parseInt(id)]});
                 });
                 if($('#files').prop('disabled')) {
@@ -301,7 +519,7 @@ $(function(){
             
             
         });
-        $('#filelist').on('click','.file_description_edit',function(){
+        $(document).on('click','#filelist .file_description_edit',function(){
             let target=$(this).parents('.detail-view')
             //  Show Textarea allow to edit
             target.find('textarea').fadeIn(0);
@@ -317,25 +535,33 @@ $(function(){
             detail_view.find('button').not('.file_description_edit').fadeOut(0);
             detail_view.find('.description_alert').fadeOut(0);
         }
-        $('#filelist').on('click','.file_description_save',function(){
+        $(document).on('click','#filelist .file_description_save',function(){
             let target=$(this).parents('.detail-view');
             let row_index=target.prev('tr').data('index');
-            // let contentTarget=$(this).parents('.detail-view').find('p');
+            let id=$('#filelist').find('tr[data-index='+row_index+']').data('id');
+            let filename=$('#filelist').find('tr[data-index='+row_index+']').find('.filename').text();
             let editcontent=$(this).parents('.detail-view').find('textarea').val();
-            $('#filelist').bootstrapTable('updateRow',{
-                index: row_index, 
-                row: {
-                    description: editcontent,
-                },
-            }); 
-            $('#filelist').find('tr[data-index='+row_index+']').find('td').first().find('.detail-icon').trigger('click');
-            collapse_description(target);
+            let update_file_data={
+                'id':id,
+                'name':filename,
+                'description':editcontent,
+            }
+            if(update_document_detail(update_file_data)){
+                $('#filelist').bootstrapTable('updateRow',{
+                    index: row_index, 
+                    row: {
+                        description: editcontent,
+                    },
+                }); 
+                $('#filelist').find('tr[data-index='+row_index+']').find('td').first().find('.detail-icon').trigger('click');
+                collapse_description(target);
+            }else console.log('Update fail~');
         });
-        $('#filelist').on('click','.file_description_cancel',function(){
+        $(document).on('click','#filelist .file_description_cancel',function(){
             let target=$(this).parents('.detail-view');
             collapse_description(target);
         });
-        $('#filelist').on('change','.detail-view textarea.bd-none',function(){
+        $(document).on('change','#filelist .detail-view textarea.bd-none',function(){
             let target=$(this).parents('.detail-view');
             let alerthtml=`<small class="pl-1 text-info font-weight-bold description_alert">Last edit not completed yet~</small>`;
             let cancelbtn=target.find('.file_description_cancel');
@@ -346,7 +572,9 @@ $(function(){
         });
 
 
-
+        $(document).on('input change','#complete_rate',function  (){
+            limit0to100('#complete_rate');
+        });
  
 
 
@@ -354,10 +582,13 @@ $(function(){
 
     //  Comment area
         $(document).on('click','#toggle-commentarea',function(){ 
-            if($(this).hasClass('active'))  comment_area_height_expand('imgage_dev','image_label_dev','authors','FormRequest','comment_area');
-            else comment_area_height('imgage_dev','image_label_dev','authors','FormRequest','comment_area',img_h);
+            // if($(this).hasClass('active'))  comment_area_height_expand('imgage_dev','image_label_dev','authors','FormRequest','comment_area');
+            if($(this).hasClass('active'))  comment_area_height_expand();
+            else comment_area_height();
+            // else comment_area_height('imgage_dev','image_label_dev','authors','FormRequest','comment_area',img_h);
             $(this).find('i').toggleClass('fa-chevron-down fa-chevron-up');
         });
+
 
         //  Add comment
         $('#sendcomment_btn').on('click',function(){
@@ -384,6 +615,9 @@ $(function(){
                 scrollToBottom($('#comment_area'),position_tar);
             }
         });
+
+    
+
 });
 
 

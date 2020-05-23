@@ -1,0 +1,47 @@
+[
+    {
+        "id": 1,
+        "sequence": 1,
+        "employee": {
+            "employee_id": "10612704",
+            "display_name": "Jeff SH Wang/WNH/Wistron",
+            "extension": "85014602",
+            "job_title": "工程師"
+        },
+        "status": "Accept",
+        "comment": "OK",
+        "timestamp": "2020-03-10T08:26:38.093183Z",
+        "role_group": "initiator",
+        "order": 1
+    },
+    {
+        "id": 2,
+        "sequence": 2,
+        "employee": {
+            "employee_id": "Z10712718",
+            "display_name": "David Wang/WNH/Wistron",
+            "extension": "85015752",
+            "job_title": "部門主管"
+        },
+        "status": "",
+        "comment": "",
+        "timestamp": null,
+        "role_group": "initiator",
+        "order": 1
+    },
+    {
+        "id": 3,
+        "sequence": 3,
+        "employee": {
+            "employee_id": "9505005",
+            "display_name": "Luis Liao/WNH/Wistron",
+            "extension": "85014686",
+            "job_title": "處長"
+        },
+        "status": "",
+        "comment": "",
+        "timestamp": null,
+        "role_group": "developers",
+        "order": 1
+    },
+]

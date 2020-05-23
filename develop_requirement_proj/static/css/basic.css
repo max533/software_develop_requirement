@@ -61,14 +61,14 @@
     .btn-danger:hover{ background-color: var(--dangerhover); border-color: var(--dangerhover);}
     .btn-info{ background-color: var(--primary); border-color: var(--primary);}
     .btn-info:hover{ background-color: var(--info); border-color: var(--info);}
-    .bd-radius-8{border-radius: .8rem;}
+    .bd-radius-8{border-radius: .8rem !important;}
 
 
 /*  general */
     body{ font-size: .9rem; }
     .sticker{
-        width:1.7em;
-        height: 1.7em;
+        width:1.8em;
+        height: 1.8em;
         object-fit: cover;
         border-radius: 50%;
         box-shadow: 0.15rem 0.15rem 0.25rem rgba(14, 14, 14, 0.247);

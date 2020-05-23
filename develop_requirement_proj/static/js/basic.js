@@ -1,6 +1,23 @@
+
+
 $(function(){   
+
+    var pressTimer;
+
+    $('#table').mouseup(function(){
+      clearTimeout(pressTimer);
+      // Clear timeout
+      return false;
+    }).mousedown(function(){
+      // Set timeout
+      pressTimer = window.setTimeout(function() {
+          alert('press too long');
+      },1000);
+      return false; 
+    });
+
 //  Global param
-    img_h = $('#image_status').find('img').first().css('height').split('px')[0];
+    // img_h = $('#image_status').find('img').first().css('height').split('px')[0];
 
 //  General setting 
     //  modal basic setting mutli-modal
@@ -14,12 +31,13 @@ $(function(){
         }
     });
     $(document).on('show.bs.modal', '.modal', function() {
-        var zIndex = 1040 + (10 * $('.modal:visible').length);
+        let zIndex = 1040 + (10 * $('.modal:visible').length);
         $(this).css('z-index', zIndex);
         setTimeout(function() {
             $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
             if($('.modal.show').length>=1){
                 $('.modal.show').not(this).addClass('blur');
+                $(this).removeClass('blur');
             }
         }, 0);
     });
@@ -27,25 +45,7 @@ $(function(){
 
     // image prop path
     $('#navUser,#user').find('img').prop('src',loginInfo.avatar);
-    $('#image_status').find('img').first().prop('src',images.status);
     $('#user').find('span').text(loginInfo.dispaly_name);
-
-    //  form sticker
-    $('#form_initiator').data('id',loginInfo.employee_id);
-    $('#form_initiator').find('img').prop('src',loginInfo.avatar);
-    $('#form_initiator').find('span').text(loginInfo.dispaly_name.split('/Wistron')[0]);
-
-//  TODO Negotiate modal
-    //  timeline data animate
-    let execTime = 200;
-    let timelineTab = [
-        {icon: "paper-plane", date:"2020-02-02 3:00 AM", texte: "Initial request"},
-        {icon: "child", date:"2020-02-02 3:00 AM", texte: "Minimal viable product(MVP) release"},
-        {icon: "flag", date:"2020-02-02 3:00 AM", texte: "Actual compelete"},
-        {icon: "hourglass-end", date:"2020-02-02 3:00 AM", texte: "Expected complete"}
-    ];
-    loadTimeline(0,timelineTab,'#ezinfoModal_timeline',execTime);
-
 
 
     //  Toolbar Click #chart_list to call BI chart
@@ -73,10 +73,11 @@ $(function(){
 
     //  假如開發者只有一人 不顯示這個按鈕和點點點
     //  .toggle-group-list
-    $('.toggle-dev-list').on('click',function(){
+    $(document).on('click','.toggle-dev-list',function(){
         let dot = $('.toggle-dev-list').siblings('span').find('strong');
         $(this).siblings('.dev-list').slideToggle('fast',function(){
-            if($(this).parents('#requestModal')) comment_area_height('imgage_dev','image_label_dev','authors','FormRequest','comment_area',img_h)     
+            // if($(this).parents('#requestModal')) comment_area_height('imgage_dev','image_label_dev','authors','FormRequest','comment_area',img_h)     
+            if($(this).parents('#requestModal')) comment_area_height();     
         });
         dot.fadeToggle('fast');   
     });
@@ -188,13 +189,13 @@ $(function(){
                 formatter:function(value, row, index){
                     let avatar=avatar_get(value.employee_id);
                     let html=`<div class="d-inline-flex align-items-top">
-                                    <img class="sticker mr-2" src="`+avatar+`" onerror="this.src='`+images['defaultavatar']+`'">
-                                    <div>
-                                        <small class="ellipsis text-dark mb-1 mr-3">
-                                            `+value.display_name.split('/Wistron')[0]+`
-                                        </small>
-                                    </div>
-                                </div>`
+                                <img class="sticker mr-2" src="`+avatar+`" onerror="this.src='`+images['defaultavatar']+`'">
+                                <div>
+                                    <small class="ellipsis text-dark mb-1 mr-1">
+                                        `+value.display_name.split('/Wistron')[0]+`
+                                    </small>
+                                </div>
+                            </div>`;
                     return html;
                 },
             },
@@ -218,11 +219,11 @@ $(function(){
                     let html=`<div class="d-inline-flex align-items-top">
                                     <img class="sticker mr-2" src="`+avatar+`" onerror="this.src='`+images['defaultavatar']+`'">
                                     <div>
-                                        <small class="ellipsis text-dark mb-1 mr-3">
+                                        <small class="ellipsis text-dark mb-1 mr-1">
                                             `+value.display_name.split('/Wistron')[0]+`
                                         </small>
                                     </div>
-                                </div>`
+                                </div>`;
                     return html;
                 },
             },
@@ -277,22 +278,6 @@ $(function(){
                     return html;
                 },
             }
-            // {
-            //     field:'file',
-            //     title:'File',
-            //     valign: 'top',
-            //     width: '160',
-            //     formatter:function(value, row, index){
-            //         let html = [];
-            //         $.each(value, function (key,value) {
-            //             if( value.length!==0 ) {
-            //                 value = "<i class='fa fa-check-circle text-info'></i>";
-            //                 html.push('<small><b>'+ key+' :</b> '+value+'</small></br>');
-            //             }
-            //         });
-            //         return html.join('')
-            //     },
-            // },
         ],
         formatLoadingMessage: function(){ 
             let html=LoadingMessage();
@@ -325,7 +310,11 @@ $(function(){
         },
         onDblClickRow:function(row,$element,field) {},
         onClickRow:function(row,$element,field) {
-            console.log('click row')
+            console.log('click row');
+            let authors=author_arr(result);
+            console.log(row);
+            console.log(authors);
+            
         }
     });
 
@@ -334,65 +323,6 @@ $(function(){
     $('<button class="btn btn-warning text-secondary ml-2" id="addRequestBtn"><i class="fa fa-plus mr-1"></i>Add Request</button>').insertAfter($(document).find('.fixed-table-toolbar .btn-group')[0]);
     $('<button class="btn btn-outline-secondary" id="chart_list" title="Chart"><i class="fa fa-chart-bar"></i></button>').insertAfter($(document).find('.fixed-table-toolbar .btn-group').last()[0]);
 
-
-
-
-//  summernote
-    $('.summernote').summernote({
-        theme: 'journal',
-        placeholder: '...',
-        tabsize: 2,
-        spellCheck: true,     
-        minheight: 40,    // set editor height
-        height: 'fitcontent', 
-        lineHeights: '1.0',
-        disableDragAndDrop: false,  
-        focus: true, 
-        hint: {
-            mentions: ['jeff', 'peter'],
-                match: /\B@(\w*)$/,
-                search: function (keyword, callback) {
-                callback($.grep(this.mentions, function (item) {
-                    return item.indexOf(keyword) == 0;
-                }));
-                },
-                content: function (item) {
-                return '@' + item;
-                },    
-        },
-        toolbar: [
-            ['style', ['style']],
-            ['font', ['bold', 'underline']],
-            ['color', ['color']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['insert', ['link', 'picture']],
-            ['view', ['help']]
-            // ['font', ['bold', 'underline', 'clear']],
-            // ['table', ['table']],
-            // ['insert', ['link', 'picture', 'video']],
-            // ['view', ['fullscreen', 'codeview','help']]
-        ],
-        callbacks: {
-            onInit: function() {
-                let placeholder=$(this).prop('placeholder');
-                let target=$(this).siblings('.note-editor').find('.note-placeholder')
-                target.text(placeholder);
-            },
-            onChange:function(contents, $editable) {},
-            onKeydown: function(e) {
-                if(e.keyCode==13) console.log('Enter/Return key pressed');
-            },
-            onFocus: function() {
-                switch ($(this).data('position')) {
-                    case 'comment':
-                        if($('#toggle-commentarea.active').length==0) $('#toggle-commentarea').trigger('click');
-                        break;
-                    default:
-                        break;
-                }
-            },
-        }
-    });
 
     
     //  Delete upload image UI --> disabled upload img funciton

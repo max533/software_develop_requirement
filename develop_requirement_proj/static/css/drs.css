@@ -90,12 +90,13 @@
 /*  image */
     div#image_status{
         overflow: auto;
+        height: 100%;
     }
     div#image_status::-webkit-scrollbar{
         display: none;
     }
     #image_status>div:nth-child(1) img{
-        width: 18em;
+        width: 50%;
     }
     #image_status div {
         text-shadow: rgba(0, 0, 0, 0.088) 0.1em 0.1em 0.08em;
@@ -438,6 +439,7 @@
     }
     #comment+.note-editor .note-editable{
         padding-right: 2rem !important;
+        width: 80% !important;
     }
     .note-placeholder{
         color: var(--grey);
@@ -465,8 +467,8 @@
         display: none; 
     }
     .note-statusbar{ 
-        width:10%; 
-        margin: -2px 1rem 0 auto;
+        width:20%; 
+        margin: -2px auto;
         background-color: var(--secondary) !important;
     }
     .note-btn{
@@ -485,9 +487,11 @@
         opacity: .8;
     }
     #sendcomment_btn{
-        right:.8rem;
-        bottom: 2.2rem;
         z-index: 101;
+        position: absolute;
+        right: 1em;
+        margin-top: -4.5em;
+
     }
     /* #sendcomment_btn:focus,
     #sendcomment_btn:hover,
