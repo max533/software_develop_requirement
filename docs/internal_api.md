@@ -59,8 +59,8 @@
     - [ ] [`GET` Fetch Order's Signature Collection by Order Id](#get-fetch-orders-signature-collection-by-order-id)
     - [ ] [`PUT` Update Order's Signature Deatail by Order Id and Signature Id](#put-update-orders-signature-deatail-by-order-id-and-signature-id)
   - [Histories Operation](#histories-operation)
-    - [ ] [`GET` Filter Histories Collection by Order Id](#get-filter-histories-collection-by-order-id)
-    - [ ] [`POST` Create User's Comment Histories](#post-create-users-comment-histories)
+    - [x] [`GET` Filter Histories Collection by Order Id](#get-filter-histories-collection-by-order-id)
+    - [x] [`POST` Create User's Comment Histories](#post-create-users-comment-histories)
   - [Documents Operation](#documents-operation)
     - [x] [`GET` Filter Documents Collection by Order Id](#get-filter-documents-collection-by-order-id)
     - [x] [`GET` Fetch a Specific Documents](#get-fetch-a-specific-documents)
@@ -800,7 +800,7 @@ Fetch order's signature collection by order's `id`
         {
             "id": 1,
             "sequence": 1,
-            "employee": {
+            "signer": {
                 "employee_id": "10612704",
                 "display_name": "Jeff SH Wang/WNH/Wistron",
                 "extension": "85014602",
@@ -815,7 +815,7 @@ Fetch order's signature collection by order's `id`
         {
             "id": 2,
             "sequence": 2,
-            "employee": {
+            "signer": {
                 "employee_id": "Z10712718",
                 "display_name": "David Wang/WNH/Wistron",
                 "extension": "85015752",
@@ -830,7 +830,7 @@ Fetch order's signature collection by order's `id`
         {
             "id": 3,
             "sequence": 3,
-            "employee": {
+            "signer": {
                 "employee_id": "9505005",
                 "display_name": "Luis Liao/WNH/Wistron",
                 "extension": "85014686",
@@ -932,8 +932,10 @@ Filter histories resource by order
             "id": 2,
             "comment": "<br>There is a comment</br>",
             "editor": {
-                "employee_id": "10612704",
-                "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "employee_id": "9505005",
+                "display_name": "Luis Liao/WNH/Wistron",
+                "extension": "85014686",
+                "job_title": "處長",
             },
             "timestamp": "2020-03-20T08:26:38.093183Z",
             "order": 10,
@@ -942,8 +944,10 @@ Filter histories resource by order
             "id": 3,
             "comment": "<br>There is a comment</br>",
             "editor": {
-                "employee_id": "10612704",
-                "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "employee_id": "9505005",
+                "display_name": "Luis Liao/WNH/Wistron",
+                "extension": "85014686",
+                "job_title": "處長",
             },
             "timestamp": "2020-03-21T08:26:38.093183Z",
             "order": 10,
@@ -988,8 +992,10 @@ Create a new user's comment histories
         "id": 2,
         "comment": "<br>There is a user comment</br>",
         "editor": {
-            "employee_id": "10612704",
-            "display_name": "Jeff Sh Wang/WHQ/Wistron"
+                "employee_id": "9505005",
+                "display_name": "Luis Liao/WNH/Wistron",
+                "extension": "85014686",
+                "job_title": "處長",
         },
         "timestamp": "2020-03-20T08:26:38.093183Z",
         "order": 10
@@ -1039,6 +1045,7 @@ Filter documents resource by order
             "order": 1,
             "description": "There is document1 description",
             "size": "1024000",
+            "uploader": "10612704",
             "created_time": "2020-03-21T08:26:38.093183Z",
         },
         {
@@ -1048,6 +1055,7 @@ Filter documents resource by order
             "order": 1,
             "description": "There is document2 description",
             "size": "2048000",
+            "uploder": "10612704",
             "created_time": "2020-03-21T08:26:38.093183Z",
         },
     ]
@@ -1090,6 +1098,7 @@ Fetch a specific documents resource by documents `id`
         "order": 1,
         "path": "http://dqms.wistron.com/document_1.pdf",
         "size": "1024000",
+        "uploder": "10612704",
         "created_time": "2020-03-21T08:26:38.093183Z",
     }
     ```
@@ -1136,6 +1145,7 @@ Create a new documents
         "order": 1,
         "path": "http://dqms.wistron.com/document_1.pdf",
         "size": "1024000",
+        "uploder": "10612704",
         "created_time": "2020-03-21T08:26:38.093183Z",
     }
     ```
@@ -1563,7 +1573,7 @@ Filter progress resource by order id
         {
             "id": 2,
             "develop_time": "2020-03-20T08:26:38.093183Z",
-            "employee": {
+            "editor": {
                 "employee_id": "10612704",
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
                 "extension": "85014815",
@@ -1577,7 +1587,7 @@ Filter progress resource by order id
         {
             "id": 2,
             "develop_time": "2020-03-20T08:26:38.093183Z",
-            "employee": {
+            "editor": {
                 "employee_id": "10612704",
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
                 "extension": "85014815",
@@ -1629,7 +1639,7 @@ Create a new development progress on specific order
     {
         "id": 2,
         "comment": "<br>There is a user comment</br>",
-        "employee": {
+        "editor": {
             "employee_id": "10612704",
             "display_name": "Jeff SH Wang/WHQ/Wistron",
             "extension": "85014815",
