@@ -1,8 +1,8 @@
 """ develop_requirement_proj API URL Configuration """
 from develop_requirement_proj.employee.api.viewsets import EmployeeViewSet
 from develop_requirement_proj.signature.api.viewsets import (
-    AccountViewSet, AssginerViewSet, DocumentViewSet, OptionView,
-    ProgressViewSet, ProjectViewSet, ScheduleViewSet,
+    AccountViewSet, AssginerViewSet, DocumentViewSet, HistoryViewSet,
+    OptionView, ProgressViewSet, ProjectViewSet, ScheduleViewSet,
 )
 
 from django.conf import settings
@@ -24,6 +24,7 @@ router.register('assigners', AssginerViewSet)
 router.register('documents', DocumentViewSet)
 router.register('schedules', ScheduleViewSet)
 router.register('progress', ProgressViewSet, basename='progress')
+router.register('histories', HistoryViewSet)
 
 urlpatterns = [
     path('options/', OptionView.as_view(), name='option')

@@ -1,6 +1,5 @@
 """ singature app's api viewsets.py """
 import logging
-import time
 
 from develop_requirement_proj.employee.models import Employee
 from develop_requirement_proj.utils.mixins import QueryDataMixin
@@ -14,12 +13,14 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ..models import (
-    Account, Document, ProgressTracker, Project, Schedule, ScheduleTracker,
+    Account, Document, History, ProgressTracker, Project, Schedule,
+    ScheduleTracker,
 )
 # from .filters import ProjectFilter
 from .serializers import (
     AccountSerializer, DocumentSerializer, EmployeeNonModelSerializer,
-    ProgressSerializer, ProjectSerializer, ScheduleSerializer,
+    HistorySerializer, ProgressSerializer, ProjectSerializer,
+    ScheduleSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -40,7 +41,7 @@ class AccountViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericView
 
 
 class ProjectViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
-    """ Provide Project resource from Account Project System """
+    """ Provide Project resource with `action` list """
     serializer_class = ProjectSerializer
 
     def get_queryset(self):
@@ -69,7 +70,7 @@ class OptionView(QueryDataMixin, views.APIView):
 
 
 class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
-    """ Provide Assigner resource by project_id and sub_function """
+    """ Provide Assigner resource with `list` action """
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
 
@@ -145,7 +146,7 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
-    """ Provide Document resource by order_id """
+    """ Provide Document resource with `retrieve`, `list`, `create`, `partial_update` and `delete` """
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
 
@@ -158,7 +159,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
 
 class ScheduleViewSet(viewsets.ModelViewSet):
-    """ Provide Schedule resource by order_id """
+    """ Provide Schedule resource with `retrieve`, `list`, `create`, `partial_update` and `delete` """
     queryset = Schedule.objects.all()
     serializer_class = ScheduleSerializer
 
@@ -274,5 +275,36 @@ class ProgressViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.G
                 if employee_id not in objects:
                     objects[employee_id] = employee
             cache.set('employees', objects, 60 * 60 * 24)
-        context['employee'] = objects
+        context['employees'] = objects
+        return context
+
+
+class HistoryViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+    """ Provide History resource with `list` and `create` action """
+    queryset = History.objects.all()
+    serializer_class = HistorySerializer
+
+    def get_queryset(self):
+        """ Filter History by order_id """
+        queryset = self.queryset
+        order_id = self.request.query_params.get('order', None)
+        if order_id is not None:
+            queryset = queryset.filter(order=order_id)
+        return queryset
+
+    def get_serializer_context(self):
+        """ Provide the editor inforamtion to use in to_representation() at serializer.py """
+        context = super().get_serializer_context()
+        objects = cache.get('employees')
+        if objects is None:
+            instance = Employee.objects.using('hr').all().values()
+            serializer = EmployeeNonModelSerializer(instance, many=True)
+
+            objects = {}
+            for employee in serializer.data:
+                employee_id = employee['employee_id']
+                if employee_id not in objects:
+                    objects[employee_id] = employee
+            cache.set('employees', objects, 60 * 60 * 24)
+        context['employees'] = objects
         return context
