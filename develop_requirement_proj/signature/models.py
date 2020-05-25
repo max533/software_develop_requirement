@@ -108,7 +108,7 @@ class Order(MPTTModel):
         verbose_name_plural = _('orders')
 
     def __str__(self):
-        return f'id:{self.id}, <{self.title}>'
+        return f'<id: {self.id}, Title: {self.title}>'
 
 
 class Document(models.Model):
@@ -172,9 +172,25 @@ class ScheduleTracker(models.Model):
 
 class ProgressTracker(models.Model):
     """ Order's Development Progress Model """
-    employee = models.CharField(max_length=20)
+    editor = models.CharField(max_length=20)
     develop_time = models.DateTimeField(null=True)
     comment = models.TextField()
     complete_rate = models.PositiveIntegerField(null=True)
     created_time = models.DateTimeField(auto_now_add=True, null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
+
+class History(models.Model):
+    """ Order's History Model """
+    editor = models.CharField(max_length=20)
+    comment = models.TextField()
+    created_time = models.DateTimeField(auto_now_add=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['order', 'created_time']
+        verbose_name = _('history')
+        verbose_name_plural = _('histories')
+
+    def __str__(self):
+        return f'Id: {self.id}, Order: {self.order.id}, Editor: {self.editor}, Comment: {self.comment}'

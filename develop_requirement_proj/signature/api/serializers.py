@@ -2,15 +2,11 @@
 from pathlib import Path
 from urllib.parse import urlparse, urlunparse
 
-from develop_requirement_proj.employee.api.serializers import (
-    EmployeeSerializer,
-)
-
 from django.db.models import Max
 
 from rest_framework import serializers
 
-from ..models import Document, ProgressTracker, Schedule
+from ..models import Document, History, ProgressTracker, Schedule
 
 
 class AccountBaseSerializer(serializers.Serializer):
@@ -84,19 +80,20 @@ class ScheduleSerializer(serializers.ModelSerializer):
 class ProgressSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
-        validated_data['employee'] = self.context['request'].user.username
+        """ Automatically add editor """
+        validated_data['editor'] = self.context['request'].user.username
         return ProgressTracker.objects.create(**validated_data)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        employee_id = ret['employee']
-        ret['employee'] = self.context['employee'][employee_id]
+        employee_id = ret['editor']
+        ret['editor'] = self.context['employees'][employee_id]
         return ret
 
     class Meta:
         model = ProgressTracker
         fields = "__all__"
-        read_only_fields = ['employee', 'created_time']
+        read_only_fields = ['editor', 'created_time']
 
 
 class EmployeeNonModelSerializer(serializers.Serializer):
@@ -108,3 +105,22 @@ class EmployeeNonModelSerializer(serializers.Serializer):
 
     def get_display_name(self, obj):
         return f"{obj['english_name']}/{obj['site']}/Wistron"
+
+
+class HistorySerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+        """ Automatically add editor """
+        validated_data['editor'] = self.context['request'].user.username
+        return History.objects.create(**validated_data)
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        employee_id = ret['editor']
+        ret['editor'] = self.context['employees'][employee_id]
+        return ret
+
+    class Meta:
+        model = History
+        fields = "__all__"
+        read_only_fields = ['editor', 'created_time']

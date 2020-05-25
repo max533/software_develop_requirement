@@ -2183,6 +2183,8 @@ name: CharFiled
 
 description: CharField
 
+uploader: CharField
+
 size: IntegerField
 
 created_time: DateTimeField
@@ -2239,7 +2241,7 @@ order: ForeignKey
 
 id: IntegerField (primary_key=True)
 
-employee: CharField
+editor: CharField
 
 develop_time: DateTimeField
 
@@ -2283,7 +2285,7 @@ id: IntegerField (primary_key=True)
 
 sequence: PositiveIntegerField
 
-employee: CharField
+signer: CharField
 
 status: CharField
 
