@@ -74,8 +74,8 @@
     - [x] [`PATCH` Update Partially Schedules Detail](#patch-update-partially-schedules-detail)
     - [x] [`DEL` Delete Schedules Detail](#del-delete-schedules-detail)
   - [Development Progress Operation](#development-progress-operation)
-    - [ ] [`GET` Filter Development Progress Collection by Order Id](#get-filter-development-progress-collection-by-order-id)
-    - [ ] [`POST` Create Development Progress](#post-create-development-progress)
+    - [x] [`GET` Filter Development Progress Collection by Order Id](#get-filter-development-progress-collection-by-order-id)
+    - [x] [`POST` Create Development Progress](#post-create-development-progress)
   - [Notifications Operation](#notifications-operation)
     - [ ] [`GET` Fetch Notifications Collection by Current User](#get-fetch-notifications-collection-by-current-user)
     - [ ] [`PUT` Update Notifications Detail](#put-update-notifications-detail)
@@ -1566,6 +1566,8 @@ Filter progress resource by order id
             "employee": {
                 "employee_id": "10612704",
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "extension": "85014815",
+                "job_title": "工程師",
             },
             "comment": "This is a comment column.",
             "complete_rate": 10,
@@ -1578,6 +1580,8 @@ Filter progress resource by order id
             "employee": {
                 "employee_id": "10612704",
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "extension": "85014815",
+                "job_title": "工程師",
             },
             "comment": "This is a comment column.",
             "complete_rate": 20,
@@ -1627,7 +1631,9 @@ Create a new development progress on specific order
         "comment": "<br>There is a user comment</br>",
         "employee": {
             "employee_id": "10612704",
-            "display_name": "Jeff Sh Wang/WHQ/Wistron"
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
+            "extension": "85014815",
+            "job_title": "工程師",
         },
         "timestamp": "2020-03-20T08:26:38.093183Z",
         "order": 10
@@ -2207,7 +2213,7 @@ order: ForeignKey
 
 ---
 
-`ScheduleGroupTracker Table`
+`ScheduleTracker Table`
 
 id: IntegerField (primary_key=True)
 

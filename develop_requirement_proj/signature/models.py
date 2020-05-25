@@ -85,8 +85,8 @@ class Project:
 
 class Order(MPTTModel):
     """ Order Model """
-    account = models.IntegerField(_("order's account"))
-    project = models.IntegerField(_("order's project"))
+    account = models.IntegerField(_("order's account"), null=True)
+    project = models.IntegerField(_("order's project"), null=True)
     develop_team_function = models.CharField(_("developer's function team"), max_length=20)
     develop_team_sub_function = models.CharField(_("developer's sub function team"), max_length=20)
     status = fields.JSONField(_("order's current status"), default=dict)
@@ -168,3 +168,13 @@ class ScheduleTracker(models.Model):
 
     def __str__(self):
         return f'Name:{self.event_name}, Order:{self.order}, Version:{self.version}'
+
+
+class ProgressTracker(models.Model):
+    """ Order's Development Progress Model """
+    employee = models.CharField(max_length=20)
+    develop_time = models.DateTimeField(null=True)
+    comment = models.TextField()
+    complete_rate = models.PositiveIntegerField(null=True)
+    created_time = models.DateTimeField(auto_now_add=True, null=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
