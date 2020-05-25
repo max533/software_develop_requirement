@@ -1,21 +1,25 @@
 """ singature app's api viewsets.py """
 import logging
+import time
 
 from develop_requirement_proj.employee.models import Employee
 from develop_requirement_proj.utils.mixins import QueryDataMixin
 from employee.api.serializers import EmployeeSerializer
 
+from django.core.cache import cache
 from django.db.models import Max
 
 from rest_framework import mixins, serializers, views, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..models import Account, Document, Project, Schedule, ScheduleTracker
+from ..models import (
+    Account, Document, ProgressTracker, Project, Schedule, ScheduleTracker,
+)
 # from .filters import ProjectFilter
 from .serializers import (
-    AccountSerializer, DocumentSerializer, ProjectSerializer,
-    ScheduleSerializer,
+    AccountSerializer, DocumentSerializer, EmployeeNonModelSerializer,
+    ProgressSerializer, ProjectSerializer, ScheduleSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -241,3 +245,34 @@ class ScheduleViewSet(viewsets.ModelViewSet):
             count += 1
             obj.id = count
         ScheduleTracker.objects.bulk_create(objs)
+
+
+class ProgressViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+    """ Provide Development Progress Resource with `list` and `create` action. """
+    queryset = ProgressTracker.objects.all()
+    serializer_class = ProgressSerializer
+
+    def get_queryset(self):
+        """ Filter Development Progress by order_id """
+        queryset = self.queryset
+        order_id = self.request.query_params.get('order', None)
+        if order_id is not None:
+            queryset = queryset.filter(order=order_id)
+        return queryset
+
+    def get_serializer_context(self):
+        """ Provide the employee inforamtion to use in to_representation() at serializer.py """
+        context = super().get_serializer_context()
+        objects = cache.get('employees')
+        if objects is None:
+            instance = Employee.objects.using('hr').all().values()
+            serializer = EmployeeNonModelSerializer(instance, many=True)
+
+            objects = {}
+            for employee in serializer.data:
+                employee_id = employee['employee_id']
+                if employee_id not in objects:
+                    objects[employee_id] = employee
+            cache.set('employees', objects, 60 * 60 * 24)
+        context['employee'] = objects
+        return context

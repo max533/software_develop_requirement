@@ -15,7 +15,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Employee
-        fields = ['employee_id', 'extension', 'display_name']
+        fields = ['employee_id', 'extension', 'display_name', 'job_title']
 
     def get_display_name(self, obj):
         return f'{obj.english_name}/{obj.site}/Wistron'
