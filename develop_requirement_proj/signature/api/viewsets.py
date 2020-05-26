@@ -13,14 +13,14 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ..models import (
-    Account, Document, History, ProgressTracker, Project, Schedule,
-    ScheduleTracker,
+    Account, Document, History, Notification, ProgressTracker, Project,
+    Schedule, ScheduleTracker,
 )
 # from .filters import ProjectFilter
 from .serializers import (
     AccountSerializer, DocumentSerializer, EmployeeNonModelSerializer,
-    HistorySerializer, ProgressSerializer, ProjectSerializer,
-    ScheduleSerializer,
+    HistorySerializer, NotificationSerializer, ProgressSerializer,
+    ProjectSerializer, ScheduleSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -308,3 +308,14 @@ class HistoryViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.Ge
             cache.set('employees', objects, 60 * 60 * 24)
         context['employees'] = objects
         return context
+
+
+class NotificationVewSet(mixins.UpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+
+    queryset = Notification.objects.all()
+    serializer_class = NotificationSerializer
+
+    def get_queryset(self):
+        employee_id = self.request.user.username
+        queryset = self.queryset.filter(owner=employee_id)
+        return queryset

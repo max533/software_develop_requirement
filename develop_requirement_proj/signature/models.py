@@ -136,8 +136,8 @@ class Schedule(models.Model):
     description = models.TextField()
     expected_time = models.DateTimeField(null=True)
     complete_rate = models.PositiveIntegerField(_('the complete rate of schedule event'), null=True)
-    created_time = models.DateTimeField(auto_now_add=True)
-    update_time = models.DateTimeField(auto_now=True)
+    created_time = models.DateTimeField(auto_now_add=True, null=True)
+    update_time = models.DateTimeField(auto_now=True, null=True)
     version = models.IntegerField(_('current_version'), null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
@@ -147,7 +147,7 @@ class Schedule(models.Model):
         verbose_name_plural = _('schedules')
 
     def __str__(self):
-        return f'Name:{self.event_name}, Order:{self.order}'
+        return f'Name:{self.event_name}, Order:{self.order.id}'
 
 
 class ScheduleTracker(models.Model):
@@ -167,7 +167,7 @@ class ScheduleTracker(models.Model):
         verbose_name_plural = _('schedule_trackers')
 
     def __str__(self):
-        return f'Name:{self.event_name}, Order:{self.order}, Version:{self.version}'
+        return f'Name:{self.event_name}, Order:{self.order.id}, Version:{self.version}'
 
 
 class ProgressTracker(models.Model):
@@ -179,12 +179,20 @@ class ProgressTracker(models.Model):
     created_time = models.DateTimeField(auto_now_add=True, null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ['order', 'created_time']
+        verbose_name = _('progress_tracker')
+        verbose_name_plural = _('progress_tarckers')
+
+    def __str__(self):
+        return f'Id: {self.id}, Compelete Rate:{self.complete_rate}, Order: {self.order.id}'
+
 
 class History(models.Model):
     """ Order's History Model """
     editor = models.CharField(max_length=20)
     comment = models.TextField()
-    created_time = models.DateTimeField(auto_now_add=True)
+    created_time = models.DateTimeField(auto_now_add=True, null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
     class Meta:
@@ -194,3 +202,21 @@ class History(models.Model):
 
     def __str__(self):
         return f'Id: {self.id}, Order: {self.order.id}, Editor: {self.editor}, Comment: {self.comment}'
+
+
+class Notification(models.Model):
+    """ Order's Notificaiton model """
+    link = models.URLField(max_length=1000)
+    read = models.BooleanField(_('the read status of the notification'), default=False)
+    category = models.CharField(max_length=20)
+    initiator = models.CharField('the initiator of the notification', max_length=20)
+    created_time = models.DateTimeField(auto_now_add=True)
+    owner = models.CharField('the owner of the notification', max_length=20)
+
+    class Meta:
+        ordering = ['owner', 'read', 'created_time']
+        verbose_name = _('notification')
+        verbose_name_plural = _('notifications')
+
+    def __str__(self):
+        return f'Id: {self.id}, Read: {self.read}, Create_at: {self.created_time}'

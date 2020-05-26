@@ -6,7 +6,7 @@ from django.db.models import Max
 
 from rest_framework import serializers
 
-from ..models import Document, History, ProgressTracker, Schedule
+from ..models import Document, History, Notification, ProgressTracker, Schedule
 
 
 class AccountBaseSerializer(serializers.Serializer):
@@ -124,3 +124,10 @@ class HistorySerializer(serializers.ModelSerializer):
         model = History
         fields = "__all__"
         read_only_fields = ['editor', 'created_time']
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = "__all__"
+        read_only_fields = ['link', 'category', 'initiator', 'created_time', 'owner']
