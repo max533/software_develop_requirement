@@ -1,6 +1,9 @@
 from django.contrib import admin
 
-from .models import Document, Order, Schedule, ScheduleTracker
+from .models import (
+    Document, History, Notification, Order, ProgressTracker, Schedule,
+    ScheduleTracker,
+)
 
 
 @admin.register(Order)
@@ -66,4 +69,41 @@ class ScheduleTrackerAdmin(admin.ModelAdmin):
         'created_time',
         'update_time',
         'order'
+    )
+
+
+@admin.register(ProgressTracker)
+class ProgressTrackerAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'editor',
+        'develop_time',
+        'comment',
+        'complete_rate',
+        'created_time',
+        'order',
+    )
+
+
+@admin.register(History)
+class HistoryAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'editor',
+        'comment',
+        'created_time',
+        'order',
+    )
+
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'link',
+        'read',
+        'category',
+        'initiator',
+        'created_time',
+        'owner'
     )
