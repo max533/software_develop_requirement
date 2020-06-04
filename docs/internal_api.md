@@ -1249,6 +1249,8 @@ Delete a documents detail by `id`
 
 ### `GET` Filter Schedules Collection by Order Id
 
+- [ ] TODO Add filter schedule by version is null
+
 ```url
 {{service_url}}/api/schedules/?param1=value1
 ```
@@ -1286,7 +1288,7 @@ Filter schedules resource by order id
             "actual_time": null,
             "expected_time": "2020-03-21T08:59:38.093183Z",
             "complete_rate": 15,
-            "version": "1",
+            "version": 1,
             "update_time": "2020-01-20T08:59:38.093183Z",
             "created_time": "2020-01-20T08:59:38.093183Z",
             "order": 1,
@@ -1298,13 +1300,13 @@ Filter schedules resource by order id
             "actual_time": null,
             "expected_time": "2020-03-21T08:59:38.093183Z",
             "complete_rate": 15,
-            "version": "1",
+            "version": 1,
             "update_time": "2020-01-20T08:59:38.093183Z",
             "created_time": "2020-01-20T08:59:38.093183Z",
             "order": 1,
         },
         {
-            "id": 2,
+            "id": 3,
             "event_name": "MVP Time",
             "description": "This is a milestone.",
             "actual_time": null,
@@ -1397,8 +1399,8 @@ Filter schedules history resource by order id
                 "id": 2,
                 "event_name": "Project End Time",
                 "actaul_time": "2020-03-21T08:59:38.093183Z",
-                "description": "This is a milestone.",
                 "expected_time": null,
+                "description": "This is a milestone.",
                 "complete_rate": 15,
                 "version": 2,
                 "update_time": "2020-01-20T08:59:38.093183Z",
@@ -1449,7 +1451,7 @@ Create a new schedules
         "id": 2,
         "event_name": "Project End Time",
         "description": "This is a milestone.",
-        "actual_time": "",
+        "actual_time": null,
         "expected_time": "2020-03-21T08:59:38.093183Z",
         "version": null,
         "complete_rate": 15,
