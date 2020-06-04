@@ -60,6 +60,7 @@ coverage.xml
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+staticfiles/
 
 # Flask stuff:
 instance/
@@ -91,8 +92,9 @@ ipython_config.py
 #   install all needed dependencies.
 #Pipfile.lock
 
-# celery beat schedule file
+# celery beat schedule file and celery pid file
 celerybeat-schedule
+celerybeat.pid
 
 # SageMath parsed files
 *.sage.py
@@ -100,6 +102,7 @@ celerybeat-schedule
 # Environments
 .env
 .venv
+.envs/
 env/
 venv/
 ENV/

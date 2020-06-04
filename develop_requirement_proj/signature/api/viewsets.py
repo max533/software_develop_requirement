@@ -1,9 +1,11 @@
 """ singature app's api viewsets.py """
 import logging
 
+from develop_requirement_proj.employee.api.serializers import (
+    EmployeeSerializer,
+)
 from develop_requirement_proj.employee.models import Employee
 from develop_requirement_proj.utils.mixins import QueryDataMixin
-from employee.api.serializers import EmployeeSerializer
 
 from django.core.cache import cache
 from django.db.models import Max

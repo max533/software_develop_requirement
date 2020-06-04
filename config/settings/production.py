@@ -6,6 +6,7 @@ Production settings to build other settings files upon.
 import logging
 
 import sentry_sdk
+from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
 
@@ -27,7 +28,6 @@ ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["example.com"])
 
 # DATABASES
 # ------------------------------------------------------------------------------
-DATABASES["default"] = env.db("DATABASE_URL")  # noqa F405
 DATABASES["default"]["ATOMIC_REQUESTS"] = True  # noqa F405
 DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)  # noqa F405
 

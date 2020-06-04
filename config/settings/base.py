@@ -12,14 +12,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/dev/ref/settings/
 
 """
+from pathlib import Path
 
 import environ
 
-# (develop_requirement_dev/config/settings/base.py - 3 = develop_requirement_dev/)
-ROOT_DIR = (
-    environ.Path(__file__) - 3
-)
-APPS_DIR = ROOT_DIR.path("develop_requirement_proj")
+ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
+
+APPS_DIR = ROOT_DIR / "develop_requirement_proj"
 
 env = environ.Env()
 
@@ -73,6 +72,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     'rest_framework',
     'django_cas_ng',
+    "django_celery_beat",
 ]
 
 LOCAL_APPS = [
@@ -135,9 +135,9 @@ AUTH_USER_MODEL = "users.CustomUser"
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-root
-STATIC_ROOT = str(ROOT_DIR("staticfiles"))
+STATIC_ROOT = str(ROOT_DIR / "staticfiles")
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
-STATICFILES_DIRS = [str(APPS_DIR.path("static"))]
+STATICFILES_DIRS = [str(APPS_DIR / "static")]
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -150,7 +150,7 @@ STATICFILES_FINDERS = [
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [str(APPS_DIR.path('templates'))],
+        'DIRS': [str(APPS_DIR / "templates")],
         # 'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -180,16 +180,45 @@ EMAIL_BACKEND = env(
 EMAIL_TIMEOUT = 5
 
 
-# ADMIN
-# ------------------------------------------------------------------------------
-# Django Admin URL.
-ADMIN_URL = "admin/"
-
-
 # MEDITA
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#media-root
 MEDIA_ROOT = env("DJANGO_MEDIA_ROOT", default='')
+
+
+# ADMIN
+# ------------------------------------------------------------------------------
+# Django Admin URL.
+ADMIN_URL = "admin/"
+# https://docs.djangoproject.com/en/dev/ref/settings/#admins
+ADMINS = [("""{{cookiecutter.author_name}}""", "{{cookiecutter.email}}")]
+# https://docs.djangoproject.com/en/dev/ref/settings/#managers
+MANAGERS = ADMINS
+
+
+# LOGGING
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#logging
+# See https://docs.djangoproject.com/en/dev/topics/logging for
+# more details on how to customize your logging configuration.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "%(levelname)s %(asctime)s %(module)s "
+            "%(process)d %(thread)d %(message)s"
+        }
+    },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        }
+    },
+    "root": {"level": "INFO", "handlers": ["console"]},
+}
 
 
 # DJANGO REST FRAMEWORK
@@ -203,6 +232,31 @@ REST_FRAMEWORK = {
     # "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.AcceptHeaderVersioning',
 }
+
+
+# Celery
+# ------------------------------------------------------------------------------
+if USE_TZ:
+    # http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-timezone
+    CELERY_TIMEZONE = TIME_ZONE
+# http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-broker_url
+CELERY_BROKER_URL = env("CELERY_BROKER_URL")
+# http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-result_backend
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+# http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-accept_content
+CELERY_ACCEPT_CONTENT = ["json"]
+# http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-task_serializer
+CELERY_TASK_SERIALIZER = "json"
+# http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-result_serializer
+CELERY_RESULT_SERIALIZER = "json"
+# http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-time-limit
+# TODO: set to whatever value is adequate in your circumstances
+CELERY_TASK_TIME_LIMIT = 5 * 60
+# http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-soft-time-limit
+# TODO: set to whatever value is adequate in your circumstances
+CELERY_TASK_SOFT_TIME_LIMIT = 60
+# http://docs.celeryproject.org/en/latest/userguide/configuration.html#beat-scheduler
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 
 # Central Authentication Service(CAS) Client Setting

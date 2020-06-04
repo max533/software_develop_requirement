@@ -70,3 +70,9 @@ INSTALLED_APPS += ["django_extensions"]  # noqa F405
 MIGRATION_MODULES = {
     'employee': 'develop_requirement_proj.employee.migrations.0001_initial',
 }
+
+
+# Celery
+# ------------------------------------------------------------------------------
+# http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-eager-propagates
+CELERY_TASK_EAGER_PROPAGATES = True
