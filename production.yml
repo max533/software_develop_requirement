@@ -23,7 +23,6 @@ services:
       context: .
       dockerfile: ./compose/production/nginx/Dockerfile
     image: ${PROJECT_SLUG}_production_nginx
-    # container_name: ${PROJECT_SLUG}_production_nginx
     depends_on:
       - django
     env_file:
@@ -55,7 +54,6 @@ services:
       context: .
       dockerfile: ./compose/production/django/Dockerfile
     image: ${PROJECT_SLUG}_production_django
-    # container_name: ${PROJECT_SLUG}_production_django
     depends_on:
       - postgres
       - redis
@@ -88,7 +86,6 @@ services:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
     image: ${PROJECT_SLUG}_production_postgres
-    # container_name: ${PROJECT_SLUG}_production_postgres
     volumes:
       - production_postgres_data:/var/lib/postgresql/data
       - production_postgres_data_backups:/backups
@@ -99,7 +96,6 @@ services:
 
   redis:
     image: redis:5.0
-    # container_name: ${PROJECT_SLUG}_production_redis
     networks:
       - backend
 

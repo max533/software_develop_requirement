@@ -65,7 +65,7 @@ class QueryDataMixin:
 
     def get_project_via_search(self, **params):
         """
-        Get Project info via search from Account Project System.
+        Get Project info via search from Account Project 2.0 System.
         """
         uri = settings.ACCOUNT_PROJECT_URI + 'api/search/projects'
         headers = {'X-Authorization': settings.ACCOUNT_PROJECT_TOKEN}
@@ -140,7 +140,7 @@ class QueryDataMixin:
                 f"{r.text}. It can't get department info by <{r.url}>."
             )
             logger.warn(error_message)
-            print(error_message)
+
             return False, None
 
         return True, r.json()
@@ -216,6 +216,54 @@ class QueryDataMixin:
             error_message = (
                 f"Status Code : {r.status_code}. Error Message : " +
                 f"{r.text}. It can't get department info by <{r.url}>."
+            )
+            logger.warn(error_message)
+            return False, None
+
+        return True, r.json()
+
+    def get_project_via_query(self, project_id, field=None):
+        """
+        Get project info via project_id from Account Project System.
+        project_id : str / list
+        """
+        uri = settings.ACCOUNT_PROJECT_URI + 'api/query/projects'
+        if type(project_id) == str:
+            p_id = project_id
+        elif type(project_id) == list:
+            p_id = ','.join(list(map(str, project_id)))
+        else:
+            p_id = ''
+
+        params = {'id': p_id}
+
+        if field is None:
+            params.update(
+                {
+                    'type': True,
+                    'name': True,
+                    'status': True,
+                    'wistron_name': True,
+                    'customer_name': True,
+                    'wistron_code': True,
+                    'plm_code_1': True,
+                    'plm_code_2': True,
+                    'product_line': True,
+                    'business_model': True,
+                    'acct': True,
+                    'deleted_at': True,
+                }
+            )
+        else:
+            params.update(field)
+
+        headers = {'X-Authorization': settings.ACCOUNT_PROJECT_TOKEN}
+        r = requests.get(uri, params=params, headers=headers, timeout=3)
+
+        if r.status_code != 200:
+            error_message = (
+                f"Status Code : {r.status_code}. Error Message : " +
+                f"{r.text}. It can't get project info by Account Project System."
             )
             logger.warn(error_message)
             return False, None

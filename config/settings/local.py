@@ -76,3 +76,8 @@ MIGRATION_MODULES = {
 # ------------------------------------------------------------------------------
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-eager-propagates
 CELERY_TASK_EAGER_PROPAGATES = True
+
+
+# Authentication
+# ------------------------------------------------------------------------------
+DJANGO_FORCE_LOGIN_USERNAME = env('DJANGO_FORCE_LOGIN_USERNAME', default='')

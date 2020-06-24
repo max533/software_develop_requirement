@@ -1,8 +1,8 @@
 from django.contrib import admin
 
 from .models import (
-    Document, History, Notification, Order, ProgressTracker, Schedule,
-    ScheduleTracker,
+    Document, History, Notification, Order, OrderTracker, ProgressTracker,
+    Schedule, ScheduleTracker, Signature,
 )
 
 
@@ -29,6 +29,30 @@ class OrderAdmin(admin.ModelAdmin):
     )
 
 
+@admin.register(OrderTracker)
+class OrderTrackerAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'account',
+        'project',
+        'develop_team_function',
+        'develop_team_sub_function',
+        'status',
+        'initiator',
+        'assigner',
+        'developers',
+        'title',
+        'description',
+        'form_begin_time',
+        'form_end_time',
+        'expected_develop_duration_day',
+        'actual_develop_duration_day',
+        'repository_url',
+        'order',
+        'parent'
+    )
+
+
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
     list_display = (
@@ -49,6 +73,7 @@ class ScheduleAdmin(admin.ModelAdmin):
         'event_name',
         'description',
         'expected_time',
+        'actual_time',
         'complete_rate',
         'version',
         'created_time',
@@ -64,6 +89,7 @@ class ScheduleTrackerAdmin(admin.ModelAdmin):
         'event_name',
         'description',
         'expected_time',
+        'actual_time',
         'complete_rate',
         'version',
         'created_time',
@@ -72,6 +98,7 @@ class ScheduleTrackerAdmin(admin.ModelAdmin):
     )
 
 
+# TODO ProgressTracker need to be correct to Progress
 @admin.register(ProgressTracker)
 class ProgressTrackerAdmin(admin.ModelAdmin):
     list_display = (
@@ -106,4 +133,19 @@ class NotificationAdmin(admin.ModelAdmin):
         'initiator',
         'created_time',
         'owner'
+    )
+
+
+@admin.register(Signature)
+class SignatureAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "sequence",
+        "signer",
+        "sign_unit",
+        "status",
+        "comment",
+        "signed_time",
+        "role_group",
+        "order"
     )

@@ -2,14 +2,13 @@
 from develop_requirement_proj.employee.api.viewsets import EmployeeViewSet
 from develop_requirement_proj.signature.api.viewsets import (
     AccountViewSet, AssginerViewSet, DocumentViewSet, HistoryViewSet,
-    NotificationVewSet, OptionView, ProgressViewSet, ProjectViewSet,
-    ScheduleViewSet,
+    NotificationVewSet, OptionView, OrderViewSet, ProgressViewSet,
+    ProjectViewSet, ScheduleViewSet, SignatureViewSet,
 )
+from rest_framework_nested import routers
 
 from django.conf import settings
 from django.urls import path
-
-from rest_framework import routers
 
 if settings.DEBUG:
     router = routers.DefaultRouter()
@@ -27,9 +26,13 @@ router.register('schedules', ScheduleViewSet)
 router.register('progress', ProgressViewSet, basename='progress')
 router.register('histories', HistoryViewSet)
 router.register('notifications', NotificationVewSet)
+router.register('orders', OrderViewSet)
+orders_router = routers.NestedDefaultRouter(router, 'orders', lookup='orders')
+orders_router.register('signatures', SignatureViewSet, basename='signatures')
 
 urlpatterns = [
     path('options/', OptionView.as_view(), name='option')
 ]
 
 urlpatterns += router.urls
+urlpatterns += orders_router.urls
