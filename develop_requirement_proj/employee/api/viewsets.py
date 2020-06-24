@@ -52,7 +52,7 @@ class EmployeeViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.RetrieveMode
 
     def get_paginated_response(self, data):
         """
-        Adjust the pagination's response to fit bootstrap4 server-side search
+        Adjust the pagination's response to fit bootstrap-table server-side filter
         """
         assert self.paginator is not None
         return response.Response(

@@ -36,6 +36,7 @@ urlpatterns += [
 ]
 
 if settings.DEBUG:
+    # Force Login feature path
     urlpatterns += [
         path('users/', include("develop_requirement_proj.users.urls"))
     ]

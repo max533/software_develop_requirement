@@ -5,20 +5,23 @@ set -o pipefail
 set -o nounset
 
 
-### 1. Make default database url
+### 1. Make celery broker url
+export CELERY_BROKER_URL="${REDIS_URL}"
+
+### 2. Make default database url
 if [ -z "${POSTGRES_USER}" ]; then
     base_postgres_image_default_user='postgres'
     export POSTGRES_USER="${base_postgres_image_default_user}"
 fi
 export DJANGO_DATABASE_DEFAULT_URL="postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}"
 
-### 2. Make hr database url
+### 3. Make hr database url
 export DJANGO_DATABASE_HR_URL="oracle://${ORACLE_USER}:${ORACLE_PASSWORD}@${ORACLE_DSN}"
 
-### 3. Setup oracle client library for cx_oracle package to use
+### 4. Setup oracle client library for cx_oracle package to use
 export LD_LIBRARY_PATH=/opt/instantclient_12_2
 
-### 4. Wait for internal database ready
+### 5. Wait for internal database ready
 postgres_ready() {
 python << END
 import sys
@@ -42,7 +45,7 @@ until postgres_ready; do
 done
 >&2 echo 'PostgreSQL is available'
 
-### 5. Wait for external database ready
+### 6. Wait for external database ready
 oracle_ready() {
 python << END
 import sys

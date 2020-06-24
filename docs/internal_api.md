@@ -31,6 +31,9 @@
   - [Development Progress Operation](#development-progress-operation)
     - [`GET` Filter Development Progress Collection by Order Id](#get-filter-development-progress-collection-by-order-id)
     - [`POST` Create Development Progress](#post-create-development-progress)
+    - [`PUT` Update Development Progress Deatail by Progress Id](#put-update-development-progress-deatail-by-progress-id)
+    - [`PATCH` Update Partially Development Progress Detail](#patch-update-partially-development-progress-detail)
+    - [`DEL` Delete Development Progress Detail](#del-delete-development-progress-detail)
   - [Notifications Operation](#notifications-operation)
     - [`GET` Fetch Notifications Collection by Current User](#get-fetch-notifications-collection-by-current-user)
     - [`PUT` Update Notifications Detail](#put-update-notifications-detail)
@@ -74,8 +77,11 @@
     - [x] [`PATCH` Update Partially Schedules Detail](#patch-update-partially-schedules-detail)
     - [x] [`DEL` Delete Schedules Detail](#del-delete-schedules-detail)
   - [Development Progress Operation](#development-progress-operation)
-    - [x] [`GET` Filter Development Progress Collection by Order Id](#get-filter-development-progress-collection-by-order-id)
-    - [x] [`POST` Create Development Progress](#post-create-development-progress)
+    - [ ] [`GET` Filter Development Progress Collection by Order Id](#get-filter-development-progress-collection-by-order-id)
+    - [ ] [`POST` Create Development Progress](#post-create-development-progress)
+    - [ ] [`PUT` Update Development Progress Deatail by Progress Id](#put-update-development-progress-deatail-by-progress-id)
+    - [ ] [`PATCH` Update Partially Development Progress Detail](#patch-update-partially-development-progress-detail)
+    - [ ] [`DEL` Delete Development Progress Detail](#del-delete-development-progress-detail)
   - [Notifications Operation](#notifications-operation)
     - [x] [`GET` Fetch Notifications Collection by Current User](#get-fetch-notifications-collection-by-current-user)
     - [x] [`PUT` Update Notifications Detail](#put-update-notifications-detail)
@@ -851,7 +857,7 @@ Fetch order's signature collection by order's `id`
 {{service_url}}/api/orders/:order_id/signatures/:signature_id/
 ```
 
-Fetch order's signature collection by order's `id` and signature's `id`
+Update order's signature detail by order's `id` and signature's `id`
 
 - PERMISSSION
 
@@ -1559,6 +1565,8 @@ Delete a schedules detail by `id`
 
 ## Development Progress Operation
 
+- [ ]FIXME Adjust progress table for retireve
+
 ### `GET` Filter Development Progress Collection by Order Id
 
 ```url
@@ -1593,36 +1601,42 @@ Filter progress resource by order id
     [
         {
             "id": 2,
-            "develop_time": "2020-03-20T08:26:38.093183Z",
+            "name": "Spirit 01",
+            "description": "This is a description.",
+            "start_time": "2020-03-20T08:26:38.093183Z",
+            "end_time": "2020-03-20T08:26:38.093183Z",
+            "complete_rate": 10,
             "editor": {
                 "employee_id": "10612704",
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
                 "extension": "85014815",
                 "job_title": "工程師",
             },
-            "comment": "This is a comment column.",
-            "complete_rate": 10,
-            "created_time": "2020-03-20T08:26:38.093183Z",
+            "update_time": "2020-03-20T08:26:38.093183Z",
             "order": 10,
         },
         {
-            "id": 2,
-            "develop_time": "2020-03-20T08:26:38.093183Z",
+            "id": 3,
+            "name": "Spirit 02",
+            "description": "This is a description.",
+            "start_time": "2020-03-20T08:26:38.093183Z",
+            "end_time": "2020-03-20T08:26:38.093183Z",
+            "complete_rate": 100,
             "editor": {
                 "employee_id": "10612704",
                 "display_name": "Jeff SH Wang/WHQ/Wistron",
                 "extension": "85014815",
                 "job_title": "工程師",
             },
-            "comment": "This is a comment column.",
-            "complete_rate": 20,
-            "created_time": "2020-03-20T08:26:38.093183Z",
+            "update_time": "2020-03-20T08:26:38.093183Z",
             "order": 10,
         },
     ]
     ```
 
 ### `POST` Create Development Progress
+
+- [ ]FIXME Adjust progress table for create
 
 ```url
 {{service_url}}/api/progress/
@@ -1641,15 +1655,28 @@ Create a new development progress on specific order
     Content-Type | application/json
     X-CSRFToken | {{ CSRF_COOKIE_NAME }}
 
+- PARAMS
+
+    Key|Value|Description
+    :---:|:---:|:---:
+    name | Progress Name | the name of the progress
+    description | This is a description | the description of progress
+    start_time| Project Begin Time | the name of progress
+    end_time | 2020-03-21T08:59:38.093183Z | the expected_time of progress
+    complete_rate | 15 | the complete_rate of progress
+    order | 2 | it indicate this progress belong to which order
+
 - BODY (raw)
 
     Example request
 
     ```json
     {
-        "develop_time": "2020-03-20T08:26:38.093183Z",
-        "comment": "<br>There is a user comment</br>",
-        "complete_rate": 20,
+        "name": "MVP Time",
+        "start_time": "2020-03-20T08:26:38.093183Z",
+        "end_time": "2020-03-20T08:26:38.093183Z",
+        "description": "This is a description.",
+        "complete_rate": 100,
         "order": 10
     }
     ```
@@ -1659,16 +1686,196 @@ Create a new development progress on specific order
     ```json
     {
         "id": 2,
-        "comment": "<br>There is a user comment</br>",
+        "name": "MVP Time",
+        "description": "This is a description.",
+        "start_time": "2020-03-20T08:26:38.093183Z",
+        "end_time": "2020-03-20T08:26:38.093183Z",
+        "complete_rate": 100,
         "editor": {
             "employee_id": "10612704",
             "display_name": "Jeff SH Wang/WHQ/Wistron",
             "extension": "85014815",
             "job_title": "工程師",
         },
-        "timestamp": "2020-03-20T08:26:38.093183Z",
+        "update_time": "2020-03-20T08:26:38.093183Z",
         "order": 10
     }
+    ```
+
+### `PUT` Update Development Progress Deatail by Progress Id
+
+- [ ] TODO Add this action with viewset
+
+```url
+{{service_url}}/api/progress/:id/
+```
+
+Update order's progress detail by progress `id`
+
+- PERMISSSION
+
+    Only developers can use
+
+- PATH VARIABLES
+
+    Variable|Description
+    :---: | :---:
+    id | progress id
+
+- PARAMS
+
+    Key|Value|Description
+    :---:|:---:|:---:
+    name | Progress Name | the name of the progress
+    description | This is a description | the description of progress
+    start_time| Project Begin Time | the name of progress
+    end_time | 2020-03-21T08:59:38.093183Z | the expected_time of progress
+    complete_rate | 15 | the complete_rate of progress
+    order | 2 | it indicate this progress belong to which order
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+    X-CSRFToken | {{ CSRF_COOKIE_NAME }}
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {
+        "id": 1,
+        "name": "MVP Time",
+        "description": "This is a description.",
+        "start_time": "2020-03-20T08:26:38.093183Z",
+        "end_time": "2020-03-20T08:26:38.093183Z",
+        "complete_rate": 100,
+        "editor": {
+            "employee_id": "10612704",
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
+            "extension": "85014815",
+            "job_title": "工程師",
+        },
+        "update_time": "2020-03-20T08:26:38.093183Z",
+        "order": 10
+    }
+    ```
+
+    Example response
+
+    ```json
+    {
+        "id": 1,
+        "name": "MVP Time",
+        "description": "This is a description.",
+        "start_time": "2020-03-20T08:26:38.093183Z",
+        "end_time": "2020-03-20T08:26:38.093183Z",
+        "complete_rate": 100,
+        "order": 10
+    }
+    ```
+
+### `PATCH` Update Partially Development Progress Detail
+
+- [ ] TODO Add this action with viewset
+
+```url
+{{service_url}}/api/progress/:id/
+```
+
+Update partial details of progress by progress `id`
+
+- PERMISSSION
+
+    Only developers can use
+
+- PATH VARIABLES
+
+    Variable|Description
+    :---: | :---:
+    id | progress id
+
+- PARAMS
+
+    Key|Value|Description
+    :---:|:---:|:---:
+    name | Progress Name | the name of the progress
+    description | This is a description | the description of progress
+    start_time| Project Begin Time | the name of progress
+    end_time | 2020-03-21T08:59:38.093183Z | the expected_time of progress
+    complete_rate | 15 | the complete_rate of progress
+    order | 2 | it indicate this progress belong to which order
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+    X-CSRFToken | {{ CSRF_COOKIE_NAME }}
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {
+        "id": 1,
+        "name": "MVP Time",
+        "start_time": "2020-03-21T08:59:38.093183Z",
+    }
+    ```
+
+    Example response
+
+    ```json
+    {
+        "id": 1,
+        "name": "MVP Time",
+        "start_time": "2020-03-21T08:59:38.093183Z",
+    }
+    ```
+
+### `DEL` Delete Development Progress Detail
+
+- [ ] TODO Add this action with viewset
+
+```url
+{{service_url}}/api/progress/:id/
+```
+
+Delete a progress detail by progress `id`
+
+- PERMISSSION
+
+    Only developers can use
+
+- PATH VARIABLES
+
+    Variable|Description
+    :---: | :---:
+    id | progress id
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+    X-CSRFToken | {{ CSRF_COOKIE_NAME }}
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {}
+    ```
+
+    Example response
+
+    ```json
+    {}
     ```
 
 ---
@@ -2186,7 +2393,7 @@ actual_develop_duration_day: FloatField
 
 repository_url: URLField
 
-parent: ForeignKey
+parent: TreeForeignKey
 
 ---
 
@@ -2268,19 +2475,23 @@ order: ForeignKey
 
 ---
 
-`ProgressTracker Table`
+`Progress Table`
 
 id: IntegerField (primary_key=True)
 
-editor: CharField
+name: CharField
 
-develop_time: DateTimeField
-
-comment: CharField
+description: TextField
 
 complete_rate: PositiveIntegerField
 
-created_time: DateTimeField
+start_time: DateTimeField
+
+end_time: DateTimeField
+
+editor: CharField
+
+update_time: DateTimeField
 
 order: ForeignKey
 
@@ -2320,7 +2531,7 @@ signer: CharField
 
 status: CharField
 
-comment: CharField
+comment: TextField
 
 signed_time: DateTimeField
 
@@ -2345,3 +2556,43 @@ initiator: CharField
 created_time: DateTimeField
 
 owner: CharField
+
+---
+
+`OrderTracker Table`
+
+id: IntegerField (primary_key=True)
+
+account: IntegerField
+
+project: IntegerField
+
+develop_team_function: CharField i.e. EE/SW/QT/BU
+
+develop_team_sub_function: CharField i.e. TSC/BIOS/BMC/MQT/PQT/DQMS...
+
+status: JSONField
+
+initator: JSONField
+
+assigner: JSONField
+
+developers: JSONField
+
+title: CharField
+
+description: TextField
+
+form_begin_time: DateTimeField
+
+form_end_time: DateTimeField
+
+expected_develop_duration_day: FloatField
+
+actual_develop_duration_day: FloatField
+
+repository_url: URLField
+
+created_time: DateTimeField
+
+order: ForeignKey

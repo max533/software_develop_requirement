@@ -16,6 +16,15 @@ Use **`pipenv`** to install all require python package
 pipenv isntall
 ```
 
+## Deploy to producition environment
+
+1. Add `.env` file to fill variable in yaml file
+2. Add `.envs/.production/.dajngo` & `.envs/.production/.postgres` & `.envs/.production/.nginx` file in root folder
+
+```bash
+docker-compose -f production.yml up -d
+```
+
 ## Versioning
 
 We use [SemVer](https://semver.org/) for versioning. For the versions available, see the tags on this repository.

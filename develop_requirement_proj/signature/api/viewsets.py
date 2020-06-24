@@ -1,4 +1,5 @@
 """ singature app's api viewsets.py """
+import json
 import logging
 
 from develop_requirement_proj.employee.api.serializers import (
@@ -8,21 +9,26 @@ from develop_requirement_proj.employee.models import Employee
 from develop_requirement_proj.utils.mixins import QueryDataMixin
 
 from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Max
+from django.forms import model_to_dict
+from django.utils import timezone
 
-from rest_framework import mixins, serializers, views, viewsets
+from rest_framework import mixins, response, serializers, views, viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
 
 from ..models import (
-    Account, Document, History, Notification, ProgressTracker, Project,
-    Schedule, ScheduleTracker,
+    Account, Document, History, Notification, Order, OrderTracker,
+    ProgressTracker, Project, Schedule, ScheduleTracker, Signature,
 )
-# from .filters import ProjectFilter
+from .filters import OrderFilter, OrderFilterBackend
+from .paginations import OrderPagination
 from .serializers import (
-    AccountSerializer, DocumentSerializer, EmployeeNonModelSerializer,
-    HistorySerializer, NotificationSerializer, ProgressSerializer,
-    ProjectSerializer, ScheduleSerializer,
+    AccountEasySerializer, AccountSerializer, DocumentSerializer,
+    EmployeeNonModelSerializer, HistorySerializer, NotificationSerializer,
+    OrderDynamicSerializer, OrderTrackerSerializer, ProgressSerializer,
+    ProjectEasySerializer, ProjectSerializer, ScheduleSerializer,
+    SignatureSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -43,7 +49,7 @@ class AccountViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericView
 
 
 class ProjectViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
-    """ Provide Project resource with `action` list """
+    """ Provide Project resource with `list` action """
     serializer_class = ProjectSerializer
 
     def get_queryset(self):
@@ -68,7 +74,7 @@ class OptionView(QueryDataMixin, views.APIView):
         if status and result:
             final_result = result
 
-        return Response(final_result)
+        return response.Response(final_result)
 
 
 class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -189,65 +195,106 @@ class ScheduleViewSet(viewsets.ModelViewSet):
                 result[obj['version']] = [obj]
             else:
                 result[obj['version']].append(obj)
-        return Response(result)
+        return response.Response(result)
 
     def perform_create(self, serializer):
-        """
-        After creating new schedule, it will record the current schedule
-        with same version in `ScheduleTracker` table.
-        """
         serializer.save()
-        # Update `Schedule` current version which filter by order_id
-        objs = Schedule.objects.filter(order=serializer.data['order'])
-        for obj in objs:
-            obj.version += 1
-        Schedule.objects.bulk_update(objs, ['version'])
-        # Create `Schedule` history and set primary key for `ScheduleTracker` Table
-        result = ScheduleTracker.objects.aggregate(Max('id'))
-        count = result['id__max'] if result['id__max'] is not None else 0
-        for obj in objs:
-            count += 1
-            obj.id = count
-        ScheduleTracker.objects.bulk_create(objs)
+        # If Schedule Add, then Order status rollback to P3 initial status
+        order = serializer.instance.order
+        # Check whether P4 phase signature is finished or not
+        try:
+            signature = order.signature_set.filter(role_group='assigner').latest('signed_time')
+            signer = signature.signer
+            signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
+            count = 0
+            for char in signer_department_id[::-1]:
+                if char == '0':
+                    count += 1
+                elif char != '0':
+                    break
+            if count >= 4:
+                skip_signature_flag = True
+            elif count < 4:
+                skip_signature_flag = False
+        except ObjectDoesNotExist as err:
+            logger.info(f"There are not any signature. Error Message: {err}")
+            skip_signature_flag = False
+
+        order.status = {
+            'P3': {
+                "initiator": "",
+                "assigner": "Approve",
+                "developers": ""
+            },
+            'signed': skip_signature_flag
+        }
+        order.save()
 
     def perform_update(self, serializer):
-        """
-        After updating new schedule, it will record the current schedule
-        with same version in `ScheduleTracker` table.
-        """
         serializer.save()
-        # Update `Schedule` currnet version which filter by order_id
-        objs = Schedule.objects.filter(order=serializer.data['order'])
-        for obj in objs:
-            obj.version += 1
-        Schedule.objects.bulk_update(objs, ['version'])
-        # Create `Schedule` history and set primary key for `ScheduleTracker` Table
-        result = ScheduleTracker.objects.aggregate(Max('id'))
-        count = result['id__max'] if result['id__max'] is not None else 0
-        for obj in objs:
-            count += 1
-            obj.id = count
-        ScheduleTracker.objects.bulk_create(objs)
+        # If Schedule Add, then Order status rollback to P3 initial status
+        order = serializer.instance.order
+        # Check whether P4 phase signature is finished or not
+        try:
+            signature = order.signature_set.filter(role_group='assigner').latest('signed_time')
+            signer = signature.signer
+            signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
+            count = 0
+            for char in signer_department_id[::-1]:
+                if char == '0':
+                    count += 1
+                elif char != '0':
+                    break
+            if count >= 4:
+                skip_signature_flag = True
+            elif count < 4:
+                skip_signature_flag = False
+        except ObjectDoesNotExist as err:
+            logger.info(f"There are not any signature. Error Message: {err}")
+            skip_signature_flag = False
+
+        order.status = {
+            'P3': {
+                "initiator": "",
+                "assigner": "Approve",
+                "developers": ""
+            },
+            'signed': skip_signature_flag
+        }
+        order.save()
 
     def perform_destroy(self, instance):
-        """
-        After deleting new schedule, it will record the current schedule
-        with same version in `ScheduleTracker` table.
-        """
-        # Update `Schedule` currnet version which filter by order_id
-        objs = Schedule.objects.filter(order=instance.order)
-        for obj in objs:
-            obj.version += 1
-        Schedule.objects.bulk_update(objs, ['version'])
-        # Delete instance
+        # If Schedule delete, then Order status rollback to P3 initial status
+        order = instance.order
         instance.delete()
-        # Create `Schedule` history and set primary key for `ScheduleTracker` Table
-        result = ScheduleTracker.objects.aggregate(Max('id'))
-        count = result['id__max'] if result['id__max'] is not None else 0
-        for obj in objs:
-            count += 1
-            obj.id = count
-        ScheduleTracker.objects.bulk_create(objs)
+        # Check whether P4 phase signature is finished or not
+        try:
+            signature = order.signature_set.filter(role_group='assigner').latest('signed_time')
+            signer = signature.signer
+            signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
+            count = 0
+            for char in signer_department_id[::-1]:
+                if char == '0':
+                    count += 1
+                elif char != '0':
+                    break
+            if count >= 4:
+                skip_signature_flag = True
+            elif count < 4:
+                skip_signature_flag = False
+        except ObjectDoesNotExist as err:
+            logger.info(f"There are not any signature in P4. Error Message: {err}")
+            skip_signature_flag = False
+
+        order.status = {
+            'P3': {
+                "initiator": "",
+                "assigner": "Approve",
+                "developers": ""
+            },
+            'signed': skip_signature_flag
+        }
+        order.save()
 
 
 class ProgressViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -276,7 +323,7 @@ class ProgressViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.G
                 employee_id = employee['employee_id']
                 if employee_id not in objects:
                     objects[employee_id] = employee
-            cache.set('employees', objects, 60 * 60 * 24)
+            cache.set('employees', objects, 60 * 60)
         context['employees'] = objects
         return context
 
@@ -307,7 +354,7 @@ class HistoryViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.Ge
                 employee_id = employee['employee_id']
                 if employee_id not in objects:
                     objects[employee_id] = employee
-            cache.set('employees', objects, 60 * 60 * 24)
+            cache.set('employees', objects, 60 * 60)
         context['employees'] = objects
         return context
 
@@ -318,6 +365,877 @@ class NotificationVewSet(mixins.UpdateModelMixin, mixins.ListModelMixin, viewset
     serializer_class = NotificationSerializer
 
     def get_queryset(self):
+        """ Get current user's notification """
+        queryset = []
         employee_id = self.request.user.username
         queryset = self.queryset.filter(owner=employee_id)
         return queryset
+
+
+class OrderViewSet(QueryDataMixin,
+                   mixins.ListModelMixin,
+                   mixins.RetrieveModelMixin,
+                   mixins.UpdateModelMixin,
+                   mixins.CreateModelMixin,
+                   viewsets.GenericViewSet):
+    """ Provide Order Resource with `list`, `retrieve`, `update`, `partial_update`, `create` action """
+    queryset = Order.objects.all()
+    serializer_class = OrderDynamicSerializer
+    pagination_class = OrderPagination
+    filter_backends = [OrderFilterBackend]
+    filter_class = OrderFilter
+
+    def get_serializer_context(self):
+        """
+        Query account, acccount, employee, function_team and sub_function_team information
+        for to_represtation() function
+        """
+        # TODO Use asyncio to speed up the reuqest with third-party api
+        context = super().get_serializer_context()
+
+        # Get project information
+        project_object = cache.get('projects', None)
+        if project_object is None:
+            project_object = {}
+            status, results = self.get_project_via_search()
+
+            if status and results:
+                serializer = ProjectEasySerializer(results, many=True)
+                for project in serializer.data:
+                    project_id = project['id']
+                    if project_id not in project_object:
+                        project_object[project_id] = project
+                cache.set('projects', project_object, 60 * 60)
+        context['projects'] = project_object
+
+        # Get account information
+        account_object = cache.get('accounts', None)
+        if account_object is None:
+            account_object = {}
+            status, results = self.get_account_via_search()
+
+            if status and results:
+                serializer = AccountEasySerializer(results, many=True)
+                for account in serializer.data:
+                    account_id = account['id']
+                    if account_id not in account_object:
+                        account_object[account_id] = account
+                cache.set('accounts', account_object, 60 * 60)
+        context['accounts'] = account_object
+
+        # Get employee information
+        employee_object = cache.get('employees', None)
+        if employee_object is None:
+            instance = Employee.objects.using('hr').all().values()
+            serializer = EmployeeNonModelSerializer(instance, many=True)
+
+            employee_object = {}
+            for employee in serializer.data:
+                employee_id = employee['employee_id']
+                if employee_id not in employee_object:
+                    employee_object[employee_id] = employee
+            cache.set('employees', employee_object, 60 * 60)
+        context['employees'] = employee_object
+
+        if self.action in ['create', 'update']:
+            # Get function_team and sub_function information
+            function_team_object = cache.get('function_team', None)
+            sub_function_team_object = cache.get('sub_function_team', None)
+
+            if function_team_object is None or sub_function_team_object is None:
+                function_team_object, sub_function_team_object = [], []
+
+                status, result = self.get_option_value(**{'field': 'dept_category'})
+
+                if status and result:
+                    if 'EBG' in result:
+                        function_team_object = list(result['EBG'].keys())
+                        cache.set('function_team', function_team_object, 60 * 60)
+                        sub_fun_list = []
+                        for key in result['EBG'].keys():
+                            sub_fun = result['EBG'][key]
+                            sub_fun_list.extend(sub_fun)
+                        sub_function_team_object = sub_fun_list
+                        cache.set('sub_function_team', sub_function_team_object, 60 * 60)
+            context['function_team'] = function_team_object
+            context['sub_function_team'] = sub_function_team_object
+
+        return context
+
+    def get_serializer(self, *args, **kwargs):
+        """ Add fields(list) into kwargs dict to provide dynamic serializer to use """
+        serializer_class = self.get_serializer_class()
+        kwargs['context'] = self.get_serializer_context()
+        fields = self.request.query_params.get('fields', None)
+        if fields:
+            kwargs['fields'] = [field for field in fields.split(',')]
+        return serializer_class(*args, **kwargs)
+
+    def get_paginated_response(self, data):
+        """ Adjust the pagination's response to fit bootstrap-table server-side filter """
+        assert self.paginator is not None
+        return response.Response(
+            {
+                'rows': data,
+                'total': self.paginator.page.paginator.count,
+                'totalNotFilter': len(self.queryset),
+            }
+        )
+
+    @action(methods=['GET'], detail=True, url_path='ancestors', url_name='ancestors')
+    def ancestor_list(self, request, *args, **kwargs):
+        """ Get the ancestor list of the order """
+        queryset = []
+        order_instance = self.get_object()
+        if order_instance.parent is None:
+            return response.Response(queryset)
+        queryset = order_instance.get_ancestors(ascending=True, include_self=True)
+        serializer = self.get_serializer(queryset, many=True)
+        return response.Response(serializer.data)
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+        order_id = serializer.instance.id
+        order = Order.objects.get(pk=order_id)
+        order_status = order.status
+
+        # Save OrderTracker
+        order_tracker_serializer = OrderTrackerSerializer(data=model_to_dict(order))
+        if order_tracker_serializer.is_valid(raise_exception=True):
+            order_tracker_serializer.save(order=order, form_begin_time=order.form_begin_time)
+
+        # # Create History (including last record and update content with json)'
+        comment = {
+            'last_order': '',
+            'current_order': serializer.data
+        }
+        history = {
+            'editor': 'system',
+            'comment': json.dumps(comment),
+            'order': order
+        }
+        History.objects.create(**history)
+
+        if 'P0' in order_status:
+            direction_flag = order_status['P0'].get('initiator', None)
+            if direction_flag == 'Approve':
+                # Debug Code
+                debug_message = (
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                )
+                logger.debug(debug_message)
+                # Find next signer
+                signer = order.initiator
+                signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
+                status, result = self.get_department_via_query(department_id=signer_department_id)
+                if not (status and result):
+                    warn_message = (
+                        f"It couldn't be find next signer with the current signer '{signer}'"
+                    )
+                    logger.warning(warn_message)
+                    return
+                if signer_department_id in result:
+                    next_signer = result[signer_department_id].get('dm', None)
+
+                # Create Signature
+                signature_next = {
+                    'sequence': 1,
+                    'signer': next_signer,
+                    'sign_unit': signer_department_id,
+                    'status': '',
+                    'comment': '',
+                    'role_group': 'initiator',
+                    'order': order
+                }
+                Signature.objects.create(**signature_next)
+                # Order Status Change
+                order.status = {
+                    "P1": {
+                        next_signer: ""
+                    }
+                }
+                order.save()
+                # Send Email to signer
+            elif direction_flag == 'Close':
+                # Debug Code
+                debug_message = (
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                )
+                logger.debug(debug_message)
+                order.form_end_time = timezone.now()
+                order.save()
+        # Send Notification to all member
+
+    def perform_update(self, serializer):
+        serializer.save()
+        # P1 and P4 status change in signature api
+        order_id = serializer.data['id']
+        order = Order.objects.get(pk=order_id)
+        order_status = order.status
+
+        # Create History (including last record and update content with json)
+        last_order_tracker = dict(OrderTracker.objects.filter(order=order_id).order_by('created_time').values()[0])
+        del last_order_tracker['order_id']
+        kwargs = {}
+        kwargs['context'] = {'accounts': cache.get('accounts', None)}
+        kwargs['context'].update({'projects': cache.get('projects', None)})
+        kwargs['context'].update({'employees': cache.get('employees', None)})
+
+        comment = {
+            'last_order': OrderDynamicSerializer(last_order_tracker, **kwargs).data,
+            'update_content': serializer.data
+        }
+        history = {
+            'editor': 'system',
+            'comment': json.dumps(comment),
+            'order': order
+        }
+        History.objects.create(**history)
+
+        # Save OrderTracker
+        order_tracker_serializer = OrderTrackerSerializer(data=model_to_dict(order))
+        if order_tracker_serializer.is_valid(raise_exception=True):
+            order_tracker_serializer.save(order=order, form_begin_time=order.form_begin_time)
+
+        if 'P0' in order_status:
+            direction_flag = order_status['P0'].get('initiator', None)
+
+            if direction_flag is None or direction_flag == "":
+                error_message = (
+                    f"The status of order id '{order_id}'  is not correct." +
+                    "There are not correct direction_flag attribure in order status."
+                )
+                logger.error(error_message)
+            elif direction_flag == "Approve":
+                # Debug Code
+                debug_message = (
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                )
+                logger.debug(debug_message)
+                # Check signature stage is finished or not. The last signer will function head leader.
+                # Consecutive occurrences times of the zero in department_id is greater than four.
+                signer = order.signature_set.filter(role_group='initiator').latest('signed_time').signer
+                signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
+                count = 0
+                for char in signer_department_id[::-1]:
+                    if char == '0':
+                        count += 1
+                    elif char != '0':
+                        break
+                if count >= 4:
+                    skip_signature_flag = True
+                elif count < 4:
+                    skip_signature_flag = False
+
+                if skip_signature_flag:
+                    # Debug Code
+                    debug_message = (
+                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
+                        f"skip_signature_flag:'{skip_signature_flag}'"
+                    )
+                    logger.debug(debug_message)
+                    order.status = {
+                        "P2": {
+                            "assigner": ""
+                        }
+                    }
+                    order.save()
+                    # TODO Send email to assigner
+                elif not skip_signature_flag:
+                    # Debug Code
+                    debug_message = (
+                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}'," +
+                        f"skip_signature_flag:'{skip_signature_flag}'"
+                    )
+                    logger.debug(debug_message)
+                    # Find next Singer
+                    signer = order.initiator
+                    signer_department = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
+                    status, result = self.get_department_via_query(department_id=signer_department)
+                    if not (status and result):
+                        warn_message = (
+                            f"It couldn't be find next signer with the current signer '{signer}'"
+                        )
+                        logger.warning(warn_message)
+                        return
+
+                    if signer_department in result:
+                        next_signer = result[signer_department].get('dm', None)
+
+                    # Check whether craete next signature
+                    max_sequence = order.signature_set.aggregate(Max('sequence'))['sequence__max']
+                    if order.signature_set.get(sequence=max_sequence).status in ['Approve', 'Return']:
+                        # Create next Signature
+                        sequence_max = order.signature_set.aggregate(Max('sequence'))['sequence__max']
+                        next_signature = {
+                            'sequence': sequence_max + 1,
+                            'signer': next_signer,
+                            'sign_unit': signer_department,
+                            'status': '',
+                            'comment': '',
+                            'role_group': 'initiator',
+                            'order': order
+                        }
+                        Signature.objects.create(**next_signature)
+                    # Order Status Change
+                    order.status = {
+                        "P1": {
+                            next_signer: ""
+                        }
+                    }
+                    order.save()
+                    # TODO Send email to next signer
+
+            elif direction_flag == "Close":
+                # Debug Code
+                debug_message = (
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                )
+                logger.debug(debug_message)
+                order.form_end_time = timezone.now()
+                order.save()
+
+        elif 'P2' in order_status:
+            direction_flag = order_status['P2'].get('assigner', None)
+
+            if direction_flag is None or direction_flag == "":
+                error_message = (
+                    f"The status of order id '{order_id}' is not correct. " +
+                    "There are not correct direction_flag attribure in order status."
+                )
+                logger.error(error_message)
+            elif direction_flag == "Approve":
+                # Debug Code
+                debug_message = (
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                )
+                logger.debug(debug_message)
+                order.status = {
+                    "P3": {
+                        "initiator": "",
+                        "assigner": "",
+                        "developers": ""
+                    },
+                    "signed": False
+                }
+                order.save()
+                # TODO Send email to assigner
+            elif direction_flag == "Return":
+                # Debug Code
+                debug_message = (
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                )
+                logger.debug(debug_message)
+                # Check signature stage is finished or not. The last signer will function head leader.
+                # Consecutive occurrences times of the zero in department_id is greater than four.
+                try:
+                    signer = order.signature_set.filter(
+                        role_group='initiator', signed_time__isnull=False).latest('signed_time').signer
+                except ObjectDoesNotExist as err:
+                    warn_message = (
+                        f"It can't find any signature with order id {order.id}. Warn Message: {err}"
+                    )
+                    logger.warn(warn_message)
+                    return
+                signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
+                count = 0
+                for char in signer_department_id[::-1]:
+                    if char == '0':
+                        count += 1
+                    elif char != '0':
+                        break
+                if count >= 4:
+                    skip_signature_flag = True
+                    # Debug Code
+                    debug_message = (
+                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
+                        f"skip_signature_flag:'{skip_signature_flag}'"
+                    )
+                    logger.debug(debug_message)
+                    order.status = {
+                        'P0': {
+                            'initiator': ''
+                        },
+                        'signed': skip_signature_flag
+                    }
+                    order.save()
+                elif count < 4:
+                    skip_signature_flag = False
+                    # Debug Code
+                    debug_message = (
+                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
+                        f"skip_signature_flag:'{skip_signature_flag}'"
+                    )
+                    logger.debug(debug_message)
+                    order.status = {
+                        'P0': {
+                            'initiator': ''
+                        },
+                        'signed': skip_signature_flag
+                    }
+                    order.save()
+                # TODO Send email to initiator
+            elif direction_flag == "Close":
+                # Debug Code
+                debug_message = (
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                )
+                logger.debug(debug_message)
+                order.form_end_time = timezone.now()
+                order.save()
+
+        elif 'P3' in order_status:
+            status_list = []
+            status_list.append(order_status['P3'].get('initiator', None))
+            status_list.append(order_status['P3'].get('assigner', None))
+            status_list.append(order_status['P3'].get('developers', None))
+
+            if "Return" in status_list:
+                direction_flag = "Return"
+            elif all(status == "Approve" for status in status_list):
+                direction_flag = "Approve"
+            elif status_list[1] == "Close":
+                direction_flag = "Close"
+            else:
+                direction_flag = "Wait"
+
+            if direction_flag in ['Return', 'Approve', 'Wait', "Close"]:
+                # Check signature stage is finished or not. The last signer will function head leader.
+                # Consecutive occurrences times of the zero in department_id is greater than four.
+                try:
+                    signature = order.signature_set.filter(role_group='assigner').latest('signed_time')
+                    signer = signature.signer
+                    signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
+                    count = 0
+                    for char in signer_department_id[::-1]:
+                        if char == '0':
+                            count += 1
+                        elif char != '0':
+                            break
+                    if count >= 4:
+                        skip_signature_flag = True
+                    elif count < 4:
+                        skip_signature_flag = False
+                except ObjectDoesNotExist as err:
+                    logger.info(f"There are not any signature. Error Message: {err}")
+                    skip_signature_flag = False
+
+            if direction_flag == "Approve":
+                if skip_signature_flag:
+                    # Debug Code
+                    debug_message = (
+                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
+                        f"skip_signature_flag:'{skip_signature_flag}'"
+                    )
+                    logger.debug(debug_message)
+                    order.status = {
+                        "P5": {
+                            "developers": ""
+                        }
+                    }
+                    order.save()
+                    # TODO Send email to developers
+                elif not skip_signature_flag:
+                    # Debug Code
+                    debug_message = (
+                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
+                        f"skip_signature_flag:'{skip_signature_flag}'"
+                    )
+                    logger.debug(debug_message)
+
+                    # Find next Singer
+                    signer = order.assigner
+                    signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
+                    status, result = self.get_department_via_query(department_id=signer_department_id)
+                    if not (status and result):
+                        warn_message = (
+                            f"It couldn't be find next signer with the current signer '{signer}'"
+                        )
+                        logger.warning(warn_message)
+                        return
+                    if signer_department_id in result:
+                        next_signer = result[signer_department_id].get('dm', None)
+
+                    # Check whether craete next signature
+                    max_sequence = order.signature_set.aggregate(Max('sequence'))['sequence__max']
+                    if order.signature_set.get(sequence=max_sequence).status in ['Approve', 'Return']:
+                        # Create Signature
+                        sequence_max = order.signature_set.aggregate(Max('sequence'))['sequence__max']
+                        next_signature = {
+                            'sequence': sequence_max + 1,
+                            'signer': next_signer,
+                            'sign_unit': signer_department_id,
+                            'status': '',
+                            'comment': '',
+                            'role_group': 'assigner',
+                            'order': order
+                        }
+                        Signature.objects.create(**next_signature)
+
+                    # Recalculate the schedule version and record snapshot in ScheduleTracle table
+                    # And Change schedule attribute expected_time to actual_time
+                    objs = order.schedule_set.all()
+                    current_max_version = objs.aggregate(Max('version'))['version__max']
+                    new_version = 1 if current_max_version is None else current_max_version + 1
+                    for obj in objs:
+                        obj.actual_time, obj.expected_time = obj.expected_time, None
+                        obj.version = new_version
+                    Schedule.objects.bulk_update(objs, ['actual_time', 'expected_time', 'version'])
+                    result = ScheduleTracker.objects.aggregate(Max('id'))['id__max']
+                    new_id = 0 if result is None else result
+                    for obj in objs:
+                        new_id += 1
+                        obj.id = new_id
+                    ScheduleTracker.objects.bulk_create(objs)
+
+                    # Order Status Change
+                    order.status = {
+                        "P4": {
+                            next_signer: ""
+                        }
+                    }
+                    order.save()
+                    # TODO Send email to next signer
+            elif direction_flag == "Return":
+                # Debug Code
+                debug_message = (
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                )
+                logger.debug(debug_message)
+
+                order.status = {
+                    "P3": {
+                        "initiator": "",
+                        "assigner": "",
+                        "developers": ""
+                    },
+                    "signed": skip_signature_flag
+                }
+                order.save()
+                # TODO Send email to assigner
+            elif direction_flag == "Close":
+                # Debug Code
+                debug_message = (
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                )
+                logger.debug(debug_message)
+                order.status = {
+                    "P3": {
+                        "assigner": "Close",
+                    },
+                    "signed": skip_signature_flag
+                }
+                order.form_end_time = timezone.now()
+                order.save()
+            elif direction_flag == "Wait":
+                # Debug Code
+                debug_message = (
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                )
+                logger.debug(debug_message)
+                order.status['signed'] = skip_signature_flag
+                order.save()
+
+        elif 'P5' in order_status:
+
+            if 'developers' in order_status['P5']:
+                direction_flag = order_status['P5'].get('developers', None)
+                if direction_flag is None or direction_flag == "":
+                    error_message = (
+                        f"The status of order id '{order_id}'  is not correct." +
+                        "There are not correct direction_flag attribure in order status."
+                    )
+                    logger.error(error_message)
+                elif direction_flag == "Approve":
+                    # Debug Code
+                    debug_message = (
+                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                    )
+                    logger.debug(debug_message)
+                    order.status = {
+                        "P5": {
+                            "initiator": ""
+                        }
+                    }
+                    order.save()
+                    # TODO Send email to assigner
+            elif 'initiator' in order_status['P5']:
+                direction_flag = order_status['P5'].get('initiator', None)
+                if direction_flag is None or direction_flag == "":
+                    error_message = (
+                        f"The status of order id '{order_id}'  is not correct." +
+                        "There are not correct direction_flag attribure in order status."
+                    )
+                    logger.error(error_message)
+                elif direction_flag == "Approve":
+                    # Debug Code
+                    debug_message = (
+                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                    )
+                    logger.debug(debug_message)
+                elif direction_flag == "Return":
+                    # Debug Code
+                    debug_message = (
+                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                    )
+                    logger.debug(debug_message)
+                    order.status = {
+                        "P5": {
+                            "developers": ""
+                        }
+                    }
+                    order.save()
+                    # TODO Send email to developers
+                elif direction_flag == "Close":
+                    # Debug Code
+                    debug_message = (
+                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                    )
+                    logger.debug(debug_message)
+                    order.form_end_time = timezone.now()
+                    order.save()
+            else:
+                error_message = (
+                    f"The status of order id '{order_id}' is not correct. " +
+                    "There are not correct direction_flag attribure in order status."
+                )
+                logger.error(error_message)
+
+        # TODO Send notification to all member
+
+
+class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
+    queryset = Signature.objects.all()
+    serializer_class = SignatureSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset.filter(order=self.kwargs['orders_pk'])
+        return queryset
+
+    def get_serializer_context(self):
+        """
+        Query accounts, projects and employee information for to_represtation() function
+        """
+        # TODO Use asyncio to speed up the reuqest with third-party api
+        context = super().get_serializer_context()
+
+        # Get project information
+        project_object = cache.get('projects', None)
+        if project_object is None:
+            project_object = {}
+            status, results = self.get_project_via_search()
+
+            if status and results:
+                serializer = ProjectEasySerializer(results, many=True)
+                for project in serializer.data:
+                    project_id = project['id']
+                    if project_id not in project_object:
+                        project_object[project_id] = project
+                cache.set('projects', project_object, 60 * 60)
+        context['projects'] = project_object
+
+        # Get account information
+        account_object = cache.get('accounts', None)
+        if account_object is None:
+            account_object = {}
+            status, results = self.get_account_via_search()
+
+            if status and results:
+                serializer = AccountEasySerializer(results, many=True)
+                for account in serializer.data:
+                    account_id = account['id']
+                    if account_id not in account_object:
+                        account_object[account_id] = account
+                cache.set('accounts', account_object, 60 * 60)
+        context['accounts'] = account_object
+
+        # Get employee information
+        employee_object = cache.get('employees', None)
+        if employee_object is None:
+            instance = Employee.objects.using('hr').all().values()
+            serializer = EmployeeNonModelSerializer(instance, many=True)
+
+            employee_object = {}
+            for employee in serializer.data:
+                employee_id = employee['employee_id']
+                if employee_id not in employee_object:
+                    employee_object[employee_id] = employee
+            cache.set('employees', employee_object, 60 * 60)
+        context['employees'] = employee_object
+
+        return context
+
+    def perform_update(self, serializer):
+        serializer.save()
+        signature_id = serializer.data['id']
+        signature = Signature.objects.get(pk=signature_id)
+        signature_status = signature.status
+        order = signature.order
+
+        # Create History (including last record and update content with json)
+        last_order_tracker = dict(OrderTracker.objects.filter(order=order.id).order_by('created_time').values()[0])
+        del last_order_tracker['order_id']
+        kwargs = {}
+        kwargs['context'] = {'accounts': cache.get('accounts', None)}
+        kwargs['context'].update({'projects': cache.get('projects', None)})
+        kwargs['context'].update({'employees': cache.get('employees', None)})
+
+        comment = {
+            'last_order': OrderDynamicSerializer(last_order_tracker, **kwargs).data,
+            'update_content': OrderDynamicSerializer(order, **kwargs).data,
+        }
+
+        history = {
+            'editor': 'system',
+            'comment': json.dumps(comment),
+            'order': order
+        }
+        History.objects.create(**history)
+
+        # Save to OrderTracker
+        order_tracker_serializer = OrderTrackerSerializer(data=model_to_dict(order))
+        if order_tracker_serializer.is_valid(raise_exception=True):
+            order_tracker_serializer.save(order=order, form_begin_time=order.form_begin_time)
+
+        logger.debug(f"Origin Signature Stauts: {signature_status}, Origin Order Status: {order.status}")
+        if signature_status == 'Approve':
+            signer = signature.signer
+            signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
+            # Check signature stage is finished or not. The last signer will be function head leader.
+            # Stop Condiontion is that Consecutive occurrences times of the zero in department_id are
+            # greater/equal four times.
+            count = 0
+            for char in signer_department_id[::-1]:
+                if char == '0':
+                    count += 1
+                elif char != '0':
+                    break
+
+            if 'P1' in order.status:
+                if count >= 4:
+                    order.status = {
+                        'P2': {
+                            'assigner': ''
+                        }
+                    }
+                    order.save()
+                elif count < 4:
+                    # Find next signer
+                    non_zero_part = len(signer_department_id) - count - 1
+                    next_signer_department_id = signer_department_id[:non_zero_part] + '0' * (count + 1)
+                    status, result = self.get_department_via_query(department_id=next_signer_department_id)
+                    if not (status and result):
+                        warn_message = (
+                            f"It couldn't be find next signer with the current signer '{signer}'"
+                        )
+                        logger.warning(warn_message)
+                        return
+                    if next_signer_department_id in result:
+                        next_signer = result[next_signer_department_id].get('dm', None)
+
+                    # Order Status Change
+                    order.status = {
+                        'P1': {
+                            next_signer: ''
+                        },
+                    }
+                    order.save()
+                    # Check whether craete next signature
+                    max_sequence = order.signature_set.aggregate(Max('sequence'))['sequence__max']
+                    if order.signature_set.get(sequence=max_sequence).status == 'Approve':
+
+                        # Create next signature
+                        next_signature = {
+                            'sequence': max_sequence + 1,
+                            'signer': next_signer,
+                            'sign_unit': next_signer_department_id,
+                            'status': '',
+                            'comment': '',
+                            'role_group': signature.role_group,
+                            'order': order
+                        }
+                        Signature.objects.create(**next_signature)
+
+            elif 'P4' in order.status:
+                if count >= 4:
+                    order.status = {
+                        'P5': {
+                            'developers': ''
+                        }
+                    }
+                    order.save()
+                elif count < 4:
+                    # Find next signer
+                    non_zero_part = len(signer_department_id) - count - 1
+                    next_signer_department_id = signer_department_id[:non_zero_part] + '0' * (count + 1)
+                    status, result = self.get_department_via_query(department_id=next_signer_department_id)
+                    if not (status and result):
+                        warn_message = (
+                            f"It couldn't be find next signer with the current signer '{signer}'"
+                        )
+                        logger.warning(warn_message)
+                        return
+                    if next_signer_department_id in result:
+                        next_signer = result[next_signer_department_id].get('dm', None)
+                    # Order Status Change
+                    order.status = {
+                        'P4': {
+                            next_signer: ''
+                        },
+                    }
+                    order.save()
+                    # Check whether craete next signature
+                    max_sequence = order.signature_set.aggregate(Max('sequence'))['sequence__max']
+                    if order.signature_set.get(sequence=max_sequence).status == 'Approve':
+
+                        # Create next signature
+                        next_signature = {
+                            'sequence': max_sequence + 1,
+                            'signer': next_signer,
+                            'sign_unit': next_signer_department_id,
+                            'status': '',
+                            'comment': '',
+                            'role_group': signature.role_group,
+                            'order': order
+                        }
+                        Signature.objects.create(**next_signature)
+
+        elif signature_status == 'Return':
+            if 'P1' in order.status:
+                order.status = {
+                    'P0': {
+                        'initiator': ''
+                    },
+                    'signed': False
+                }
+                order.save()
+            elif 'P4' in order.status:
+                order.status = {
+                    'P3': {
+                        'initiator': '',
+                        'assigner': '',
+                        'developers': ''
+                    },
+                    'signed': False
+                }
+                order.save()
+        elif signature_status == 'Close':
+            if 'P1' in order.status:
+                order.status = {
+                    'P1': {
+                        signer: 'Close'
+                    }
+                }
+                order.form_end_time = timezone.now()
+                order.save()
+            elif 'P4' in order.status:
+                order.status = {
+                    'P4': {
+                        signer: 'Close'
+                    }
+                }
+                order.form_end_time = timezone.now()
+                order.save()
+
+        # TODO Send notification to all member

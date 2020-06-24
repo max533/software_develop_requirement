@@ -47,6 +47,8 @@ services:
 
   redis:
     image: redis:5.0
+    networks:
+      - backend
 
   celeryworker:
     <<: *django
@@ -73,6 +75,9 @@ services:
   flower:
     <<: *django
     image: develop_requirement_proj_local_flower
+    networks:
+      - backend
     ports:
       - "5555:5555"
     command: /start-flower
+
