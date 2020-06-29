@@ -365,8 +365,10 @@ Fetch a specific orders resource by `id`
 
 ### `POST` Create an Orders
 
+ - [ ] TODO Need to automatically add initiator
+
 ```url
-{{service_url}}/api/orders/?fields=develop_team_function,develop_team_sub_function,status,initiator,assigner,developers,title,description,expected_develop_duration_day,repository_url,parent
+{{service_url}}/api/orders/
 ```
 
 Create a new orders
@@ -377,9 +379,19 @@ Create a new orders
 
 - PARAMS
 
-    Key|Value|Description
+    Key|Value|Descriptions
     :---:|:---:|:---:
-    fields (option)| account/project/develop_team_function/develop_team_sub_function/status/initiator/assigner/developers/title/description/expected_develop_duration_day/actual_develop_duration_day/repository_url/parent| which fields need to be validate
+    account | 3 | account id
+    project | 1 | project id
+    developers | {"memeber": ["10612704", "10712714", "5825225"], "contactor": "D12345685"} | developers group
+    develop_team_function | QT | the function of develop team
+    develop_team_sub_function | PQT | the sub function of develop team
+    status |{ "p1": {"initiator": "Accept"} }| current order status
+    initiator| Z10612704 | employee_id of initiator
+    assigner | Z10752135 | employee_id of assigner
+    title | this is a good title | order's title
+    description | this is a good description | order's description
+    parent | 12 | the parent id of order
 
 - HEADERS
 
@@ -410,9 +422,6 @@ Create a new orders
         },
         "title": "DQMS develope requirement system",
         "description": "<br> Three is description </br>",
-        "expected_develop_duration_day": 10.5,
-        "actual_develop_duration_day": 20.0,
-        "repository_url": "www.gitlab.com",
         "parent": 10,
     }
     ```
@@ -464,7 +473,7 @@ Create a new orders
                     "job_title": "工程師",
                 },
             ],
-            "contactor":{
+            "contactor": {
                     "employee_id": "9505005",
                     "display_name": "Luis Liao/WHQ/Wistron",
                     "extension": "85014833",
@@ -473,9 +482,6 @@ Create a new orders
         },
         "title": "DQMS develope requirement system",
         "description": "<br> Three is description </br>",
-        "expected_develop_duration_day": 10.5,
-        "actual_develop_duration_day": 20.0,
-        "repository_url": "www.gitlab.com",
         "parent": 10,
     }
     ```
@@ -610,10 +616,7 @@ Update partial details of specific orders by order `id`
             }
         },
         "title": "DQMS develope requirement system",
-        "description": "<br> Three is description </br>",
-        "expected_develop_duration_day": 10.5,
-        "actual_develop_duration_day": 20.0,
-        "repository_url": "www.gitlab.com",
+        "description": "<br> Three is description </br>"
     }
     ```
 
