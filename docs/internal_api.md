@@ -30,6 +30,7 @@
     - [`DEL` Delete Schedules Detail](#del-delete-schedules-detail)
   - [Development Progress Operation](#development-progress-operation)
     - [`GET` Filter Development Progress Collection by Order Id](#get-filter-development-progress-collection-by-order-id)
+    - [`GET` Fetch a Specific Development Progress](#get-fetch-a-specific-development-progress)
     - [`POST` Create Development Progress](#post-create-development-progress)
     - [`PUT` Update Development Progress Deatail by Progress Id](#put-update-development-progress-deatail-by-progress-id)
     - [`PATCH` Update Partially Development Progress Detail](#patch-update-partially-development-progress-detail)
@@ -1634,6 +1635,54 @@ Filter progress resource by order id
     ]
     ```
 
+### `GET` Fetch a Specific Development Progress
+
+```url
+{{service_url}}/api/progress/:id/
+```
+
+Fetch a specific progress resource by progress `id`
+
+- PATH VARIABLES
+    Variable|Description
+    :---: | :---:
+    `id` | progress id
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {}
+    ```
+
+    Example response
+
+    ```json
+    {
+        "id": 2,
+        "name": "Spirit 01",
+        "description": "This is a description.",
+        "start_time": "2020-03-20T08:26:38.093183Z",
+        "end_time": "2020-03-20T08:26:38.093183Z",
+        "complete_rate": 10,
+        "editor": {
+            "employee_id": "10612704",
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
+            "extension": "85014815",
+            "job_title": "工程師",
+        },
+        "update_time": "2020-03-20T08:26:38.093183Z",
+        "order": 10,
+    }
+    ``
+
 ### `POST` Create Development Progress
 
 - [ ]FIXME Adjust progress table for create
@@ -1661,8 +1710,8 @@ Create a new development progress on specific order
     :---:|:---:|:---:
     name | Progress Name | the name of the progress
     description | This is a description | the description of progress
-    start_time| Project Begin Time | the name of progress
-    end_time | 2020-03-21T08:59:38.093183Z | the expected_time of progress
+    start_time| Project Begin Time | the start time of progress
+    end_time | 2020-03-21T08:59:38.093183Z | the end time of progress
     complete_rate | 15 | the complete_rate of progress
     order | 2 | it indicate this progress belong to which order
 
@@ -1728,8 +1777,8 @@ Update order's progress detail by progress `id`
     :---:|:---:|:---:
     name | Progress Name | the name of the progress
     description | This is a description | the description of progress
-    start_time| Project Begin Time | the name of progress
-    end_time | 2020-03-21T08:59:38.093183Z | the expected_time of progress
+    start_time| Project Begin Time | the start time of progress
+    end_time | 2020-03-21T08:59:38.093183Z | the end time of progress
     complete_rate | 15 | the complete_rate of progress
     order | 2 | it indicate this progress belong to which order
 
@@ -1752,13 +1801,6 @@ Update order's progress detail by progress `id`
         "start_time": "2020-03-20T08:26:38.093183Z",
         "end_time": "2020-03-20T08:26:38.093183Z",
         "complete_rate": 100,
-        "editor": {
-            "employee_id": "10612704",
-            "display_name": "Jeff SH Wang/WHQ/Wistron",
-            "extension": "85014815",
-            "job_title": "工程師",
-        },
-        "update_time": "2020-03-20T08:26:38.093183Z",
         "order": 10
     }
     ```
@@ -1773,6 +1815,13 @@ Update order's progress detail by progress `id`
         "start_time": "2020-03-20T08:26:38.093183Z",
         "end_time": "2020-03-20T08:26:38.093183Z",
         "complete_rate": 100,
+        "editor": {
+            "employee_id": "10612704",
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
+            "extension": "85014815",
+            "job_title": "工程師",
+        },
+        "update_time": "2020-03-20T08:26:38.093183Z",
         "order": 10
     }
     ```
@@ -1803,8 +1852,8 @@ Update partial details of progress by progress `id`
     :---:|:---:|:---:
     name | Progress Name | the name of the progress
     description | This is a description | the description of progress
-    start_time| Project Begin Time | the name of progress
-    end_time | 2020-03-21T08:59:38.093183Z | the expected_time of progress
+    start_time| Project Begin Time | the start time of progress
+    end_time | 2020-03-21T08:59:38.093183Z | the end time of progress
     complete_rate | 15 | the complete_rate of progress
     order | 2 | it indicate this progress belong to which order
 
