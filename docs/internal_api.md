@@ -6,7 +6,7 @@
   - [Outline](#outline)
   - [API Development Progress](#api-development-progress)
   - [Orders Operation](#orders-operation)
-    - [`GET` Fetch Orders Collection](#get-fetch-orders-collection)
+    - [`GET` Fetch Orders Collection / Filter Orders by Attribute](#get-fetch-orders-collection--filter-orders-by-attribute)
     - [`GET` Fetch a Specific Orders](#get-fetch-a-specific-orders)
     - [`POST` Create an Orders](#post-create-an-orders)
     - [`PATCH` Update Partially Specific Orders Detail](#patch-update-partially-specific-orders-detail)
@@ -55,13 +55,13 @@
 - [Develop Requirement System API Document](#develop-requirement-system-api-document)
 
   - [Orders Operation](#orders-operation)
-    - [ ] [`GET` Fetch Orders Collection](#get-fetch-orders-collection)
-    - [ ] [`GET` Fetch a Specific Orders](#get-fetch-a-specific-orders)
-    - [ ] [`POST` Create an Orders](#post-create-an-orders)
-    - [ ] [`PATCH` Update Partially Specific Orders Detail](#patch-update-partially-specific-orders-detail)
-    - [ ] [`GET` Fetch Order's Ancestor Collection by Order Id](#get-fetch-orders-ancestor-collection-by-order-id)
-    - [ ] [`GET` Fetch Order's Signature Collection by Order Id](#get-fetch-orders-signature-collection-by-order-id)
-    - [ ] [`PUT` Update Order's Signature Deatail by Order Id and Signature Id](#put-update-orders-signature-deatail-by-order-id-and-signature-id)
+    - [x] [`GET` Fetch Orders Collection / Filter Orders by Attribute](#get-fetch-orders-collection)
+    - [x] [`GET` Fetch a Specific Orders](#get-fetch-a-specific-orders)
+    - [x] [`POST` Create an Orders](#post-create-an-orders)
+    - [x] [`PATCH` Update Partially Specific Orders Detail](#patch-update-partially-specific-orders-detail)
+    - [x] [`GET` Fetch Order's Ancestor Collection by Order Id](#get-fetch-orders-ancestor-collection-by-order-id)
+    - [x] [`GET` Fetch Order's Signature Collection by Order Id](#get-fetch-orders-signature-collection-by-order-id)
+    - [x] [`PUT` Update Order's Signature Deatail by Order Id and Signature Id](#put-update-orders-signature-deatail-by-order-id-and-signature-id)
   - [Histories Operation](#histories-operation)
     - [x] [`GET` Filter Histories Collection by Order Id](#get-filter-histories-collection-by-order-id)
     - [x] [`POST` Create User's Comment Histories](#post-create-users-comment-histories)
@@ -78,11 +78,11 @@
     - [x] [`PATCH` Update Partially Schedules Detail](#patch-update-partially-schedules-detail)
     - [x] [`DEL` Delete Schedules Detail](#del-delete-schedules-detail)
   - [Development Progress Operation](#development-progress-operation)
-    - [ ] [`GET` Filter Development Progress Collection by Order Id](#get-filter-development-progress-collection-by-order-id)
-    - [ ] [`POST` Create Development Progress](#post-create-development-progress)
-    - [ ] [`PUT` Update Development Progress Deatail by Progress Id](#put-update-development-progress-deatail-by-progress-id)
-    - [ ] [`PATCH` Update Partially Development Progress Detail](#patch-update-partially-development-progress-detail)
-    - [ ] [`DEL` Delete Development Progress Detail](#del-delete-development-progress-detail)
+    - [x] [`GET` Filter Development Progress Collection by Order Id](#get-filter-development-progress-collection-by-order-id)
+    - [x] [`POST` Create Development Progress](#post-create-development-progress)
+    - [x] [`PUT` Update Development Progress Deatail by Progress Id](#put-update-development-progress-deatail-by-progress-id)
+    - [x] [`PATCH` Update Partially Development Progress Detail](#patch-update-partially-development-progress-detail)
+    - [x] [`DEL` Delete Development Progress Detail](#del-delete-development-progress-detail)
   - [Notifications Operation](#notifications-operation)
     - [x] [`GET` Fetch Notifications Collection by Current User](#get-fetch-notifications-collection-by-current-user)
     - [x] [`PUT` Update Notifications Detail](#put-update-notifications-detail)
@@ -100,7 +100,7 @@
 
 ## Orders Operation
 
-### `GET` Fetch Orders Collection
+### `GET` Fetch Orders Collection / Filter Orders by Attribute
 
 ```url
 {{service_url}}/api/orders/?page=value1&page_size=value2&filter={"param1":"value1", "param2":"value"}
@@ -117,6 +117,7 @@ Fetch all orders resource
     " | {"project": 3} | project id (exact search)
     " | {"initiator": "Jeff SH Wang"} | initator name (fuzzy search and case insensitive)
     " | {"assigner ": "Leo Tu"} | assigner name (fuzzy search and case insensitive)
+    " | {"developers": "Jeff SH Wang"} | developers name (fuzzy search and case insensitive)
     " | {"title": "There is title"} | title (fuzzy search and case insensitive)
     " | {"form_begin_time__before": "2020-03-10T08:26:38.093183Z"} | the begin time of form_begin_time (range search)
     " | {"form_begin_time__after": "2020-03-10T08:26:38.093183Z"}| the end time of form_begin_time (range search)
