@@ -18,8 +18,8 @@ from rest_framework import mixins, response, serializers, views, viewsets
 from rest_framework.decorators import action
 
 from ..models import (
-    Account, Document, History, Notification, Order, OrderTracker,
-    ProgressTracker, Project, Schedule, ScheduleTracker, Signature,
+    Account, Document, History, Notification, Order, OrderTracker, Progress,
+    Project, Schedule, ScheduleTracker, Signature,
 )
 from .filters import OrderFilter, OrderFilterBackend
 from .paginations import OrderPagination
@@ -297,9 +297,9 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         order.save()
 
 
-class ProgressViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
-    """ Provide Development Progress Resource with `list` and `create` action. """
-    queryset = ProgressTracker.objects.all()
+class ProgressViewSet(viewsets.ModelViewSet):
+    """ Provide Development Progress Resource with all action. """
+    queryset = Progress.objects.all()
     serializer_class = ProgressSerializer
 
     def get_queryset(self):

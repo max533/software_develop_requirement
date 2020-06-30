@@ -172,22 +172,24 @@ class ScheduleTracker(models.Model):
         return f'Id: {self.id}, Name:{self.event_name}, Order:{self.order.id}, Version:{self.version}'
 
 
-class ProgressTracker(models.Model):
+class Progress(models.Model):
     """ Order's Development Progress Model """
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    complete_rate = models.PositiveIntegerField()
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
     editor = models.CharField(max_length=20)
-    develop_time = models.DateTimeField(null=True)
-    comment = models.TextField()
-    complete_rate = models.PositiveIntegerField(null=True)
-    created_time = models.DateTimeField(auto_now_add=True, null=True)
+    update_time = models.DateTimeField(auto_now_add=True, null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['order', 'created_time']
-        verbose_name = _('progress tracker')
-        verbose_name_plural = _('progress tarckers')
+        ordering = ['order', 'update_time']
+        verbose_name = _('progress')
+        verbose_name_plural = _('progress')
 
     def __str__(self):
-        return f'Id: {self.id}, Order: {self.order.id}, Compelete Rate:{self.complete_rate}'
+        return f'Id: {self.id}, Order: {self.order.id}, Name: {self.name}'
 
 
 class History(models.Model):
