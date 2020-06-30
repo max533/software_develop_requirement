@@ -1,8 +1,8 @@
 from django.contrib import admin
 
 from .models import (
-    Document, History, Notification, Order, OrderTracker, ProgressTracker,
-    Schedule, ScheduleTracker, Signature,
+    Document, History, Notification, Order, OrderTracker, Progress, Schedule,
+    ScheduleTracker, Signature,
 )
 
 
@@ -98,16 +98,17 @@ class ScheduleTrackerAdmin(admin.ModelAdmin):
     )
 
 
-# TODO ProgressTracker need to be correct to Progress
-@admin.register(ProgressTracker)
-class ProgressTrackerAdmin(admin.ModelAdmin):
+@admin.register(Progress)
+class ProgressAdmin(admin.ModelAdmin):
     list_display = (
         'id',
-        'editor',
-        'develop_time',
-        'comment',
+        'name',
+        'description',
         'complete_rate',
-        'created_time',
+        'start_time',
+        'end_time',
+        'editor',
+        'update_time',
         'order',
     )
 

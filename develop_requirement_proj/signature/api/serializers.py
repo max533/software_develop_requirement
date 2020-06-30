@@ -5,8 +5,8 @@ from urllib.parse import urlparse, urlunparse
 from rest_framework import serializers
 
 from ..models import (
-    Document, History, Notification, Order, OrderTracker, ProgressTracker,
-    Schedule, Signature,
+    Document, History, Notification, Order, OrderTracker, Progress, Schedule,
+    Signature,
 )
 
 
@@ -76,7 +76,7 @@ class ProgressSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """ Automatically add editor """
         validated_data['editor'] = self.context['request'].user.username
-        return ProgressTracker.objects.create(**validated_data)
+        return Progress.objects.create(**validated_data)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -85,9 +85,9 @@ class ProgressSerializer(serializers.ModelSerializer):
         return ret
 
     class Meta:
-        model = ProgressTracker
+        model = Progress
         fields = "__all__"
-        read_only_fields = ['editor', 'created_time']
+        read_only_fields = ['editor', 'udpate_time']
 
 
 class EmployeeNonModelSerializer(serializers.Serializer):

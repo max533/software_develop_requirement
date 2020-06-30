@@ -1569,8 +1569,6 @@ Delete a schedules detail by `id`
 
 ## Development Progress Operation
 
-- [ ]FIXME Adjust progress table for retireve
-
 ### `GET` Filter Development Progress Collection by Order Id
 
 ```url
@@ -1688,8 +1686,6 @@ Fetch a specific progress resource by progress `id`
 
 ### `POST` Create Development Progress
 
-- [ ]FIXME Adjust progress table for create
-
 ```url
 {{service_url}}/api/progress/
 ```
@@ -1755,8 +1751,6 @@ Create a new development progress on specific order
     ```
 
 ### `PUT` Update Development Progress Deatail by Progress Id
-
-- [ ] TODO Add this action with viewset
 
 ```url
 {{service_url}}/api/progress/:id/
@@ -1831,8 +1825,6 @@ Update order's progress detail by progress `id`
 
 ### `PATCH` Update Partially Development Progress Detail
 
-- [ ] TODO Add this action with viewset
-
 ```url
 {{service_url}}/api/progress/:id/
 ```
@@ -1890,8 +1882,6 @@ Update partial details of progress by progress `id`
     ```
 
 ### `DEL` Delete Development Progress Detail
-
-- [ ] TODO Add this action with viewset
 
 ```url
 {{service_url}}/api/progress/:id/
