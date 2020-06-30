@@ -363,6 +363,17 @@ class AccountEasySerializer(serializers.Serializer):
 
 class SignatureSerializer(serializers.ModelSerializer):
 
+    def to_representation(self, instance):
+        """
+        Transform emeployee_id to employee information.
+        """
+        ret = super().to_representation(instance)
+
+        if 'signer' in ret:
+            ret['signer'] = self.context['employees'].get(ret['signer'], '')
+
+        return ret
+
     class Meta:
         model = Signature
         fields = "__all__"
