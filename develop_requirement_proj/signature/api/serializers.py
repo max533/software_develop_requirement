@@ -157,9 +157,6 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
         if 'project' in ret:
             ret['project'] = self.context['projects'].get(ret['project'], '')
 
-        if 'initiator' in ret:
-            ret['initiator'] = self.context['employees'].get(ret['initiator'], '')
-
         if 'assigner' in ret:
             ret['assigner'] = self.context['employees'].get(ret['assigner'], '')
 
@@ -201,12 +198,6 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
         """ Check whether the develop_team_sub_function is reasonable or not """
         if value not in self.context['sub_function_team']:
             raise serializers.ValidationError('The develop_team_sub_function is not reasonable value')
-        return value
-
-    def validate_initiator(self, value):
-        """ Check whether the initiator in the EBG HR database or not """
-        if not (value in self.context['employees']):
-            raise serializers.ValidationError('There are not such person.')
         return value
 
     def validate_assigner(self, value):
@@ -348,7 +339,7 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         exclude = ['lft', 'rght', 'tree_id', 'level']
-        read_only_fields = ['form_begin_time', 'form_end_time']
+        read_only_fields = ['initiator', 'form_begin_time', 'form_end_time']
 
 
 class ProjectEasySerializer(serializers.Serializer):

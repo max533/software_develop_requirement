@@ -85,11 +85,11 @@ class Project:
 
 class Order(MPTTModel):
     """ Order Model """
-    account = models.IntegerField(_("order's account"), null=True)
-    project = models.IntegerField(_("order's project"), null=True)
+    account = models.IntegerField(_("order's account"))
+    project = models.IntegerField(_("order's project"))
     develop_team_function = models.CharField(_("developer's function team"), max_length=20)
     develop_team_sub_function = models.CharField(_("developer's sub function team"), max_length=20)
-    status = fields.JSONField(_("order's current status"), default=dict)
+    status = fields.JSONField(_("order's current status"))
     initiator = models.CharField(_("initiator's employee_id"), max_length=50)
     assigner = models.CharField(_("assigner's employee_id (PO/PM)"), max_length=50)
     developers = fields.JSONField(_("employee_ids of the developer's contactor and member"), default=dict)
