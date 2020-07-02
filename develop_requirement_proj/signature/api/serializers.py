@@ -154,6 +154,9 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
         if 'account' in ret:
             ret['account'] = self.context['accounts'].get(ret['account'], '')
 
+        if 'initiator' in ret:
+            ret['initiator'] = self.context['employees'].get(ret['initiator'], '')
+
         if 'project' in ret:
             ret['project'] = self.context['projects'].get(ret['project'], '')
 
