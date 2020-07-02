@@ -55,7 +55,7 @@
 - [Develop Requirement System API Document](#develop-requirement-system-api-document)
 
   - [Orders Operation](#orders-operation)
-    - [x] [`GET` Fetch Orders Collection / Filter Orders by Attribute](#get-fetch-orders-collection)
+    - [x] [`GET` Fetch Orders Collection / Filter Orders by Attribute](#get-fetch-orders-collection--filter-orders-by-attribute)
     - [x] [`GET` Fetch a Specific Orders](#get-fetch-a-specific-orders)
     - [x] [`POST` Create an Orders](#post-create-an-orders)
     - [x] [`PATCH` Update Partially Specific Orders Detail](#patch-update-partially-specific-orders-detail)
@@ -73,12 +73,13 @@
     - [x] [`DEL` Delete Documents Detail](#del-delete-documents-detail)
   - [Schedules Operation](#schedules-operation)
     - [x] [`GET` Filter Schedules Collection by Order Id](#get-filter-schedules-collection-by-order-id)
-    - [x] [`GET` Filter Schedules Group Tracker by Order Id](#get-filter-schedules-group-tracker-by-order-id)
+    - [x] [`GET` Filter Schedules History by Order Id](#get-filter-schedules-history-by-order-id)
     - [x] [`POST` Create a Schedules](#post-create-a-schedules)
     - [x] [`PATCH` Update Partially Schedules Detail](#patch-update-partially-schedules-detail)
     - [x] [`DEL` Delete Schedules Detail](#del-delete-schedules-detail)
   - [Development Progress Operation](#development-progress-operation)
     - [x] [`GET` Filter Development Progress Collection by Order Id](#get-filter-development-progress-collection-by-order-id)
+    - [x] [`GET` Fetch a Specific Development Progress](#get-fetch-a-specific-development-progress)
     - [x] [`POST` Create Development Progress](#post-create-development-progress)
     - [x] [`PUT` Update Development Progress Deatail by Progress Id](#put-update-development-progress-deatail-by-progress-id)
     - [x] [`PATCH` Update Partially Development Progress Detail](#patch-update-partially-development-progress-detail)
@@ -103,7 +104,7 @@
 ### `GET` Fetch Orders Collection / Filter Orders by Attribute
 
 ```url
-{{service_url}}/api/orders/?page=value1&page_size=value2&filter={"param1":"value1", "param2":"value"}
+{{service_url}}/api/orders/?page=value1&page_size=value2&filter='{"param1":"value1", "param2":"value"}'
 ```
 
 Fetch all orders resource
@@ -112,18 +113,19 @@ Fetch all orders resource
 
     Key|Value|Description
     :---:|:---:|:---:
-    filter (option) | {'id': 1}  | order id (exact search)
-    " | {"account": 1} | account id (exact search)
-    " | {"project": 3} | project id (exact search)
-    " | {"initiator": "Jeff SH Wang"} | initator name (fuzzy search and case insensitive)
-    " | {"assigner ": "Leo Tu"} | assigner name (fuzzy search and case insensitive)
-    " | {"developers": "Jeff SH Wang"} | developers name (fuzzy search and case insensitive)
-    " | {"title": "There is title"} | title (fuzzy search and case insensitive)
-    " | {"form_begin_time__before": "2020-03-10T08:26:38.093183Z"} | the begin time of form_begin_time (range search)
-    " | {"form_begin_time__after": "2020-03-10T08:26:38.093183Z"}| the end time of form_begin_time (range search)
-    " | {"parent": 20} | parent order id (exact search)
-    page (option) | 5 | page (it indicate what page number is )
-    page_size (option) | 10 | page size
+    filter (option) | '{"id": 1}'  | order id (exact search)
+    " | '{"account": 1}' | account id (exact search)
+    " | '{"project": 3}' | project id (exact search)
+    " | '{"initiator": "Jeff SH Wang"}' | initator name (fuzzy search and case insensitive)
+    " | '{"assigner ": "Leo Tu"}' | assigner name (fuzzy search and case insensitive)
+    " | '{"developers": "Jeff SH Wang"}' | developers name (fuzzy search and case insensitive)
+    " | '{"title": "There is title"}' | title (fuzzy search and case insensitive)
+    " | '{"description": "There is description"}' | description (fuzzy search and case insensitive)
+    " | '{"form_begin_time_after": "2020-03-10T08:26:38.093183Z"}' | the start boundary of form_begin_time (range search)
+    " | '{"form_begin_time_before": "2020-03-10T08:26:38.093183Z"}' | the end boundary of form_begin_time (range search)
+    " | '{"parent": 20}' | parent order id (exact search)
+    page (option) | 5 | page (it indicate what current page number is )
+    page_size (option) | 20 | page size (range: 15~50 )
 
 - HEADERS
 
@@ -365,8 +367,6 @@ Fetch a specific orders resource by `id`
     ```
 
 ### `POST` Create an Orders
-
- - [ ] TODO Need to automatically add initiator
 
 ```url
 {{service_url}}/api/orders/
@@ -817,7 +817,8 @@ Fetch order's signature collection by order's `id`
                 "extension": "85014602",
                 "job_title": "工程師",
             },
-            "status": "Accept",
+            "sign_unit": "ESQD00",
+            "status": "Approve",
             "comment": "OK",
             "timestamp": "2020-03-10T08:26:38.093183Z",
             "role_group": "initiator",
@@ -832,7 +833,8 @@ Fetch order's signature collection by order's `id`
                 "extension": "85015752",
                 "job_title": "部門主管",
             },
-            "status": "",
+            "sign_unit": "ESQT00",
+            "status": "Approve",
             "comment": "",
             "timestamp": null,
             "role_group": "initiator",
@@ -847,7 +849,8 @@ Fetch order's signature collection by order's `id`
                 "extension": "85014686",
                 "job_title": "處長",
             },
-            "status": "",
+            "sign_unit": "ESQD00",
+            "status": "Approve",
             "comment": "",
             "timestamp": null,
             "role_group": "developers",

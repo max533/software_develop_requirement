@@ -1,7 +1,11 @@
+import ast
 import json
 import logging
 
+from develop_requirement_proj.employee.models import Employee
 from django_filters import rest_framework as filters
+
+from django.db.models import Q
 
 from rest_framework import exceptions
 
@@ -16,10 +20,11 @@ class OrderFilterBackend(filters.DjangoFilterBackend):
         kwargs = super().get_filterset_kwargs(request, queryset, view)
 
         # Transform Bootstrap-Table filter's style to django-filter query string filter's style
-        # Ex/ filter={'titile':'abc'} --> title=abc
+        # Ex/ filter='{"title":"abc"}' --> filter={"title":"abc"}
         if 'filter' in request.query_params:
             if request.query_params['filter']:
                 kwarg_data = kwargs['data'].copy()
+                print(kwarg_data)
                 del kwarg_data['filter']
                 try:
                     query_string = json.loads(request.query_params['filter'])
@@ -27,6 +32,36 @@ class OrderFilterBackend(filters.DjangoFilterBackend):
                     error_message = f"Query string format is incorrect. Error Message : {err}"
                     logger.debug(error_message)
                     raise exceptions.ParseError
+
+                # Convert english name into employee_id with initiator, assigner, developers field
+                # TODO Using serialzier validate query will be clear and better
+                if 'initiator' in query_string:
+                    initiator = query_string.get('initiator').strip()
+                    if initiator:
+                        initiator_employee_id = Employee.objects.using('hr').filter(
+                            english_name__icontains=initiator).values_list('employee_id', flat=True)
+                        query_string['initiator'] = list(initiator_employee_id)
+                    else:
+                        del query_string['initiator']
+
+                if 'assigner' in query_string:
+                    assigner = query_string.get('assigner').strip()
+                    if assigner:
+                        assigner_employee_id = Employee.objects.using('hr').filter(
+                            english_name__icontains=assigner).values_list('employee_id', flat=True)
+                        query_string['assigner'] = list(assigner_employee_id)
+                    else:
+                        del query_string['assigner']
+
+                if 'developers' in query_string:
+                    developers = query_string.get('developers').strip()
+                    if developers:
+                        developers_employee_id = Employee.objects.using('hr').filter(
+                            english_name__icontains=developers).values_list('employee_id', flat=True)
+                        query_string['developers'] = list(developers_employee_id)
+                    else:
+                        del query_string['developers']
+
                 kwarg_data.update(query_string)
                 kwargs['data'] = kwarg_data
 
@@ -35,8 +70,11 @@ class OrderFilterBackend(filters.DjangoFilterBackend):
 
 class OrderFilter(filters.FilterSet):
 
-    assigner = filters.CharFilter(field_name='assigner__display_name', lookup_expr='icontains')
-    initiator = filters.CharFilter(field_name='initiator__employee_id', lookup_expr='icontains')
+    initiator = filters.CharFilter(method='initiator_filter')
+    assigner = filters.CharFilter(method='assigner_filter')
+    developers = filters.CharFilter(method='developers_filter')
+    title = filters.CharFilter(field_name='title', lookup_expr='icontains')
+    description = filters.CharFilter(field_name='description', lookup_expr='icontains')
     form_begin_time = filters.IsoDateTimeFromToRangeFilter()
 
     class Meta:
@@ -45,6 +83,20 @@ class OrderFilter(filters.FilterSet):
             'id': ['exact'],
             'account': ['exact'],
             'project': ['exact'],
-            'title': ['icontains'],
             'parent': ['exact'],
         }
+
+    def initiator_filter(slef, queryset, name, value):
+        lookup = '__'.join([name, 'in'])
+        return queryset.filter(**{lookup: ast.literal_eval(value)})
+
+    def assigner_filter(slef, queryset, name, value):
+        lookup = '__'.join([name, 'in'])
+        return queryset.filter(**{lookup: ast.literal_eval(value)})
+
+    def developers_filter(slef, queryset, name, value):
+        lookup_contactor = '__'.join([name, 'contactor', 'contained_by'])
+        lookup_member = '__'.join([name, 'member', 'contained_by'])
+        value = ast.literal_eval(value)
+        complex_lookup = Q(**{lookup_contactor: value}) | Q(**{lookup_member: value})
+        return queryset.filter(complex_lookup)

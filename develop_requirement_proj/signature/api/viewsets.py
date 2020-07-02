@@ -494,7 +494,7 @@ class OrderViewSet(QueryDataMixin,
         return response.Response(serializer.data)
 
     def perform_create(self, serializer):
-        serializer.save()
+        serializer.save(initiator=self.request.user.username)
 
         order_id = serializer.instance.id
         order = Order.objects.get(pk=order_id)
@@ -537,12 +537,32 @@ class OrderViewSet(QueryDataMixin,
                     return
                 if signer_department_id in result:
                     next_signer = result[signer_department_id].get('dm', None)
-
+                # If initiator is equal to next_signer
+                if signer == next_signer:
+                    count = 0
+                    for char in signer_department_id[::-1]:
+                        if char == '0':
+                            count += 1
+                        elif char != '0':
+                            break
+                    non_zero_part = len(signer_department_id) - count - 1
+                    next_signer_department_id = signer_department_id[:non_zero_part] + '0' * (count + 1)
+                    status, result = self.get_department_via_query(department_id=next_signer_department_id)
+                    if not (status and result):
+                        warn_message = (
+                            f"It couldn't be find next signer with the current signer '{signer}'"
+                        )
+                        logger.warning(warn_message)
+                        return
+                    if next_signer_department_id in result:
+                        next_signer = result[next_signer_department_id].get('dm', None)
+                else:
+                    next_signer_department_id = signer_department_id
                 # Create Signature
                 signature_next = {
                     'sequence': 1,
                     'signer': next_signer,
-                    'sign_unit': signer_department_id,
+                    'sign_unit': next_signer_department_id,
                     'status': '',
                     'comment': '',
                     'role_group': 'initiator',
@@ -651,8 +671,8 @@ class OrderViewSet(QueryDataMixin,
                     logger.debug(debug_message)
                     # Find next Singer
                     signer = order.initiator
-                    signer_department = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
-                    status, result = self.get_department_via_query(department_id=signer_department)
+                    signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
+                    status, result = self.get_department_via_query(department_id=signer_department_id)
                     if not (status and result):
                         warn_message = (
                             f"It couldn't be find next signer with the current signer '{signer}'"
@@ -660,9 +680,23 @@ class OrderViewSet(QueryDataMixin,
                         logger.warning(warn_message)
                         return
 
-                    if signer_department in result:
-                        next_signer = result[signer_department].get('dm', None)
-
+                    if signer_department_id in result:
+                        next_signer = result[signer_department_id].get('dm', None)
+                    # If initiator is equal to next_signer
+                    if signer == next_signer:
+                        non_zero_part = len(signer_department_id) - count - 1
+                        next_signer_department_id = signer_department_id[:non_zero_part] + '0' * (count + 1)
+                        status, result = self.get_department_via_query(department_id=next_signer_department_id)
+                        if not (status and result):
+                            warn_message = (
+                                f"It couldn't be find next signer with the current signer '{signer}'"
+                            )
+                            logger.warning(warn_message)
+                            return
+                        if next_signer_department_id in result:
+                            next_signer = result[next_signer_department_id].get('dm', None)
+                    else:
+                        next_signer_department_id = signer_department_id
                     # Check whether craete next signature
                     max_sequence = order.signature_set.aggregate(Max('sequence'))['sequence__max']
                     if order.signature_set.get(sequence=max_sequence).status in ['Approve', 'Return']:
@@ -671,7 +705,7 @@ class OrderViewSet(QueryDataMixin,
                         next_signature = {
                             'sequence': sequence_max + 1,
                             'signer': next_signer,
-                            'sign_unit': signer_department,
+                            'sign_unit': next_signer_department_id,
                             'status': '',
                             'comment': '',
                             'role_group': 'initiator',
@@ -856,7 +890,21 @@ class OrderViewSet(QueryDataMixin,
                         return
                     if signer_department_id in result:
                         next_signer = result[signer_department_id].get('dm', None)
-
+                    # If assigner is equal to next_signer
+                    if signer == next_signer:
+                        non_zero_part = len(signer_department_id) - count - 1
+                        next_signer_department_id = signer_department_id[:non_zero_part] + '0' * (count + 1)
+                        status, result = self.get_department_via_query(department_id=next_signer_department_id)
+                        if not (status and result):
+                            warn_message = (
+                                f"It couldn't be find next signer with the current signer '{signer}'"
+                            )
+                            logger.warning(warn_message)
+                            return
+                        if next_signer_department_id in result:
+                            next_signer = result[next_signer_department_id].get('dm', None)
+                    else:
+                        next_signer_department_id = signer_department_id
                     # Check whether craete next signature
                     max_sequence = order.signature_set.aggregate(Max('sequence'))['sequence__max']
                     if order.signature_set.get(sequence=max_sequence).status in ['Approve', 'Return']:
@@ -865,7 +913,7 @@ class OrderViewSet(QueryDataMixin,
                         next_signature = {
                             'sequence': sequence_max + 1,
                             'signer': next_signer,
-                            'sign_unit': signer_department_id,
+                            'sign_unit': next_signer_department_id,
                             'status': '',
                             'comment': '',
                             'role_group': 'assigner',
