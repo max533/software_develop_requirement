@@ -1931,7 +1931,7 @@ Delete a progress detail by progress `id`
 ### `GET` Fetch Notifications Collection by Current User
 
 ```url
-{{service_url}}/api/notifications/
+{{service_url}}/api/notifications/?param=value
 ```
 
 Fetch notifications collection resource by current user
@@ -1940,7 +1940,7 @@ Fetch notifications collection resource by current user
 
     Key|Value|Description
     :---:|:---:|:---:
-    read | true/false | notifications read status  (exact search)
+    read_status | true/false | notifications read status  (exact search)
 
 - HEADERS
 
@@ -1959,35 +1959,98 @@ Fetch notifications collection resource by current user
     Example response
 
     ```json
-    [
-        {
-            "id": 1,
-            "link": "http://xxx.xxx.xxx.xxx/?abc=123",
-            "read": false,
-            "category": "signature",
-            "initiator": "10612704",
-            "created_time": "2020-03-10T08:26:38.093183Z",
-            "owner": "10612704",
-        },
-        {
-            "id": 2,
-            "link": "http://xxx.xxx.xxx.xxx/?def=123",
-            "read": false,
-            "category": "signature",
-            "initiator": "10612704",
-            "created_time": "2020-03-10T08:26:38.093183Z",
-            "owner": "10612704",
-        },
-        {
-            "id": 3,
-            "link": "http://xxx.xxx.xxx.xxx/?def=123",
-            "read": true,
-            "category": "signature",
-            "initiator": "10612704",
-            "created_time": "2020-03-10T08:26:38.093183Z",
-            "owner": "10612704",
-        },
-    ]
+    {
+        "all_count": 100,
+        "unread_count": 25,
+        "read_count": 75,
+        "all_list" : [
+            {
+                "id": 1,
+                "link": "http://xxx.xxx.xxx.xxx/?abc=123",
+                "read_status": false,
+                "category": "approve",
+                "recipient": [
+                    "10612704",
+                    "9505005",
+                    "10712704"
+                ],
+                "actor": "Luis Liao",
+                "verb": "approve",
+                "action_object": "order",
+                "target": "",
+                "created_time": "2020-03-10T08:26:38.093183Z",
+                "delete_time": "2020-04-05T09:10:20.000000Z"
+            },
+            {
+                "id": 1,
+                "link": "http://xxx.xxx.xxx.xxx/?abc=123",
+                "read_status": false,
+                "category": "assign",
+                "recipient": [
+                    "10612704",
+                    "9505005",
+                    "10712704"
+                ],
+                "actor": "Luis Liao",
+                "verb": "assign",
+                "action_object": "Jeff SH Wang as assginer",
+                "target": "",
+                "created_time": "2020-03-10T08:26:38.093183Z",
+                "deleted_time": null
+            },
+            {
+                "id": 2,
+                "link": "http://xxx.xxx.xxx.xxx/?def=123",
+                "read_status": false,
+                "category": "change_schedule",
+                "recipient": [
+                    "10612704",
+                    "9505005",
+                    "10712704"
+                ],
+                "actor": "Luis Liao",
+                "verb": "change",
+                "action_object": "schedule",
+                "target": "on order",
+                "created_time": "2020-03-10T08:26:38.093183Z",
+                "deleted_time": null
+            },
+            {
+                "id": 3,
+                "link": "http://xxx.xxx.xxx.xxx/?def=123",
+                "read_status": true,
+                "category": "close",
+                "recipient": [
+                    "10612704",
+                    "9505005",
+                    "10712704"
+                ],
+                "actor": "Luis Liao",
+                "verb": "close",
+                "action_object": "order",
+                "target":,
+                "created_time": "2020-03-10T08:26:38.093183Z",
+                "deleted_time": "2020-04-05T09:10:20.000000Z"
+            },
+            {
+                "id": 4,
+                "link": "http://xxx.xxx.xxx.xxx/?def=123",
+                "read_status": true,
+                "category": "return",
+                "recipient": [
+                    "10612704",
+                    "9505005",
+                    "10712704"
+                ],
+                "actor": "Luis Liao",
+                "verb": "return",
+                "action_object": "order",
+                "target": "",
+                "created_time": "2020-03-10T08:26:38.093183Z",
+                "deleted_time": "2020-04-05T09:10:20.000000Z"
+            },
+        ]
+    }
     ```
 
 ### `PUT` Update Notifications Detail
@@ -2593,15 +2656,23 @@ id: IntegerField (primary_key=True)
 
 link: URLField
 
-read: BoolField (true, false)
+read_status: BoolField (true, false)
 
-category: CharField (Ex/signature, develop, return, close)
+category: CharField (Ex/assign, approve, return, close, schedule_change, signature)
 
-initiator: CharField
+recipient: ArrayField (CharField)
+
+actor: CharField
+
+verb: CharField
+
+action_object: CharField
+
+target: CharField
 
 created_time: DateTimeField
 
-owner: CharField
+deleted_time: DateTimeField
 
 ---
 
