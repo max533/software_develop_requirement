@@ -160,7 +160,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = self.queryset
-        order_id = self.request.query_params.get("order_id", None)
+        order_id = self.request.query_params.get("order", None)
         if order_id is not None:
             queryset = queryset.filter(order=order_id)
         return queryset
@@ -1058,7 +1058,10 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
     serializer_class = SignatureSerializer
 
     def get_queryset(self):
-        queryset = self.queryset.filter(order=self.kwargs['orders_pk'])
+        queryset = self.queryset
+        order_id = self.request.query_params.get('order', None)
+        if order_id is not None:
+            queryset = self.queryset.filter(order=order_id)
         return queryset
 
     def get_serializer_context(self):
