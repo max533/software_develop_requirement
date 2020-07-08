@@ -134,6 +134,7 @@ class Schedule(models.Model):
     """ Order's Current Schedule Model """
     event_name = models.CharField(max_length=100)
     description = models.TextField()
+    confirm_status = models.BooleanField(default=False)
     expected_time = models.DateTimeField(null=True)
     actual_time = models.DateField(null=True)
     complete_rate = models.PositiveIntegerField(_('the complete rate of schedule event'))
@@ -155,6 +156,7 @@ class ScheduleTracker(models.Model):
     """ Order's Schedule Tracker Model"""
     event_name = models.CharField(max_length=100)
     description = models.TextField()
+    confirm_status = models.BooleanField(default=False)
     expected_time = models.DateTimeField(null=True)
     actual_time = models.DateField(null=True)
     complete_rate = models.PositiveIntegerField(_('the complete rate of schedule event'), null=True)

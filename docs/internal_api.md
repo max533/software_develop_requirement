@@ -2568,6 +2568,8 @@ id: IntegerField (primary_key=True)
 
 event_name: CharField
 
+confirm_status: BooleanField
+
 description: CharField
 
 expected_time: DateTimeField
