@@ -300,6 +300,38 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
             },
             {
                 "P3": {
+                    "initiator": "Return",
+                    "assigner": "Approve",
+                    "developers": "",
+                },
+                "signed": True,
+            },
+            {
+                "P3": {
+                    "initiator": "Return",
+                    "assigner": "Approve",
+                    "developers": "",
+                },
+                "signed": False,
+            },
+            {
+                "P3": {
+                    "initiator": "",
+                    "assigner": "Approve",
+                    "developers": "Return",
+                },
+                "signed": True,
+            },
+            {
+                "P3": {
+                    "initiator": "",
+                    "assigner": "Approve",
+                    "developers": "Return",
+                },
+                "signed": False,
+            },
+            {
+                "P3": {
                     "initiator": "Approve",
                     "assigner": "Approve",
                     "developers": "",
@@ -316,6 +348,22 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
             },
             {
                 "P3": {
+                    "initiator": "Approve",
+                    "assigner": "Approve",
+                    "developers": "Return",
+                },
+                "signed": True,
+            },
+            {
+                "P3": {
+                    "initiator": "Approve",
+                    "assigner": "Approve",
+                    "developers": "Return",
+                },
+                "signed": False,
+            },
+            {
+                "P3": {
                     "initiator": "",
                     "assigner": "Approve",
                     "developers": "Approve",
@@ -325,6 +373,38 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
             {
                 "P3": {
                     "initiator": "",
+                    "assigner": "Approve",
+                    "developers": "Approve",
+                },
+                "signed": False,
+            },
+            {
+                "P3": {
+                    "initiator": "Return",
+                    "assigner": "Approve",
+                    "developers": "Approve",
+                },
+                "signed": True,
+            },
+            {
+                "P3": {
+                    "initiator": "Return",
+                    "assigner": "Approve",
+                    "developers": "Approve",
+                },
+                "signed": False,
+            },
+            {
+                "P3": {
+                    "initiator": "Approve",
+                    "assigner": "Approve",
+                    "developers": "Approve",
+                },
+                "signed": True,
+            },
+            {
+                "P3": {
+                    "initiator": "Approve",
                     "assigner": "Approve",
                     "developers": "Approve",
                 },
