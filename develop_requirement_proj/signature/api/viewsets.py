@@ -486,10 +486,7 @@ class OrderViewSet(QueryDataMixin,
     @action(methods=['GET'], detail=True, url_path='ancestors', url_name='ancestors')
     def ancestor_list(self, request, *args, **kwargs):
         """ Get the ancestor list of the order """
-        queryset = []
         order_instance = self.get_object()
-        if order_instance.parent is None:
-            return response.Response(queryset)
         queryset = order_instance.get_ancestors(ascending=True, include_self=True)
         serializer = self.get_serializer(queryset, many=True)
         return response.Response(serializer.data)
