@@ -1299,6 +1299,7 @@ Filter schedules resource by order id
             "id": 1,
             "event_name": "Project Begin Time",
             "description": "This is a milestone.",
+            "confirm_status": true,
             "actual_time": null,
             "expected_time": "2020-03-21T08:59:38.093183Z",
             "complete_rate": 15,
@@ -1311,6 +1312,7 @@ Filter schedules resource by order id
             "id": 2,
             "event_name": "Project End Time",
             "description": "This is a milestone.",
+            "confirm_status": true,
             "actual_time": null,
             "expected_time": "2020-03-21T08:59:38.093183Z",
             "complete_rate": 15,
@@ -1323,6 +1325,7 @@ Filter schedules resource by order id
             "id": 3,
             "event_name": "MVP Time",
             "description": "This is a milestone.",
+            "confirm_status": true,
             "actual_time": null,
             "expected_time": "2020-03-21T08:59:38.093183Z",
             "complete_rate": 15,
@@ -1375,6 +1378,7 @@ Filter schedules history resource by order id
                 "id": 1,
                 "event_name": "Project Begin Time",
                 "description": "This is a milestone.",
+                "confirm_status": true,
                 "actual_time": "2020-03-21T08:59:38.093183Z",
                 "expected_time": null,
                 "complete_rate": 15,
@@ -1387,6 +1391,7 @@ Filter schedules history resource by order id
                 "id": 2,
                 "event_name": "Project End Time",
                 "description": "This is a milestone.",
+                "confirm_status": true,
                 "actaul_time": "2020-03-21T08:59:38.093183Z",
                 "expected_time": null,
                 "complete_rate": 15,
@@ -1401,6 +1406,7 @@ Filter schedules history resource by order id
                 "id": 1,
                 "event_name": "Project Begin Time",
                 "description": "This is a milestone.",
+                "confirm_status": true,
                 "actaul_time": "2020-03-21T08:59:38.093183Z",
                 "expected_time": null,
                 "complete_rate": 15,
@@ -1413,6 +1419,7 @@ Filter schedules history resource by order id
                 "id": 2,
                 "event_name": "Project End Time",
                 "actaul_time": "2020-03-21T08:59:38.093183Z",
+                "confirm_status": true,
                 "expected_time": null,
                 "description": "This is a milestone.",
                 "complete_rate": 15,
@@ -1465,6 +1472,7 @@ Create a new schedules
         "id": 2,
         "event_name": "Project End Time",
         "description": "This is a milestone.",
+        "confirm_status": true,
         "actual_time": null,
         "expected_time": "2020-03-21T08:59:38.093183Z",
         "version": null,
@@ -2547,6 +2555,8 @@ id: IntegerField (primary_key=True)
 event_name: CharField
 
 description: CharField
+
+confirm_status: BooleanField
 
 expected_time: DateTimeField
 
