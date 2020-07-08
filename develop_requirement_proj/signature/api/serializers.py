@@ -167,13 +167,19 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
             if 'member' in ret['developers']:
                 member = ret['developers']['member']
                 result = []
-                for each_member in member:
-                    result.append(self.context['employees'].get(each_member, ''))
-                ret['developers']['member'] = result
+                # Jsonfield will encounter some problem in serializer and it will keep convert data in html render
+                # The browser show error message that it will not convert data again after converting
+                # We use data type to check whether convert data or not
+                first_member = member[0]
+                if type(first_member) == str:
+                    for each_member in member:
+                        result.append(self.context['employees'].get(each_member, ''))
+                    ret['developers']['member'] = result
             else:
                 ret['developers']['member'] = []
             if 'contactor' in ret['developers']:
-                ret['developers']['contactor'] = self.context['employees'].get(ret['developers']['contactor'], '')
+                if type(ret['developers']['contactor']) == str:
+                    ret['developers']['contactor'] = self.context['employees'].get(ret['developers']['contactor'], '')
             else:
                 ret['developers']['contactor'] = ''
 
