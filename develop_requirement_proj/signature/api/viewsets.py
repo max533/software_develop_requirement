@@ -10,6 +10,7 @@ from develop_requirement_proj.utils.mixins import QueryDataMixin
 
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import send_mail
 from django.db.models import Max
 from django.forms import model_to_dict
 from django.utils import timezone
@@ -576,7 +577,25 @@ class OrderViewSet(QueryDataMixin,
                     }
                 }
                 order.save()
-                # Send Email to signer
+                # Send Email to next signer
+                email_subject = "<Signing> There is a software development order waiting your signing"
+                recipient_name = Employee.objects.using('hr').get(employee_id=next_signer).english_name.title()
+                email_message = (
+                    f"Dear {recipient_name},\n" +
+                    "\n" +
+                    "There is a software developement order that is waiting for your signing.\n" +
+                    "You can click below link to check the order detail.\n" +
+                    f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
+                    "\n" +
+                    "Don't reply this mail as it is automatically sent by the system.\n" +
+                    "If you have any question, welcome to contact DQMS Team.\n" +
+                    "\n" +
+                    "Best Regard\n" +
+                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                )
+                sender = ""
+                recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer).mail]
+                send_mail(email_subject, email_message, sender, recipient_list)
             elif direction_flag == 'Close':
                 # Debug Code
                 debug_message = (
@@ -662,6 +681,24 @@ class OrderViewSet(QueryDataMixin,
                     }
                     order.save()
                     # TODO Send email to assigner
+                    email_subject = "<Confirm> There is a software development order waiting your confirm."
+                    recipient_name = Employee.objects.using('hr').get(employee_id=order.assigner).english_name.title()
+                    email_message = (
+                        f"Dear {recipient_name},\n" +
+                        "\n" +
+                        "There is a software developement order that is waiting for your response.\n" +
+                        "You can click below link to check the order detail.\n" +
+                        f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
+                        "\n" +
+                        "Don't reply this mail as it is automatically sent by the system.\n" +
+                        "If you have any question, welcome to contact DQMS Team.\n" +
+                        "\n" +
+                        "Best Regard\n" +
+                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                    )
+                    sender = ""
+                    recipient_list = [Employee.objects.using('hr').get(employee_id=order.assigner).mail]
+                    send_mail(email_subject, email_message, sender, recipient_list)
                 elif not skip_signature_flag:
                     # Debug Code
                     debug_message = (
@@ -720,7 +757,25 @@ class OrderViewSet(QueryDataMixin,
                     }
                     order.save()
                     # TODO Send email to next signer
+                    email_subject = "<Signing> There is a software development order waiting your signing"
+                    recipient_name = Employee.objects.using('hr').get(employee_id=next_signer).english_name.title()
+                    email_message = (
+                        f"Dear {recipient_name},\n" +
+                        "\n" +
+                        "There is a software developement order that is waiting for your signing.\n" +
+                        "You can click below link to check the order detail.\n" +
+                        f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
+                        "\n" +
 
+                        "Don't reply this mail as it is automatically sent by the system.\n" +
+                        "If you have any question, welcome to contact DQMS Team.\n" +
+                        "\n" +
+                        "Best Regard\n" +
+                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                    )
+                    sender = ""
+                    recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer).mail]
+                    send_mail(email_subject, email_message, sender, recipient_list)
             elif direction_flag == "Close":
                 # Debug Code
                 debug_message = (
@@ -729,7 +784,48 @@ class OrderViewSet(QueryDataMixin,
                 logger.debug(debug_message)
                 order.form_end_time = timezone.now()
                 order.save()
+                # TODO Send email to all member
+                email_subject = "<Close> There is a software development closed order"
+                email_message = (
+                    "Dear all,\n" +
+                    "\n" +
+                    "There is a software developement closed order.\n" +
+                    "You can click below link to check the order detail.\n" +
+                    f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n" +
+                    "\n" +
+                    "Don't reply this mail as it is automatically sent by the system.\n" +
+                    "If you have any question, welcome to contact DQMS Team.\n" +
+                    "\n" +
+                    "Best Regard\n" +
+                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                )
+                sender = ""
+                # Collect all member mail in recipient_list
+                signer_id_list = list(order.signature_set.order_by(
+                    'signer').distinct('signer').values_list('signer', flat=True))
+                signer_mail_list = list(Employee.objects.using('hr').filter(
+                    employee_id__in=signer_id_list).values_list('mail', flat=True))
 
+                developers = order.developers
+                developer_list = []
+                if 'contactor' in developers:
+                    developer_list.append(developers['contactor'])
+                if 'member' in developers:
+                    developer_list.extend(developers['member'])
+                developer_mail_list = list(Employee.objects.using('hr').filter(
+                    employee_id__in=developer_list).values_list('mail', flat=True))
+
+                recipient_list = [
+                    Employee.objects.using('hr').get(employee_id=order.assigner).mail,
+                    Employee.objects.using('hr').get(employee_id=order.initiator).mail,
+                ]
+                recipient_list.extend(
+                    [mail for mail in signer_mail_list if mail not in recipient_list]
+                )
+                recipient_list.extend(
+                    [mail for mail in developer_mail_list if mail not in recipient_list]
+                )
+                send_mail(email_subject, email_message, sender, recipient_list)
         elif 'P2' in order_status:
             direction_flag = order_status['P2'].get('assigner', None)
 
@@ -755,6 +851,25 @@ class OrderViewSet(QueryDataMixin,
                 }
                 order.save()
                 # TODO Send email to assigner
+                email_subject = "Schedule: There is a software development order waiting your schedule"
+                recipient_name = Employee.objects.using('hr').get(employee_id=order.assigner).english_name.title()
+                email_message = (
+                    f"Dear {recipient_name},\n" +
+                    "\n" +
+                    "There is a software developement order that is waiting for your schedule.\n" +
+                    "You can click below link to check the order detail.\n" +
+                    f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
+                    "\n" +
+
+                    "Don't reply this mail as it is automatically sent by the system.\n" +
+                    "If you have any question, welcome to contact DQMS Team.\n" +
+                    "\n" +
+                    "Best Regard\n" +
+                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                )
+                sender = ""
+                recipient_list = [Employee.objects.using('hr').get(employee_id=order.assigner).mail.lower()]
+                send_mail(email_subject, email_message, sender, recipient_list)
             elif direction_flag == "Return":
                 # Debug Code
                 debug_message = (
@@ -810,6 +925,25 @@ class OrderViewSet(QueryDataMixin,
                     }
                     order.save()
                 # TODO Send email to initiator
+                email_subject = "<Return> There is a software development return order waiting your confirm"
+                recipient_name = Employee.objects.using('hr').get(employee_id=order.initiator).english_name.title()
+                email_message = (
+                    f"Dear {recipient_name},\n" +
+                    "\n" +
+                    "There is a software developement return order that is waiting for your response.\n" +
+                    "You can click below link to check the order detail.\n" +
+                    f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
+                    "\n" +
+
+                    "Don't reply this mail as it is automatically sent by the system.\n" +
+                    "If you have any question, welcome to contact DQMS Team.\n" +
+                    "\n" +
+                    "Best Regard\n" +
+                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                )
+                sender = ""
+                recipient_list = [Employee.objects.using('hr').get(employee_id=order.initiator).mail]
+                send_mail(email_subject, email_message, sender, recipient_list)
             elif direction_flag == "Close":
                 # Debug Code
                 debug_message = (
@@ -818,7 +952,49 @@ class OrderViewSet(QueryDataMixin,
                 logger.debug(debug_message)
                 order.form_end_time = timezone.now()
                 order.save()
+                # Send email to all member
+                email_subject = "<Close> There is a software development closed order"
+                email_message = (
+                    "Dear all,\n" +
+                    "\n" +
+                    "There is a software developement closed order.\n" +
+                    "You can click below link to check the order detail.\n" +
+                    f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n" +
+                    "\n" +
+                    "Don't reply this mail as it is automatically sent by the system.\n" +
+                    "If you have any question, welcome to contact DQMS Team.\n" +
+                    "\n" +
+                    "Best Regard\n" +
+                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                )
+                sender = ""
+                # Collect all member mail in recipient_list
+                signer_id_list = list(order.signature_set.order_by(
+                    'signer').distinct('signer').values_list('signer', flat=True))
+                signer_mail_list = list(Employee.objects.using('hr').filter(
+                    employee_id__in=signer_id_list).values_list('mail', flat=True))
 
+                developers = order.developers
+                developer_list = []
+                if 'contactor' in developers:
+                    developer_list.append(developers['contactor'])
+                if 'member' in developers:
+                    developer_list.extend(developers['member'])
+
+                developer_mail_list = list(Employee.objects.using('hr').filter(
+                    employee_id__in=developer_list).values_list('mail', flat=True))
+
+                recipient_list = [
+                    Employee.objects.using('hr').get(employee_id=order.assigner).mail,
+                    Employee.objects.using('hr').get(employee_id=order.initiator).mail,
+                ]
+                recipient_list.extend(
+                    [mail for mail in signer_mail_list if mail not in recipient_list]
+                )
+                recipient_list.extend(
+                    [mail for mail in developer_mail_list if mail not in recipient_list]
+                )
+                send_mail(email_subject, email_message, sender, recipient_list)
         elif 'P3' in order_status:
             status_list = []
             status_list.append(order_status['P3'].get('initiator', None))
@@ -870,6 +1046,33 @@ class OrderViewSet(QueryDataMixin,
                     }
                     order.save()
                     # TODO Send email to developers
+                    email_subject = "<Confirm> There is a software development order waiting your confirm."
+                    recipient_name = Employee.objects.using('hr').get(
+                        employee_id=order.developers['contactor']).english_name.title()
+                    email_message = (
+                        f"Dear {recipient_name} & developers,\n" +
+                        "\n" +
+                        "There is a software developement order that is waiting for your response.\n" +
+                        "You can click below link to check the order detail.\n" +
+                        f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n"
+                        "\n" +
+                        "Don't reply this mail as it is automatically sent by the system.\n" +
+                        "If you have any question, welcome to contact DQMS Team.\n" +
+                        "\n" +
+                        "Best Regard\n" +
+                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                    )
+                    sender = ""
+                    developers = order.developers
+                    developer_list = []
+                    if 'contactor' in developers:
+                        developer_list.append(developers['contactor'])
+                    if 'member' in developers:
+                        developer_list.append(developers['member'])
+                    developer_mail_list = set(Employee.objects.using('hr').filter(
+                        employee_id__in=developer_list).values_list('mail', flat=True))
+                    recipient_list = developer_list
+                    send_mail(email_subject, email_message, sender, recipient_list)
                 elif not skip_signature_flag:
                     # Debug Code
                     debug_message = (
@@ -891,6 +1094,12 @@ class OrderViewSet(QueryDataMixin,
                     if signer_department_id in result:
                         next_signer = result[signer_department_id].get('dm', None)
                     # If assigner is equal to next_signer
+                    count = 0
+                    for char in signer_department_id[::-1]:
+                        if char == '0':
+                            count += 1
+                        elif char != '0':
+                            break
                     if signer == next_signer:
                         non_zero_part = len(signer_department_id) - count - 1
                         next_signer_department_id = signer_department_id[:non_zero_part] + '0' * (count + 1)
@@ -945,6 +1154,24 @@ class OrderViewSet(QueryDataMixin,
                     }
                     order.save()
                     # TODO Send email to next signer
+                    email_subject = "<Signing> There is a software development order waiting your signing"
+                    recipient_name = Employee.objects.using('hr').get(employee_id=next_signer).english_name.title()
+                    email_message = (
+                        f"Dear {recipient_name},\n" +
+                        "\n" +
+                        "There is a software developement order that is waiting for your signing.\n" +
+                        "You can click below link to check the order detail.\n" +
+                        f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
+                        "\n" +
+                        "Don't reply this mail as it is automatically sent by the system.\n" +
+                        "If you have any question, welcome to contact DQMS Team.\n" +
+                        "\n" +
+                        "Best Regard\n" +
+                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                    )
+                    sender = ""
+                    recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer).mail]
+                    send_mail(email_subject, email_message, sender, recipient_list)
             elif direction_flag == "Return":
                 # Debug Code
                 debug_message = (
@@ -962,6 +1189,24 @@ class OrderViewSet(QueryDataMixin,
                 }
                 order.save()
                 # TODO Send email to assigner
+                email_subject = "ReSchedule: There is a software development order waiting your reschedule"
+                recipient_name = Employee.objects.using('hr').get(employee_id=order.assigner).english_name.title()
+                email_message = (
+                    f"Dear {recipient_name},\n" +
+                    "\n" +
+                    "There is a software developement return order that is waiting for your reschedule.\n" +
+                    "You can click below link to check the order detail.\n" +
+                    f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
+                    "\n" +
+                    "Don't reply this mail as it is automatically sent by the system.\n" +
+                    "If you have any question, welcome to contact DQMS Team.\n" +
+                    "\n" +
+                    "Best Regard\n" +
+                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                )
+                sender = ""
+                recipient_list = [Employee.objects.using('hr').get(employee_id=order.assigner).mail]
+                send_mail(email_subject, email_message, sender, recipient_list)
             elif direction_flag == "Close":
                 # Debug Code
                 debug_message = (
@@ -976,6 +1221,49 @@ class OrderViewSet(QueryDataMixin,
                 }
                 order.form_end_time = timezone.now()
                 order.save()
+                # TODO Send email to all member
+                email_subject = "<Close> There is a software development closed order"
+                email_message = (
+                    "Dear all,\n" +
+                    "\n" +
+                    "There is a software developement closed order.\n" +
+                    "You can click below link to check the order detail.\n" +
+                    f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n" +
+                    "\n" +
+                    "Don't reply this mail as it is automatically sent by the system.\n" +
+                    "If you have any question, welcome to contact DQMS Team.\n" +
+                    "\n" +
+                    "Best Regard\n" +
+                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                )
+                sender = ""
+                # Collect all member mail in recipient_list
+                signer_id_list = list(order.signature_set.order_by(
+                    'signer').distinct('signer').values_list('signer', flat=True))
+                signer_mail_list = list(Employee.objects.using('hr').filter(
+                    employee_id__in=signer_id_list).values_list('mail', flat=True))
+
+                developers = order.developers
+                developer_list = []
+                if 'contactor' in developers:
+                    developer_list.append(developers['contactor'])
+                if 'member' in developers:
+                    developer_list.extend(developers['member'])
+
+                developer_mail_list = list(Employee.objects.using('hr').filter(
+                    employee_id__in=developer_list).values_list('mail', flat=True))
+
+                recipient_list = [
+                    Employee.objects.using('hr').get(employee_id=order.assigner).mail,
+                    Employee.objects.using('hr').get(employee_id=order.initiator).mail,
+                ]
+                recipient_list.extend(
+                    [mail for mail in signer_mail_list if mail not in recipient_list]
+                )
+                recipient_list.extend(
+                    [mail for mail in developer_mail_list if mail not in recipient_list]
+                )
+                send_mail(email_subject, email_message, sender, recipient_list)
             elif direction_flag == "Wait":
                 # Debug Code
                 debug_message = (
@@ -984,6 +1272,32 @@ class OrderViewSet(QueryDataMixin,
                 logger.debug(debug_message)
                 order.status['signed'] = skip_signature_flag
                 order.save()
+                # Send email to initiator and developers contactor
+                email_subject = "<Confirm> There is a software development order waiting your confirm"
+                recipient_name_list = [
+                    Employee.objects.using('hr').get(employee_id=order.initiator).english_name.title(),
+                    Employee.objects.using('hr').get(employee_id=order.developers__contactor).english_name.title()
+                ]
+                recipient_name = ' & '.join(recipient_name_list)
+                email_message = (
+                    f"Dear {recipient_name},\n" +
+                    "\n" +
+                    "There is a software developement order that is waiting for your response.\n" +
+                    "You can click below link to check the order detail.\n" +
+                    f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
+                    "\n" +
+                    "Don't reply this mail as it is automatically sent by the system.\n" +
+                    "If you have any question, welcome to contact DQMS Team.\n" +
+                    "\n" +
+                    "Best Regard\n" +
+                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                )
+                sender = ""
+                recipient_list = [
+                    Employee.objects.using('hr').get(employee_id=order.initiator).mail,
+                    Employee.objects.using('hr').get(employee_id=order.developers__contactor).mail,
+                ]
+                send_mail(email_subject, email_message, sender, recipient_list)
 
         elif 'P5' in order_status:
 
@@ -1007,7 +1321,26 @@ class OrderViewSet(QueryDataMixin,
                         }
                     }
                     order.save()
-                    # TODO Send email to assigner
+                # TODO Send email to initiator
+                email_subject = "<Confirm> There is a software development order waiting your confirm"
+                recipient_name = Employee.objects.using('hr').get(employee_id=order.initiator).english_name.title()
+                email_message = (
+                    f"Dear {recipient_name},\n" +
+                    "\n" +
+                    "There is a software developement order waiting for your response.\n" +
+                    "You can click below link to check the order detail.\n" +
+                    f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
+                    "\n" +
+                    "Don't reply this mail as it is automatically sent by the system.\n" +
+                    "If you have any question, welcome to contact DQMS Team.\n" +
+                    "\n" +
+                    "Best Regard\n" +
+                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                )
+                sender = ""
+                recipient_list = [Employee.objects.using('hr').get(employee_id=order.initiator).mail]
+                send_mail(email_subject, email_message, sender, recipient_list)
+
             elif 'initiator' in order_status['P5']:
                 direction_flag = order_status['P5'].get('initiator', None)
                 if direction_flag is None or direction_flag == "":
@@ -1022,6 +1355,48 @@ class OrderViewSet(QueryDataMixin,
                         f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
                     )
                     logger.debug(debug_message)
+                    # TODO Send email to all member
+                    email_subject = "<Complete> There is a software development complete order"
+                    email_message = (
+                        "Dear all,\n" +
+                        "\n" +
+                        "There is a software developement complete order.\n" +
+                        "You can click below link to check the order detail.\n" +
+                        f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n" +
+                        "\n" +
+                        "Don't reply this mail as it is automatically sent by the system.\n" +
+                        "If you have any question, welcome to contact DQMS Team.\n" +
+                        "\n" +
+                        "Best Regard\n" +
+                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                    )
+                    sender = ""
+                    # Collect all member mail in recipient_list
+                    signer_id_list = list(order.signature_set.order_by(
+                        'signer').distinct('signer').values_list('signer', flat=True))
+                    signer_mail_list = list(Employee.objects.using('hr').filter(
+                        employee_id__in=signer_id_list).values_list('mail', flat=True))
+
+                    developers = order.developers
+                    developer_list = []
+                    if 'contactor' in developers:
+                        developer_list.append(developers['contactor'])
+                    if 'member' in developers:
+                        developer_list.extend(developers['member'])
+                    developer_mail_list = list(Employee.objects.using('hr').filter(
+                        employee_id__in=developer_list).values_list('mail', flat=True))
+
+                    recipient_list = [
+                        Employee.objects.using('hr').get(employee_id=order.assigner).mail,
+                        Employee.objects.using('hr').get(employee_id=order.initiator).mail,
+                    ]
+                    recipient_list.extend(
+                        [mail for mail in signer_mail_list if mail not in recipient_list]
+                    )
+                    recipient_list.extend(
+                        [mail for mail in developer_mail_list if mail not in recipient_list]
+                    )
+                    send_mail(email_subject, email_message, sender, recipient_list)
                 elif direction_flag == "Return":
                     # Debug Code
                     debug_message = (
@@ -1035,6 +1410,33 @@ class OrderViewSet(QueryDataMixin,
                     }
                     order.save()
                     # TODO Send email to developers
+                    email_subject = "<Return> There is a software development return order waiting your confirm."
+                    recipient_name = Employee.objects.using('hr').get(
+                        employee_id=order.developers['contactor']).english_name.title()
+                    email_message = (
+                        f"Dear {recipient_name} & developers,\n" +
+                        "\n" +
+                        "There is a software developement return order that is waiting for your response.\n" +
+                        "You can click below link to check the order detail.\n" +
+                        f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n"
+                        "\n" +
+                        "Don't reply this mail as it is automatically sent by the system.\n" +
+                        "If you have any question, welcome to contact DQMS Team.\n" +
+                        "\n" +
+                        "Best Regard\n" +
+                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                    )
+                    sender = ""
+                    developers = order.developers
+                    developer_list = []
+                    if 'contactor' in developers:
+                        developer_list.append(developers['contactor'])
+                    if 'member' in developers:
+                        developer_list.extend(developers['member'])
+                    developer_mail_list = list(Employee.objects.using('hr').filter(
+                        employee_id__in=developer_list).values_list('mail', flat=True))
+                    recipient_list = developer_mail_list
+                    send_mail(email_subject, email_message, sender, recipient_list)
                 elif direction_flag == "Close":
                     # Debug Code
                     debug_message = (
@@ -1042,7 +1444,55 @@ class OrderViewSet(QueryDataMixin,
                     )
                     logger.debug(debug_message)
                     order.form_end_time = timezone.now()
+                    order.status = {
+                        "P5": {
+                            "initiator": "Close"
+                        }
+                    }
                     order.save()
+                    # Send email to all member
+                    email_subject = "<Close> There is a software development closed order"
+                    email_message = (
+                        "Dear all,\n" +
+                        "\n" +
+                        "There is a software developement closed order.\n" +
+                        "You can click below link to check the order detail.\n" +
+                        f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n" +
+                        "\n" +
+                        "Don't reply this mail as it is automatically sent by the system.\n" +
+                        "If you have any question, welcome to contact DQMS Team.\n" +
+                        "\n" +
+                        "Best Regard\n" +
+                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                    )
+                    sender = ""
+                    # Collect all member mail in recipient_list
+                    signer_id_list = list(order.signature_set.order_by(
+                        'signer').distinct('signer').values_list('signer', flat=True))
+                    signer_mail_list = list(Employee.objects.using('hr').filter(
+                        employee_id__in=signer_id_list).values_list('mail', flat=True))
+
+                    developers = order.developers
+                    developer_list = []
+                    if 'contactor' in developers:
+                        developer_list.append(developers['contactor'])
+                    if 'member' in developers:
+                        developer_list.extend(developers['member'])
+
+                    developer_mail_list = list(Employee.objects.using('hr').filter(
+                        employee_id__in=developer_list).values_list('mail', flat=True))
+
+                    recipient_list = [
+                        Employee.objects.using('hr').get(employee_id=order.assigner).mail,
+                        Employee.objects.using('hr').get(employee_id=order.initiator).mail,
+                    ]
+                    recipient_list.extend(
+                        [mail for mail in signer_mail_list if mail not in recipient_list]
+                    )
+                    recipient_list.extend(
+                        [mail for mail in developer_mail_list if mail not in recipient_list]
+                    )
+                    send_mail(email_subject, email_message, sender, recipient_list)
             else:
                 error_message = (
                     f"The status of order id '{order_id}' is not correct. " +
@@ -1122,7 +1572,8 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
         signature_id = serializer.data['id']
         signature = Signature.objects.get(pk=signature_id)
         signature_status = signature.status
-        order = signature.order
+        order = Order.objects.get(pk=signature.order.id)
+        order_copy = Order.objects.get(pk=signature.order.id)
 
         # Create History (including last record and update content with json)
         last_order_tracker = dict(OrderTracker.objects.filter(order=order.id).order_by('created_time').values()[0])
@@ -1134,7 +1585,7 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
 
         comment = {
             'last_order': OrderDynamicSerializer(last_order_tracker, **kwargs).data,
-            'update_content': OrderDynamicSerializer(order, **kwargs).data,
+            'update_content': OrderDynamicSerializer(order_copy, **kwargs).data,
         }
 
         history = {
@@ -1150,8 +1601,9 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
             order_tracker_serializer.save(order=order, form_begin_time=order.form_begin_time)
 
         logger.debug(f"Origin Signature Stauts: {signature_status}, Origin Order Status: {order.status}")
+        signer = signature.signer
+        developers = order.developers
         if signature_status == 'Approve':
-            signer = signature.signer
             signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
             # Check signature stage is finished or not. The last signer will be function head leader.
             # Stop Condiontion is that Consecutive occurrences times of the zero in department_id are
@@ -1171,6 +1623,25 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
                         }
                     }
                     order.save()
+                    # TODO Send email to assigner
+                    email_subject = "<Confirm> There is a software development order waiting your confirm."
+                    recipient_name = Employee.objects.using('hr').get(employee_id=order.assigner).english_name.title()
+                    email_message = (
+                        f"Dear {recipient_name},\n" +
+                        "\n" +
+                        "There is a software developement order that is waiting for your response.\n" +
+                        "You can click below link to check the order detail.\n" +
+                        f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n"
+                        "\n" +
+                        "Don't reply this mail as it is automatically sent by the system.\n" +
+                        "If you have any question, welcome to contact DQMS Team.\n" +
+                        "\n" +
+                        "Best Regard\n" +
+                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                    )
+                    sender = ""
+                    recipient_list = [Employee.objects.using('hr').get(employee_id=order.assigner).mail]
+                    send_mail(email_subject, email_message, sender, recipient_list)
                 elif count < 4:
                     # Find next signer
                     non_zero_part = len(signer_department_id) - count - 1
@@ -1207,7 +1678,25 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
                             'order': order
                         }
                         Signature.objects.create(**next_signature)
-
+                        # Send Email to next signer
+                        email_subject = "<Signing> There is a software development order waiting your signing"
+                        recipient_name = Employee.objects.using('hr').get(employee_id=next_signer).english_name.title()
+                        email_message = (
+                            f"Dear {recipient_name},\n" +
+                            "\n" +
+                            "There is a software developement order that is waiting for your signing.\n" +
+                            "You can click below link to check the order detail.\n" +
+                            f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n"
+                            "\n" +
+                            "Don't reply this mail as it is automatically sent by the system.\n" +
+                            "If you have any question, welcome to contact DQMS Team.\n" +
+                            "\n" +
+                            "Best Regard\n" +
+                            "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                        )
+                        sender = ""
+                        recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer)]
+                        send_mail(email_subject, email_message, sender, recipient_list)
             elif 'P4' in order.status:
                 if count >= 4:
                     order.status = {
@@ -1216,6 +1705,34 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
                         }
                     }
                     order.save()
+                    # TODO Send email to developers
+                    email_subject = "<Confirm> There is a software development order waiting your confirm."
+                    recipient_name = Employee.objects.using('hr').get(
+                        employee_id=order.developers['contactor']).english_name.title()
+                    email_message = (
+                        f"Dear {recipient_name} & developers,\n" +
+                        "\n" +
+                        "There is a software developement order that is waiting for your response.\n" +
+                        "You can click below link to check the order detail.\n" +
+                        f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n"
+                        "\n" +
+                        "Don't reply this mail as it is automatically sent by the system.\n" +
+                        "If you have any question, welcome to contact DQMS Team.\n" +
+                        "\n" +
+                        "Best Regard\n" +
+                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                    )
+                    sender = ""
+                    developers = order.developers
+                    developer_list = []
+                    if 'contactor' in developers:
+                        developer_list.append(developers['contactor'])
+                    if 'member' in developers:
+                        developer_list.append(developers['member'])
+                    developer_mail_list = list(Employee.objects.using('hr').get(
+                        employee_id__in=developer_list).distinct('mail').value_list('mail', flat=True))
+                    recipient_list = developer_mail_list
+                    send_mail(email_subject, email_message, sender, recipient_list)
                 elif count < 4:
                     # Find next signer
                     non_zero_part = len(signer_department_id) - count - 1
@@ -1251,7 +1768,25 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
                             'order': order
                         }
                         Signature.objects.create(**next_signature)
-
+                        # TODO Send email to next signer
+                        email_subject = "<Signing> There is a software development order waiting your signing"
+                        recipient_name = Employee.objects.using('hr').get(employee_id=next_signer).english_name.title()
+                        email_message = (
+                            f"Dear {recipient_name},\n" +
+                            "\n" +
+                            "There is a software developement order that is waiting for your signing.\n" +
+                            "You can click below link to check the order detail.\n" +
+                            f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n"
+                            "\n" +
+                            "Don't reply this mail as it is automatically sent by the system.\n" +
+                            "If you have any question, welcome to contact DQMS Team.\n" +
+                            "\n" +
+                            "Best Regard\n" +
+                            "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                        )
+                        sender = ""
+                        recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer).mail]
+                        send_mail(email_subject, email_message, sender, recipient_list)
         elif signature_status == 'Return':
             if 'P1' in order.status:
                 order.status = {
@@ -1261,6 +1796,25 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
                     'signed': False
                 }
                 order.save()
+                # TODO Send email to initiator
+                email_subject = "<Return> There is a software development return order waiting your confirm."
+                recipient_name = Employee.objects.using('hr').get(employee_id=order.initiator).english_name.title()
+                email_message = (
+                    f"Dear {recipient_name},\n" +
+                    "\n" +
+                    "There is a software developement return order that is waiting for your response.\n" +
+                    "You can click below link to check the order detail.\n" +
+                    f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n"
+                    "\n" +
+                    "Don't reply this mail as it is automatically sent by the system.\n" +
+                    "If you have any question, welcome to contact DQMS Team.\n" +
+                    "\n" +
+                    "Best Regard\n" +
+                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                )
+                sender = ""
+                recipient_list = [Employee.objects.using('hr').get(employee_id=order.initiator).mail]
+                send_mail(email_subject, email_message, sender, recipient_list)
             elif 'P4' in order.status:
                 order.status = {
                     'P3': {
@@ -1271,6 +1825,25 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
                     'signed': False
                 }
                 order.save()
+                # TODO Send email to assigner
+                email_subject = "<Reschedule> There is a software development order waiting your reschedule"
+                recipient_name = Employee.objects.using('hr').get(employee_id=order.assigner).english_name.title()
+                email_message = (
+                    f"Dear {recipient_name},\n" +
+                    "\n" +
+                    "There is a software developement return order that is waiting for your reschedule.\n" +
+                    "You can click below link to check the order detail.\n" +
+                    f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n"
+                    "\n" +
+                    "Don't reply this mail as it is automatically sent by the system.\n" +
+                    "If you have any question, welcome to contact DQMS Team.\n" +
+                    "\n" +
+                    "Best Regard\n" +
+                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                )
+                sender = ""
+                recipient_list = [Employee.objects.using('hr').get(employee_id=order.assigner).mail]
+                send_mail(email_subject, email_message, sender, recipient_list)
         elif signature_status == 'Close':
             if 'P1' in order.status:
                 order.status = {
@@ -1288,5 +1861,46 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
                 }
                 order.form_end_time = timezone.now()
                 order.save()
+            # TODO Send email to all member
+            email_subject = "<Close> There is a software development closed order"
+            email_message = (
+                "Dear all,\n" +
+                "\n" +
+                "There is a software developement closed order.\n" +
+                "You can click below link to check the order detail.\n" +
+                f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n" +
+                "\n" +
+                "Don't reply this mail as it is automatically sent by the system.\n" +
+                "If you have any question, welcome to contact DQMS Team.\n" +
+                "\n" +
+                "Best Regard\n" +
+                "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+            )
+            sender = ""
+            # Collect all member mail in recipient_list
+            signer_id_list = list(order.signature_set.order_by(
+                'signer').distinct('signer').values_list('signer', flat=True))
+            signer_mail_list = list(Employee.objects.using('hr').filter(
+                employee_id__in=signer_id_list).values_list('mail', flat=True))
 
+            developer_list = []
+            if 'contactor' in developers:
+                developer_list.append(developers['contactor'])
+            if 'member' in developers:
+                developer_list.extend(developers['member'])
+
+            developer_mail_list = list(Employee.objects.using('hr').filter(
+                employee_id__in=developer_list).values_list('mail', flat=True))
+
+            recipient_list = [
+                Employee.objects.using('hr').get(employee_id=order.assigner).mail,
+                Employee.objects.using('hr').get(employee_id=order.initiator).mail,
+            ]
+            recipient_list.extend(
+                [mail for mail in signer_mail_list if mail not in recipient_list]
+            )
+            recipient_list.extend(
+                [mail for mail in developer_mail_list if mail not in recipient_list]
+            )
+            send_mail(email_subject, email_message, sender, recipient_list)
         # TODO Send notification to all member

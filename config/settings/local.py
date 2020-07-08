@@ -39,6 +39,9 @@ CACHES = {
 EMAIL_BACKEND = env(
     "DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"
 )
+DEFAULT_FROM_EMAIL = env(
+    "DJANGO_DEFAULT_FROM_EMAIL", default="Softwore Development Requirement System <no_reply@dqms.wistron.com>"
+)
 
 
 # django-debug-toolbar
