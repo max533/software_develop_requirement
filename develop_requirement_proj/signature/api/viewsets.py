@@ -202,6 +202,7 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         serializer.save()
         # If Schedule Add, then Order status rollback to P3 initial status
         order = serializer.instance.order
+
         # Check whether P4 phase signature is finished or not
         try:
             signature = order.signature_set.filter(role_group='assigner').latest('signed_time')
@@ -220,16 +221,21 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         except ObjectDoesNotExist as err:
             logger.info(f"There are not any signature. Error Message: {err}")
             skip_signature_flag = False
-
         order.status = {
             'P3': {
                 "initiator": "",
-                "assigner": "Approve",
+                "assigner": "",
                 "developers": ""
             },
             'signed': skip_signature_flag
         }
         order.save()
+
+        # Update confirm_status
+        schedules = order.schedule_set.all()
+        for schedule in schedules:
+            schedule.confirm_status = False
+        Schedule.objects.bulk_update(schedules, ['confirm_status'])
 
     def perform_update(self, serializer):
         serializer.save()
@@ -257,12 +263,18 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         order.status = {
             'P3': {
                 "initiator": "",
-                "assigner": "Approve",
+                "assigner": "",
                 "developers": ""
             },
             'signed': skip_signature_flag
         }
         order.save()
+
+        # Update confirm_status
+        schedules = order.schedule_set.all()
+        for schedule in schedules:
+            schedule.confirm_status = False
+        Schedule.objects.bulk_update(schedules, ['confirm_status'])
 
     def perform_destroy(self, instance):
         # If Schedule delete, then Order status rollback to P3 initial status
@@ -290,12 +302,18 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         order.status = {
             'P3': {
                 "initiator": "",
-                "assigner": "Approve",
+                "assigner": "",
                 "developers": ""
             },
             'signed': skip_signature_flag
         }
         order.save()
+
+        # Update confirm_status
+        schedules = order.schedule_set.all()
+        for schedule in schedules:
+            schedule.confirm_status = False
+        Schedule.objects.bulk_update(schedules, ['confirm_status'])
 
 
 class ProgressViewSet(viewsets.ModelViewSet):
@@ -731,7 +749,7 @@ class OrderViewSet(QueryDataMixin,
                             next_signer = result[next_signer_department_id].get('dm', None)
                     else:
                         next_signer_department_id = signer_department_id
-                    # Check whether craete next signature
+                    # Check whether enter next phase or not
                     max_sequence = order.signature_set.aggregate(Max('sequence'))['sequence__max']
                     if order.signature_set.get(sequence=max_sequence).status in ['Approve', 'Return']:
                         # Create next Signature
@@ -746,33 +764,33 @@ class OrderViewSet(QueryDataMixin,
                             'order': order
                         }
                         Signature.objects.create(**next_signature)
-                    # Order Status Change
-                    order.status = {
-                        "P1": {
-                            next_signer: ""
+                        # Order Status Change
+                        order.status = {
+                            "P1": {
+                                next_signer: ""
+                            }
                         }
-                    }
-                    order.save()
-                    # TODO Send email to next signer
-                    email_subject = "<Signing> There is a software development order waiting your signing"
-                    recipient_name = Employee.objects.using('hr').get(employee_id=next_signer).english_name.title()
-                    email_message = (
-                        f"Dear {recipient_name},\n" +
-                        "\n" +
-                        "There is a software developement order that is waiting for your signing.\n" +
-                        "You can click below link to check the order detail.\n" +
-                        f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
-                        "\n" +
+                        order.save()
+                        # TODO Send email to next signer
+                        email_subject = "<Signing> There is a software development order waiting your signing"
+                        recipient_name = Employee.objects.using('hr').get(employee_id=next_signer).english_name.title()
+                        email_message = (
+                            f"Dear {recipient_name},\n" +
+                            "\n" +
+                            "There is a software developement order that is waiting for your signing.\n" +
+                            "You can click below link to check the order detail.\n" +
+                            f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
+                            "\n" +
 
-                        "Don't reply this mail as it is automatically sent by the system.\n" +
-                        "If you have any question, welcome to contact DQMS Team.\n" +
-                        "\n" +
-                        "Best Regard\n" +
-                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                    )
-                    sender = ""
-                    recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer).mail]
-                    send_mail(email_subject, email_message, sender, recipient_list)
+                            "Don't reply this mail as it is automatically sent by the system.\n" +
+                            "If you have any question, welcome to contact DQMS Team.\n" +
+                            "\n" +
+                            "Best Regard\n" +
+                            "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                        )
+                        sender = ""
+                        recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer).mail]
+                        send_mail(email_subject, email_message, sender, recipient_list)
             elif direction_flag == "Close":
                 # Debug Code
                 debug_message = (
@@ -1004,10 +1022,12 @@ class OrderViewSet(QueryDataMixin,
                 direction_flag = "Approve"
             elif status_list[1] == "Close":
                 direction_flag = "Close"
+            elif status_list[1] == "Approve":
+                direction_flag = "Negotiate"
             else:
                 direction_flag = "Wait"
 
-            if direction_flag in ['Return', 'Approve', 'Wait', "Close"]:
+            if direction_flag in ['Return', 'Approve', 'Wait', 'Negotiate', "Close"]:
                 # Check signature stage is finished or not. The last signer will function head leader.
                 # Consecutive occurrences times of the zero in department_id is greater than four.
                 try:
@@ -1029,6 +1049,27 @@ class OrderViewSet(QueryDataMixin,
                     skip_signature_flag = False
 
             if direction_flag == "Approve":
+                # Check the all schedule modify or not.
+                # If schedule didn't be modified, It will skip bleow thing.
+                # 1. Recalculate the schedule version and record snapshot in ScheduleTracker table
+                # 2. Change schedule's expected_time to actual_time
+                # 3. Change schedule's all confirm status to True
+                objs = order.schedule_set.all()
+                if not all(list(objs.values_list('confirm_status', flat=True))):
+                    current_max_version = objs.aggregate(Max('version'))['version__max']
+                    new_version = 1 if current_max_version is None else current_max_version + 1
+                    for obj in objs:
+                        obj.actual_time, obj.expected_time = obj.expected_time, None
+                        obj.version = new_version
+                        obj.confirm_status = True
+                    Schedule.objects.bulk_update(objs, ['actual_time', 'expected_time', 'version', 'confirm_status'])
+                    result = ScheduleTracker.objects.aggregate(Max('id'))['id__max']
+                    new_id = 0 if result is None else result
+                    for obj in objs:
+                        new_id += 1
+                        obj.id = new_id
+                    ScheduleTracker.objects.bulk_create(objs)
+
                 if skip_signature_flag:
                     # Debug Code
                     debug_message = (
@@ -1111,7 +1152,7 @@ class OrderViewSet(QueryDataMixin,
                             next_signer = result[next_signer_department_id].get('dm', None)
                     else:
                         next_signer_department_id = signer_department_id
-                    # Check whether craete next signature
+                    # Check whether enter next phase or not
                     max_sequence = order.signature_set.aggregate(Max('sequence'))['sequence__max']
                     if order.signature_set.get(sequence=max_sequence).status in ['Approve', 'Return']:
                         # Create Signature
@@ -1127,48 +1168,32 @@ class OrderViewSet(QueryDataMixin,
                         }
                         Signature.objects.create(**next_signature)
 
-                    # Recalculate the schedule version and record snapshot in ScheduleTracle table
-                    # And Change schedule attribute expected_time to actual_time
-                    objs = order.schedule_set.all()
-                    current_max_version = objs.aggregate(Max('version'))['version__max']
-                    new_version = 1 if current_max_version is None else current_max_version + 1
-                    for obj in objs:
-                        obj.actual_time, obj.expected_time = obj.expected_time, None
-                        obj.version = new_version
-                    Schedule.objects.bulk_update(objs, ['actual_time', 'expected_time', 'version'])
-                    result = ScheduleTracker.objects.aggregate(Max('id'))['id__max']
-                    new_id = 0 if result is None else result
-                    for obj in objs:
-                        new_id += 1
-                        obj.id = new_id
-                    ScheduleTracker.objects.bulk_create(objs)
-
-                    # Order Status Change
-                    order.status = {
-                        "P4": {
-                            next_signer: ""
+                        # Order Status Change
+                        order.status = {
+                            "P4": {
+                                next_signer: ""
+                            }
                         }
-                    }
-                    order.save()
-                    # TODO Send email to next signer
-                    email_subject = "<Signing> There is a software development order waiting your signing"
-                    recipient_name = Employee.objects.using('hr').get(employee_id=next_signer).english_name.title()
-                    email_message = (
-                        f"Dear {recipient_name},\n" +
-                        "\n" +
-                        "There is a software developement order that is waiting for your signing.\n" +
-                        "You can click below link to check the order detail.\n" +
-                        f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
-                        "\n" +
-                        "Don't reply this mail as it is automatically sent by the system.\n" +
-                        "If you have any question, welcome to contact DQMS Team.\n" +
-                        "\n" +
-                        "Best Regard\n" +
-                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                    )
-                    sender = ""
-                    recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer).mail]
-                    send_mail(email_subject, email_message, sender, recipient_list)
+                        order.save()
+                        # TODO Send email to next signer
+                        email_subject = "<Signing> There is a software development order waiting your signing"
+                        recipient_name = Employee.objects.using('hr').get(employee_id=next_signer).english_name.title()
+                        email_message = (
+                            f"Dear {recipient_name},\n" +
+                            "\n" +
+                            "There is a software developement order that is waiting for your signing.\n" +
+                            "You can click below link to check the order detail.\n" +
+                            f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
+                            "\n" +
+                            "Don't reply this mail as it is automatically sent by the system.\n" +
+                            "If you have any question, welcome to contact DQMS Team.\n" +
+                            "\n" +
+                            "Best Regard\n" +
+                            "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+                        )
+                        sender = ""
+                        recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer).mail]
+                        send_mail(email_subject, email_message, sender, recipient_list)
             elif direction_flag == "Return":
                 # Debug Code
                 debug_message = (
@@ -1261,6 +1286,7 @@ class OrderViewSet(QueryDataMixin,
                     [mail for mail in developer_mail_list if mail not in recipient_list]
                 )
                 send_mail(email_subject, email_message, sender, recipient_list)
+
             elif direction_flag == "Wait":
                 # Debug Code
                 debug_message = (
@@ -1269,11 +1295,21 @@ class OrderViewSet(QueryDataMixin,
                 logger.debug(debug_message)
                 order.status['signed'] = skip_signature_flag
                 order.save()
+
+            elif direction_flag == "Negotiate":
+                # Debug Code
+                debug_message = (
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                )
+                logger.debug(debug_message)
+                order.status['signed'] = skip_signature_flag
                 # Send email to initiator and developers contactor
                 email_subject = "<Confirm> There is a software development order waiting your confirm"
+                if 'contactor' in order.developers:
+                    developer_contactor = order.developers['contactor']
                 recipient_name_list = [
                     Employee.objects.using('hr').get(employee_id=order.initiator).english_name.title(),
-                    Employee.objects.using('hr').get(employee_id=order.developers__contactor).english_name.title()
+                    Employee.objects.using('hr').get(employee_id=developer_contactor).english_name.title()
                 ]
                 recipient_name = ' & '.join(recipient_name_list)
                 email_message = (
@@ -1292,7 +1328,7 @@ class OrderViewSet(QueryDataMixin,
                 sender = ""
                 recipient_list = [
                     Employee.objects.using('hr').get(employee_id=order.initiator).mail,
-                    Employee.objects.using('hr').get(employee_id=order.developers__contactor).mail,
+                    Employee.objects.using('hr').get(employee_id=developer_contactor).mail,
                 ]
                 send_mail(email_subject, email_message, sender, recipient_list)
 

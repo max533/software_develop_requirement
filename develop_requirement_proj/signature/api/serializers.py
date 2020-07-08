@@ -68,7 +68,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Schedule
         fields = "__all__"
-        read_only_fields = ['actual_time', 'created_time', 'update_time', 'version']
+        read_only_fields = ['actual_time', 'created_time', 'update_time', 'version', 'confirm_status']
 
 
 class ProgressSerializer(serializers.ModelSerializer):
@@ -233,8 +233,22 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
     def validate_status(self, value):
         """ Check the status is reasonable or not """
         status_list = [
-            {"P0": {"initiator": "Close"}},
-            {"P0": {"initiator": "Approve"}},
+            {
+                "P0": {"initiator": "Close"},
+                "signed": True
+            },
+            {
+                "P0": {"initiator": "Close"},
+                "signed": False
+            },
+            {
+                "P0": {"initiator": "Approve"},
+                "signed": True
+            },
+            {
+                "P0": {"initiator": "Approve"},
+                "signed": False
+            },
             {"P2": {"assigner": "Approve"}},
             {"P2": {"assigner": "Return"}},
             {"P2": {"assigner": "Close"}},
