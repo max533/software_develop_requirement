@@ -459,7 +459,7 @@ class OrderViewSet(QueryDataMixin,
             cache.set('employees', employee_object, 60 * 60)
         context['employees'] = employee_object
 
-        if self.action in ['create', 'update']:
+        if self.action in ['create', 'update', 'partial_update']:
             # Get function_team and sub_function information
             function_team_object = cache.get('function_team', None)
             sub_function_team_object = cache.get('sub_function_team', None)
