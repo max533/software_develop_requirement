@@ -212,20 +212,32 @@ class History(models.Model):
 
 class Notification(models.Model):
     """ Order's Notificaiton model """
+    NOTIFICATION_CATEGORY_CHOICE = [
+        ('initialization', 'Initialization'),
+        ('completion', 'Completion'),
+        ('category', 'Category'),
+        ('response', 'Response'),
+        ('negotiation', 'Negotiation'),
+        ('signature', 'Signature'),
+    ]
     link = models.URLField(max_length=1000)
-    read = models.BooleanField(_('the read status of the notification'), default=False)
-    category = models.CharField(max_length=20)
-    initiator = models.CharField('the initiator of the notification', max_length=20)
+    read_status = models.BooleanField(_('the read status of the notification'), default=False)
+    category = models.CharField(max_length=20, choices=NOTIFICATION_CATEGORY_CHOICE, default='unknown')
+    recipient = models.CharField('the owner of the notification', max_length=20)
+    actor = models.TextField()
+    verb = models.TextField()
+    action_object = models.TextField()
+    target = models.TextField()
     created_time = models.DateTimeField(auto_now_add=True)
-    owner = models.CharField('the owner of the notification', max_length=20)
+    deleted_time = models.DateTimeField(null=True)
 
     class Meta:
-        ordering = ['owner', 'read', 'created_time']
+        ordering = ['recipient', 'read_status', 'created_time']
         verbose_name = _('notification')
         verbose_name_plural = _('notifications')
 
     def __str__(self):
-        return f'Id: {self.id}, Read: {self.read}, Create_at: {self.created_time}'
+        return f'Id: {self.id}, Recipient: {self.recipient}, Read: {self.read_status}, Create_at: {self.created_time}'
 
 
 class Signature(models.Model):

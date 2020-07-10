@@ -132,11 +132,15 @@ class NotificationAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'link',
-        'read',
+        'read_status',
         'category',
-        'initiator',
+        'recipient',
+        'actor',
+        'verb',
+        'action_object',
+        'target',
         'created_time',
-        'owner'
+        'deleted_time'
     )
 
 
