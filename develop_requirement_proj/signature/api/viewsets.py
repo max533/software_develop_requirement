@@ -11,7 +11,7 @@ from develop_requirement_proj.utils.mixins import QueryDataMixin
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
-from django.db.models import Max
+from django.db.models import Max, Q
 from django.forms import model_to_dict
 from django.utils import timezone
 
@@ -378,7 +378,10 @@ class HistoryViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.Ge
         return context
 
 
-class NotificationVewSet(mixins.UpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+class NotificationVewSet(mixins.ListModelMixin,
+                         mixins.RetrieveModelMixin,
+                         mixins.UpdateModelMixin,
+                         viewsets.GenericViewSet):
 
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
@@ -387,7 +390,7 @@ class NotificationVewSet(mixins.UpdateModelMixin, mixins.ListModelMixin, viewset
         """ Get current user's notification """
         queryset = []
         employee_id = self.request.user.username
-        queryset = self.queryset.filter(owner=employee_id)
+        queryset = self.queryset.filter(recipient=employee_id)
         return queryset
 
 
@@ -521,7 +524,7 @@ class OrderViewSet(QueryDataMixin,
         if order_tracker_serializer.is_valid(raise_exception=True):
             order_tracker_serializer.save(order=order, form_begin_time=order.form_begin_time)
 
-        # # Create History (including last record and update content with json)'
+        # Create History (including last record and update content with json)
         comment = {
             'last_order': '',
             'current_order': serializer.data
@@ -611,6 +614,15 @@ class OrderViewSet(QueryDataMixin,
                 sender = ""
                 recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer).mail]
                 send_mail(email_subject, email_message, sender, recipient_list)
+
+                # Send notification to all order attendent
+                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+                category = 'initialization'
+                actor = self.request.user.get_english_name()
+                verb = 'initialize'
+                action_object = 'order'
+                send_notification(order_id, link, category, actor, verb, action_object)
+
             elif direction_flag == 'Close':
                 # Debug Code
                 debug_message = (
@@ -619,7 +631,6 @@ class OrderViewSet(QueryDataMixin,
                 logger.debug(debug_message)
                 order.form_end_time = timezone.now()
                 order.save()
-        # Send Notification to all member
 
     def perform_update(self, serializer):
         serializer.save()
@@ -781,7 +792,6 @@ class OrderViewSet(QueryDataMixin,
                             "You can click below link to check the order detail.\n" +
                             f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
                             "\n" +
-
                             "Don't reply this mail as it is automatically sent by the system.\n" +
                             "If you have any question, welcome to contact DQMS Team.\n" +
                             "\n" +
@@ -791,6 +801,15 @@ class OrderViewSet(QueryDataMixin,
                         sender = ""
                         recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer).mail]
                         send_mail(email_subject, email_message, sender, recipient_list)
+
+                # Send notification to all order attendent
+                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+                category = 'response'
+                actor = self.request.user.get_english_name()
+                verb = 'approve'
+                action_object = 'order'
+                send_notification(order_id, link, category, actor, verb, action_object)
+
             elif direction_flag == "Close":
                 # Debug Code
                 debug_message = (
@@ -841,6 +860,15 @@ class OrderViewSet(QueryDataMixin,
                     [mail for mail in developer_mail_list if mail not in recipient_list]
                 )
                 send_mail(email_subject, email_message, sender, recipient_list)
+
+                # Send notification to all order attendent
+                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+                category = 'response'
+                actor = self.request.user.get_english_name()
+                verb = 'close'
+                action_object = 'order'
+                send_notification(order_id, link, category, actor, verb, action_object)
+
         elif 'P2' in order_status:
             direction_flag = order_status['P2'].get('assigner', None)
 
@@ -885,6 +913,15 @@ class OrderViewSet(QueryDataMixin,
                 sender = ""
                 recipient_list = [Employee.objects.using('hr').get(employee_id=order.assigner).mail.lower()]
                 send_mail(email_subject, email_message, sender, recipient_list)
+
+                # Send notification to all order attendent
+                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+                category = 'response'
+                actor = self.request.user.get_english_name()
+                verb = 'approve'
+                action_object = 'order'
+                send_notification(order_id, link, category, actor, verb, action_object)
+
             elif direction_flag == "Return":
                 # Debug Code
                 debug_message = (
@@ -939,6 +976,7 @@ class OrderViewSet(QueryDataMixin,
                         'signed': skip_signature_flag
                     }
                     order.save()
+
                 # TODO Send email to initiator
                 email_subject = "<Return> There is a software development return order waiting your confirm"
                 recipient_name = Employee.objects.using('hr').get(employee_id=order.initiator).english_name.title()
@@ -959,6 +997,15 @@ class OrderViewSet(QueryDataMixin,
                 sender = ""
                 recipient_list = [Employee.objects.using('hr').get(employee_id=order.initiator).mail]
                 send_mail(email_subject, email_message, sender, recipient_list)
+
+                # Send notification to all order attendent
+                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+                category = 'response'
+                actor = self.request.user.get_english_name()
+                verb = 'return'
+                action_object = 'order'
+                send_notification(order_id, link, category, actor, verb, action_object)
+
             elif direction_flag == "Close":
                 # Debug Code
                 debug_message = (
@@ -1010,6 +1057,15 @@ class OrderViewSet(QueryDataMixin,
                     [mail for mail in developer_mail_list if mail not in recipient_list]
                 )
                 send_mail(email_subject, email_message, sender, recipient_list)
+
+                # Send notification to all order attendent
+                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+                category = 'response'
+                actor = self.request.user.get_english_name()
+                verb = 'close'
+                action_object = 'order'
+                send_notification(order_id, link, category, actor, verb, action_object)
+
         elif 'P3' in order_status:
             status_list = []
             status_list.append(order_status['P3'].get('initiator', None))
@@ -1194,6 +1250,16 @@ class OrderViewSet(QueryDataMixin,
                         sender = ""
                         recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer).mail]
                         send_mail(email_subject, email_message, sender, recipient_list)
+
+                # Send notification to all order attendent
+                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+                category = 'negotiation'
+                actor = self.request.user.get_english_name()
+                verb = 'approve'
+                action_object = 'schedule'
+                target = 'on order'
+                send_notification(order_id, link, category, actor, verb, action_object, target)
+
             elif direction_flag == "Return":
                 # Debug Code
                 debug_message = (
@@ -1229,6 +1295,16 @@ class OrderViewSet(QueryDataMixin,
                 sender = ""
                 recipient_list = [Employee.objects.using('hr').get(employee_id=order.assigner).mail]
                 send_mail(email_subject, email_message, sender, recipient_list)
+
+                # Send notification to all order attendent
+                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+                category = 'negotiation'
+                actor = self.request.user.get_english_name()
+                verb = 'return'
+                action_object = 'schedule'
+                target = 'on order'
+                send_notification(order_id, link, category, actor, verb, action_object, target)
+
             elif direction_flag == "Close":
                 # Debug Code
                 debug_message = (
@@ -1287,14 +1363,13 @@ class OrderViewSet(QueryDataMixin,
                 )
                 send_mail(email_subject, email_message, sender, recipient_list)
 
-            elif direction_flag == "Wait":
-                # Debug Code
-                debug_message = (
-                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
-                )
-                logger.debug(debug_message)
-                order.status['signed'] = skip_signature_flag
-                order.save()
+                # Send notification to all order attendent
+                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+                category = 'negotiation'
+                actor = self.request.user.get_english_name()
+                verb = 'close'
+                action_object = 'order'
+                send_notification(order_id, link, category, actor, verb, action_object)
 
             elif direction_flag == "Negotiate":
                 # Debug Code
@@ -1331,6 +1406,32 @@ class OrderViewSet(QueryDataMixin,
                     Employee.objects.using('hr').get(employee_id=developer_contactor).mail,
                 ]
                 send_mail(email_subject, email_message, sender, recipient_list)
+
+                # Send notification to all order attendent
+                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+                category = 'negotiation'
+                actor = self.request.user.get_english_name()
+                verb = 'approve'
+                action_object = 'order'
+                send_notification(order_id, link, category, actor, verb, action_object)
+
+            elif direction_flag == "Wait":
+                # Debug Code
+                debug_message = (
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                )
+                logger.debug(debug_message)
+                order.status['signed'] = skip_signature_flag
+                order.save()
+
+                # Send notification to all order attendent
+                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+                category = 'negotiation'
+                actor = self.request.user.get_english_name()
+                verb = 'approve'
+                action_object = 'schedule'
+                target = 'on order'
+                send_notification(order_id, link, category, actor, verb, action_object, target)
 
         elif 'P5' in order_status:
 
@@ -1373,6 +1474,14 @@ class OrderViewSet(QueryDataMixin,
                 sender = ""
                 recipient_list = [Employee.objects.using('hr').get(employee_id=order.initiator).mail]
                 send_mail(email_subject, email_message, sender, recipient_list)
+
+                # Send notification to all order attendent
+                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+                category = 'response'
+                actor = self.request.user.get_english_name()
+                verb = 'approve'
+                action_object = 'order'
+                send_notification(order_id, link, category, actor, verb, action_object)
 
             elif 'initiator' in order_status['P5']:
                 direction_flag = order_status['P5'].get('initiator', None)
@@ -1430,6 +1539,15 @@ class OrderViewSet(QueryDataMixin,
                         [mail for mail in developer_mail_list if mail not in recipient_list]
                     )
                     send_mail(email_subject, email_message, sender, recipient_list)
+
+                    # Send notification to all order attendent
+                    link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+                    category = 'completion'
+                    actor = self.request.user.get_english_name()
+                    verb = 'approve'
+                    action_object = 'order'
+                    send_notification(order_id, link, category, actor, verb, action_object)
+
                 elif direction_flag == "Return":
                     # Debug Code
                     debug_message = (
@@ -1470,6 +1588,15 @@ class OrderViewSet(QueryDataMixin,
                         employee_id__in=developer_list).values_list('mail', flat=True))
                     recipient_list = developer_mail_list
                     send_mail(email_subject, email_message, sender, recipient_list)
+
+                    # Send notification to all order attendent
+                    link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+                    category = 'response'
+                    actor = self.request.user.get_english_name()
+                    verb = 'return'
+                    action_object = 'order'
+                    send_notification(order_id, link, category, actor, verb, action_object)
+
                 elif direction_flag == "Close":
                     # Debug Code
                     debug_message = (
@@ -1526,6 +1653,14 @@ class OrderViewSet(QueryDataMixin,
                         [mail for mail in developer_mail_list if mail not in recipient_list]
                     )
                     send_mail(email_subject, email_message, sender, recipient_list)
+
+                    # Send notification to all order attendent
+                    link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+                    category = 'response'
+                    actor = self.request.user.get_english_name()
+                    verb = 'close'
+                    action_object = 'order'
+                    send_notification(order_id, link, category, actor, verb, action_object)
             else:
                 error_message = (
                     f"The status of order id '{order_id}' is not correct. " +
@@ -1727,6 +1862,7 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
                         sender = ""
                         recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer)]
                         send_mail(email_subject, email_message, sender, recipient_list)
+
             elif 'P4' in order.status:
                 if count >= 4:
                     order.status = {
@@ -1759,8 +1895,8 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
                         developer_list.append(developers['contactor'])
                     if 'member' in developers:
                         developer_list.append(developers['member'])
-                    developer_mail_list = list(Employee.objects.using('hr').get(
-                        employee_id__in=developer_list).distinct('mail').value_list('mail', flat=True))
+                    developer_mail_list = list(Employee.objects.using('hr').filter(
+                        employee_id__in=developer_list).values_list('mail', flat=True))
                     recipient_list = developer_mail_list
                     send_mail(email_subject, email_message, sender, recipient_list)
                 elif count < 4:
@@ -1817,6 +1953,15 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
                         sender = ""
                         recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer).mail]
                         send_mail(email_subject, email_message, sender, recipient_list)
+
+            # Send notification to all order attendent
+            link = f"{self.request.build_absolute_uri(location='/')}?order={order.id}"
+            category = 'signature'
+            actor = self.request.user.get_english_name()
+            verb = 'approve'
+            action_object = 'order'
+            send_notification(order.id, link, category, actor, verb, action_object)
+
         elif signature_status == 'Return':
             if 'P1' in order.status:
                 order.status = {
@@ -1874,6 +2019,15 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
                 sender = ""
                 recipient_list = [Employee.objects.using('hr').get(employee_id=order.assigner).mail]
                 send_mail(email_subject, email_message, sender, recipient_list)
+
+            # Send notification to all order attendent
+            link = f"{self.request.build_absolute_uri(location='/')}?order={order.id}"
+            category = 'signature'
+            actor = self.request.user.get_english_name()
+            verb = 'return'
+            action_object = 'order'
+            send_notification(order.id, link, category, actor, verb, action_object)
+
         elif signature_status == 'Close':
             if 'P1' in order.status:
                 order.status = {
@@ -1933,4 +2087,46 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
                 [mail for mail in developer_mail_list if mail not in recipient_list]
             )
             send_mail(email_subject, email_message, sender, recipient_list)
-        # TODO Send notification to all member
+
+            # Send notification to all order attendent
+            link = f"{self.request.build_absolute_uri(location='/')}?order={order.id}"
+            category = 'signature'
+            actor = self.request.user.get_english_name()
+            verb = 'close'
+            action_object = 'order'
+            send_notification(order.id, link, category, actor, verb, action_object)
+
+
+def send_notification(order_id, link, category, actor, verb, action_object='', target=''):
+    """ Send notification for all order attendent"""
+    # Find all recipient
+    order = Order.objects.get(pk=order_id)
+    signer_id_list = list(order.signature_set.order_by('signer').distinct(
+        'signer').values_list('signer', flat=True))
+
+    developer_list = []
+    if 'contactor' in order.developers:
+        developer_list.append(order.developers['contactor'])
+    if 'member' in order.developers:
+        developer_list.extend(order.developers['member'])
+
+    recipient_list = [
+        Employee.objects.using('hr').get(employee_id=order.assigner).employee_id,
+        Employee.objects.using('hr').get(employee_id=order.initiator).employee_id,
+    ]
+    recipient_list.extend(developer_list)
+    recipient_list.extend(signer_id_list)
+
+    objs = []
+    for recipient in set(recipient_list):
+        data = {
+            "link": link,
+            "category": category,
+            "recipient": recipient,
+            "actor": actor,
+            "verb": verb,
+            "action_object": action_object,
+            "target": target,
+        }
+        objs.append(Notification(**data))
+    Notification.objects.bulk_create(objs)

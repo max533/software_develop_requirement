@@ -2670,9 +2670,9 @@ link: URLField
 
 read_status: BoolField (true, false)
 
-category: CharField (Ex/assign, approve, return, close, schedule_change, signature)
+category: CharField (Ex/completion, reponse, negotiation, signature, initialization)
 
-recipient: ArrayField (CharField)
+recipient: CharField
 
 actor: CharField
 
