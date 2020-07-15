@@ -6,12 +6,15 @@ from develop_requirement_proj.employee.api.serializers import (
     EmployeeSerializer,
 )
 from develop_requirement_proj.employee.models import Employee
-from develop_requirement_proj.utils.mixins import QueryDataMixin
+from develop_requirement_proj.utils.exceptions import Conflict
+from develop_requirement_proj.utils.mixins import (
+    MessageMixin, QueryDataMixin, SignatureMixin,
+)
 
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
-from django.db.models import Max, Q
+from django.db.models import Max
 from django.forms import model_to_dict
 from django.utils import timezone
 
@@ -394,7 +397,8 @@ class NotificationVewSet(mixins.ListModelMixin,
         return queryset
 
 
-class OrderViewSet(QueryDataMixin,
+class OrderViewSet(MessageMixin,
+                   SignatureMixin,
                    mixins.ListModelMixin,
                    mixins.RetrieveModelMixin,
                    mixins.UpdateModelMixin,
@@ -535,48 +539,19 @@ class OrderViewSet(QueryDataMixin,
             'order': order
         }
         History.objects.create(**history)
-
+        link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
         if 'P0' in order_status:
             direction_flag = order_status['P0'].get('initiator', None)
             if direction_flag == 'Approve':
+                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P1')
                 # Debug Code
                 debug_message = (
-                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
+                    f"skip_signature_flag:'{skip_signature_flag}'"
                 )
                 logger.debug(debug_message)
                 # Find next signer
-                signer = order.initiator
-                signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
-                status, result = self.get_department_via_query(department_id=signer_department_id)
-                if not (status and result):
-                    warn_message = (
-                        f"It couldn't be find next signer with the current signer '{signer}'"
-                    )
-                    logger.warning(warn_message)
-                    return
-                if signer_department_id in result:
-                    next_signer = result[signer_department_id].get('dm', None)
-                # If initiator is equal to next_signer
-                if signer == next_signer:
-                    count = 0
-                    for char in signer_department_id[::-1]:
-                        if char == '0':
-                            count += 1
-                        elif char != '0':
-                            break
-                    non_zero_part = len(signer_department_id) - count - 1
-                    next_signer_department_id = signer_department_id[:non_zero_part] + '0' * (count + 1)
-                    status, result = self.get_department_via_query(department_id=next_signer_department_id)
-                    if not (status and result):
-                        warn_message = (
-                            f"It couldn't be find next signer with the current signer '{signer}'"
-                        )
-                        logger.warning(warn_message)
-                        return
-                    if next_signer_department_id in result:
-                        next_signer = result[next_signer_department_id].get('dm', None)
-                else:
-                    next_signer_department_id = signer_department_id
+                next_signer, next_signer_department_id = self.find_next_signer(order_id, signer=order.initiator)
                 # Create Signature
                 signature_next = {
                     'sequence': 1,
@@ -595,25 +570,8 @@ class OrderViewSet(QueryDataMixin,
                     }
                 }
                 order.save()
-                # Send Email to next signer
-                email_subject = "<Signing> There is a software development order waiting your signing"
-                recipient_name = Employee.objects.using('hr').get(employee_id=next_signer).english_name.title()
-                email_message = (
-                    f"Dear {recipient_name},\n" +
-                    "\n" +
-                    "There is a software developement order that is waiting for your signing.\n" +
-                    "You can click below link to check the order detail.\n" +
-                    f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
-                    "\n" +
-                    "Don't reply this mail as it is automatically sent by the system.\n" +
-                    "If you have any question, welcome to contact DQMS Team.\n" +
-                    "\n" +
-                    "Best Regard\n" +
-                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                )
-                sender = ""
-                recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer).mail]
-                send_mail(email_subject, email_message, sender, recipient_list)
+                # Send email to next signer
+                self.send_mail_2_single_user(next_signer, link, category='signing')
 
                 # Send notification to all order attendent
                 link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
@@ -621,7 +579,7 @@ class OrderViewSet(QueryDataMixin,
                 actor = self.request.user.get_english_name()
                 verb = 'initialize'
                 action_object = 'order'
-                send_notification(order_id, link, category, actor, verb, action_object)
+                self.send_notification(order_id, link, category, actor, verb, action_object)
 
             elif direction_flag == 'Close':
                 # Debug Code
@@ -663,348 +621,135 @@ class OrderViewSet(QueryDataMixin,
         if order_tracker_serializer.is_valid(raise_exception=True):
             order_tracker_serializer.save(order=order, form_begin_time=order.form_begin_time)
 
+        link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
         if 'P0' in order_status:
             direction_flag = order_status['P0'].get('initiator', None)
-
-            if direction_flag is None or direction_flag == "":
-                error_message = (
-                    f"The status of order id '{order_id}'  is not correct." +
-                    "There are not correct direction_flag attribure in order status."
-                )
-                logger.error(error_message)
-            elif direction_flag == "Approve":
+            if direction_flag == "Approve":
+                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P1')
                 # Debug Code
                 debug_message = (
-                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
+                    f"skip_signature_flag:'{skip_signature_flag}'"
                 )
                 logger.debug(debug_message)
-                # Check signature stage is finished or not. The last signer will function head leader.
-                # Consecutive occurrences times of the zero in department_id is greater than four.
-                signer = order.signature_set.filter(role_group='initiator').latest('signed_time').signer
-                signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
-                count = 0
-                for char in signer_department_id[::-1]:
-                    if char == '0':
-                        count += 1
-                    elif char != '0':
-                        break
-                if count >= 4:
-                    skip_signature_flag = True
-                elif count < 4:
-                    skip_signature_flag = False
-
                 if skip_signature_flag:
-                    # Debug Code
-                    debug_message = (
-                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
-                        f"skip_signature_flag:'{skip_signature_flag}'"
-                    )
-                    logger.debug(debug_message)
                     order.status = {
                         "P2": {
                             "assigner": ""
                         }
                     }
                     order.save()
-                    # TODO Send email to assigner
-                    email_subject = "<Confirm> There is a software development order waiting your confirm."
-                    recipient_name = Employee.objects.using('hr').get(employee_id=order.assigner).english_name.title()
-                    email_message = (
-                        f"Dear {recipient_name},\n" +
-                        "\n" +
-                        "There is a software developement order that is waiting for your response.\n" +
-                        "You can click below link to check the order detail.\n" +
-                        f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
-                        "\n" +
-                        "Don't reply this mail as it is automatically sent by the system.\n" +
-                        "If you have any question, welcome to contact DQMS Team.\n" +
-                        "\n" +
-                        "Best Regard\n" +
-                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                    )
-                    sender = ""
-                    recipient_list = [Employee.objects.using('hr').get(employee_id=order.assigner).mail]
-                    send_mail(email_subject, email_message, sender, recipient_list)
-                elif not skip_signature_flag:
-                    # Debug Code
-                    debug_message = (
-                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}'," +
-                        f"skip_signature_flag:'{skip_signature_flag}'"
-                    )
-                    logger.debug(debug_message)
-                    # Find next Singer
-                    signer = order.initiator
-                    signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
-                    status, result = self.get_department_via_query(department_id=signer_department_id)
-                    if not (status and result):
-                        warn_message = (
-                            f"It couldn't be find next signer with the current signer '{signer}'"
-                        )
-                        logger.warning(warn_message)
-                        return
-
-                    if signer_department_id in result:
-                        next_signer = result[signer_department_id].get('dm', None)
-                    # If initiator is equal to next_signer
-                    if signer == next_signer:
-                        non_zero_part = len(signer_department_id) - count - 1
-                        next_signer_department_id = signer_department_id[:non_zero_part] + '0' * (count + 1)
-                        status, result = self.get_department_via_query(department_id=next_signer_department_id)
-                        if not (status and result):
-                            warn_message = (
-                                f"It couldn't be find next signer with the current signer '{signer}'"
-                            )
-                            logger.warning(warn_message)
-                            return
-                        if next_signer_department_id in result:
-                            next_signer = result[next_signer_department_id].get('dm', None)
-                    else:
-                        next_signer_department_id = signer_department_id
-                    # Check whether enter next phase or not
-                    max_sequence = order.signature_set.aggregate(Max('sequence'))['sequence__max']
-                    if order.signature_set.get(sequence=max_sequence).status in ['Approve', 'Return']:
-                        # Create next Signature
-                        sequence_max = order.signature_set.aggregate(Max('sequence'))['sequence__max']
-                        next_signature = {
-                            'sequence': sequence_max + 1,
-                            'signer': next_signer,
-                            'sign_unit': next_signer_department_id,
-                            'status': '',
-                            'comment': '',
-                            'role_group': 'initiator',
-                            'order': order
+                    # Send email to assigner
+                    self.send_mail_2_single_user(order.assigner, link, category='confirm')
+                elif not skip_signature_flag and create_new_signaure_flag:
+                    # Find next signer
+                    next_signer, next_signer_department_id = self.find_next_signer(order_id, signer=order.initiator)
+                    # Create next Signature
+                    sequence_max = order.signature_set.aggregate(Max('sequence'))['sequence__max']
+                    if sequence_max is None:
+                        sequence_max = 0
+                    next_signature = {
+                        'sequence': sequence_max + 1,
+                        'signer': next_signer,
+                        'sign_unit': next_signer_department_id,
+                        'status': '',
+                        'comment': '',
+                        'role_group': 'initiator',
+                        'order': order
+                    }
+                    Signature.objects.create(**next_signature)
+                    # Order Status Change
+                    order.status = {
+                        "P1": {
+                            next_signer: ""
                         }
-                        Signature.objects.create(**next_signature)
-                        # Order Status Change
-                        order.status = {
-                            "P1": {
-                                next_signer: ""
-                            }
-                        }
-                        order.save()
-                        # TODO Send email to next signer
-                        email_subject = "<Signing> There is a software development order waiting your signing"
-                        recipient_name = Employee.objects.using('hr').get(employee_id=next_signer).english_name.title()
-                        email_message = (
-                            f"Dear {recipient_name},\n" +
-                            "\n" +
-                            "There is a software developement order that is waiting for your signing.\n" +
-                            "You can click below link to check the order detail.\n" +
-                            f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
-                            "\n" +
-                            "Don't reply this mail as it is automatically sent by the system.\n" +
-                            "If you have any question, welcome to contact DQMS Team.\n" +
-                            "\n" +
-                            "Best Regard\n" +
-                            "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                        )
-                        sender = ""
-                        recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer).mail]
-                        send_mail(email_subject, email_message, sender, recipient_list)
+                    }
+                    order.save()
+                    # Send email to next signer
+                    self.send_mail_2_single_user(next_signer, link, category='signing')
+                else:
+                    error_message = "This operation is not correct"
+                    logger.error(error_message)
+                    raise Conflict
 
                 # Send notification to all order attendent
-                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
                 category = 'response'
                 actor = self.request.user.get_english_name()
                 verb = 'approve'
                 action_object = 'order'
-                send_notification(order_id, link, category, actor, verb, action_object)
+                self.send_notification(order_id, link, category, actor, verb, action_object)
 
             elif direction_flag == "Close":
                 # Debug Code
                 debug_message = (
-                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'."
                 )
                 logger.debug(debug_message)
+                # Save order close time
                 order.form_end_time = timezone.now()
                 order.save()
-                # TODO Send email to all member
-                email_subject = "<Close> There is a software development closed order"
-                email_message = (
-                    "Dear all,\n" +
-                    "\n" +
-                    "There is a software developement closed order.\n" +
-                    "You can click below link to check the order detail.\n" +
-                    f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n" +
-                    "\n" +
-                    "Don't reply this mail as it is automatically sent by the system.\n" +
-                    "If you have any question, welcome to contact DQMS Team.\n" +
-                    "\n" +
-                    "Best Regard\n" +
-                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                )
-                sender = ""
-                # Collect all member mail in recipient_list
-                signer_id_list = list(order.signature_set.order_by(
-                    'signer').distinct('signer').values_list('signer', flat=True))
-                signer_mail_list = list(Employee.objects.using('hr').filter(
-                    employee_id__in=signer_id_list).values_list('mail', flat=True))
-
-                developers = order.developers
-                developer_list = []
-                if 'contactor' in developers:
-                    developer_list.append(developers['contactor'])
-                if 'member' in developers:
-                    developer_list.extend(developers['member'])
-                developer_mail_list = list(Employee.objects.using('hr').filter(
-                    employee_id__in=developer_list).values_list('mail', flat=True))
-
-                recipient_list = [
-                    Employee.objects.using('hr').get(employee_id=order.assigner).mail,
-                    Employee.objects.using('hr').get(employee_id=order.initiator).mail,
-                ]
-                recipient_list.extend(
-                    [mail for mail in signer_mail_list if mail not in recipient_list]
-                )
-                recipient_list.extend(
-                    [mail for mail in developer_mail_list if mail not in recipient_list]
-                )
-                send_mail(email_subject, email_message, sender, recipient_list)
-
+                # Send close order mail to all member
+                self.send_mail_2_all(order_id, link, category='close')
                 # Send notification to all order attendent
-                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
                 category = 'response'
                 actor = self.request.user.get_english_name()
                 verb = 'close'
                 action_object = 'order'
-                send_notification(order_id, link, category, actor, verb, action_object)
+                self.send_notification(order_id, link, category, actor, verb, action_object)
 
         elif 'P2' in order_status:
             direction_flag = order_status['P2'].get('assigner', None)
-
-            if direction_flag is None or direction_flag == "":
-                error_message = (
-                    f"The status of order id '{order_id}' is not correct. " +
-                    "There are not correct direction_flag attribure in order status."
-                )
-                logger.error(error_message)
-            elif direction_flag == "Approve":
+            if direction_flag == "Approve":
+                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P4')
                 # Debug Code
                 debug_message = (
-                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
+                    f"skip_signature_flag:'{skip_signature_flag}'"
                 )
                 logger.debug(debug_message)
+                # Order status change
                 order.status = {
                     "P3": {
                         "initiator": "",
                         "assigner": "",
                         "developers": ""
                     },
-                    "signed": False
+                    "signed": skip_signature_flag
                 }
                 order.save()
-                # TODO Send email to assigner
-                email_subject = "Schedule: There is a software development order waiting your schedule"
-                recipient_name = Employee.objects.using('hr').get(employee_id=order.assigner).english_name.title()
-                email_message = (
-                    f"Dear {recipient_name},\n" +
-                    "\n" +
-                    "There is a software developement order that is waiting for your schedule.\n" +
-                    "You can click below link to check the order detail.\n" +
-                    f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
-                    "\n" +
-
-                    "Don't reply this mail as it is automatically sent by the system.\n" +
-                    "If you have any question, welcome to contact DQMS Team.\n" +
-                    "\n" +
-                    "Best Regard\n" +
-                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                )
-                sender = ""
-                recipient_list = [Employee.objects.using('hr').get(employee_id=order.assigner).mail.lower()]
-                send_mail(email_subject, email_message, sender, recipient_list)
-
+                # Send email to assigner
+                self.send_mail_2_single_user(order.assigner, link, category='schedule')
                 # Send notification to all order attendent
-                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
                 category = 'response'
                 actor = self.request.user.get_english_name()
                 verb = 'approve'
                 action_object = 'order'
-                send_notification(order_id, link, category, actor, verb, action_object)
+                self.send_notification(order_id, link, category, actor, verb, action_object)
 
             elif direction_flag == "Return":
+                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P1')
                 # Debug Code
                 debug_message = (
-                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
+                    f"skip_signature_flag:'{skip_signature_flag}'"
                 )
                 logger.debug(debug_message)
-                # Check signature stage is finished or not. The last signer will function head leader.
-                # Consecutive occurrences times of the zero in department_id is greater than four.
-                try:
-                    signer = order.signature_set.filter(
-                        role_group='initiator', signed_time__isnull=False).latest('signed_time').signer
-                except ObjectDoesNotExist as err:
-                    warn_message = (
-                        f"It can't find any signature with order id {order.id}. Warn Message: {err}"
-                    )
-                    logger.warn(warn_message)
-                    return
-                signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
-                count = 0
-                for char in signer_department_id[::-1]:
-                    if char == '0':
-                        count += 1
-                    elif char != '0':
-                        break
-                if count >= 4:
-                    skip_signature_flag = True
-                    # Debug Code
-                    debug_message = (
-                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
-                        f"skip_signature_flag:'{skip_signature_flag}'"
-                    )
-                    logger.debug(debug_message)
-                    order.status = {
-                        'P0': {
-                            'initiator': ''
-                        },
-                        'signed': skip_signature_flag
-                    }
-                    order.save()
-                elif count < 4:
-                    skip_signature_flag = False
-                    # Debug Code
-                    debug_message = (
-                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
-                        f"skip_signature_flag:'{skip_signature_flag}'"
-                    )
-                    logger.debug(debug_message)
-                    order.status = {
-                        'P0': {
-                            'initiator': ''
-                        },
-                        'signed': skip_signature_flag
-                    }
-                    order.save()
-
-                # TODO Send email to initiator
-                email_subject = "<Return> There is a software development return order waiting your confirm"
-                recipient_name = Employee.objects.using('hr').get(employee_id=order.initiator).english_name.title()
-                email_message = (
-                    f"Dear {recipient_name},\n" +
-                    "\n" +
-                    "There is a software developement return order that is waiting for your response.\n" +
-                    "You can click below link to check the order detail.\n" +
-                    f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
-                    "\n" +
-
-                    "Don't reply this mail as it is automatically sent by the system.\n" +
-                    "If you have any question, welcome to contact DQMS Team.\n" +
-                    "\n" +
-                    "Best Regard\n" +
-                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                )
-                sender = ""
-                recipient_list = [Employee.objects.using('hr').get(employee_id=order.initiator).mail]
-                send_mail(email_subject, email_message, sender, recipient_list)
-
+                # Order status change
+                order.status = {
+                    'P0': {
+                        'initiator': ''
+                    },
+                    'signed': skip_signature_flag
+                }
+                order.save()
+                # Send email to assigner
+                self.send_mail_2_single_user(order.initiator, link, category='return')
                 # Send notification to all order attendent
-                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
                 category = 'response'
                 actor = self.request.user.get_english_name()
                 verb = 'return'
                 action_object = 'order'
-                send_notification(order_id, link, category, actor, verb, action_object)
+                self.send_notification(order_id, link, category, actor, verb, action_object)
 
             elif direction_flag == "Close":
                 # Debug Code
@@ -1012,59 +757,17 @@ class OrderViewSet(QueryDataMixin,
                     f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
                 )
                 logger.debug(debug_message)
+                # Save order close time
                 order.form_end_time = timezone.now()
                 order.save()
-                # Send email to all member
-                email_subject = "<Close> There is a software development closed order"
-                email_message = (
-                    "Dear all,\n" +
-                    "\n" +
-                    "There is a software developement closed order.\n" +
-                    "You can click below link to check the order detail.\n" +
-                    f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n" +
-                    "\n" +
-                    "Don't reply this mail as it is automatically sent by the system.\n" +
-                    "If you have any question, welcome to contact DQMS Team.\n" +
-                    "\n" +
-                    "Best Regard\n" +
-                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                )
-                sender = ""
-                # Collect all member mail in recipient_list
-                signer_id_list = list(order.signature_set.order_by(
-                    'signer').distinct('signer').values_list('signer', flat=True))
-                signer_mail_list = list(Employee.objects.using('hr').filter(
-                    employee_id__in=signer_id_list).values_list('mail', flat=True))
-
-                developers = order.developers
-                developer_list = []
-                if 'contactor' in developers:
-                    developer_list.append(developers['contactor'])
-                if 'member' in developers:
-                    developer_list.extend(developers['member'])
-
-                developer_mail_list = list(Employee.objects.using('hr').filter(
-                    employee_id__in=developer_list).values_list('mail', flat=True))
-
-                recipient_list = [
-                    Employee.objects.using('hr').get(employee_id=order.assigner).mail,
-                    Employee.objects.using('hr').get(employee_id=order.initiator).mail,
-                ]
-                recipient_list.extend(
-                    [mail for mail in signer_mail_list if mail not in recipient_list]
-                )
-                recipient_list.extend(
-                    [mail for mail in developer_mail_list if mail not in recipient_list]
-                )
-                send_mail(email_subject, email_message, sender, recipient_list)
-
+                # Send close order mail to all member
+                self.send_mail_2_all(order_id, link, category='close')
                 # Send notification to all order attendent
-                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
                 category = 'response'
                 actor = self.request.user.get_english_name()
                 verb = 'close'
                 action_object = 'order'
-                send_notification(order_id, link, category, actor, verb, action_object)
+                self.send_notification(order_id, link, category, actor, verb, action_object)
 
         elif 'P3' in order_status:
             status_list = []
@@ -1078,33 +781,19 @@ class OrderViewSet(QueryDataMixin,
                 direction_flag = "Approve"
             elif status_list[1] == "Close":
                 direction_flag = "Close"
-            elif status_list[1] == "Approve":
+            elif status_list[1] == "Approve" and status_list[0] == "" and status_list[2] == "":
                 direction_flag = "Negotiate"
             else:
                 direction_flag = "Wait"
 
-            if direction_flag in ['Return', 'Approve', 'Wait', 'Negotiate', "Close"]:
-                # Check signature stage is finished or not. The last signer will function head leader.
-                # Consecutive occurrences times of the zero in department_id is greater than four.
-                try:
-                    signature = order.signature_set.filter(role_group='assigner').latest('signed_time')
-                    signer = signature.signer
-                    signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
-                    count = 0
-                    for char in signer_department_id[::-1]:
-                        if char == '0':
-                            count += 1
-                        elif char != '0':
-                            break
-                    if count >= 4:
-                        skip_signature_flag = True
-                    elif count < 4:
-                        skip_signature_flag = False
-                except ObjectDoesNotExist as err:
-                    logger.info(f"There are not any signature. Error Message: {err}")
-                    skip_signature_flag = False
-
             if direction_flag == "Approve":
+                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P4')
+                # Debug Code
+                debug_message = (
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
+                    f"skip_signature_flag:'{skip_signature_flag}'"
+                )
+                logger.debug(debug_message)
                 # Check the all schedule modify or not.
                 # If schedule didn't be modified, It will skip bleow thing.
                 # 1. Recalculate the schedule version and record snapshot in ScheduleTracker table
@@ -1127,175 +816,70 @@ class OrderViewSet(QueryDataMixin,
                     ScheduleTracker.objects.bulk_create(objs)
 
                 if skip_signature_flag:
-                    # Debug Code
-                    debug_message = (
-                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
-                        f"skip_signature_flag:'{skip_signature_flag}'"
-                    )
-                    logger.debug(debug_message)
                     order.status = {
                         "P5": {
                             "developers": ""
                         }
                     }
                     order.save()
-                    # TODO Send email to developers
-                    email_subject = "<Confirm> There is a software development order waiting your confirm."
-                    recipient_name = Employee.objects.using('hr').get(
-                        employee_id=order.developers['contactor']).english_name.title()
-                    email_message = (
-                        f"Dear {recipient_name} & developers,\n" +
-                        "\n" +
-                        "There is a software developement order that is waiting for your response.\n" +
-                        "You can click below link to check the order detail.\n" +
-                        f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n"
-                        "\n" +
-                        "Don't reply this mail as it is automatically sent by the system.\n" +
-                        "If you have any question, welcome to contact DQMS Team.\n" +
-                        "\n" +
-                        "Best Regard\n" +
-                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                    )
-                    sender = ""
-                    developers = order.developers
-                    developer_list = []
-                    if 'contactor' in developers:
-                        developer_list.append(developers['contactor'])
-                    if 'member' in developers:
-                        developer_list.append(developers['member'])
-                    developer_mail_list = set(Employee.objects.using('hr').filter(
-                        employee_id__in=developer_list).values_list('mail', flat=True))
-                    recipient_list = developer_list
-                    send_mail(email_subject, email_message, sender, recipient_list)
-                elif not skip_signature_flag:
-                    # Debug Code
-                    debug_message = (
-                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
-                        f"skip_signature_flag:'{skip_signature_flag}'"
-                    )
-                    logger.debug(debug_message)
-
+                    if 'contactor' in order.developers:
+                        self.send_mail_2_single_user(order.developers['contactor'], link, category='confirm')
+                elif not skip_signature_flag and create_new_signaure_flag:
                     # Find next Singer
-                    signer = order.assigner
-                    signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
-                    status, result = self.get_department_via_query(department_id=signer_department_id)
-                    if not (status and result):
-                        warn_message = (
-                            f"It couldn't be find next signer with the current signer '{signer}'"
-                        )
-                        logger.warning(warn_message)
-                        return
-                    if signer_department_id in result:
-                        next_signer = result[signer_department_id].get('dm', None)
-                    # If assigner is equal to next_signer
-                    count = 0
-                    for char in signer_department_id[::-1]:
-                        if char == '0':
-                            count += 1
-                        elif char != '0':
-                            break
-                    if signer == next_signer:
-                        non_zero_part = len(signer_department_id) - count - 1
-                        next_signer_department_id = signer_department_id[:non_zero_part] + '0' * (count + 1)
-                        status, result = self.get_department_via_query(department_id=next_signer_department_id)
-                        if not (status and result):
-                            warn_message = (
-                                f"It couldn't be find next signer with the current signer '{signer}'"
-                            )
-                            logger.warning(warn_message)
-                            return
-                        if next_signer_department_id in result:
-                            next_signer = result[next_signer_department_id].get('dm', None)
-                    else:
-                        next_signer_department_id = signer_department_id
-                    # Check whether enter next phase or not
-                    max_sequence = order.signature_set.aggregate(Max('sequence'))['sequence__max']
-                    if order.signature_set.get(sequence=max_sequence).status in ['Approve', 'Return']:
-                        # Create Signature
-                        sequence_max = order.signature_set.aggregate(Max('sequence'))['sequence__max']
-                        next_signature = {
-                            'sequence': sequence_max + 1,
-                            'signer': next_signer,
-                            'sign_unit': next_signer_department_id,
-                            'status': '',
-                            'comment': '',
-                            'role_group': 'assigner',
-                            'order': order
+                    next_signer, next_signer_department_id = self.find_next_signer(order_id, order.assigner)
+                    # Create Signature
+                    sequence_max = order.signature_set.aggregate(Max('sequence'))['sequence__max']
+                    if sequence_max is None:
+                        sequence_max = 0
+                    next_signature = {
+                        'sequence': sequence_max + 1,
+                        'signer': next_signer,
+                        'sign_unit': next_signer_department_id,
+                        'status': '',
+                        'comment': '',
+                        'role_group': 'assigner',
+                        'order': order
+                    }
+                    Signature.objects.create(**next_signature)
+                    # Order Status Change
+                    order.status = {
+                        "P4": {
+                            next_signer: ""
                         }
-                        Signature.objects.create(**next_signature)
-
-                        # Order Status Change
-                        order.status = {
-                            "P4": {
-                                next_signer: ""
-                            }
-                        }
-                        order.save()
-                        # TODO Send email to next signer
-                        email_subject = "<Signing> There is a software development order waiting your signing"
-                        recipient_name = Employee.objects.using('hr').get(employee_id=next_signer).english_name.title()
-                        email_message = (
-                            f"Dear {recipient_name},\n" +
-                            "\n" +
-                            "There is a software developement order that is waiting for your signing.\n" +
-                            "You can click below link to check the order detail.\n" +
-                            f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
-                            "\n" +
-                            "Don't reply this mail as it is automatically sent by the system.\n" +
-                            "If you have any question, welcome to contact DQMS Team.\n" +
-                            "\n" +
-                            "Best Regard\n" +
-                            "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                        )
-                        sender = ""
-                        recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer).mail]
-                        send_mail(email_subject, email_message, sender, recipient_list)
-
+                    }
+                    order.save()
+                    # Send email to next signer
+                    self.send_mail_2_single_user(next_signer, link, category='confirm')
+                else:
+                    pass
                 # Send notification to all order attendent
-                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
                 category = 'negotiation'
                 actor = self.request.user.get_english_name()
                 verb = 'approve'
                 action_object = 'schedule'
                 target = 'on order'
-                send_notification(order_id, link, category, actor, verb, action_object, target)
+                self.send_notification(order_id, link, category, actor, verb, action_object, target)
 
             elif direction_flag == "Return":
+                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P4')
                 # Debug Code
                 debug_message = (
-                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
+                    f"skip_signature_flag:'{skip_signature_flag}'"
                 )
                 logger.debug(debug_message)
-
+                # Order status change (keep return value)
                 order.status = {
                     "P3": {
-                        "initiator": "",
+                        "initiator": order.status['P3']['initiator'],
                         "assigner": "",
-                        "developers": ""
+                        "developers": order.status['P3']['developers']
                     },
                     "signed": skip_signature_flag
                 }
                 order.save()
-                # TODO Send email to assigner
-                email_subject = "ReSchedule: There is a software development order waiting your reschedule"
-                recipient_name = Employee.objects.using('hr').get(employee_id=order.assigner).english_name.title()
-                email_message = (
-                    f"Dear {recipient_name},\n" +
-                    "\n" +
-                    "There is a software developement return order that is waiting for your reschedule.\n" +
-                    "You can click below link to check the order detail.\n" +
-                    f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
-                    "\n" +
-                    "Don't reply this mail as it is automatically sent by the system.\n" +
-                    "If you have any question, welcome to contact DQMS Team.\n" +
-                    "\n" +
-                    "Best Regard\n" +
-                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                )
-                sender = ""
-                recipient_list = [Employee.objects.using('hr').get(employee_id=order.assigner).mail]
-                send_mail(email_subject, email_message, sender, recipient_list)
-
+                # Send email to assigner
+                self.send_mail_2_single_user(order.assigner, link, category='reschedule')
                 # Send notification to all order attendent
                 link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
                 category = 'negotiation'
@@ -1303,12 +887,14 @@ class OrderViewSet(QueryDataMixin,
                 verb = 'return'
                 action_object = 'schedule'
                 target = 'on order'
-                send_notification(order_id, link, category, actor, verb, action_object, target)
+                self.send_notification(order_id, link, category, actor, verb, action_object, target)
 
             elif direction_flag == "Close":
+                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P4')
                 # Debug Code
                 debug_message = (
-                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
+                    f"skip_signature_flag:'{skip_signature_flag}'"
                 )
                 logger.debug(debug_message)
                 order.status = {
@@ -1317,292 +903,121 @@ class OrderViewSet(QueryDataMixin,
                     },
                     "signed": skip_signature_flag
                 }
+                # Save order close time
                 order.form_end_time = timezone.now()
                 order.save()
-                # TODO Send email to all member
-                email_subject = "<Close> There is a software development closed order"
-                email_message = (
-                    "Dear all,\n" +
-                    "\n" +
-                    "There is a software developement closed order.\n" +
-                    "You can click below link to check the order detail.\n" +
-                    f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n" +
-                    "\n" +
-                    "Don't reply this mail as it is automatically sent by the system.\n" +
-                    "If you have any question, welcome to contact DQMS Team.\n" +
-                    "\n" +
-                    "Best Regard\n" +
-                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                )
-                sender = ""
-                # Collect all member mail in recipient_list
-                signer_id_list = list(order.signature_set.order_by(
-                    'signer').distinct('signer').values_list('signer', flat=True))
-                signer_mail_list = list(Employee.objects.using('hr').filter(
-                    employee_id__in=signer_id_list).values_list('mail', flat=True))
-
-                developers = order.developers
-                developer_list = []
-                if 'contactor' in developers:
-                    developer_list.append(developers['contactor'])
-                if 'member' in developers:
-                    developer_list.extend(developers['member'])
-
-                developer_mail_list = list(Employee.objects.using('hr').filter(
-                    employee_id__in=developer_list).values_list('mail', flat=True))
-
-                recipient_list = [
-                    Employee.objects.using('hr').get(employee_id=order.assigner).mail,
-                    Employee.objects.using('hr').get(employee_id=order.initiator).mail,
-                ]
-                recipient_list.extend(
-                    [mail for mail in signer_mail_list if mail not in recipient_list]
-                )
-                recipient_list.extend(
-                    [mail for mail in developer_mail_list if mail not in recipient_list]
-                )
-                send_mail(email_subject, email_message, sender, recipient_list)
-
+                # Send close order mail to all member
+                self.send_mail_2_all(order_id, link, category='close')
                 # Send notification to all order attendent
-                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
                 category = 'negotiation'
                 actor = self.request.user.get_english_name()
                 verb = 'close'
                 action_object = 'order'
-                send_notification(order_id, link, category, actor, verb, action_object)
+                self.send_notification(order_id, link, category, actor, verb, action_object)
 
             elif direction_flag == "Negotiate":
+                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P4')
                 # Debug Code
                 debug_message = (
-                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
+                    f"skip_signature_flag:'{skip_signature_flag}'"
                 )
                 logger.debug(debug_message)
-                order.status['signed'] = skip_signature_flag
-                # Send email to initiator and developers contactor
-                email_subject = "<Confirm> There is a software development order waiting your confirm"
-                if 'contactor' in order.developers:
-                    developer_contactor = order.developers['contactor']
-                recipient_name_list = [
-                    Employee.objects.using('hr').get(employee_id=order.initiator).english_name.title(),
-                    Employee.objects.using('hr').get(employee_id=developer_contactor).english_name.title()
+                # Send mail to initiator and developers contactor
+                recipient_employee_id_list = [
+                    Employee.objects.using('hr').get(employee_id=order.initiator).employee_id,
+                    Employee.objects.using('hr').get(employee_id=order.developers['contactor']).employee_id
                 ]
-                recipient_name = ' & '.join(recipient_name_list)
-                email_message = (
-                    f"Dear {recipient_name},\n" +
-                    "\n" +
-                    "There is a software developement order that is waiting for your response.\n" +
-                    "You can click below link to check the order detail.\n" +
-                    f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
-                    "\n" +
-                    "Don't reply this mail as it is automatically sent by the system.\n" +
-                    "If you have any question, welcome to contact DQMS Team.\n" +
-                    "\n" +
-                    "Best Regard\n" +
-                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                )
-                sender = ""
-                recipient_list = [
-                    Employee.objects.using('hr').get(employee_id=order.initiator).mail,
-                    Employee.objects.using('hr').get(employee_id=developer_contactor).mail,
-                ]
-                send_mail(email_subject, email_message, sender, recipient_list)
-
+                self.send_mail_2_multiple_user(recipient_employee_id_list, link, 'confirm')
                 # Send notification to all order attendent
-                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
                 category = 'negotiation'
                 actor = self.request.user.get_english_name()
                 verb = 'approve'
                 action_object = 'order'
-                send_notification(order_id, link, category, actor, verb, action_object)
+                self.send_notification(order_id, link, category, actor, verb, action_object)
 
             elif direction_flag == "Wait":
+                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P4')
                 # Debug Code
                 debug_message = (
-                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
+                    f"skip_signature_flag:'{skip_signature_flag}'"
                 )
                 logger.debug(debug_message)
-                order.status['signed'] = skip_signature_flag
-                order.save()
-
                 # Send notification to all order attendent
-                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
                 category = 'negotiation'
                 actor = self.request.user.get_english_name()
                 verb = 'approve'
                 action_object = 'schedule'
                 target = 'on order'
-                send_notification(order_id, link, category, actor, verb, action_object, target)
+                self.send_notification(order_id, link, category, actor, verb, action_object, target)
 
         elif 'P5' in order_status:
-
             if 'developers' in order_status['P5']:
                 direction_flag = order_status['P5'].get('developers', None)
-                if direction_flag is None or direction_flag == "":
-                    error_message = (
-                        f"The status of order id '{order_id}'  is not correct." +
-                        "There are not correct direction_flag attribure in order status."
-                    )
-                    logger.error(error_message)
-                elif direction_flag == "Approve":
-                    # Debug Code
-                    debug_message = (
-                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
-                    )
-                    logger.debug(debug_message)
+                # Debug Code
+                debug_message = (
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                )
+                logger.debug(debug_message)
+                if direction_flag == "Approve":
+                    # Order status change
                     order.status = {
                         "P5": {
                             "initiator": ""
                         }
                     }
                     order.save()
-                # TODO Send email to initiator
-                email_subject = "<Confirm> There is a software development order waiting your confirm"
-                recipient_name = Employee.objects.using('hr').get(employee_id=order.initiator).english_name.title()
-                email_message = (
-                    f"Dear {recipient_name},\n" +
-                    "\n" +
-                    "There is a software developement order waiting for your response.\n" +
-                    "You can click below link to check the order detail.\n" +
-                    f"{self.request.build_absolute_uri(location='/')}?order={order_id} \n"
-                    "\n" +
-                    "Don't reply this mail as it is automatically sent by the system.\n" +
-                    "If you have any question, welcome to contact DQMS Team.\n" +
-                    "\n" +
-                    "Best Regard\n" +
-                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                )
-                sender = ""
-                recipient_list = [Employee.objects.using('hr').get(employee_id=order.initiator).mail]
-                send_mail(email_subject, email_message, sender, recipient_list)
-
+                # Send email to initiator
+                self.send_mail_2_single_user(order.initiator, link, category='confirm')
                 # Send notification to all order attendent
-                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
                 category = 'response'
                 actor = self.request.user.get_english_name()
                 verb = 'approve'
                 action_object = 'order'
-                send_notification(order_id, link, category, actor, verb, action_object)
+                self.send_notification(order_id, link, category, actor, verb, action_object)
 
             elif 'initiator' in order_status['P5']:
                 direction_flag = order_status['P5'].get('initiator', None)
-                if direction_flag is None or direction_flag == "":
-                    error_message = (
-                        f"The status of order id '{order_id}'  is not correct." +
-                        "There are not correct direction_flag attribure in order status."
-                    )
-                    logger.error(error_message)
-                elif direction_flag == "Approve":
-                    # Debug Code
-                    debug_message = (
-                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
-                    )
-                    logger.debug(debug_message)
-                    # TODO Send email to all member
-                    email_subject = "<Complete> There is a software development complete order"
-                    email_message = (
-                        "Dear all,\n" +
-                        "\n" +
-                        "There is a software developement complete order.\n" +
-                        "You can click below link to check the order detail.\n" +
-                        f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n" +
-                        "\n" +
-                        "Don't reply this mail as it is automatically sent by the system.\n" +
-                        "If you have any question, welcome to contact DQMS Team.\n" +
-                        "\n" +
-                        "Best Regard\n" +
-                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                    )
-                    sender = ""
-                    # Collect all member mail in recipient_list
-                    signer_id_list = list(order.signature_set.order_by(
-                        'signer').distinct('signer').values_list('signer', flat=True))
-                    signer_mail_list = list(Employee.objects.using('hr').filter(
-                        employee_id__in=signer_id_list).values_list('mail', flat=True))
-
-                    developers = order.developers
-                    developer_list = []
-                    if 'contactor' in developers:
-                        developer_list.append(developers['contactor'])
-                    if 'member' in developers:
-                        developer_list.extend(developers['member'])
-                    developer_mail_list = list(Employee.objects.using('hr').filter(
-                        employee_id__in=developer_list).values_list('mail', flat=True))
-
-                    recipient_list = [
-                        Employee.objects.using('hr').get(employee_id=order.assigner).mail,
-                        Employee.objects.using('hr').get(employee_id=order.initiator).mail,
-                    ]
-                    recipient_list.extend(
-                        [mail for mail in signer_mail_list if mail not in recipient_list]
-                    )
-                    recipient_list.extend(
-                        [mail for mail in developer_mail_list if mail not in recipient_list]
-                    )
-                    send_mail(email_subject, email_message, sender, recipient_list)
-
+                # Debug Code
+                debug_message = (
+                    f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
+                )
+                logger.debug(debug_message)
+                if direction_flag == "Approve":
+                    # Send complete order mail to all member
+                    self.send_mail_2_all(order_id, link, category='complete')
                     # Send notification to all order attendent
-                    link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
                     category = 'completion'
                     actor = self.request.user.get_english_name()
                     verb = 'approve'
                     action_object = 'order'
-                    send_notification(order_id, link, category, actor, verb, action_object)
+                    self.send_notification(order_id, link, category, actor, verb, action_object)
 
                 elif direction_flag == "Return":
-                    # Debug Code
-                    debug_message = (
-                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
-                    )
-                    logger.debug(debug_message)
+                    # Order status change
                     order.status = {
                         "P5": {
                             "developers": ""
                         }
                     }
                     order.save()
-                    # TODO Send email to developers
-                    email_subject = "<Return> There is a software development return order waiting your confirm."
-                    recipient_name = Employee.objects.using('hr').get(
-                        employee_id=order.developers['contactor']).english_name.title()
-                    email_message = (
-                        f"Dear {recipient_name} & developers,\n" +
-                        "\n" +
-                        "There is a software developement return order that is waiting for your response.\n" +
-                        "You can click below link to check the order detail.\n" +
-                        f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n"
-                        "\n" +
-                        "Don't reply this mail as it is automatically sent by the system.\n" +
-                        "If you have any question, welcome to contact DQMS Team.\n" +
-                        "\n" +
-                        "Best Regard\n" +
-                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                    )
-                    sender = ""
-                    developers = order.developers
-                    developer_list = []
-                    if 'contactor' in developers:
-                        developer_list.append(developers['contactor'])
-                    if 'member' in developers:
-                        developer_list.extend(developers['member'])
-                    developer_mail_list = list(Employee.objects.using('hr').filter(
-                        employee_id__in=developer_list).values_list('mail', flat=True))
-                    recipient_list = developer_mail_list
-                    send_mail(email_subject, email_message, sender, recipient_list)
-
+                    # Send mail to all developers
+                    recipient_employee_id_list = []
+                    if 'contactor' in order.developers:
+                        recipient_employee_id_list.append(order.developers['contactor'])
+                    if 'member' in order.developers:
+                        recipient_employee_id_list.extend(order.developers['member'])
+                    self.send_mail_2_multiple_user(recipient_employee_id_list, link, category='return')
                     # Send notification to all order attendent
-                    link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
                     category = 'response'
                     actor = self.request.user.get_english_name()
                     verb = 'return'
                     action_object = 'order'
-                    send_notification(order_id, link, category, actor, verb, action_object)
+                    self.send_notification(order_id, link, category, actor, verb, action_object)
 
                 elif direction_flag == "Close":
-                    # Debug Code
-                    debug_message = (
-                        f"Order Status:'{order_status}', direction_flag:'{direction_flag}'"
-                    )
-                    logger.debug(debug_message)
+                    # Order status change
                     order.form_end_time = timezone.now()
                     order.status = {
                         "P5": {
@@ -1610,68 +1025,21 @@ class OrderViewSet(QueryDataMixin,
                         }
                     }
                     order.save()
-                    # Send email to all member
-                    email_subject = "<Close> There is a software development closed order"
-                    email_message = (
-                        "Dear all,\n" +
-                        "\n" +
-                        "There is a software developement closed order.\n" +
-                        "You can click below link to check the order detail.\n" +
-                        f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n" +
-                        "\n" +
-                        "Don't reply this mail as it is automatically sent by the system.\n" +
-                        "If you have any question, welcome to contact DQMS Team.\n" +
-                        "\n" +
-                        "Best Regard\n" +
-                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                    )
-                    sender = ""
-                    # Collect all member mail in recipient_list
-                    signer_id_list = list(order.signature_set.order_by(
-                        'signer').distinct('signer').values_list('signer', flat=True))
-                    signer_mail_list = list(Employee.objects.using('hr').filter(
-                        employee_id__in=signer_id_list).values_list('mail', flat=True))
-
-                    developers = order.developers
-                    developer_list = []
-                    if 'contactor' in developers:
-                        developer_list.append(developers['contactor'])
-                    if 'member' in developers:
-                        developer_list.extend(developers['member'])
-
-                    developer_mail_list = list(Employee.objects.using('hr').filter(
-                        employee_id__in=developer_list).values_list('mail', flat=True))
-
-                    recipient_list = [
-                        Employee.objects.using('hr').get(employee_id=order.assigner).mail,
-                        Employee.objects.using('hr').get(employee_id=order.initiator).mail,
-                    ]
-                    recipient_list.extend(
-                        [mail for mail in signer_mail_list if mail not in recipient_list]
-                    )
-                    recipient_list.extend(
-                        [mail for mail in developer_mail_list if mail not in recipient_list]
-                    )
-                    send_mail(email_subject, email_message, sender, recipient_list)
-
+                    # Send close order mail to all member
+                    self.send_mail_2_all(order_id, link, category='close')
                     # Send notification to all order attendent
-                    link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
                     category = 'response'
                     actor = self.request.user.get_english_name()
                     verb = 'close'
                     action_object = 'order'
-                    send_notification(order_id, link, category, actor, verb, action_object)
-            else:
-                error_message = (
-                    f"The status of order id '{order_id}' is not correct. " +
-                    "There are not correct direction_flag attribure in order status."
-                )
-                logger.error(error_message)
-
-        # TODO Send notification to all member
+                    self.send_notification(order_id, link, category, actor, verb, action_object)
 
 
-class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
+class SignatureViewSet(MessageMixin,
+                       SignatureMixin,
+                       mixins.ListModelMixin,
+                       mixins.UpdateModelMixin,
+                       viewsets.GenericViewSet):
     queryset = Signature.objects.all()
     serializer_class = SignatureSerializer
 
@@ -1733,10 +1101,10 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
         return context
 
     def perform_update(self, serializer):
-        serializer.save()
+        serializer.save(signed_time=timezone.now())
         signature_id = serializer.data['id']
         signature = Signature.objects.get(pk=signature_id)
-        signature_status = signature.status
+        direction_flag = signature.status
         order = Order.objects.get(pk=signature.order.id)
         order_copy = Order.objects.get(pk=signature.order.id)
 
@@ -1765,62 +1133,29 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
         if order_tracker_serializer.is_valid(raise_exception=True):
             order_tracker_serializer.save(order=order, form_begin_time=order.form_begin_time)
 
-        logger.debug(f"Origin Signature Stauts: {signature_status}, Origin Order Status: {order.status}")
-        signer = signature.signer
-        developers = order.developers
-        if signature_status == 'Approve':
-            signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
-            # Check signature stage is finished or not. The last signer will be function head leader.
-            # Stop Condiontion is that Consecutive occurrences times of the zero in department_id are
-            # greater/equal four times.
-            count = 0
-            for char in signer_department_id[::-1]:
-                if char == '0':
-                    count += 1
-                elif char != '0':
-                    break
-
+        link = f"{self.request.build_absolute_uri(location='/')}?order={order.id}"
+        if direction_flag == 'Approve':
             if 'P1' in order.status:
-                if count >= 4:
+                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order.id, 'P1')
+                # Debug Code
+                debug_message = (
+                    f"Order Status: P1, signature_status:'{direction_flag}', " +
+                    f"skip_signature_flag:'{skip_signature_flag}'"
+                )
+                logger.debug(debug_message)
+                if skip_signature_flag:
+                    # Order status change
                     order.status = {
                         'P2': {
                             'assigner': ''
                         }
                     }
                     order.save()
-                    # TODO Send email to assigner
-                    email_subject = "<Confirm> There is a software development order waiting your confirm."
-                    recipient_name = Employee.objects.using('hr').get(employee_id=order.assigner).english_name.title()
-                    email_message = (
-                        f"Dear {recipient_name},\n" +
-                        "\n" +
-                        "There is a software developement order that is waiting for your response.\n" +
-                        "You can click below link to check the order detail.\n" +
-                        f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n"
-                        "\n" +
-                        "Don't reply this mail as it is automatically sent by the system.\n" +
-                        "If you have any question, welcome to contact DQMS Team.\n" +
-                        "\n" +
-                        "Best Regard\n" +
-                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                    )
-                    sender = ""
-                    recipient_list = [Employee.objects.using('hr').get(employee_id=order.assigner).mail]
-                    send_mail(email_subject, email_message, sender, recipient_list)
-                elif count < 4:
+                    # Send email to assigner
+                    self.send_mail_2_single_user(order.assigner, link, category='confirm')
+                elif not skip_signature_flag:
                     # Find next signer
-                    non_zero_part = len(signer_department_id) - count - 1
-                    next_signer_department_id = signer_department_id[:non_zero_part] + '0' * (count + 1)
-                    status, result = self.get_department_via_query(department_id=next_signer_department_id)
-                    if not (status and result):
-                        warn_message = (
-                            f"It couldn't be find next signer with the current signer '{signer}'"
-                        )
-                        logger.warning(warn_message)
-                        return
-                    if next_signer_department_id in result:
-                        next_signer = result[next_signer_department_id].get('dm', None)
-
+                    next_signer, next_signer_department_id = self.find_next_signer(order.id, signature.signer)
                     # Order Status Change
                     order.status = {
                         'P1': {
@@ -1828,90 +1163,48 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
                         },
                     }
                     order.save()
-                    # Check whether craete next signature
-                    max_sequence = order.signature_set.aggregate(Max('sequence'))['sequence__max']
-                    if order.signature_set.get(sequence=max_sequence).status == 'Approve':
-
-                        # Create next signature
-                        next_signature = {
-                            'sequence': max_sequence + 1,
-                            'signer': next_signer,
-                            'sign_unit': next_signer_department_id,
-                            'status': '',
-                            'comment': '',
-                            'role_group': signature.role_group,
-                            'order': order
-                        }
-                        Signature.objects.create(**next_signature)
-                        # Send Email to next signer
-                        email_subject = "<Signing> There is a software development order waiting your signing"
-                        recipient_name = Employee.objects.using('hr').get(employee_id=next_signer).english_name.title()
-                        email_message = (
-                            f"Dear {recipient_name},\n" +
-                            "\n" +
-                            "There is a software developement order that is waiting for your signing.\n" +
-                            "You can click below link to check the order detail.\n" +
-                            f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n"
-                            "\n" +
-                            "Don't reply this mail as it is automatically sent by the system.\n" +
-                            "If you have any question, welcome to contact DQMS Team.\n" +
-                            "\n" +
-                            "Best Regard\n" +
-                            "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                        )
-                        sender = ""
-                        recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer)]
-                        send_mail(email_subject, email_message, sender, recipient_list)
-
+                    # Create next signature
+                    sequence_max = order.signature_set.aggregate(Max('sequence'))['sequence__max']
+                    if sequence_max is None:
+                        sequence_max = 0
+                    next_signature = {
+                        'sequence': sequence_max + 1,
+                        'signer': next_signer,
+                        'sign_unit': next_signer_department_id,
+                        'status': '',
+                        'comment': '',
+                        'role_group': signature.role_group,
+                        'order': order
+                    }
+                    Signature.objects.create(**next_signature)
+                    # Send email to next signer
+                    self.send_mail_2_single_user(next_signer, link, category='signing')
             elif 'P4' in order.status:
-                if count >= 4:
+                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order.id, 'P4')
+                # Debug Code
+                debug_message = (
+                    f"Order Phase: P4, signature_status:'{direction_flag}', " +
+                    f"skip_signature_flag:'{skip_signature_flag}'"
+                )
+                logger.debug(debug_message)
+                if skip_signature_flag:
+                    # Order status change
                     order.status = {
                         'P5': {
                             'developers': ''
                         }
                     }
                     order.save()
-                    # TODO Send email to developers
-                    email_subject = "<Confirm> There is a software development order waiting your confirm."
-                    recipient_name = Employee.objects.using('hr').get(
-                        employee_id=order.developers['contactor']).english_name.title()
-                    email_message = (
-                        f"Dear {recipient_name} & developers,\n" +
-                        "\n" +
-                        "There is a software developement order that is waiting for your response.\n" +
-                        "You can click below link to check the order detail.\n" +
-                        f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n"
-                        "\n" +
-                        "Don't reply this mail as it is automatically sent by the system.\n" +
-                        "If you have any question, welcome to contact DQMS Team.\n" +
-                        "\n" +
-                        "Best Regard\n" +
-                        "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                    )
-                    sender = ""
-                    developers = order.developers
-                    developer_list = []
-                    if 'contactor' in developers:
-                        developer_list.append(developers['contactor'])
-                    if 'member' in developers:
-                        developer_list.append(developers['member'])
-                    developer_mail_list = list(Employee.objects.using('hr').filter(
-                        employee_id__in=developer_list).values_list('mail', flat=True))
-                    recipient_list = developer_mail_list
-                    send_mail(email_subject, email_message, sender, recipient_list)
-                elif count < 4:
+                    # Send mail to all developers
+                    recipient_employee_id_list = []
+                    if 'contactor' in order.developers:
+                        recipient_employee_id_list.append(order.developers['contactor'])
+                    if 'member' in order.developers:
+                        recipient_employee_id_list.extend(order.developers['member'])
+                    self.send_mail_2_multiple_user(recipient_employee_id_list, link, category='confirm')
+                elif not skip_signature_flag:
                     # Find next signer
-                    non_zero_part = len(signer_department_id) - count - 1
-                    next_signer_department_id = signer_department_id[:non_zero_part] + '0' * (count + 1)
-                    status, result = self.get_department_via_query(department_id=next_signer_department_id)
-                    if not (status and result):
-                        warn_message = (
-                            f"It couldn't be find next signer with the current signer '{signer}'"
-                        )
-                        logger.warning(warn_message)
-                        return
-                    if next_signer_department_id in result:
-                        next_signer = result[next_signer_department_id].get('dm', None)
+                    next_signer, next_signer_department_id = self.find_next_signer(order.id, signature.signer)
                     # Order Status Change
                     order.status = {
                         'P4': {
@@ -1919,214 +1212,100 @@ class SignatureViewSet(QueryDataMixin, mixins.ListModelMixin, mixins.UpdateModel
                         },
                     }
                     order.save()
-                    # Check whether craete next signature
-                    max_sequence = order.signature_set.aggregate(Max('sequence'))['sequence__max']
-                    if order.signature_set.get(sequence=max_sequence).status == 'Approve':
-
-                        # Create next signature
-                        next_signature = {
-                            'sequence': max_sequence + 1,
-                            'signer': next_signer,
-                            'sign_unit': next_signer_department_id,
-                            'status': '',
-                            'comment': '',
-                            'role_group': signature.role_group,
-                            'order': order
-                        }
-                        Signature.objects.create(**next_signature)
-                        # TODO Send email to next signer
-                        email_subject = "<Signing> There is a software development order waiting your signing"
-                        recipient_name = Employee.objects.using('hr').get(employee_id=next_signer).english_name.title()
-                        email_message = (
-                            f"Dear {recipient_name},\n" +
-                            "\n" +
-                            "There is a software developement order that is waiting for your signing.\n" +
-                            "You can click below link to check the order detail.\n" +
-                            f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n"
-                            "\n" +
-                            "Don't reply this mail as it is automatically sent by the system.\n" +
-                            "If you have any question, welcome to contact DQMS Team.\n" +
-                            "\n" +
-                            "Best Regard\n" +
-                            "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                        )
-                        sender = ""
-                        recipient_list = [Employee.objects.using('hr').get(employee_id=next_signer).mail]
-                        send_mail(email_subject, email_message, sender, recipient_list)
+                    # Create next signature
+                    sequence_max = order.signature_set.aggregate(Max('sequence'))['sequence__max']
+                    if sequence_max is None:
+                        sequence_max = 0
+                    next_signature = {
+                        'sequence': sequence_max + 1,
+                        'signer': next_signer,
+                        'sign_unit': next_signer_department_id,
+                        'status': '',
+                        'comment': '',
+                        'signed_time': '',
+                        'role_group': signature.role_group,
+                        'order': order
+                    }
+                    Signature.objects.create(**next_signature)
+                    # Send email to next signer
+                    self.send_mail_2_single_user(next_signer, link, category='signing')
 
             # Send notification to all order attendent
-            link = f"{self.request.build_absolute_uri(location='/')}?order={order.id}"
             category = 'signature'
             actor = self.request.user.get_english_name()
             verb = 'approve'
             action_object = 'order'
-            send_notification(order.id, link, category, actor, verb, action_object)
+            self.send_notification(order.id, link, category, actor, verb, action_object)
 
-        elif signature_status == 'Return':
+        elif direction_flag == 'Return':
             if 'P1' in order.status:
+                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order.id, 'P1')
+                # Debug Code
+                debug_message = (
+                    f"Order Phase: P1, signature_status:'{direction_flag}', " +
+                    f"skip_signature_flag:'{skip_signature_flag}'"
+                )
+                # Order status change
                 order.status = {
                     'P0': {
                         'initiator': ''
                     },
-                    'signed': False
+                    'signed': skip_signature_flag
                 }
                 order.save()
-                # TODO Send email to initiator
-                email_subject = "<Return> There is a software development return order waiting your confirm."
-                recipient_name = Employee.objects.using('hr').get(employee_id=order.initiator).english_name.title()
-                email_message = (
-                    f"Dear {recipient_name},\n" +
-                    "\n" +
-                    "There is a software developement return order that is waiting for your response.\n" +
-                    "You can click below link to check the order detail.\n" +
-                    f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n"
-                    "\n" +
-                    "Don't reply this mail as it is automatically sent by the system.\n" +
-                    "If you have any question, welcome to contact DQMS Team.\n" +
-                    "\n" +
-                    "Best Regard\n" +
-                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                )
-                sender = ""
-                recipient_list = [Employee.objects.using('hr').get(employee_id=order.initiator).mail]
-                send_mail(email_subject, email_message, sender, recipient_list)
+                # Send mail to initiator
+                self.send_mail_2_single_user(order.initiator, link, category='return')
             elif 'P4' in order.status:
+                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order.id, 'P4')
+                # Debug Code
+                debug_message = (
+                    f"Order Phase: P4, signature_status:'{direction_flag}', " +
+                    f"skip_signature_flag:'{skip_signature_flag}'"
+                )
+                # Order status change
                 order.status = {
                     'P3': {
                         'initiator': '',
                         'assigner': '',
                         'developers': ''
                     },
-                    'signed': False
+                    'signed': skip_signature_flag
                 }
                 order.save()
-                # TODO Send email to assigner
-                email_subject = "<Reschedule> There is a software development order waiting your reschedule"
-                recipient_name = Employee.objects.using('hr').get(employee_id=order.assigner).english_name.title()
-                email_message = (
-                    f"Dear {recipient_name},\n" +
-                    "\n" +
-                    "There is a software developement return order that is waiting for your reschedule.\n" +
-                    "You can click below link to check the order detail.\n" +
-                    f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n"
-                    "\n" +
-                    "Don't reply this mail as it is automatically sent by the system.\n" +
-                    "If you have any question, welcome to contact DQMS Team.\n" +
-                    "\n" +
-                    "Best Regard\n" +
-                    "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-                )
-                sender = ""
-                recipient_list = [Employee.objects.using('hr').get(employee_id=order.assigner).mail]
-                send_mail(email_subject, email_message, sender, recipient_list)
+                # Send mail to assigner
+                self.send_mail_2_single_user(order.assigner, link, category='return')
 
             # Send notification to all order attendent
-            link = f"{self.request.build_absolute_uri(location='/')}?order={order.id}"
             category = 'signature'
             actor = self.request.user.get_english_name()
             verb = 'return'
             action_object = 'order'
-            send_notification(order.id, link, category, actor, verb, action_object)
+            self.send_notification(order.id, link, category, actor, verb, action_object)
 
-        elif signature_status == 'Close':
+        elif direction_flag == 'Close':
             if 'P1' in order.status:
                 order.status = {
                     'P1': {
-                        signer: 'Close'
+                        signature.signer: 'Close'
                     }
                 }
                 order.form_end_time = timezone.now()
                 order.save()
             elif 'P4' in order.status:
+                # Order staus change
                 order.status = {
                     'P4': {
-                        signer: 'Close'
+                        signature.signer: 'Close'
                     }
                 }
                 order.form_end_time = timezone.now()
                 order.save()
-            # TODO Send email to all member
-            email_subject = "<Close> There is a software development closed order"
-            email_message = (
-                "Dear all,\n" +
-                "\n" +
-                "There is a software developement closed order.\n" +
-                "You can click below link to check the order detail.\n" +
-                f"{self.request.build_absolute_uri(location='/')}?order={order.id} \n" +
-                "\n" +
-                "Don't reply this mail as it is automatically sent by the system.\n" +
-                "If you have any question, welcome to contact DQMS Team.\n" +
-                "\n" +
-                "Best Regard\n" +
-                "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
-            )
-            sender = ""
-            # Collect all member mail in recipient_list
-            signer_id_list = list(order.signature_set.order_by(
-                'signer').distinct('signer').values_list('signer', flat=True))
-            signer_mail_list = list(Employee.objects.using('hr').filter(
-                employee_id__in=signer_id_list).values_list('mail', flat=True))
-
-            developer_list = []
-            if 'contactor' in developers:
-                developer_list.append(developers['contactor'])
-            if 'member' in developers:
-                developer_list.extend(developers['member'])
-
-            developer_mail_list = list(Employee.objects.using('hr').filter(
-                employee_id__in=developer_list).values_list('mail', flat=True))
-
-            recipient_list = [
-                Employee.objects.using('hr').get(employee_id=order.assigner).mail,
-                Employee.objects.using('hr').get(employee_id=order.initiator).mail,
-            ]
-            recipient_list.extend(
-                [mail for mail in signer_mail_list if mail not in recipient_list]
-            )
-            recipient_list.extend(
-                [mail for mail in developer_mail_list if mail not in recipient_list]
-            )
-            send_mail(email_subject, email_message, sender, recipient_list)
+                # Send close order mail to all member
+                self.send_mail_2_all(order.id, link, category='close')
 
             # Send notification to all order attendent
-            link = f"{self.request.build_absolute_uri(location='/')}?order={order.id}"
             category = 'signature'
             actor = self.request.user.get_english_name()
             verb = 'close'
             action_object = 'order'
-            send_notification(order.id, link, category, actor, verb, action_object)
-
-
-def send_notification(order_id, link, category, actor, verb, action_object='', target=''):
-    """ Send notification for all order attendent"""
-    # Find all recipient
-    order = Order.objects.get(pk=order_id)
-    signer_id_list = list(order.signature_set.order_by('signer').distinct(
-        'signer').values_list('signer', flat=True))
-
-    developer_list = []
-    if 'contactor' in order.developers:
-        developer_list.append(order.developers['contactor'])
-    if 'member' in order.developers:
-        developer_list.extend(order.developers['member'])
-
-    recipient_list = [
-        Employee.objects.using('hr').get(employee_id=order.assigner).employee_id,
-        Employee.objects.using('hr').get(employee_id=order.initiator).employee_id,
-    ]
-    recipient_list.extend(developer_list)
-    recipient_list.extend(signer_id_list)
-
-    objs = []
-    for recipient in set(recipient_list):
-        data = {
-            "link": link,
-            "category": category,
-            "recipient": recipient,
-            "actor": actor,
-            "verb": verb,
-            "action_object": action_object,
-            "target": target,
-        }
-        objs.append(Notification(**data))
-    Notification.objects.bulk_create(objs)
+            self.send_notification(order.id, link, category, actor, verb, action_object)

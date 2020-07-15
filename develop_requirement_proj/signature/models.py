@@ -247,7 +247,7 @@ class Signature(models.Model):
     sign_unit = models.CharField(_('the department of signing'), max_length=20)
     status = models.CharField(max_length=20)
     comment = models.TextField()
-    signed_time = models.DateTimeField(auto_now=True, null=True)
+    signed_time = models.DateTimeField(null=True)
     role_group = models.CharField(max_length=20)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
