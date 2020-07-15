@@ -512,6 +512,19 @@ class OrderViewSet(MessageMixin,
                     'order': order
                 }
                 Signature.objects.create(**signature_next)
+                # Create default schedule
+                schedule_start = {
+                    'event_name': 'Start',
+                    'complete_rate': 0,
+                    'order': order
+                }
+                schedule_end = {
+                    'event_name': 'End',
+                    'complete_rate': 100,
+                    'order': order
+                }
+                Schedule.objects.create(**schedule_start)
+                Schedule.objects.create(**schedule_end)
                 # Order Status Change
                 order.status = {
                     "P1": {

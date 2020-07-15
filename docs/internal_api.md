@@ -1263,8 +1263,6 @@ Delete a documents detail by `id`
 
 ### `GET` Filter Schedules Collection by Order Id
 
-- [ ] TODO Add filter schedule by version is null
-
 ```url
 {{service_url}}/api/schedules/?param1=value1
 ```
