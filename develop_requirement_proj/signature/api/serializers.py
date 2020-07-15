@@ -65,6 +65,11 @@ class DocumentSerializer(serializers.ModelSerializer):
 
 class ScheduleSerializer(serializers.ModelSerializer):
 
+    def validate_complete_rate(self, value):
+        if value < 0 or value > 100:
+            raise serializers.ValidationError('This is not a reasonable value')
+        return value
+
     class Meta:
         model = Schedule
         fields = "__all__"

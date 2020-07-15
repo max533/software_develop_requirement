@@ -170,7 +170,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class ScheduleViewSet(viewsets.ModelViewSet):
+class ScheduleViewSet(SignatureMixin, viewsets.ModelViewSet):
     """ Provide Schedule resource with `retrieve`, `list`, `create`, `partial_update` and `delete` """
     queryset = Schedule.objects.all()
     serializer_class = ScheduleSerializer
@@ -205,25 +205,9 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         serializer.save()
         # If Schedule Add, then Order status rollback to P3 initial status
         order = serializer.instance.order
-
         # Check whether P4 phase signature is finished or not
-        try:
-            signature = order.signature_set.filter(role_group='assigner').latest('signed_time')
-            signer = signature.signer
-            signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
-            count = 0
-            for char in signer_department_id[::-1]:
-                if char == '0':
-                    count += 1
-                elif char != '0':
-                    break
-            if count >= 4:
-                skip_signature_flag = True
-            elif count < 4:
-                skip_signature_flag = False
-        except ObjectDoesNotExist as err:
-            logger.info(f"There are not any signature. Error Message: {err}")
-            skip_signature_flag = False
+        skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order.id, 'P4')
+        # Order status change
         order.status = {
             'P3': {
                 "initiator": "",
@@ -233,7 +217,6 @@ class ScheduleViewSet(viewsets.ModelViewSet):
             'signed': skip_signature_flag
         }
         order.save()
-
         # Update confirm_status
         schedules = order.schedule_set.all()
         for schedule in schedules:
@@ -245,24 +228,8 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         # If Schedule Add, then Order status rollback to P3 initial status
         order = serializer.instance.order
         # Check whether P4 phase signature is finished or not
-        try:
-            signature = order.signature_set.filter(role_group='assigner').latest('signed_time')
-            signer = signature.signer
-            signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
-            count = 0
-            for char in signer_department_id[::-1]:
-                if char == '0':
-                    count += 1
-                elif char != '0':
-                    break
-            if count >= 4:
-                skip_signature_flag = True
-            elif count < 4:
-                skip_signature_flag = False
-        except ObjectDoesNotExist as err:
-            logger.info(f"There are not any signature. Error Message: {err}")
-            skip_signature_flag = False
-
+        skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order.id, 'P4')
+        # Order status change
         order.status = {
             'P3': {
                 "initiator": "",
@@ -272,7 +239,6 @@ class ScheduleViewSet(viewsets.ModelViewSet):
             'signed': skip_signature_flag
         }
         order.save()
-
         # Update confirm_status
         schedules = order.schedule_set.all()
         for schedule in schedules:
@@ -284,24 +250,8 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         order = instance.order
         instance.delete()
         # Check whether P4 phase signature is finished or not
-        try:
-            signature = order.signature_set.filter(role_group='assigner').latest('signed_time')
-            signer = signature.signer
-            signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
-            count = 0
-            for char in signer_department_id[::-1]:
-                if char == '0':
-                    count += 1
-                elif char != '0':
-                    break
-            if count >= 4:
-                skip_signature_flag = True
-            elif count < 4:
-                skip_signature_flag = False
-        except ObjectDoesNotExist as err:
-            logger.info(f"There are not any signature in P4. Error Message: {err}")
-            skip_signature_flag = False
-
+        skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order.id, 'P4')
+        # Order status change
         order.status = {
             'P3': {
                 "initiator": "",
@@ -311,7 +261,6 @@ class ScheduleViewSet(viewsets.ModelViewSet):
             'signed': skip_signature_flag
         }
         order.save()
-
         # Update confirm_status
         schedules = order.schedule_set.all()
         for schedule in schedules:
