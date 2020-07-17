@@ -387,8 +387,7 @@ Create a new orders
     developers | {"memeber": ["10612704", "10712714", "5825225"], "contactor": "D12345685"} | developers group
     develop_team_function | QT | the function of develop team
     develop_team_sub_function | PQT | the sub function of develop team
-    status |{ "p1": {"initiator": "Accept"} }| current order status
-    initiator| Z10612704 | employee_id of initiator
+    status |{ "P0": {"initiator": "Accept"}, "signed":true }| current order status
     assigner | Z10752135 | employee_id of assigner
     title | this is a good title | order's title
     description | this is a good description | order's description
@@ -411,8 +410,11 @@ Create a new orders
         "project": 2,
         "develop_team_function": "QT",
         "develop_team_sub_function": "DQMS",
-        "status": {"p3_initiator": "Approve"},
-        "initiator": "10612704",
+        "status": {
+            "P5": {
+                "initiator": "Approve"
+            },
+        },
         "assigner": "10712714",
         "developers": {
             "member":[
@@ -443,7 +445,7 @@ Create a new orders
         "develop_team_function": "QT",
         "develop_team_sub_function": "DQMS",
         "status": {
-            "p3": {
+            "P5": {
                 "initiator": "Approve"
             },
         },
@@ -483,6 +485,12 @@ Create a new orders
         },
         "title": "DQMS develope requirement system",
         "description": "<br> Three is description </br>",
+        "form_begin_time": "2020-03-10T08:26:38.093183Z",
+        "form_end_time": null,
+        "expected_develop_duration_day": null,
+        "actual_develop_duration_day": null,
+        "repository_url": "",
+        "parent": null,
         "parent": 10,
     }
     ```
@@ -497,8 +505,7 @@ Update partial details of specific orders by order `id`
 
 - PERMISSSION
 
-    Only the assigner, developers and initiator.
-    If the fields is only developers, only the assigner can use.
+    Only the assigner, developers and initiator in the order can use.
 
 - PATH VARIABLES
 
@@ -515,8 +522,7 @@ Update partial details of specific orders by order `id`
     developers | {"memeber": ["10612704", "10712714", "5825225"], "contactor": "D12345685"} | developers group
     develop_team_function | QT | the function of develop team
     develop_team_sub_function | PQT | the sub function of develop team
-    status |{ "p1": {"initiator": "Accept"} }| current order status
-    initiator| Z10612704 | employee_id of initiator
+    status |{ "P5": {"initiator": "Approve"} }| current order status
     assigner | Z10752135 | employee_id of assigner
     title | this is a good title | order's title
     description | this is a good description | order's description
@@ -544,11 +550,10 @@ Update partial details of specific orders by order `id`
         "develop_team_function": "QT",
         "develop_team_sub_function": "DQMS",
         "status": {
-            "p3": {
+            "P5": {
                 "initiator": "Approve"
             },
         },
-        "initiator": "10612704",
         "assigner": "10712714",
         "developers": {
             "member":[
@@ -578,7 +583,7 @@ Update partial details of specific orders by order `id`
         "develop_team_function": "QT",
         "develop_team_sub_function": "DQMS",
         "status": {
-            "p3": {
+            "P5": {
                 "initiator": "Approve"
             },
         },
@@ -617,8 +622,14 @@ Update partial details of specific orders by order `id`
             }
         },
         "title": "DQMS develope requirement system",
-        "description": "<br> Three is description </br>"
-    }
+        "description": "<br> Three is description </br>",
+        "form_begin_time": "2020-03-10T08:26:38.093183Z",
+        "form_end_time": "2020-04-10T08:26:38.093183Z",
+        "expected_develop_duration_day": 10.5,
+        "actual_develop_duration_day": 20.0,
+        "repository_url": "www.gitlab.com",
+        "parent": null,
+    },
     ```
 
 ### `GET` Fetch Order's Ancestor Collection by Order Id
@@ -666,7 +677,7 @@ Fetch order's ancestor collection by orders `id`
             "develop_team_function": "QT",
             "develop_team_sub_function": "DQMS",
             "status": {
-                "p3": {
+                "P5": {
                     "initiator": "Approve"
                 },
             },
@@ -726,7 +737,7 @@ Fetch order's ancestor collection by orders `id`
             "develop_team_function": "QT",
             "develop_team_sub_function": "DQMS",
             "status": {
-                "p3": {
+                "P5": {
                     "initiator": "Approve"
                 },
             },
@@ -820,7 +831,7 @@ Fetch order's signature collection by order's `id`
             "sign_unit": "ESQD00",
             "status": "Approve",
             "comment": "OK",
-            "timestamp": "2020-03-10T08:26:38.093183Z",
+            "signed_time": "2020-03-10T08:26:38.093183Z",
             "role_group": "initiator",
             "order": 1,
         },
@@ -833,10 +844,10 @@ Fetch order's signature collection by order's `id`
                 "extension": "85015752",
                 "job_title": "部門主管",
             },
-            "sign_unit": "ESQT00",
+            "sign_unit": "ESQ000",
             "status": "Approve",
             "comment": "",
-            "timestamp": null,
+            "signed_time": null,
             "role_group": "initiator",
             "order": 1,
         },
@@ -852,8 +863,8 @@ Fetch order's signature collection by order's `id`
             "sign_unit": "ESQD00",
             "status": "Approve",
             "comment": "",
-            "timestamp": null,
-            "role_group": "developers",
+            "signed_time": null,
+            "role_group": "assigner",
             "order": 1,
         },
     ]
@@ -869,7 +880,7 @@ Update order's signature detail by order's `id` and signature's `id`
 
 - PERMISSSION
 
-    Only current signaturer can use
+    Only current signer can use
 
 - PATH VARIABLES
 
@@ -891,7 +902,7 @@ Update order's signature detail by order's `id` and signature's `id`
     ```json
     {
         "id": 1,
-        "status": "Accept",
+        "status": "Approve",
         "comment": "It's a good proposal",
     }
     ```
@@ -901,9 +912,20 @@ Update order's signature detail by order's `id` and signature's `id`
     ```json
     {
         "id": 1,
-        "status": "Accept",
+        "sequence": 1,
+        "signer": {
+            "employee_id": "9505005",
+            "display_name": "LUIS LIAO/WNH/Wistron",
+            "extension": "85015610",
+            "job_title": "經理"
+        },
+        "sign_unit": "ESQD00",
+        "status": "Approve",
         "comment": "It's a good proposal",
-    }
+        "signed_time": "2020-07-15T10:54:49.301387+08:00",
+        "role_group": "initiator",
+        "order": 20
+    },
     ```
 
 ---
@@ -979,7 +1001,7 @@ Create a new user's comment histories
 
 - PERMISSSION
 
-    Everyone can use
+    Only initiator, assigner, developers and signer in the order can use
 
 - HEADERS
 
@@ -1011,7 +1033,7 @@ Create a new user's comment histories
                 "extension": "85014686",
                 "job_title": "處長",
         },
-        "timestamp": "2020-03-20T08:26:38.093183Z",
+        "created_time": "2020-03-20T08:26:38.093183Z",
         "order": 10
     }
     ```
@@ -1026,13 +1048,13 @@ Create a new user's comment histories
 {{service_url}}/api/documents/?param1=value1
 ```
 
-Filter documents resource by order
+Filter documents resource by order id
 
 - PARAMS
 
     Key|Value|Description
     :---:|:---:|:---:
-    order | 1 | order id
+    order | 1 | Order id
 
 - HEADERS
 
@@ -1059,7 +1081,12 @@ Filter documents resource by order
             "order": 1,
             "description": "There is document1 description",
             "size": "1024000",
-            "uploader": "10612704",
+            "uploader": {
+                "employee_id": "9505005",
+                "display_name": "Luis Liao/WNH/Wistron",
+                "extension": "85014686",
+                "job_title": "處長",
+            },
             "created_time": "2020-03-21T08:26:38.093183Z",
         },
         {
@@ -1069,7 +1096,12 @@ Filter documents resource by order
             "order": 1,
             "description": "There is document2 description",
             "size": "2048000",
-            "uploder": "10612704",
+            "uploader": {
+                "employee_id": "9505005",
+                "display_name": "Luis Liao/WNH/Wistron",
+                "extension": "85014686",
+                "job_title": "處長",
+            },
             "created_time": "2020-03-21T08:26:38.093183Z",
         },
     ]
@@ -1215,6 +1247,11 @@ Update partial details of specific documents by document `id`
         "id": 1,
         "name": "filename.txt",
         "description": "There is document description",
+        "order": 1,
+        "path": "http://dqms.wistron.com/document_1.pdf",
+        "size": "1024000",
+        "uploder": "10612704",
+        "created_time": "2020-03-21T08:26:38.093183Z",
     }
     ```
 
@@ -1273,7 +1310,7 @@ Filter schedules resource by order id
 
     Key|Value|Description
     :---:|:---:|:---:
-    order (option) | 1 | order id
+    order (option) | 1 | Order id
 
 - HEADERS
 
@@ -1475,6 +1512,8 @@ Create a new schedules
         "expected_time": "2020-03-21T08:59:38.093183Z",
         "version": null,
         "complete_rate": 15,
+        "created_time": "2020-07-15T05:41:07.993820Z",
+        "update_time": "2020-07-15T05:41:07.993865Z",
         "order": 1,
     }
     ```
@@ -1530,9 +1569,17 @@ Update partial details of schedules by schedule `id`
 
     ```json
     {
-        "id": 1,
-        "event_name": "MVP Time",
+        "id": 2,
+        "event_name": "Project End Time",
+        "description": "This is a milestone.",
+        "confirm_status": true,
+        "actual_time": null,
         "expected_time": "2020-03-21T08:59:38.093183Z",
+        "version": null,
+        "complete_rate": 15,
+        "created_time": "2020-07-15T05:41:07.993820Z",
+        "update_time": "2020-07-15T05:41:07.993865Z",
+        "order": 1,
     }
     ```
 
@@ -1591,7 +1638,7 @@ Filter progress resource by order id
 
     Key|Value|Description
     :---:|:---:|:---:
-    order| 10 | order id
+    order| 10 | Order id
 
 - HEADERS
 
@@ -1704,7 +1751,7 @@ Create a new development progress on specific order
 
 - PERMISSSION
 
-    Only developers can use
+    Only developers in the order can use
 
 - HEADERS
 
@@ -1770,7 +1817,7 @@ Update order's progress detail by progress `id`
 
 - PERMISSSION
 
-    Only developers can use
+    Only developers in the order can use
 
 - PATH VARIABLES
 
@@ -1843,7 +1890,7 @@ Update partial details of progress by progress `id`
 
 - PERMISSSION
 
-    Only developers can use
+    Only developers in the order can use
 
 - PATH VARIABLES
 
@@ -1887,7 +1934,18 @@ Update partial details of progress by progress `id`
     {
         "id": 1,
         "name": "MVP Time",
+        "description": "This is a description.",
         "start_time": "2020-03-21T08:59:38.093183Z",
+        "end_time": "2020-03-22T08:26:38.093183Z",
+        "complete_rate": 100,
+        "editor": {
+            "employee_id": "10612704",
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
+            "extension": "85014815",
+            "job_title": "工程師",
+        },
+        "update_time": "2020-03-20T08:26:38.093183Z",
+        "order": 10
     }
     ```
 
@@ -1901,7 +1959,7 @@ Delete a progress detail by progress `id`
 
 - PERMISSSION
 
-    Only developers can use
+    Only developers in the order can use
 
 - PATH VARIABLES
 
@@ -1968,18 +2026,13 @@ Fetch notifications collection resource by current user
     {
         "all_count": 100,
         "unread_count": 25,
-        "read_count": 75,
         "all_list" : [
             {
                 "id": 1,
                 "link": "http://xxx.xxx.xxx.xxx/?abc=123",
                 "read_status": false,
                 "category": "approve",
-                "recipient": [
-                    "10612704",
-                    "9505005",
-                    "10712704"
-                ],
+                "recipient": "10612704",
                 "actor": "Luis Liao",
                 "verb": "approve",
                 "action_object": "order",
@@ -1992,11 +2045,7 @@ Fetch notifications collection resource by current user
                 "link": "http://xxx.xxx.xxx.xxx/?abc=123",
                 "read_status": false,
                 "category": "assign",
-                "recipient": [
-                    "10612704",
-                    "9505005",
-                    "10712704"
-                ],
+                "recipient": "10612704",
                 "actor": "Luis Liao",
                 "verb": "assign",
                 "action_object": "Jeff SH Wang as assginer",
@@ -2009,11 +2058,7 @@ Fetch notifications collection resource by current user
                 "link": "http://xxx.xxx.xxx.xxx/?def=123",
                 "read_status": false,
                 "category": "change_schedule",
-                "recipient": [
-                    "10612704",
-                    "9505005",
-                    "10712704"
-                ],
+                "recipient": "10612704",
                 "actor": "Luis Liao",
                 "verb": "change",
                 "action_object": "schedule",
@@ -2026,11 +2071,7 @@ Fetch notifications collection resource by current user
                 "link": "http://xxx.xxx.xxx.xxx/?def=123",
                 "read_status": true,
                 "category": "close",
-                "recipient": [
-                    "10612704",
-                    "9505005",
-                    "10712704"
-                ],
+                "recipient": "10612704",
                 "actor": "Luis Liao",
                 "verb": "close",
                 "action_object": "order",
@@ -2043,11 +2084,7 @@ Fetch notifications collection resource by current user
                 "link": "http://xxx.xxx.xxx.xxx/?def=123",
                 "read_status": true,
                 "category": "return",
-                "recipient": [
-                    "10612704",
-                    "9505005",
-                    "10712704"
-                ],
+                "recipient": "10612704",
                 "actor": "Luis Liao",
                 "verb": "return",
                 "action_object": "order",
@@ -2100,13 +2137,17 @@ Update detail of notifications by `id`
     ```json
     {
         "id": 1,
-        "link": "http://xxx.xxx.xxx.xxx/?order=123",
-        "read": true,
-        "category": "signature",
-        "initiator": "10612704",
+        "link": "http://xxx.xxx.xxx.xxx/?def=123",
+        "read_status": true,
+        "category": "return",
+        "recipient": "10612704",
+        "actor": "Luis Liao",
+        "verb": "return",
+        "action_object": "order",
+        "target": "",
         "created_time": "2020-03-10T08:26:38.093183Z",
-        "owner": "10612704",
-    }
+        "deleted_time": "2020-04-05T09:10:20.000000Z"
+    },
     ```
 
 ---
@@ -2488,9 +2529,9 @@ develop_team_sub_function: CharField i.e. TSC/BIOS/BMC/MQT/PQT/DQMS...
 
 status: JSONField
 
-initator: JSONField
+initator: CharField
 
-assigner: JSONField
+assigner: CharField
 
 developers: JSONField
 
@@ -2534,7 +2575,7 @@ path: FileField
 
 name: CharFiled
 
-description: CharField
+description: TextField
 
 uploader: CharField
 
@@ -2552,7 +2593,7 @@ id: IntegerField (primary_key=True)
 
 event_name: CharField
 
-description: CharField
+description: TextField
 
 confirm_status: BooleanField
 
@@ -2578,7 +2619,7 @@ event_name: CharField
 
 confirm_status: BooleanField
 
-description: CharField
+description: TextField
 
 expected_time: DateTimeField
 
@@ -2648,6 +2689,8 @@ sequence: PositiveIntegerField
 
 signer: CharField
 
+sign_unit: CharField
+
 status: CharField
 
 comment: TextField
@@ -2700,9 +2743,9 @@ develop_team_sub_function: CharField i.e. TSC/BIOS/BMC/MQT/PQT/DQMS...
 
 status: JSONField
 
-initator: JSONField
+initator: CharField
 
-assigner: JSONField
+assigner: CharField
 
 developers: JSONField
 
