@@ -1,5 +1,4 @@
 """ singature app's api viewsets.py """
-import json
 import logging
 
 from develop_requirement_proj.employee.api.serializers import (
@@ -22,14 +21,14 @@ from rest_framework import mixins, response, serializers, views, viewsets
 from rest_framework.decorators import action
 
 from ..models import (
-    Account, Document, History, Notification, Order, OrderTracker, Progress,
-    Project, Schedule, ScheduleTracker, Signature,
+    Account, Comment, Document, Notification, Order, Progress, Project,
+    Schedule, ScheduleTracker, Signature,
 )
 from .filters import OrderFilter, OrderFilterBackend
 from .paginations import OrderPagination
 from .serializers import (
-    AccountEasySerializer, AccountSerializer, DocumentSerializer,
-    EmployeeNonModelSerializer, HistorySerializer, NotificationSerializer,
+    AccountEasySerializer, AccountSerializer, CommentSerializer,
+    DocumentSerializer, EmployeeNonModelSerializer, NotificationSerializer,
     OrderDynamicSerializer, OrderTrackerSerializer, ProgressSerializer,
     ProjectEasySerializer, ProjectSerializer, ScheduleSerializer,
     SignatureSerializer,
@@ -299,13 +298,13 @@ class ProgressViewSet(viewsets.ModelViewSet):
         return context
 
 
-class HistoryViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
-    """ Provide History resource with `list` and `create` action """
-    queryset = History.objects.all()
-    serializer_class = HistorySerializer
+class CommentViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+    """ Provide Comments resource with `list` and `create` action """
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
 
     def get_queryset(self):
-        """ Filter History by order_id """
+        """ Filter comment by order_id """
         queryset = self.queryset
         order_id = self.request.query_params.get('order', None)
         if order_id is not None:
@@ -466,7 +465,11 @@ class OrderViewSet(MessageMixin,
         return response.Response(serializer.data)
 
     def perform_create(self, serializer):
-        serializer.save(initiator=self.request.user.username)
+        serializer.save(
+            initiator=self.request.user.username,
+            update_staff=self.request.user.username,
+            update_time=timezone.now()
+        )
 
         order_id = serializer.instance.id
         order = Order.objects.get(pk=order_id)
@@ -475,19 +478,13 @@ class OrderViewSet(MessageMixin,
         # Save OrderTracker
         order_tracker_serializer = OrderTrackerSerializer(data=model_to_dict(order))
         if order_tracker_serializer.is_valid(raise_exception=True):
-            order_tracker_serializer.save(order=order, form_begin_time=order.form_begin_time)
+            order_tracker_serializer.save(
+                order=order,
+                form_begin_time=order.form_begin_time,
+                form_end_time=order.form_end_time,
+                update_time=order.update_time
+            )
 
-        # Create History (including last record and update content with json)
-        comment = {
-            'last_order': '',
-            'current_order': serializer.data
-        }
-        history = {
-            'editor': 'system',
-            'comment': json.dumps(comment),
-            'order': order
-        }
-        History.objects.create(**history)
         link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
         if 'P0' in order_status:
             direction_flag = order_status['P0'].get('initiator', None)
@@ -553,35 +550,24 @@ class OrderViewSet(MessageMixin,
                 order.save()
 
     def perform_update(self, serializer):
-        serializer.save()
+        serializer.save(
+            update_staff=self.request.user.username,
+            update_time=timezone.now()
+        )
         # P1 and P4 status change in signature api
         order_id = serializer.data['id']
         order = Order.objects.get(pk=order_id)
         order_status = order.status
 
-        # Create History (including last record and update content with json)
-        last_order_tracker = dict(OrderTracker.objects.filter(order=order_id).order_by('created_time').values()[0])
-        del last_order_tracker['order_id']
-        kwargs = {}
-        kwargs['context'] = {'accounts': cache.get('accounts', None)}
-        kwargs['context'].update({'projects': cache.get('projects', None)})
-        kwargs['context'].update({'employees': cache.get('employees', None)})
-
-        comment = {
-            'last_order': OrderDynamicSerializer(last_order_tracker, **kwargs).data,
-            'update_content': serializer.data
-        }
-        history = {
-            'editor': 'system',
-            'comment': json.dumps(comment),
-            'order': order
-        }
-        History.objects.create(**history)
-
         # Save OrderTracker
         order_tracker_serializer = OrderTrackerSerializer(data=model_to_dict(order))
         if order_tracker_serializer.is_valid(raise_exception=True):
-            order_tracker_serializer.save(order=order, form_begin_time=order.form_begin_time)
+            order_tracker_serializer.save(
+                order=order,
+                form_begin_time=order.form_begin_time,
+                form_end_time=order.form_end_time,
+                update_time=order.update_time
+            )
 
         link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
         if 'P0' in order_status:
@@ -1068,32 +1054,16 @@ class SignatureViewSet(MessageMixin,
         signature = Signature.objects.get(pk=signature_id)
         direction_flag = signature.status
         order = Order.objects.get(pk=signature.order.id)
-        order_copy = Order.objects.get(pk=signature.order.id)
-
-        # Create History (including last record and update content with json)
-        last_order_tracker = dict(OrderTracker.objects.filter(order=order.id).order_by('created_time').values()[0])
-        del last_order_tracker['order_id']
-        kwargs = {}
-        kwargs['context'] = {'accounts': cache.get('accounts', None)}
-        kwargs['context'].update({'projects': cache.get('projects', None)})
-        kwargs['context'].update({'employees': cache.get('employees', None)})
-
-        comment = {
-            'last_order': OrderDynamicSerializer(last_order_tracker, **kwargs).data,
-            'update_content': OrderDynamicSerializer(order_copy, **kwargs).data,
-        }
-
-        history = {
-            'editor': 'system',
-            'comment': json.dumps(comment),
-            'order': order
-        }
-        History.objects.create(**history)
 
         # Save to OrderTracker
         order_tracker_serializer = OrderTrackerSerializer(data=model_to_dict(order))
         if order_tracker_serializer.is_valid(raise_exception=True):
-            order_tracker_serializer.save(order=order, form_begin_time=order.form_begin_time)
+            order_tracker_serializer.save(
+                order=order,
+                form_begin_time=order.form_begin_time,
+                form_end_time=order.form_end_time,
+                update_time=order.update_time
+            )
 
         link = f"{self.request.build_absolute_uri(location='/')}?order={order.id}"
         if direction_flag == 'Approve':

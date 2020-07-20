@@ -5,7 +5,7 @@ from urllib.parse import urlparse, urlunparse
 from rest_framework import serializers
 
 from ..models import (
-    Document, History, Notification, Order, OrderTracker, Progress, Schedule,
+    Comment, Document, Notification, Order, OrderTracker, Progress, Schedule,
     Signature,
 )
 
@@ -106,22 +106,21 @@ class EmployeeNonModelSerializer(serializers.Serializer):
         return f"{obj['english_name']}/{obj['site']}/Wistron"
 
 
-class HistorySerializer(serializers.ModelSerializer):
+class CommentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """ Automatically add editor """
         validated_data['editor'] = self.context['request'].user.username
-        return History.objects.create(**validated_data)
+        return Comment.objects.create(**validated_data)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         employee_id = ret['editor']
-        if employee_id != 'system':
-            ret['editor'] = self.context['employees'][employee_id]
+        ret['editor'] = self.context['employees'][employee_id]
         return ret
 
     class Meta:
-        model = History
+        model = Comment
         fields = "__all__"
         read_only_fields = ['editor', 'created_time']
 
@@ -450,7 +449,13 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         exclude = ['lft', 'rght', 'tree_id', 'level']
-        read_only_fields = ['initiator', 'form_begin_time', 'form_end_time']
+        read_only_fields = [
+            'initiator',
+            'form_begin_time',
+            'form_end_time',
+            'update_time',
+            'update_staff'
+        ]
 
 
 class ProjectEasySerializer(serializers.Serializer):
