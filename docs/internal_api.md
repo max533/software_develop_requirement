@@ -8,14 +8,15 @@
   - [Orders Operation](#orders-operation)
     - [`GET` Fetch Orders Collection / Filter Orders by Attribute](#get-fetch-orders-collection--filter-orders-by-attribute)
     - [`GET` Fetch a Specific Orders](#get-fetch-a-specific-orders)
+    - [`GET` Fetch Order History by Order Id](#get-fetch-order-history-by-order-id)
     - [`POST` Create an Orders](#post-create-an-orders)
     - [`PATCH` Update Partially Specific Orders Detail](#patch-update-partially-specific-orders-detail)
     - [`GET` Fetch Order's Ancestor Collection by Order Id](#get-fetch-orders-ancestor-collection-by-order-id)
     - [`GET` Fetch Order's Signature Collection by Order Id](#get-fetch-orders-signature-collection-by-order-id)
     - [`PUT` Update Order's Signature Deatail by Order Id and Signature Id](#put-update-orders-signature-deatail-by-order-id-and-signature-id)
-  - [Histories Operation](#histories-operation)
-    - [`GET` Filter Histories Collection by Order Id](#get-filter-histories-collection-by-order-id)
-    - [`POST` Create User's Comment Histories](#post-create-users-comment-histories)
+  - [Comments Operation](#comments-operation)
+    - [`GET` Filter Comments Collection by Order Id](#get-filter-comments-collection-by-order-id)
+    - [`POST` Create User's Comment](#post-create-users-comment)
   - [Documents Operation](#documents-operation)
     - [`GET` Filter Documents Collection by Order Id](#get-filter-documents-collection-by-order-id)
     - [`GET` Fetch a Specific Documents](#get-fetch-a-specific-documents)
@@ -24,7 +25,7 @@
     - [`DEL` Delete Documents Detail](#del-delete-documents-detail)
   - [Schedules Operation](#schedules-operation)
     - [`GET` Filter Schedules Collection by Order Id](#get-filter-schedules-collection-by-order-id)
-    - [`GET` Filter Schedules History by Order Id](#get-filter-schedules-history-by-order-id)
+    - [`GET` Filter Schedules Plan History by Order Id](#get-filter-schedules-plan-history-by-order-id)
     - [`POST` Create a Schedules](#post-create-a-schedules)
     - [`PATCH` Update Partially Schedules Detail](#patch-update-partially-schedules-detail)
     - [`DEL` Delete Schedules Detail](#del-delete-schedules-detail)
@@ -57,14 +58,15 @@
   - [Orders Operation](#orders-operation)
     - [x] [`GET` Fetch Orders Collection / Filter Orders by Attribute](#get-fetch-orders-collection--filter-orders-by-attribute)
     - [x] [`GET` Fetch a Specific Orders](#get-fetch-a-specific-orders)
+    - [ ] [`GET` Fetch Order History by Order Id](#get-fetch-order-history-by-order-id)
     - [x] [`POST` Create an Orders](#post-create-an-orders)
     - [x] [`PATCH` Update Partially Specific Orders Detail](#patch-update-partially-specific-orders-detail)
     - [x] [`GET` Fetch Order's Ancestor Collection by Order Id](#get-fetch-orders-ancestor-collection-by-order-id)
     - [x] [`GET` Fetch Order's Signature Collection by Order Id](#get-fetch-orders-signature-collection-by-order-id)
     - [x] [`PUT` Update Order's Signature Deatail by Order Id and Signature Id](#put-update-orders-signature-deatail-by-order-id-and-signature-id)
-  - [Histories Operation](#histories-operation)
-    - [x] [`GET` Filter Histories Collection by Order Id](#get-filter-histories-collection-by-order-id)
-    - [x] [`POST` Create User's Comment Histories](#post-create-users-comment-histories)
+  - [Comments Operation](#comments-operation)
+    - [x] [`GET` Filter Comments Collection by Order Id](#get-filter-comments-collection-by-order-id)
+    - [x] [`POST` Create User's Comment](#post-create-users-comment)
   - [Documents Operation](#documents-operation)
     - [x] [`GET` Filter Documents Collection by Order Id](#get-filter-documents-collection-by-order-id)
     - [x] [`GET` Fetch a Specific Documents](#get-fetch-a-specific-documents)
@@ -73,7 +75,7 @@
     - [x] [`DEL` Delete Documents Detail](#del-delete-documents-detail)
   - [Schedules Operation](#schedules-operation)
     - [x] [`GET` Filter Schedules Collection by Order Id](#get-filter-schedules-collection-by-order-id)
-    - [x] [`GET` Filter Schedules History by Order Id](#get-filter-schedules-history-by-order-id)
+    - [x] [`GET` Filter Schedules Plan History by Order Id](#get-filter-schedules-plan-history-by-order-id)
     - [x] [`POST` Create a Schedules](#post-create-a-schedules)
     - [x] [`PATCH` Update Partially Schedules Detail](#patch-update-partially-schedules-detail)
     - [x] [`DEL` Delete Schedules Detail](#del-delete-schedules-detail)
@@ -161,9 +163,10 @@ Fetch all orders resource
                 "develop_team_function": "QT",
                 "develop_team_sub_function": "DQMS",
                 "status": {
-                    "p3": {
+                    "P0": {
                         "initiator": "Approve"
                     },
+                    "signed": false,
                 },
                 "initiator": {
                     "employee_id": "10612704",
@@ -202,10 +205,12 @@ Fetch all orders resource
                 "title": "DQMS develope requirement system",
                 "description": "<br> Three is description </br>",
                 "form_begin_time": "2020-03-10T08:26:38.093183Z",
-                "form_end_time": "2020-04-10T08:26:38.093183Z",
+                "form_end_time": null,
                 "expected_develop_duration_day": 10.5,
                 "actual_develop_duration_day": 20.0,
                 "repository_url": "www.gitlab.com",
+                "update_staff": "10612704",
+                "update_time": "2020-04-10T08:26:38.093183Z",
                 "parent": 10,
             },
             {
@@ -221,9 +226,10 @@ Fetch all orders resource
                 "develop_team_function": "QT",
                 "develop_team_sub_function": "DQMS",
                 "status": {
-                    "p3": {
+                    "P0": {
                         "initiator": "Approve"
                     },
+                    "signed": false,
                 },
                 "initiator": {
                     "employee_id": "10612704",
@@ -262,10 +268,12 @@ Fetch all orders resource
                 "title": "DQMS develope requirement system",
                 "description": "<br> Three is description </br>",
                 "form_begin_time": "2020-03-10T08:26:38.093183Z",
-                "form_end_time": "2020-04-10T08:26:38.093183Z",
+                "form_end_time": null,
                 "expected_develop_duration_day": 10.5,
                 "actual_develop_duration_day": 20.0,
                 "repository_url": "www.gitlab.com",
+                "update_staff": "10612704",
+                "update_time": "2020-04-10T08:26:38.093183Z",
                 "parent": 10,
             }
         ]
@@ -317,9 +325,10 @@ Fetch a specific orders resource by `id`
         "develop_team_function": "QT",
         "develop_team_sub_function": "DQMS",
         "status": {
-            "p3": {
+            "P0": {
                 "initiator": "Approve"
             },
+            "signed": false
         },
         "initiator": {
             "employee_id": "10612704",
@@ -362,8 +371,169 @@ Fetch a specific orders resource by `id`
         "expected_develop_duration_day": 10.5,
         "actual_develop_duration_day": 20.0,
         "repository_url": "www.gitlab.com",
+        "update_staff": "10612704",
+        "update_time": "2020-04-10T08:26:38.093183Z",
         "parent": 10,
     }
+    ```
+
+### `GET` Fetch Order History by Order Id
+
+```url
+{{service_url}}/api/orders/:id/tracker/
+```
+
+Fetch orders history resource by order id
+
+- PATH VARIABLES
+
+    Variable|Description
+    :---: | :---:
+    `id` | Order id
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {}
+    ```
+
+    Example resonse
+
+    ```json
+    [
+        {
+            "id": 2,
+            "account": {
+                "id": 1,
+                "code": "Lily",
+            },
+            "project": {
+                "id": 2,
+                "name": "Stark"
+            },
+            "develop_team_function": "QT",
+            "develop_team_sub_function": "DQMS",
+            "status": {
+                "P5": {
+                    "developers": "Approve"
+                },
+            },
+            "initiator": {
+                "employee_id": "10612704",
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "extension": "85014815",
+                "job_title": "工程師",
+            },
+            "assigner": {
+                "employee_id": "10612704",
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "extension": "85014815",
+                "job_title": "工程師",
+            },
+            "developers": {
+                "mebmer":[
+                    {
+                        "employee_id": "10612704",
+                        "display_name": "Jeff SH Wang/WHQ/Wistron",
+                        "extension": "85014815",
+                        "job_title": "工程師",
+                    },
+                    {
+                        "employee_id": "10712714",
+                        "display_name": "Leo Tu/WHQ/Wistron",
+                        "extension": "85014817",
+                        "job_title": "工程師",
+                    },
+                ],
+                "contactor":{
+                        "employee_id": "9505005",
+                        "display_name": "Luis Liao/WHQ/Wistron",
+                        "extension": "85014833",
+                        "job_title": "功能經理",
+                }
+            },
+            "title": "DQMS develope requirement system",
+            "description": "<br> Three is description </br>",
+            "form_begin_time": "2020-03-10T08:26:38.093183Z",
+            "form_end_time": "2020-04-10T08:26:38.093183Z",
+            "expected_develop_duration_day": 10.5,
+            "actual_develop_duration_day": 20.0,
+            "repository_url": "www.gitlab.com",
+            "update_staff": "10612704",
+            "update_time": "2020-04-10T08:26:38.093183Z",
+            "parent": null,
+        },
+        {
+            "id": 2,
+            "account": {
+                "id": 1,
+                "code": "Lily",
+            },
+            "project": {
+                "id": 2,
+                "name": "Stark"
+            },
+            "develop_team_function": "QT",
+            "develop_team_sub_function": "DQMS",
+            "status": {
+                "P5": {
+                    "initiator": "Approve"
+                },
+            },
+            "initiator": {
+                "employee_id": "10612704",
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "extension": "85014815",
+                "job_title": "工程師",
+            },
+            "assigner": {
+                "employee_id": "10612704",
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "extension": "85014815",
+                "job_title": "工程師",
+            },
+            "developers": {
+                "mebmer":[
+                    {
+                        "employee_id": "10612704",
+                        "display_name": "Jeff SH Wang/WHQ/Wistron",
+                        "extension": "85014815",
+                        "job_title": "工程師",
+                    },
+                    {
+                        "employee_id": "10712714",
+                        "display_name": "Leo Tu/WHQ/Wistron",
+                        "extension": "85014817",
+                        "job_title": "工程師",
+                    },
+                ],
+                "contactor":{
+                        "employee_id": "9505005",
+                        "display_name": "Luis Liao/WHQ/Wistron",
+                        "extension": "85014833",
+                        "job_title": "功能經理",
+                }
+            },
+            "title": "DQMS develope requirement system",
+            "description": "<br> Three is description </br>",
+            "form_begin_time": "2020-03-10T08:26:38.093183Z",
+            "form_end_time": null,
+            "expected_develop_duration_day": 10.5,
+            "actual_develop_duration_day": 20.0,
+            "repository_url": "www.gitlab.com",
+            "update_staff": "9505005",
+            "update_time": "2020-04-09T08:26:38.093183Z",
+            "parent": 2,
+        }
+    ]
     ```
 
 ### `POST` Create an Orders
@@ -491,6 +661,8 @@ Create a new orders
         "actual_develop_duration_day": null,
         "repository_url": "",
         "parent": null,
+        "update_staff": "10612704",
+        "update_time": "2020-04-10T08:26:38.093183Z",
         "parent": 10,
     }
     ```
@@ -628,6 +800,8 @@ Update partial details of specific orders by order `id`
         "expected_develop_duration_day": 10.5,
         "actual_develop_duration_day": 20.0,
         "repository_url": "www.gitlab.com",
+        "update_staff": "10612704",
+        "update_time": "2020-04-10T08:26:38.093183Z",
         "parent": null,
     },
     ```
@@ -718,10 +892,12 @@ Fetch order's ancestor collection by orders `id`
             "title": "DQMS develope requirement system",
             "description": "<br> Three is description </br>",
             "form_begin_time": "2020-03-10T08:26:38.093183Z",
-            "form_end_time": "2020-04-10T08:26:38.093183Z",
+            "form_end_time": null,
             "expected_develop_duration_day": 10.5,
             "actual_develop_duration_day": 20.0,
             "repository_url": "www.gitlab.com",
+            "update_staff": "10612704",
+            "update_time": "2020-04-10T08:26:38.093183Z",
             "parent": null,
         },
         {
@@ -778,10 +954,12 @@ Fetch order's ancestor collection by orders `id`
             "title": "DQMS develope requirement system",
             "description": "<br> Three is description </br>",
             "form_begin_time": "2020-03-10T08:26:38.093183Z",
-            "form_end_time": "2020-04-10T08:26:38.093183Z",
+            "form_end_time": null,
             "expected_develop_duration_day": 10.5,
             "actual_develop_duration_day": 20.0,
             "repository_url": "www.gitlab.com",
+            "update_staff": "10612704",
+            "update_time": "2020-04-10T08:26:38.093183Z",
             "parent": 2,
         }
     ]
@@ -930,15 +1108,15 @@ Update order's signature detail by order's `id` and signature's `id`
 
 ---
 
-## Histories Operation
+## Comments Operation
 
-### `GET` Filter Histories Collection by Order Id
+### `GET` Filter Comments Collection by Order Id
 
 ```url
-{{service_url}}/api/histories/?param1=value1
+{{service_url}}/api/comments/?param1=value1
 ```
 
-Filter histories resource by order
+Filter comments resource by order id
 
 - PARAMS
 
@@ -973,7 +1151,7 @@ Filter histories resource by order
                 "extension": "85014686",
                 "job_title": "處長",
             },
-            "timestamp": "2020-03-20T08:26:38.093183Z",
+            "created_time": "2020-03-20T08:26:38.093183Z",
             "order": 10,
         },
         {
@@ -985,19 +1163,19 @@ Filter histories resource by order
                 "extension": "85014686",
                 "job_title": "處長",
             },
-            "timestamp": "2020-03-21T08:26:38.093183Z",
+            "created_time": "2020-03-21T08:26:38.093183Z",
             "order": 10,
         },
     ]
     ```
 
-### `POST` Create User's Comment Histories
+### `POST` Create User's Comment
 
 ```url
-{{service_url}}/api/histories/
+{{service_url}}/api/comments/
 ```
 
-Create a new user's comment histories
+Create a new user's comment
 
 - PERMISSSION
 
@@ -1374,15 +1552,15 @@ Filter schedules resource by order id
 
 - Default
 
-    event_name : `Project Begin Time`, `Project End Time`, `MVP Time`
+    event_name : `Start`, `End`
 
-### `GET` Filter Schedules History by Order Id
+### `GET` Filter Schedules Plan History by Order Id
 
 ```url
 {{service_url}}/api/schedules/group_tracker/?param1=value1
 ```
 
-Filter schedules history resource by order id
+Filter schedules plan history resource by order id
 
 - PARAMS
 
