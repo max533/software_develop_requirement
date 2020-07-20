@@ -1,7 +1,7 @@
 """ develop_requirement_proj API URL Configuration """
 from develop_requirement_proj.employee.api.viewsets import EmployeeViewSet
 from develop_requirement_proj.signature.api.viewsets import (
-    AccountViewSet, AssginerViewSet, DocumentViewSet, HistoryViewSet,
+    AccountViewSet, AssginerViewSet, CommentViewSet, DocumentViewSet,
     NotificationVewSet, OptionView, OrderViewSet, ProgressViewSet,
     ProjectViewSet, ScheduleViewSet, SignatureViewSet,
 )
@@ -24,7 +24,7 @@ router.register('assigners', AssginerViewSet)
 router.register('documents', DocumentViewSet)
 router.register('schedules', ScheduleViewSet)
 router.register('progress', ProgressViewSet, basename='progress')
-router.register('histories', HistoryViewSet)
+router.register('comments', CommentViewSet)
 router.register('notifications', NotificationVewSet)
 router.register('orders', OrderViewSet)
 orders_router = routers.NestedDefaultRouter(router, 'orders', lookup='orders')

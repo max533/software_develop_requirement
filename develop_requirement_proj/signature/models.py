@@ -100,6 +100,8 @@ class Order(MPTTModel):
     expected_develop_duration_day = models.FloatField(_("expected development duration (days)"), null=True, blank=True)
     actual_develop_duration_day = models.FloatField(_("actual development duration (days)"), null=True, blank=True)
     repository_url = models.URLField(_("repository url of source code"), max_length=1000, blank=True)
+    update_time = models.DateTimeField(auto_now=True, null=True)
+    update_staff = models.CharField(max_length=50)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
 
     class Meta:
@@ -194,8 +196,8 @@ class Progress(models.Model):
         return f'Id: {self.id}, Order: {self.order.id}, Name: {self.name}'
 
 
-class History(models.Model):
-    """ Order's History Model """
+class Comment(models.Model):
+    """ Order's Comment Model """
     editor = models.CharField(max_length=20)
     comment = models.TextField()
     created_time = models.DateTimeField(auto_now_add=True, null=True)
@@ -277,14 +279,15 @@ class OrderTracker(models.Model):
     expected_develop_duration_day = models.FloatField(_("expected development duration (days)"), null=True, blank=True)
     actual_develop_duration_day = models.FloatField(_("actual development duration (days)"), null=True, blank=True)
     repository_url = models.URLField(_("repository url of source code"), max_length=1000, blank=True)
-    created_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True, null=True)
+    update_staff = models.CharField(max_length=50)
     parent = models.PositiveIntegerField(null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['order', 'created_time']
+        ordering = ['order', 'update_time']
         verbose_name = _('order tracker')
         verbose_name_plural = _('order trackers')
 
     def __str__(self):
-        return f'Id: {self.id}, Title: {self.title}, Order: {self.order.id}, Create_at: {self.created_time}'
+        return f'Id: {self.id}, Title: {self.title}, Order: {self.order.id}, Update_at: {self.update_time}'

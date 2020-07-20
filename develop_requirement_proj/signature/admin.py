@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import (
-    Document, History, Notification, Order, OrderTracker, Progress, Schedule,
+    Comment, Document, Notification, Order, OrderTracker, Progress, Schedule,
     ScheduleTracker, Signature,
 )
 
@@ -25,6 +25,8 @@ class OrderAdmin(admin.ModelAdmin):
         'expected_develop_duration_day',
         'actual_develop_duration_day',
         'repository_url',
+        'update_staff',
+        'update_time',
         'parent'
     )
 
@@ -48,6 +50,8 @@ class OrderTrackerAdmin(admin.ModelAdmin):
         'expected_develop_duration_day',
         'actual_develop_duration_day',
         'repository_url',
+        'update_staff',
+        'update_time',
         'order',
         'parent'
     )
@@ -116,8 +120,8 @@ class ProgressAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(History)
-class HistoryAdmin(admin.ModelAdmin):
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'editor',
