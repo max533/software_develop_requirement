@@ -52,7 +52,9 @@ class DocumentSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         url = urlparse(ret['path'])
-        filepath = str(Path('download') / instance.path.name)
+        prefix = Path('download')
+        filepath_suffix = '/'.join(Path(url.path).parts[-2::])
+        filepath = str(prefix / filepath_suffix)
         parts = (url.scheme, url.netloc, filepath, '', '', '')
         ret['path'] = urlunparse(parts)
         return ret

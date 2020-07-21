@@ -1,9 +1,13 @@
+import logging
+
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http.response import HttpResponse
 from django.views.generic import TemplateView, View
 
 from .models import Document
+
+logger = logging.getLogger(__name__)
 
 
 class IndexView(TemplateView):
@@ -13,7 +17,7 @@ class IndexView(TemplateView):
 class DownloadView(LoginRequiredMixin, View):
     login_url = '/cas/login'
 
-    def get(self, request, relative_filename, *args, **kwargs):
+    def get(self, request, order_id, relative_filename, *args, **kwargs):
         """
         Provide web server redirect download file feature.
 
@@ -21,16 +25,21 @@ class DownloadView(LoginRequiredMixin, View):
 
         filename : the the name of the file which user named it.
         """
-        instance = Document.objects.filter(path=relative_filename).first()
+        relative_filename = settings.MEDIA_ROOT + str(order_id) + '/' + relative_filename
+        instance = Document.objects.filter(order=order_id, path=relative_filename).first()
         # Check document exist and file exist filesystem or not
         if instance is None:
+            message = 'There is no such a file in database record.'
+            logger.info(message)
             message = '<h1>There is no file which you want to find.</h1>'
             return HttpResponse(message, status=404)
         elif not instance.path.storage.exists(instance.path.name):
+            message = 'There is no such a file in filesystem.'
+            logger.info(message)
             message = '<h1>There is no file which you want to find.</h1>'
             return HttpResponse(message, status=404)
         # Get user's deafult filename and filesize
-        filename, size = instance.path.name, instance.size
+        filename, size = instance.name, instance.size
         # Add filename and size in HTTP header
         if settings.DEBUG:
             response = HttpResponse(open(instance.path.path, 'rb'))
@@ -42,6 +51,6 @@ class DownloadView(LoginRequiredMixin, View):
         if settings.DEBUG:
             return response
         # Assign web server (nginx) to serve file for downloading
-        redirect_path = f'/protected_file/{instance.path.name}'
+        redirect_path = f'/protected_file/{instance.path}'
         response['X-Accel-Redirect'] = redirect_path
         return response
