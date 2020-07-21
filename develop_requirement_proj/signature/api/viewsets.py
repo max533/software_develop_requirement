@@ -11,8 +11,6 @@ from develop_requirement_proj.utils.mixins import (
 )
 
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist
-from django.core.mail import send_mail
 from django.db.models import Max
 from django.forms import model_to_dict
 from django.utils import timezone
@@ -468,7 +466,6 @@ class OrderViewSet(MessageMixin,
         serializer.save(
             initiator=self.request.user.username,
             update_staff=self.request.user.username,
-            update_time=timezone.now()
         )
 
         order_id = serializer.instance.id
@@ -552,7 +549,6 @@ class OrderViewSet(MessageMixin,
     def perform_update(self, serializer):
         serializer.save(
             update_staff=self.request.user.username,
-            update_time=timezone.now()
         )
         # P1 and P4 status change in signature api
         order_id = serializer.data['id']
@@ -745,17 +741,15 @@ class OrderViewSet(MessageMixin,
                 # Check the all schedule modify or not.
                 # If schedule didn't be modified, It will skip bleow thing.
                 # 1. Recalculate the schedule version and record snapshot in ScheduleTracker table
-                # 2. Change schedule's expected_time to actual_time
-                # 3. Change schedule's all confirm status to True
+                # 2. Change schedule's all confirm status to True
                 objs = order.schedule_set.all()
                 if not all(list(objs.values_list('confirm_status', flat=True))):
                     current_max_version = objs.aggregate(Max('version'))['version__max']
                     new_version = 1 if current_max_version is None else current_max_version + 1
                     for obj in objs:
-                        obj.actual_time, obj.expected_time = obj.expected_time, None
                         obj.version = new_version
                         obj.confirm_status = True
-                    Schedule.objects.bulk_update(objs, ['actual_time', 'expected_time', 'version', 'confirm_status'])
+                    Schedule.objects.bulk_update(objs, ['version', 'confirm_status'])
                     result = ScheduleTracker.objects.aggregate(Max('id'))['id__max']
                     new_id = 0 if result is None else result
                     for obj in objs:
@@ -777,10 +771,9 @@ class OrderViewSet(MessageMixin,
                     next_signer, next_signer_department_id = self.find_next_signer(order_id, order.assigner)
                     # Create Signature
                     sequence_max = order.signature_set.aggregate(Max('sequence'))['sequence__max']
-                    if sequence_max is None:
-                        sequence_max = 0
+                    sequence_new = 1 if sequence_max is None else sequence_max + 1
                     next_signature = {
-                        'sequence': sequence_max + 1,
+                        'sequence': sequence_new,
                         'signer': next_signer,
                         'sign_unit': next_signer_department_id,
                         'status': '',
@@ -1095,12 +1088,11 @@ class SignatureViewSet(MessageMixin,
                         },
                     }
                     order.save()
-                    # Create next signature
+                    # Create Signature
                     sequence_max = order.signature_set.aggregate(Max('sequence'))['sequence__max']
-                    if sequence_max is None:
-                        sequence_max = 0
+                    sequence_new = 1 if sequence_max is None else sequence_max + 1
                     next_signature = {
-                        'sequence': sequence_max + 1,
+                        'sequence': sequence_new,
                         'signer': next_signer,
                         'sign_unit': next_signer_department_id,
                         'status': '',
@@ -1144,12 +1136,11 @@ class SignatureViewSet(MessageMixin,
                         },
                     }
                     order.save()
-                    # Create next signature
+                    # Create Signature
                     sequence_max = order.signature_set.aggregate(Max('sequence'))['sequence__max']
-                    if sequence_max is None:
-                        sequence_max = 0
+                    sequence_new = 1 if sequence_max is None else sequence_max + 1
                     next_signature = {
-                        'sequence': sequence_max + 1,
+                        'sequence': sequence_new,
                         'signer': next_signer,
                         'sign_unit': next_signer_department_id,
                         'status': '',

@@ -1510,11 +1510,10 @@ Filter schedules resource by order id
     [
         {
             "id": 1,
-            "event_name": "Project Begin Time",
+            "event_name": "Start",
             "description": "This is a milestone.",
             "confirm_status": true,
-            "actual_time": null,
-            "expected_time": "2020-03-21T08:59:38.093183Z",
+            "timestamp": "2020-03-21T08:59:38.093183Z",
             "complete_rate": 15,
             "version": 1,
             "update_time": "2020-01-20T08:59:38.093183Z",
@@ -1523,13 +1522,12 @@ Filter schedules resource by order id
         },
         {
             "id": 2,
-            "event_name": "Project End Time",
+            "event_name": "End",
             "description": "This is a milestone.",
             "confirm_status": true,
-            "actual_time": null,
-            "expected_time": "2020-03-21T08:59:38.093183Z",
-            "complete_rate": 15,
-            "version": 1,
+            "timestamp": null,
+            "complete_rate": 100,
+            "version": null,
             "update_time": "2020-01-20T08:59:38.093183Z",
             "created_time": "2020-01-20T08:59:38.093183Z",
             "order": 1,
@@ -1539,8 +1537,7 @@ Filter schedules resource by order id
             "event_name": "MVP Time",
             "description": "This is a milestone.",
             "confirm_status": true,
-            "actual_time": null,
-            "expected_time": "2020-03-21T08:59:38.093183Z",
+            "timestamp": null,
             "complete_rate": 15,
             "version": null,
             "update_time": "2020-01-20T08:59:38.093183Z",
@@ -1592,8 +1589,7 @@ Filter schedules plan history resource by order id
                 "event_name": "Project Begin Time",
                 "description": "This is a milestone.",
                 "confirm_status": true,
-                "actual_time": "2020-03-21T08:59:38.093183Z",
-                "expected_time": null,
+                "timestamp": null,
                 "complete_rate": 15,
                 "version": 1,
                 "update_time": "2020-01-20T08:59:38.093183Z",
@@ -1605,8 +1601,7 @@ Filter schedules plan history resource by order id
                 "event_name": "Project End Time",
                 "description": "This is a milestone.",
                 "confirm_status": true,
-                "actaul_time": "2020-03-21T08:59:38.093183Z",
-                "expected_time": null,
+                "timestamp": null,
                 "complete_rate": 15,
                 "version": 1,
                 "update_time": "2020-01-20T08:59:38.093183Z",
@@ -1620,8 +1615,7 @@ Filter schedules plan history resource by order id
                 "event_name": "Project Begin Time",
                 "description": "This is a milestone.",
                 "confirm_status": true,
-                "actaul_time": "2020-03-21T08:59:38.093183Z",
-                "expected_time": null,
+                "timestamp": null,
                 "complete_rate": 15,
                 "version": 2,
                 "update_time": "2020-01-20T08:59:38.093183Z",
@@ -1631,10 +1625,9 @@ Filter schedules plan history resource by order id
             {
                 "id": 2,
                 "event_name": "Project End Time",
-                "actaul_time": "2020-03-21T08:59:38.093183Z",
-                "confirm_status": true,
-                "expected_time": null,
                 "description": "This is a milestone.",
+                "confirm_status": true,
+                "timestamp": null,
                 "complete_rate": 15,
                 "version": 2,
                 "update_time": "2020-01-20T08:59:38.093183Z",
@@ -1657,6 +1650,16 @@ Create a new schedules
 
     Only assigner can use
 
+- PARAMS
+
+    Key|Value|Description
+    :---:|:---:|:---:
+    event_name| Project Begin Time | the name of schedules
+    description | This is a description | the description of schedules
+    timestamp | 2020-03-21T08:59:38.093183Z | the timestamp of schedules
+    complete_rate | 15 | the complete_rate of schedules
+    order | 2 | it indicate this record belong to which order
+
 - HEADERS
 
     Key|Value
@@ -1672,7 +1675,7 @@ Create a new schedules
     {
         "event_name": "Project End Time",
         "description": "This is a milestone.",
-        "expected_time": "2020-03-21T08:59:38.093183Z",
+        "timestamp": "2020-03-21T08:59:38.093183Z",
         "complete_rate": 15,
         "order": 1,
     }
@@ -1686,8 +1689,7 @@ Create a new schedules
         "event_name": "Project End Time",
         "description": "This is a milestone.",
         "confirm_status": true,
-        "actual_time": null,
-        "expected_time": "2020-03-21T08:59:38.093183Z",
+        "timestamp": "2020-03-21T08:59:38.093183Z",
         "version": null,
         "complete_rate": 15,
         "created_time": "2020-07-15T05:41:07.993820Z",
@@ -1720,7 +1722,7 @@ Update partial details of schedules by schedule `id`
     :---:|:---:|:---:
     event_name| Project Begin Time | the name of schedules
     description | This is a description | the description of schedules
-    expected_time | 2020-03-21T08:59:38.093183Z | the expected_time of schedules
+    timestamp | 2020-03-21T08:59:38.093183Z | the timestamp of schedules
     complete_rate | 15 | the complete_rate of schedules
     order | 2 | it indicate this record belong to which order
 
@@ -1739,7 +1741,7 @@ Update partial details of schedules by schedule `id`
     {
         "id": 1,
         "event_name": "MVP Time",
-        "expected_time": "2020-03-21T08:59:38.093183Z",
+        "timestamp": "2020-03-21T08:59:38.093183Z",
     }
     ```
 
@@ -1751,8 +1753,7 @@ Update partial details of schedules by schedule `id`
         "event_name": "Project End Time",
         "description": "This is a milestone.",
         "confirm_status": true,
-        "actual_time": null,
-        "expected_time": "2020-03-21T08:59:38.093183Z",
+        "timestamp": "2020-03-21T08:59:38.093183Z",
         "version": null,
         "complete_rate": 15,
         "created_time": "2020-07-15T05:41:07.993820Z",

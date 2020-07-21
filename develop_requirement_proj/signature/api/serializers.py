@@ -73,7 +73,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Schedule
         fields = "__all__"
-        read_only_fields = ['actual_time', 'created_time', 'update_time', 'version', 'confirm_status']
+        read_only_fields = ['created_time', 'update_time', 'version', 'confirm_status']
 
 
 class ProgressSerializer(serializers.ModelSerializer):
