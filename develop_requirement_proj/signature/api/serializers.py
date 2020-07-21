@@ -75,7 +75,13 @@ class ScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Schedule
         fields = "__all__"
-        read_only_fields = ['created_time', 'update_time', 'version', 'confirm_status']
+        read_only_fields = [
+            'confirm_status',
+            'timestamp',
+            'created_time'
+            'update_time',
+            'version',
+        ]
 
 
 class ProgressSerializer(serializers.ModelSerializer):
@@ -131,7 +137,17 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = "__all__"
-        read_only_fields = ['link', 'category', 'initiator', 'created_time', 'owner']
+        read_only_fields = [
+            'link',
+            'category',
+            'recipient',
+            'actor',
+            'verb',
+            'action_object',
+            'target',
+            'created_time',
+            'deleted_time'
+        ]
 
 
 class OrderDynamicSerializer(serializers.ModelSerializer):
@@ -472,6 +488,11 @@ class AccountEasySerializer(serializers.Serializer):
 
 class SignatureSerializer(serializers.ModelSerializer):
 
+    def validate_status(self, value):
+        if value not in ['Approve', 'Return', 'Close']:
+            raise serializers.ValidationError('This is not reasonable value.')
+        return value
+
     def to_representation(self, instance):
         """
         Transform emeployee_id to employee information.
@@ -486,7 +507,14 @@ class SignatureSerializer(serializers.ModelSerializer):
     class Meta:
         model = Signature
         fields = "__all__"
-        read_only_fields = ['sequence', 'signer', 'sign_unit', 'signed_time', 'role_group', 'order']
+        read_only_fields = [
+            'sequence',
+            'signer',
+            'sign_unit',
+            'signed_time',
+            'role_group',
+            'order'
+        ]
 
 
 class OrderTrackerSerializer(serializers.ModelSerializer):

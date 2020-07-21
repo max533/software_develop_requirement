@@ -2732,13 +2732,13 @@ parent: TreeForeignKey
 
 ---
 
-`History Table`
+`Comment Table`
 
 id: IntegerField (primary_key=True)
 
 editor: CharField
 
-comment: TextField
+contnet: TextField
 
 created_time: DateTimeField
 

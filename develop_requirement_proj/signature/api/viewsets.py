@@ -17,6 +17,7 @@ from django.utils import timezone
 
 from rest_framework import mixins, response, serializers, views, viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 
 from ..models import (
     Account, Comment, Document, Notification, Order, Progress, Project,
@@ -24,6 +25,11 @@ from ..models import (
 )
 from .filters import OrderFilter, OrderFilterBackend
 from .paginations import OrderPagination
+from .permissions import (
+    CommentPermission, DocumentPermission, NotificationPermission,
+    OrderPermission, ProgressPermission, SchedulePermission,
+    SignaturePermission,
+)
 from .serializers import (
     AccountEasySerializer, AccountSerializer, CommentSerializer,
     DocumentSerializer, EmployeeNonModelSerializer, NotificationSerializer,
@@ -158,6 +164,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
     """ Provide Document resource with `retrieve`, `list`, `create`, `partial_update` and `delete` """
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
+    permission_classes = [IsAuthenticated & DocumentPermission]
 
     def get_queryset(self):
         queryset = self.queryset
@@ -171,6 +178,7 @@ class ScheduleViewSet(SignatureMixin, viewsets.ModelViewSet):
     """ Provide Schedule resource with `retrieve`, `list`, `create`, `partial_update` and `delete` """
     queryset = Schedule.objects.all()
     serializer_class = ScheduleSerializer
+    permission_classes = [IsAuthenticated & SchedulePermission]
 
     def get_queryset(self):
         """ Select queryset depend on which action and filter queryset by order_id """
@@ -269,6 +277,7 @@ class ProgressViewSet(viewsets.ModelViewSet):
     """ Provide Development Progress Resource with all action. """
     queryset = Progress.objects.all()
     serializer_class = ProgressSerializer
+    permission_classes = [IsAuthenticated & ProgressPermission]
 
     def get_queryset(self):
         """ Filter Development Progress by order_id """
@@ -300,6 +309,7 @@ class CommentViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.Ge
     """ Provide Comments resource with `list` and `create` action """
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated & CommentPermission]
 
     def get_queryset(self):
         """ Filter comment by order_id """
@@ -334,6 +344,7 @@ class NotificationVewSet(mixins.ListModelMixin,
 
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
+    permission_classes = [IsAuthenticated & NotificationPermission]
 
     def get_queryset(self):
         """ Get current user's notification """
@@ -356,6 +367,7 @@ class OrderViewSet(MessageMixin,
     pagination_class = OrderPagination
     filter_backends = [OrderFilterBackend]
     filter_class = OrderFilter
+    permission_classes = [IsAuthenticated & OrderPermission]
 
     def get_serializer_context(self):
         """
@@ -983,6 +995,7 @@ class SignatureViewSet(MessageMixin,
                        viewsets.GenericViewSet):
     queryset = Signature.objects.all()
     serializer_class = SignatureSerializer
+    permission_classes = [IsAuthenticated & SignaturePermission]
 
     def get_queryset(self):
         queryset = self.queryset.filter(order=self.kwargs['orders_pk'])

@@ -205,7 +205,7 @@ class Progress(models.Model):
 class Comment(models.Model):
     """ Order's Comment Model """
     editor = models.CharField(max_length=50)
-    comment = models.TextField()
+    content = models.TextField()
     created_time = models.DateTimeField(auto_now_add=True, null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
