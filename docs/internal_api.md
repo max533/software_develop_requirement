@@ -1265,7 +1265,7 @@ Filter documents resource by order id
                 "extension": "85014686",
                 "job_title": "處長",
             },
-            "created_time": "2020-03-21T08:26:38.093183Z",
+            "update_time": "2020-03-21T08:26:38.093183Z",
         },
         {
             "id": 2,
@@ -1280,7 +1280,7 @@ Filter documents resource by order id
                 "extension": "85014686",
                 "job_title": "處長",
             },
-            "created_time": "2020-03-21T08:26:38.093183Z",
+            "update_time": "2020-03-21T08:26:38.093183Z",
         },
     ]
     ```
@@ -1323,7 +1323,7 @@ Fetch a specific documents resource by documents `id`
         "path": "http://dqms.wistron.com/document_1.pdf",
         "size": "1024000",
         "uploder": "10612704",
-        "created_time": "2020-03-21T08:26:38.093183Z",
+        "update_time": "2020-03-21T08:26:38.093183Z",
     }
     ```
 
@@ -1370,7 +1370,7 @@ Create a new documents
         "path": "http://dqms.wistron.com/document_1.pdf",
         "size": "1024000",
         "uploder": "10612704",
-        "created_time": "2020-03-21T08:26:38.093183Z",
+        "update_time": "2020-03-21T08:26:38.093183Z",
     }
     ```
 
@@ -1429,7 +1429,7 @@ Update partial details of specific documents by document `id`
         "path": "http://dqms.wistron.com/document_1.pdf",
         "size": "1024000",
         "uploder": "10612704",
-        "created_time": "2020-03-21T08:26:38.093183Z",
+        "update_time": "2020-03-21T08:26:38.093183Z",
     }
     ```
 

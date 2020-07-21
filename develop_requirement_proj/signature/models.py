@@ -87,8 +87,8 @@ class Order(MPTTModel):
     """ Order Model """
     account = models.IntegerField(_("order's account"))
     project = models.IntegerField(_("order's project"))
-    develop_team_function = models.CharField(_("developer's function team"), max_length=20)
-    develop_team_sub_function = models.CharField(_("developer's sub function team"), max_length=20)
+    develop_team_function = models.CharField(_("developer's function team"), max_length=50)
+    develop_team_sub_function = models.CharField(_("developer's sub function team"), max_length=50)
     status = fields.JSONField(_("order's current status"))
     initiator = models.CharField(_("initiator's employee_id"), max_length=50)
     assigner = models.CharField(_("assigner's employee_id (PO/PM)"), max_length=50)
@@ -99,7 +99,7 @@ class Order(MPTTModel):
     form_end_time = models.DateTimeField(_("order's end time"), null=True)
     expected_develop_duration_day = models.FloatField(_("expected development duration (days)"), null=True, blank=True)
     actual_develop_duration_day = models.FloatField(_("actual development duration (days)"), null=True, blank=True)
-    repository_url = models.URLField(_("repository url of source code"), max_length=1000, blank=True)
+    repository_url = models.URLField(_("repository url of source code"), max_length=4000, blank=True)
     update_time = models.DateTimeField(auto_now=True, null=True)
     update_staff = models.CharField(max_length=50)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
@@ -115,16 +115,16 @@ class Order(MPTTModel):
 
 class Document(models.Model):
     """ Order's Document Model """
-    path = models.FileField(_("document's relative path"), max_length=200, upload_to=settings.MEDIA_ROOT)
-    name = models.CharField(_("docuemnt's name"), max_length=200)
-    description = models.CharField(_("document's description"), max_length=1000)
+    path = models.FileField(_("document's relative path"), max_length=4000, upload_to=settings.MEDIA_ROOT)
+    name = models.TextField(_("docuemnt's name"))
+    description = models.TextField(_("document's description"))
     size = models.PositiveIntegerField()
-    created_time = models.DateTimeField(auto_now_add=True)
-    uploader = models.CharField(max_length=20)
+    update_time = models.DateTimeField(auto_now=True)
+    uploader = models.CharField(max_length=50)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['order', 'created_time']
+        ordering = ['order', 'update_time']
         verbose_name = _('document')
         verbose_name_plural = _('documents')
 
@@ -134,7 +134,7 @@ class Document(models.Model):
 
 class Schedule(models.Model):
     """ Order's Current Schedule Model """
-    event_name = models.CharField(max_length=100)
+    event_name = models.CharField(max_length=500)
     description = models.TextField()
     confirm_status = models.BooleanField(default=False)
     timestamp = models.DateTimeField(null=True)
@@ -155,7 +155,7 @@ class Schedule(models.Model):
 
 class ScheduleTracker(models.Model):
     """ Order's Schedule Tracker Model"""
-    event_name = models.CharField(max_length=100)
+    event_name = models.CharField(max_length=500)
     description = models.TextField()
     confirm_status = models.BooleanField(default=False)
     timestamp = models.DateTimeField(null=True)
@@ -176,12 +176,12 @@ class ScheduleTracker(models.Model):
 
 class Progress(models.Model):
     """ Order's Development Progress Model """
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=500)
     description = models.TextField()
     complete_rate = models.PositiveIntegerField()
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    editor = models.CharField(max_length=20)
+    editor = models.CharField(max_length=50)
     update_time = models.DateTimeField(auto_now_add=True, null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
@@ -196,7 +196,7 @@ class Progress(models.Model):
 
 class Comment(models.Model):
     """ Order's Comment Model """
-    editor = models.CharField(max_length=20)
+    editor = models.CharField(max_length=50)
     comment = models.TextField()
     created_time = models.DateTimeField(auto_now_add=True, null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
@@ -220,10 +220,10 @@ class Notification(models.Model):
         ('negotiation', 'Negotiation'),
         ('signature', 'Signature'),
     ]
-    link = models.URLField(max_length=1000)
+    link = models.URLField(max_length=4000)
     read_status = models.BooleanField(_('the read status of the notification'), default=False)
     category = models.CharField(max_length=20, choices=NOTIFICATION_CATEGORY_CHOICE, default='unknown')
-    recipient = models.CharField('the owner of the notification', max_length=20)
+    recipient = models.CharField('the owner of the notification', max_length=50)
     actor = models.TextField()
     verb = models.TextField()
     action_object = models.TextField()
@@ -243,12 +243,12 @@ class Notification(models.Model):
 class Signature(models.Model):
     """ Order's Signature Model """
     sequence = models.PositiveIntegerField(null=True)
-    signer = models.CharField(max_length=20)
-    sign_unit = models.CharField(_('the department of signing'), max_length=20)
-    status = models.CharField(max_length=20)
+    signer = models.CharField(max_length=50)
+    sign_unit = models.CharField(_('the department of signing'), max_length=50)
+    status = models.CharField(max_length=50)
     comment = models.TextField()
     signed_time = models.DateTimeField(null=True)
-    role_group = models.CharField(max_length=20)
+    role_group = models.CharField(max_length=50)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
     class Meta:
@@ -264,8 +264,8 @@ class OrderTracker(models.Model):
     """ Order Tracker Model """
     account = models.IntegerField(_("order's account"), null=True)
     project = models.IntegerField(_("order's project"), null=True)
-    develop_team_function = models.CharField(_("developer's function team"), max_length=20)
-    develop_team_sub_function = models.CharField(_("developer's sub function team"), max_length=20)
+    develop_team_function = models.CharField(_("developer's function team"), max_length=50)
+    develop_team_sub_function = models.CharField(_("developer's sub function team"), max_length=50)
     status = fields.JSONField(_("order's current status"), default=dict)
     initiator = models.CharField(_("initiator's employee_id"), max_length=50)
     assigner = models.CharField(_("assigner's employee_id (PO/PM)"), max_length=50)
@@ -276,7 +276,7 @@ class OrderTracker(models.Model):
     form_end_time = models.DateTimeField(_("order's end time"), null=True)
     expected_develop_duration_day = models.FloatField(_("expected development duration (days)"), null=True, blank=True)
     actual_develop_duration_day = models.FloatField(_("actual development duration (days)"), null=True, blank=True)
-    repository_url = models.URLField(_("repository url of source code"), max_length=1000, blank=True)
+    repository_url = models.URLField(_("repository url of source code"), max_length=4000, blank=True)
     update_time = models.DateTimeField(auto_now=True, null=True)
     update_staff = models.CharField(max_length=50)
     parent = models.PositiveIntegerField(null=True)

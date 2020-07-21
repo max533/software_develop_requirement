@@ -60,7 +60,7 @@ class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Document
         fields = "__all__"
-        read_only_fields = ['size', 'created_time', 'uploader']
+        read_only_fields = ['size', 'update_time', 'uploader']
 
 
 class ScheduleSerializer(serializers.ModelSerializer):

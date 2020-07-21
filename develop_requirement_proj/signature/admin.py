@@ -65,7 +65,7 @@ class DocumentAdmin(admin.ModelAdmin):
         'name',
         'description',
         'size',
-        'created_time',
+        'update_time',
         'uploader',
         'order'
     )
