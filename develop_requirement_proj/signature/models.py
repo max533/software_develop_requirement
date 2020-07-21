@@ -1,10 +1,18 @@
 """ signature database model """
+from pathlib import Path
+
 from mptt.models import MPTTModel, TreeForeignKey
 
 from django.conf import settings
 from django.contrib.postgres import fields
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+
+def upload_document(instance, filename):
+    folder_path = Path(settings.MEDIA_ROOT) / str(instance.order.id)
+    filepath = folder_path / filename
+    return filepath
 
 
 class Account:
@@ -115,7 +123,7 @@ class Order(MPTTModel):
 
 class Document(models.Model):
     """ Order's Document Model """
-    path = models.FileField(_("document's relative path"), max_length=4000, upload_to=settings.MEDIA_ROOT)
+    path = models.FileField(_("document's relative path"), max_length=4000, upload_to=upload_document)
     name = models.TextField(_("docuemnt's name"))
     description = models.TextField(_("document's description"))
     size = models.PositiveIntegerField()
