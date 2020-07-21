@@ -258,11 +258,11 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 # -------------------------------------------------------------------------------
 # django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
 REST_FRAMEWORK = {
-    # 'DEFAULT_AUTHENTICATION_CLASSES': (
-    #     'rest_framework.authentication.SessionAuthentication',
-    #     'rest_framework.authentication.TokenAuthentication',
-    # ),
-    # "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
+    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.AcceptHeaderVersioning',
 }
 
@@ -280,6 +280,15 @@ CAS_VERSION = '3'
 CAS_APPLY_ATTRIBUTES_TO_USER = True
 # https://djangocas.dev/docs/latest/configuration.html#cas-redirect-url-optional
 CAS_REDIRECT_URL = "/"
+
+
+# CSRF Cookie Name
+# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-name
+CSRF_COOKIE_NAME = 'csrftoken_drs'
+
+# Session Cookie Name
+# https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-name
+SESSION_COOKIE_NAME = 'session_drs'
 
 
 # Third-Party API Setting

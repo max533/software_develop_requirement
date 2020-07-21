@@ -123,7 +123,7 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'editor',
-        'comment',
+        'content',
         'created_time',
         'order',
     )
