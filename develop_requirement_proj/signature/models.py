@@ -240,7 +240,7 @@ class Notification(models.Model):
     deleted_time = models.DateTimeField(null=True)
 
     class Meta:
-        ordering = ['recipient', 'read_status', 'created_time']
+        ordering = ['recipient', 'read_status', '-created_time']
         verbose_name = _('notification')
         verbose_name_plural = _('notifications')
 

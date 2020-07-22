@@ -353,6 +353,27 @@ class NotificationVewSet(mixins.ListModelMixin,
         queryset = self.queryset.filter(recipient=employee_id)
         return queryset
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        unread_count = queryset.filter(read_status=False).count()
+
+        unread_count = unread_count if unread_count is not None else 0
+
+        return response.Response(
+            {
+                "unread_count": unread_count,
+                "data": serializer.data
+            }
+        )
+
 
 class OrderViewSet(MessageMixin,
                    SignatureMixin,
