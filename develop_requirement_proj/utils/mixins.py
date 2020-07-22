@@ -445,8 +445,6 @@ class SignatureMixin(QueryDataMixin):
         next_signer_department_id = signer_department_id
         while (signer == next_signer and count < 5):
             non_zero_part = len(signer_department_id) - count - 1
-            print(non_zero_part)
-            print(next_signer_department_id)
             next_signer_department_id = signer_department_id[:non_zero_part] + '0' * (count + 1)
             status, result = self.get_department_via_query(department_id=next_signer_department_id)
             if not (status and result):
@@ -454,7 +452,6 @@ class SignatureMixin(QueryDataMixin):
                 logger.warning(warn_message)
                 raise ServiceUnavailable
 
-            print(signer, next_signer)
             if next_signer_department_id in result:
                 next_signer = result[next_signer_department_id].get('dm', None)
             count += 1
