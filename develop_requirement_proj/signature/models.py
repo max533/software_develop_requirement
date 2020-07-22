@@ -113,7 +113,7 @@ class Order(MPTTModel):
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
 
     class Meta:
-        ordering = ['form_begin_time']
+        ordering = ['-form_begin_time']
         verbose_name = _('order')
         verbose_name_plural = _('orders')
 
@@ -285,13 +285,13 @@ class OrderTracker(models.Model):
     expected_develop_duration_day = models.FloatField(_("expected development duration (days)"), null=True, blank=True)
     actual_develop_duration_day = models.FloatField(_("actual development duration (days)"), null=True, blank=True)
     repository_url = models.URLField(_("repository url of source code"), max_length=4000, blank=True)
-    update_time = models.DateTimeField(auto_now=True, null=True)
+    update_time = models.DateTimeField(null=True)
     update_staff = models.CharField(max_length=50)
     parent = models.PositiveIntegerField(null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['order', 'update_time']
+        ordering = ['order', '-update_time']
         verbose_name = _('order tracker')
         verbose_name_plural = _('order trackers')
 

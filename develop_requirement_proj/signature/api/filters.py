@@ -24,7 +24,7 @@ class OrderFilterBackend(filters.DjangoFilterBackend):
         if 'filter' in request.query_params:
             if request.query_params['filter']:
                 kwarg_data = kwargs['data'].copy()
-                print(kwarg_data)
+
                 del kwarg_data['filter']
                 try:
                     query_string = json.loads(request.query_params['filter'])

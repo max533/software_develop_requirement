@@ -455,6 +455,12 @@ class OrderViewSet(MessageMixin,
             kwargs['fields'] = [field for field in fields.split(',')]
         return serializer_class(*args, **kwargs)
 
+    def get_serializer_class(self):
+        serializer_class = super().get_serializer_class()
+        if self.action == 'history_list':
+            serializer_class = OrderTrackerSerializer
+        return serializer_class
+
     def get_paginated_response(self, data):
         """ Adjust the pagination's response to fit bootstrap-table server-side filter """
         assert self.paginator is not None
@@ -465,6 +471,14 @@ class OrderViewSet(MessageMixin,
                 'totalNotFilter': len(self.queryset),
             }
         )
+
+    @action(methods=['GET'], detail=True, url_path='trackers', url_name='trackers')
+    def history_list(self, request, *args, **kwargs):
+        """ Get the ancestor list of the order """
+        order_instance = self.get_object()
+        queryset = order_instance.ordertracker_set.all()
+        serializer = self.get_serializer(queryset, many=True)
+        return response.Response(serializer.data)
 
     @action(methods=['GET'], detail=True, url_path='ancestors', url_name='ancestors')
     def ancestor_list(self, request, *args, **kwargs):
@@ -485,14 +499,14 @@ class OrderViewSet(MessageMixin,
         order_status = order.status
 
         # Save OrderTracker
-        order_tracker_serializer = OrderTrackerSerializer(data=model_to_dict(order))
+        order_tracker_dict = model_to_dict(order)
+        order_tracker_dict['form_begin_time'] = order.form_begin_time
+        order_tracker_dict['update_time'] = order.update_time
+        order_tracker_dict['form_end_time'] = order.form_end_time
+        order_tracker_dict['order'] = order.id
+        order_tracker_serializer = OrderTrackerSerializer(data=order_tracker_dict)
         if order_tracker_serializer.is_valid(raise_exception=True):
-            order_tracker_serializer.save(
-                order=order,
-                form_begin_time=order.form_begin_time,
-                form_end_time=order.form_end_time,
-                update_time=order.update_time
-            )
+            order_tracker_serializer.save()
 
         link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
         if 'P0' in order_status:
@@ -568,14 +582,14 @@ class OrderViewSet(MessageMixin,
         order_status = order.status
 
         # Save OrderTracker
-        order_tracker_serializer = OrderTrackerSerializer(data=model_to_dict(order))
+        order_tracker_dict = model_to_dict(order)
+        order_tracker_dict['form_begin_time'] = order.form_begin_time
+        order_tracker_dict['update_time'] = order.update_time
+        order_tracker_dict['form_end_time'] = order.form_end_time
+        order_tracker_dict['order'] = order.id
+        order_tracker_serializer = OrderTrackerSerializer(data=order_tracker_dict)
         if order_tracker_serializer.is_valid(raise_exception=True):
-            order_tracker_serializer.save(
-                order=order,
-                form_begin_time=order.form_begin_time,
-                form_end_time=order.form_end_time,
-                update_time=order.update_time
-            )
+            order_tracker_serializer.save()
 
         link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
         if 'P0' in order_status:
@@ -781,6 +795,13 @@ class OrderViewSet(MessageMixin,
                 elif not skip_signature_flag and create_new_signaure_flag:
                     # Find next Singer
                     next_signer, next_signer_department_id = self.find_next_signer(order_id, order.assigner)
+                    # Order Status Change
+                    order.status = {
+                        "P4": {
+                            next_signer: ""
+                        }
+                    }
+                    order.save()
                     # Create Signature
                     sequence_max = order.signature_set.aggregate(Max('sequence'))['sequence__max']
                     sequence_new = 1 if sequence_max is None else sequence_max + 1
@@ -794,13 +815,7 @@ class OrderViewSet(MessageMixin,
                         'order': order
                     }
                     Signature.objects.create(**next_signature)
-                    # Order Status Change
-                    order.status = {
-                        "P4": {
-                            next_signer: ""
-                        }
-                    }
-                    order.save()
+
                     # Send email to next signer
                     self.send_mail_2_single_user(next_signer, link, category='confirm')
                 else:
@@ -1061,15 +1076,15 @@ class SignatureViewSet(MessageMixin,
         direction_flag = signature.status
         order = Order.objects.get(pk=signature.order.id)
 
-        # Save to OrderTracker
-        order_tracker_serializer = OrderTrackerSerializer(data=model_to_dict(order))
+        # Save OrderTracker
+        order_tracker_dict = model_to_dict(order)
+        order_tracker_dict['form_begin_time'] = order.form_begin_time
+        order_tracker_dict['update_time'] = order.update_time
+        order_tracker_dict['form_end_time'] = order.form_end_time
+        order_tracker_dict['order'] = order.id
+        order_tracker_serializer = OrderTrackerSerializer(data=order_tracker_dict)
         if order_tracker_serializer.is_valid(raise_exception=True):
-            order_tracker_serializer.save(
-                order=order,
-                form_begin_time=order.form_begin_time,
-                form_end_time=order.form_end_time,
-                update_time=order.update_time
-            )
+            order_tracker_serializer.save()
 
         link = f"{self.request.build_absolute_uri(location='/')}?order={order.id}"
         if direction_flag == 'Approve':
@@ -1091,7 +1106,7 @@ class SignatureViewSet(MessageMixin,
                     order.save()
                     # Send email to assigner
                     self.send_mail_2_single_user(order.assigner, link, category='confirm')
-                elif not skip_signature_flag:
+                elif not skip_signature_flag and create_new_signaure_flag:
                     # Find next signer
                     next_signer, next_signer_department_id = self.find_next_signer(order.id, signature.signer)
                     # Order Status Change
@@ -1116,6 +1131,16 @@ class SignatureViewSet(MessageMixin,
                     Signature.objects.create(**next_signature)
                     # Send email to next signer
                     self.send_mail_2_single_user(next_signer, link, category='signing')
+                elif not skip_signature_flag and not create_new_signaure_flag:
+                    # Find next signer
+                    next_signer, next_signer_department_id = self.find_next_signer(order.id, signature.signer)
+                    # Order Status Change
+                    order.status = {
+                        'P1': {
+                            next_signer: ''
+                        },
+                    }
+                    order.save()
             elif 'P4' in order.status:
                 skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order.id, 'P4')
                 # Debug Code
@@ -1139,7 +1164,7 @@ class SignatureViewSet(MessageMixin,
                     if 'member' in order.developers:
                         recipient_employee_id_list.extend(order.developers['member'])
                     self.send_mail_2_multiple_user(recipient_employee_id_list, link, category='confirm')
-                elif not skip_signature_flag:
+                elif not skip_signature_flag and create_new_signaure_flag:
                     # Find next signer
                     next_signer, next_signer_department_id = self.find_next_signer(order.id, signature.signer)
                     # Order Status Change
@@ -1165,7 +1190,16 @@ class SignatureViewSet(MessageMixin,
                     Signature.objects.create(**next_signature)
                     # Send email to next signer
                     self.send_mail_2_single_user(next_signer, link, category='signing')
-
+                elif not skip_signature_flag and create_new_signaure_flag:
+                    # Find next signer
+                    next_signer, next_signer_department_id = self.find_next_signer(order.id, signature.signer)
+                    # Order Status Change
+                    order.status = {
+                        'P4': {
+                            next_signer: ''
+                        },
+                    }
+                    order.save()
             # Send notification to all order attendent
             category = 'signature'
             actor = self.request.user.get_english_name()
