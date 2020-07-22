@@ -2174,16 +2174,10 @@ Delete a progress detail by progress `id`
 ### `GET` Fetch Notifications Collection by Current User
 
 ```url
-{{service_url}}/api/notifications/?param=value
+{{service_url}}/api/notifications/
 ```
 
 Fetch notifications collection resource by current user
-
-- PARAMS
-
-    Key|Value|Description
-    :---:|:---:|:---:
-    read_status | true/false | notifications read status  (exact search)
 
 - HEADERS
 
@@ -2203,11 +2197,10 @@ Fetch notifications collection resource by current user
 
     ```json
     {
-        "all_count": 100,
-        "unread_count": 25,
-        "all_list" : [
+        "unread_count": 2,
+        "data" : [
             {
-                "id": 1,
+                "id": 4,
                 "link": "http://xxx.xxx.xxx.xxx/?abc=123",
                 "read_status": false,
                 "category": "approve",
@@ -2216,24 +2209,11 @@ Fetch notifications collection resource by current user
                 "verb": "approve",
                 "action_object": "order",
                 "target": "",
-                "created_time": "2020-03-10T08:26:38.093183Z",
+                "created_time": "2020-03-10T11:26:38.093183Z",
                 "delete_time": "2020-04-05T09:10:20.000000Z"
             },
             {
-                "id": 1,
-                "link": "http://xxx.xxx.xxx.xxx/?abc=123",
-                "read_status": false,
-                "category": "assign",
-                "recipient": "10612704",
-                "actor": "Luis Liao",
-                "verb": "assign",
-                "action_object": "Jeff SH Wang as assginer",
-                "target": "",
-                "created_time": "2020-03-10T08:26:38.093183Z",
-                "deleted_time": null
-            },
-            {
-                "id": 2,
+                "id": 3,
                 "link": "http://xxx.xxx.xxx.xxx/?def=123",
                 "read_status": false,
                 "category": "change_schedule",
@@ -2242,11 +2222,11 @@ Fetch notifications collection resource by current user
                 "verb": "change",
                 "action_object": "schedule",
                 "target": "on order",
-                "created_time": "2020-03-10T08:26:38.093183Z",
+                "created_time": "2020-03-10T10:26:38.093183Z",
                 "deleted_time": null
             },
             {
-                "id": 3,
+                "id": 2,
                 "link": "http://xxx.xxx.xxx.xxx/?def=123",
                 "read_status": true,
                 "category": "close",
@@ -2255,11 +2235,11 @@ Fetch notifications collection resource by current user
                 "verb": "close",
                 "action_object": "order",
                 "target":,
-                "created_time": "2020-03-10T08:26:38.093183Z",
+                "created_time": "2020-03-10T09:26:38.093183Z",
                 "deleted_time": "2020-04-05T09:10:20.000000Z"
             },
             {
-                "id": 4,
+                "id": 1,
                 "link": "http://xxx.xxx.xxx.xxx/?def=123",
                 "read_status": true,
                 "category": "return",
