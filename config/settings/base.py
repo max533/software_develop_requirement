@@ -213,7 +213,7 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "verbose": {
-            "format": "[{asctime}] {levelname:8} | {process} {thread} | {module}.{funcName} {lineno:3} @ {filename} => {message}",
+            "format": "[{asctime}] {levelname:8} | {process} {thread} | {module}.{funcName} {lineno:3} @ {filename} => {message}", # noqa
             'style': '{',
         }
     },

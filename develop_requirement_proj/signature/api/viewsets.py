@@ -26,6 +26,7 @@ from ..models import (
     Schedule, ScheduleTracker, Signature,
 )
 from .filters import OrderFilter, OrderFilterBackend
+from .mixins import CacheMixin
 from .paginations import OrderPagination
 from .permissions import (
     CommentPermission, DocumentPermission, NotificationPermission,
@@ -33,10 +34,9 @@ from .permissions import (
     SignaturePermission,
 )
 from .serializers import (
-    AccountEasySerializer, AccountSerializer, CommentSerializer,
-    DocumentSerializer, EmployeeNonModelSerializer, NotificationSerializer,
-    OrderDynamicSerializer, OrderTrackerSerializer, ProgressSerializer,
-    ProjectEasySerializer, ProjectSerializer, ScheduleSerializer,
+    AccountSerializer, CommentSerializer, DocumentSerializer,
+    NotificationSerializer, OrderDynamicSerializer, OrderTrackerSerializer,
+    ProgressSerializer, ProjectSerializer, ScheduleSerializer,
     SignatureSerializer,
 )
 
@@ -307,7 +307,7 @@ class ScheduleViewSet(SignatureMixin, viewsets.ModelViewSet):
         Schedule.objects.bulk_update(schedules, ['confirm_status'])
 
 
-class ProgressViewSet(viewsets.ModelViewSet):
+class ProgressViewSet(CacheMixin, viewsets.ModelViewSet):
     """ Provide Development Progress Resource with all action. """
     queryset = Progress.objects.all()
     serializer_class = ProgressSerializer
@@ -324,18 +324,7 @@ class ProgressViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         """ Provide the employee inforamtion to use in to_representation() at serializer.py """
         context = super().get_serializer_context()
-        objects = cache.get('employees')
-        if objects is None:
-            instance = Employee.objects.using('hr').all().values()
-            serializer = EmployeeNonModelSerializer(instance, many=True)
-
-            objects = {}
-            for employee in serializer.data:
-                employee_id = employee['employee_id']
-                if employee_id not in objects:
-                    objects[employee_id] = employee
-            cache.set('employees', objects, 60 * 60)
-        context['employees'] = objects
+        context['employees'] = self.fetch_simple_employees_from_cache()
         return context
 
 
@@ -356,18 +345,7 @@ class CommentViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.Ge
     def get_serializer_context(self):
         """ Provide the editor inforamtion to use in to_representation() at serializer.py """
         context = super().get_serializer_context()
-        objects = cache.get('employees')
-        if objects is None:
-            instance = Employee.objects.using('hr').all().values()
-            serializer = EmployeeNonModelSerializer(instance, many=True)
-
-            objects = {}
-            for employee in serializer.data:
-                employee_id = employee['employee_id']
-                if employee_id not in objects:
-                    objects[employee_id] = employee
-            cache.set('employees', objects, 60 * 60)
-        context['employees'] = objects
+        context['employees'] = self.fetch_simple_employees_from_cache()
         return context
 
 
@@ -431,58 +409,12 @@ class OrderViewSet(MessageMixin,
         """
         # TODO Use asyncio to speed up the reuqest with third-party api
         context = super().get_serializer_context()
-
         # Get project information
-        project_object = cache.get('projects', None)
-        if project_object is None:
-            project_object = {}
-            try:
-                projects = self.get_project_via_search()
-            except Exception as err:
-                logger.error(err)
-                raise ServiceUnavailable
-
-            serializer = ProjectEasySerializer(projects, many=True)
-            for project in serializer.data:
-                project_id = project['id']
-                if project_id not in project_object:
-                    project_object[project_id] = project
-            cache.set('projects', project_object, 60 * 60)
-
-        context['projects'] = project_object
-
+        context['projects'] = self.fetch_simple_projects_from_cache()
         # Get account information
-        account_object = cache.get('accounts', None)
-        if account_object is None:
-            account_object = {}
-            try:
-                accounts = self.get_account_via_search()
-            except Exception as err:
-                logger.error(err)
-                raise ServiceUnavailable
-
-            serializer = AccountEasySerializer(accounts, many=True)
-            for account in serializer.data:
-                account_id = account['id']
-                if account_id not in account_object:
-                    account_object[account_id] = account
-            cache.set('accounts', account_object, 60 * 60)
-
-        context['accounts'] = account_object
-
+        context['accounts'] = self.fetch_simple_accounts_from_cache()
         # Get employee information
-        employee_object = cache.get('employees', None)
-        if employee_object is None:
-            instance = Employee.objects.using('hr').all().values()
-            serializer = EmployeeNonModelSerializer(instance, many=True)
-
-            employee_object = {}
-            for employee in serializer.data:
-                employee_id = employee['employee_id']
-                if employee_id not in employee_object:
-                    employee_object[employee_id] = employee
-            cache.set('employees', employee_object, 60 * 60)
-        context['employees'] = employee_object
+        context['employees'] = self.fetch_simple_employees_from_cache()
 
         if self.action in ['create', 'update', 'partial_update']:
             # Get function_team and sub_function information
@@ -1088,59 +1020,12 @@ class SignatureViewSet(MessageMixin,
         """
         # TODO Use asyncio to speed up the reuqest with third-party api
         context = super().get_serializer_context()
-
         # Get project information
-        project_object = cache.get('projects', None)
-        if project_object is None:
-            project_object = {}
-            try:
-                projects = self.get_project_via_search()
-            except Exception as err:
-                logger.error(err)
-                raise ServiceUnavailable
-
-            serializer = ProjectEasySerializer(projects, many=True)
-            for project in serializer.data:
-                project_id = project['id']
-                if project_id not in project_object:
-                    project_object[project_id] = project
-            cache.set('projects', project_object, 60 * 60)
-
-        context['projects'] = project_object
-
+        context['projects'] = self.fetch_simple_projects_from_cache()
         # Get account information
-        account_object = cache.get('accounts', None)
-        if account_object is None:
-            account_object = {}
-            try:
-                accounts = self.get_account_via_search()
-            except Exception as err:
-                logger.error(err)
-                raise ServiceUnavailable
-
-            serializer = AccountEasySerializer(accounts, many=True)
-            for account in serializer.data:
-                account_id = account['id']
-                if account_id not in account_object:
-                    account_object[account_id] = account
-            cache.set('accounts', account_object, 60 * 60)
-
-        context['accounts'] = account_object
-
+        context['accounts'] = self.fetch_simple_accounts_from_cache()
         # Get employee information
-        employee_object = cache.get('employees', None)
-        if employee_object is None:
-            instance = Employee.objects.using('hr').all().values()
-            serializer = EmployeeNonModelSerializer(instance, many=True)
-
-            employee_object = {}
-            for employee in serializer.data:
-                employee_id = employee['employee_id']
-                if employee_id not in employee_object:
-                    employee_object[employee_id] = employee
-            cache.set('employees', employee_object, 60 * 60)
-        context['employees'] = employee_object
-
+        context['employees'] = self.fetch_simple_employees_from_cache()
         return context
 
     def perform_update(self, serializer):
