@@ -69,7 +69,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
 
     def validate_complete_rate(self, value):
         if value < 0 or value > 100:
-            raise serializers.ValidationError('This is not a reasonable value')
+            raise serializers.ValidationError('This is not a reasonable value.')
         return value
 
     class Meta:
@@ -213,25 +213,25 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
     def validate_account(self, value):
         """ Check whether the account is in AccPro 2.0 System or not """
         if value not in self.context['accounts']:
-            raise serializers.ValidationError('The account is not reasonable value')
+            raise serializers.ValidationError('This is not a reasonable value.')
         return value
 
     def validate_project(self, value):
         """ Check whether the project is in AccPro 2.0 System or not """
         if value not in self.context['projects']:
-            raise serializers.ValidationError('The project is not reasonable value')
+            raise serializers.ValidationError('This is not a reasonable value.')
         return value
 
     def validate_develop_team_function(self, value):
         """ Check whether the develop_team_function is reasonable or not """
         if value not in self.context['function_team']:
-            raise serializers.ValidationError('The develop_team_function is not reasonable value')
+            raise serializers.ValidationError('This is not a reasonable value.')
         return value
 
     def validate_develop_team_sub_function(self, value):
         """ Check whether the develop_team_sub_function is reasonable or not """
         if value not in self.context['sub_function_team']:
-            raise serializers.ValidationError('The develop_team_sub_function is not reasonable value')
+            raise serializers.ValidationError('This is not a reasonable value.')
         return value
 
     def validate_assigner(self, value):
@@ -461,7 +461,7 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
             {"P5": {"initiator": "Close"}},
         ]
         if value not in status_list:
-            raise serializers.ValidationError('The status is not reasonable value')
+            raise serializers.ValidationError('This is not a reasonable value.')
         return value
 
     class Meta:
@@ -490,7 +490,7 @@ class SignatureSerializer(serializers.ModelSerializer):
 
     def validate_status(self, value):
         if value not in ['Approve', 'Return', 'Close']:
-            raise serializers.ValidationError('This is not reasonable value.')
+            raise serializers.ValidationError('This is not a reasonable value.')
         if self.instance.status != '':
             raise serializers.ValidationError('This signer has already signed.')
         return value
