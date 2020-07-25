@@ -17,80 +17,106 @@ class QueryDataMixin:
     """
     Use 3rd-party api to get employee, department, account, project information.
     """
-    def get_employee_via_query(self, employee_id):
+    def get_account_via_search(self, *args, **kwargs):
         """
-        Get employee info via employee_id from TeamRoster 2.0 System.
-        employee_id : str / list
-        """
-        uri = settings.TEAMROSTER_URI + 'api/query/profile'
-        if type(employee_id) == str:
-            e_id = employee_id
-        elif type(employee_id) == list:
-            e_id = ','.join(employee_id)
-        else:
-            e_id = ''
-        params = {
-            'emplid': e_id,
-            'avatar': True,
-            'dept_category': True,
-            'dept_role': True,
-            'proj_all': True,
-            'proj_all_role': True
-        }
+        Get account info via search from Account Project 2.0 System.
 
-        headers = {'X-Authorization': settings.TEAMROSTER_TOKEN}
-        r = requests.get(uri, params=params, headers=headers, timeout=3)
+        `Args`:
+        - kwargs ([dict], optional) : other params.
+        - kwarg key can contain `name`, `code`, `bu`, `sort`, `order`, `offset`, `limit`.
 
-        if r.status_code != 200:
-            error_message = (
-                f"Status Code : {r.status_code}. Error Message : " +
-                f"{r.text}. It can't get user information by <{r.url}>."
-            )
-            logger.warn(error_message)
-            return False, None
+        `Raises`:
+        - requests.HTTPError: If the http status code of the response is not 200, it will be raised.
+        - Other error will handle by `requests` library.
 
-        return True, r.json()
+        `Returns`:
+        - accounts [list(dict)]: This is the list that contain account dictionary
 
-    def get_account_via_search(self, **params):
-        """
-        Get account info via search from Account Project System.
+        `Usage Note`:
+        - Please use the function with try catch.
         """
         uri = settings.ACCOUNT_PROJECT_URI + 'api/search/accounts'
         headers = {'X-Authorization': settings.ACCOUNT_PROJECT_TOKEN}
-        r = requests.get(uri, params=params, headers=headers, timeout=3)
+
+        try:
+            r = requests.get(uri, params=kwargs, headers=headers, timeout=3)
+        except Exception as err:
+            logger.warn(err)
+            raise
 
         if r.status_code != 200:
-            error_message = (
-                f"Status Code : {r.status_code}. Error Message : " +
-                f"{r.text}. It can't get account info by <{r.url}>."
-            )
-            logger.warn(error_message)
-            return False, None
+            message = f"Status Code : {r.status_code}. It can't get account info by <{r.url}>."
+            logger.warn(message)
+            raise requests.HTTPError
 
-        return True, r.json()
+        try:
+            accounts = r.json()
+        except Exception as err:
+            logger.warn(err)
+            raise
 
-    def get_project_via_search(self, **params):
+        return accounts
+
+    def get_project_via_search(self, *args, **kwargs):
         """
         Get Project info via search from Account Project 2.0 System.
+
+        `Args`:
+        - kwargs ([dict], optional) : other params.
+        - kwarg key can contain `acct_id`, `acct_code`, `acct_bu`, `wistron_name`, `customer_name`,
+        `wistron_code`, `plm_code`, `plm_code_1`, `plm_code_2`, `type`, `status`, `business_model`,
+        `product_line`, `sort`, `order`, `offset`, `limit`.
+
+        `Raises`:
+        - requests.HTTPError: If the http status code of the response is not 200, it will be raised.
+        - Other error will handle by `requests` library.
+
+        `Returns`:
+        - projects [list(dict)]: This is the list that contain project dictionary
+
+        `Usage Note`:
+        - Please use the function with try catch.
         """
         uri = settings.ACCOUNT_PROJECT_URI + 'api/search/projects'
         headers = {'X-Authorization': settings.ACCOUNT_PROJECT_TOKEN}
-        r = requests.get(uri, params=params, headers=headers, timeout=3)
+
+        try:
+            r = requests.get(uri, params=kwargs, headers=headers, timeout=3)
+        except Exception as err:
+            logger.warn(err)
+            raise
+
         if r.status_code != 200:
-            error_message = (
-                f"Status Code : {r.status_code}. Error Message : " +
-                f"{r.text}. It can't get project info by <{r.url}>."
-            )
-            logger.warn(error_message)
-            return False, None
+            message = f"Status Code : {r.status_code}. It can't get project info by <{r.url}>."
+            logger.warn(message)
+            raise requests.HTTPError
 
-        return True, r.json()
+        try:
+            projects = r.json()
+        except Exception as err:
+            logger.warn(err)
+            raise
 
-    def get_option_value(self, **params):
+        return projects
+
+    def get_option_value(self, field, *args, **kwargs):
         """
         Get options value from TeamRoster 2.0 System and Account Project System.
+
+        `Args`:
+        - kwargs ([dict], optional) : other params.
+        - field [str] : the category of query data
+
+        `Raises`:
+        - requests.HTTPError: If the http status code of the response is not 200, it will be raised.
+        - Other error will handle by `requests` library.
+
+        `Returns`:
+        - options [dict]: Constant Value
+
+        `Usage Note`:
+        - Please use the function with try catch.
         """
-        field = params.get('field', None)
         teamroster_options = [
             'dept_category',
             'dept_role'
@@ -102,7 +128,7 @@ class QueryDataMixin:
             'product_line',
             'business_model'
         ]
-        # Choose the uri what will send request
+        # Choose the which uri will send request
         if field in teamroster_options:
             uri = settings.TEAMROSTER_URI + 'api/get/options'
             headers = {'X-Authorization': settings.TEAMROSTER_TOKEN}
@@ -110,58 +136,135 @@ class QueryDataMixin:
             uri = settings.ACCOUNT_PROJECT_URI + 'api/get/options'
             headers = {'X-Authorization': settings.ACCOUNT_PROJECT_TOKEN}
         else:
-            return False, None
+            logger.warn("There is not correct input with field")
+            raise ValueError
 
-        r = requests.get(uri, params=params, headers=headers, timeout=3)
+        payload = {"field": field}
+        try:
+            r = requests.get(uri, params=payload, headers=headers, timeout=3)
+        except Exception as err:
+            logger.warn(err)
+            raise
 
         if r.status_code != 200:
-            error_message = (
-                f"Status Code : {r.status_code}. Error Message : " +
-                f"{r.text}. It can't get options info by <{r.url}>."
-            )
-            logger.warn(error_message)
-            return False, None
+            message = f"Status Code : {r.status_code}. It can't get options info by <{r.url}>."
+            logger.warn(message)
+            raise requests.HTTPError
 
-        return True, r.json()
+        try:
+            options = r.json()
+        except Exception as err:
+            logger.warn(err)
+            raise
+
+        return options
 
     def get_department_via_search(self, *args, **kwargs):
         """
-        Get department value from TeamRoster 2.0 System
+        Get department information from TeamRoster 2.0 System
 
-        bg (str) : bussiness group Ex/ 'EBG'
+        `Args`:
+        - kwargs ([dict], optional) : other params.
+        - kwarg key can contain `bg`, `fn_lvl1`, `fnlvl2`.
 
-        fn_lvl1 (str) : funnction Ex/ 'QT'
+        `Raises`:
+        - requests.HTTPError: If the http status code of the response is not 200, it will be raised.
+        - Other error will handle by `requests` library.
 
-        fn_lvl2 (str) : sub_function Ex/ 'DQMS'
+        `Returns`:
+        - departments [list(str)]: This is the list that contains department id.
+        Key is the department_id and value is department property.
+
+        `Usage Note`:
+        - Please use the function with try catch.
         """
-
         uri = settings.TEAMROSTER_URI + 'api/search/department'
         headers = {'X-Authorization': settings.TEAMROSTER_TOKEN}
 
-        r = requests.get(uri, params=kwargs, headers=headers, timeout=3)
+        try:
+            r = requests.get(uri, params=kwargs, headers=headers, timeout=3)
+        except Exception as err:
+            logger.warn(err)
+            raise
 
         if r.status_code != 200:
-            error_message = (
-                f"Status Code : {r.status_code}. Error Message : " +
-                f"{r.text}. It can't get department info by <{r.url}>."
-            )
-            logger.warn(error_message)
+            message = f"Status Code : {r.status_code}. It can't get department info by <{r.url}>."
+            logger.warn(message)
+            raise requests.HTTPError
 
-            return False, None
+        try:
+            departments = r.json()
+        except Exception as err:
+            logger.warn(err)
+            raise
 
-        return True, r.json()
+        return departments
 
-    def get_department_via_query(self, department_id=None, *args, **kwargs):
+    def get_project_via_teamroaster_project_serach(self, *args, **kwargs):
         """
-        Get department information from TeamRoster 2.0 System
+        Get project information from TeamRoster 2.0 System.
 
-        department_id (str) Ex/ 'Z8502456'
+        `Args`:
+        - kwargs ([dict], optional) : other params.
+        - kwarg key can contain `bg`, `fn_lvl1`, `fnlvl2`, `projid`, `lead`,
+        `lead_dept`, `supv`, `supv_dept_list`, `member`, `member_dept_list`
 
-        args (list) :  department_id Ex/ ['Z10612805', 'A123456']
+        `Raises`:
+        - requests.HTTPError: If the http status code of the response is not 200, it will be raised.
+        - Other error will handle by `requests` library.
 
-        kwargs (dict) : other params. if no kwargs will uese deault_params.
+        `Returns`:
+        - projects [list(dict)]: This is the list that contain project dictionary.
+        Key is the department_id and value is department property.
+
+        `Usage Note`:
+        - Please use the function with try catch.
         """
-        params = dict()
+        uri = settings.TEAMROSTER_URI + 'api/search/project'
+        headers = {'X-Authorization': settings.TEAMROSTER_TOKEN}
+
+        try:
+            r = requests.get(uri, params=kwargs, headers=headers, timeout=3)
+        except Exception as err:
+            logger.warn(err)
+            raise
+
+        if r.status_code != 200:
+            message = f"Status Code : {r.status_code}. It can't get project info by <{r.url}>."
+            logger.warn(message)
+            raise requests.HTTPError
+
+        try:
+            projects = r.json()
+        except Exception as err:
+            logger.warn(err)
+            raise
+
+        return projects
+
+    def get_department_via_query(self, department_id=None, department_list=None, field=None):
+        """
+        Get department information from TeamRoster 2.0 System.
+
+        `Args`:
+        - department_id ([str], optional): department id. Defaults to None.`
+        - department_list ([list], optional): the list of department id. Defaults to None.
+        - field ([dict], optional) : other params. if no kwargs will uese deault_params.
+        The value of department_id nor department_list could not both be None.
+
+        `Raises`:
+        - requests.HTTPError: If the http status code of the response is not 200, it will be raised.
+        - ValueError : If the value of department_id nor department_list both be None, it will be raised.
+        - Other error will handle by `requests library.
+
+        `Returns`:
+        - departments [dict(dict)]: This is the dictionary that contain department dictionary.
+        Key is the department_id and value is department property.
+
+        `Usage Note`:
+        - Please use the function with try catch.
+        """
+        payload = dict()
         default_params = {
             'category': True,
             'dm': True,
@@ -172,159 +275,182 @@ class QueryDataMixin:
             'acct_own': True,
             'acct_support': True,
         }
-        # Add department id to params
-        if department_id:
-            params['deptid'] = department_id
-        elif args:
-            params['deptid'] = ','.join(args)
+        # Add department id to payload
+        if department_id is not None:
+            payload['deptid'] = department_id
+        elif department_list is not None:
+            payload['deptid'] = ','.join(list(map(str, department_list)))
+        elif department_id is None and department_list is None:
+            raise ValueError('This is not reasonable input argument')
+        # Add other information to payload
+        if field is None:
+            payload.update(default_params)
         else:
-            params['deptid'] = ''
-        # Add other information to params
-        if kwargs:
-            params.update(kwargs)
-        else:
-            params.update(default_params)
+            payload.update(field)
 
         uri = settings.TEAMROSTER_URI + 'api/query/department'
         headers = {'X-Authorization': settings.TEAMROSTER_TOKEN}
-        r = requests.get(uri, params=params, headers=headers, timeout=3)
+
+        try:
+            r = requests.get(uri, params=payload, headers=headers, timeout=3)
+        except Exception as err:
+            logger.warn(err)
+            raise
 
         if r.status_code != 200:
-            error_message = (
-                f"Status Code : {r.status_code}. Error Message : " +
-                f"{r.text}. It can't get department info by <{r.url}>."
-            )
-            logger.warn(error_message)
-            return False, None
+            message = f"Status Code : {r.status_code}. It can't get department info by <{r.url}>."
+            logger.warn(message)
+            raise requests.HTTPError
 
-        return True, r.json()
+        try:
+            departments = r.json()
+        except Exception as err:
+            logger.warn(err)
+            raise
 
-    def get_project_via_teamroaster_project_serach(self, **kwargs):
+        return departments
+
+    def get_project_via_query(self, project_id=None, project_list=None, field=None):
         """
-        Get project information from TeamRoster 2.0 System
+        Get project information from  Account Project 2.0 System
 
-        kwargs (dict) : other params. if no kwargs will uese deault_params.
+        `Args`:
+        - project_id ([str], optional): Project id. Defaults to None.
+        - project_list ([list(str)], optional): Project id list. Defaults to None.
+        - field ([type], optional): Query data field. Defaults to None. It will use default_param.
+        - The value of project_id nor project_list could not both be None.
 
-        kwarg key can contain `bg`, `fn_lvl1`, `fnlvl2`, `projid`, `lead`,
+        `Raises`:
+        - requests.HTTPError: If the http status code of the response is not 200, it will be raised.
+        - ValueError : If the value of department_id nor department_list both be None, it will be raised.
+        - Other error will handle by `requests library.
 
-        `lead_dept`, `supv`, `supv_dept_list`, `member`, `member_dept_list`
+        `Returns`:
+        - projects [list(dict)]: This is the list that contains project dictionary.
+
+        `Usage Note`:
+        - Please use the function with try catch.
         """
-        params = {}
-        if kwargs:
-            params = kwargs
-
-        uri = settings.TEAMROSTER_URI + 'api/search/project'
-        headers = {'X-Authorization': settings.TEAMROSTER_TOKEN}
-
-        r = requests.get(uri, params=params, headers=headers, timeout=3)
-
-        if r.status_code != 200:
-            error_message = (
-                f"Status Code : {r.status_code}. Error Message : " +
-                f"{r.text}. It can't get department info by <{r.url}>."
-            )
-            logger.warn(error_message)
-            return False, None
-
-        return True, r.json()
-
-    def get_project_via_query(self, project_id, field=None):
-        """
-        Get project info via project_id from Account Project System.
-        project_id : str / list
-        """
-        uri = settings.ACCOUNT_PROJECT_URI + 'api/query/projects'
-        if type(project_id) == str:
-            p_id = project_id
-        elif type(project_id) == list:
-            p_id = ','.join(list(map(str, project_id)))
-        else:
-            p_id = ''
-
-        params = {'id': p_id}
+        default_param = {
+            'type': True,
+            'name': True,
+            'status': True,
+            'wistron_name': True,
+            'customer_name': True,
+            'wistron_code': True,
+            'plm_code_1': True,
+            'plm_code_2': True,
+            'product_line': True,
+            'business_model': True,
+            'acct': True,
+            'deleted_at': True,
+        }
+        payload = dict()
+        if project_id is not None:
+            payload['id'] = project_id
+        elif project_list is not None:
+            payload['id'] = ','.join(list(map(str, project_list)))
+        elif project_id is None and project_list is None:
+            raise ValueError('This is not reasonable input argument')
 
         if field is None:
-            params.update(
-                {
-                    'type': True,
-                    'name': True,
-                    'status': True,
-                    'wistron_name': True,
-                    'customer_name': True,
-                    'wistron_code': True,
-                    'plm_code_1': True,
-                    'plm_code_2': True,
-                    'product_line': True,
-                    'business_model': True,
-                    'acct': True,
-                    'deleted_at': True,
-                }
-            )
+            payload.update(default_param)
         else:
-            params.update(field)
+            payload.update(field)
 
+        uri = settings.ACCOUNT_PROJECT_URI + 'api/query/projects'
         headers = {'X-Authorization': settings.ACCOUNT_PROJECT_TOKEN}
-        r = requests.get(uri, params=params, headers=headers, timeout=3)
+        try:
+            r = requests.get(uri, params=payload, headers=headers, timeout=3)
+        except Exception as err:
+            logger.warn(err)
+            raise
 
         if r.status_code != 200:
-            error_message = (
-                f"Status Code : {r.status_code}. Error Message : " +
-                f"{r.text}. It can't get project info by Account Project System."
-            )
-            logger.warn(error_message)
-            return False, None
+            message = f"Status Code : {r.status_code}. It can't get project info by <{r.url}>."
+            logger.warn(message)
+            raise requests.HTTPError
 
-        return True, r.json()
+        try:
+            projects = r.json()
+        except Exception as err:
+            logger.warn(err)
+            raise
 
-    def get_profile_via_query(self, employee_id, field=None):
+        return projects
+
+    def get_profile_via_query(self, employee_id=None, employee_list=None, field=None):
         """
         Get profile information from TeamRoster 2.0 System
-        employee_id : str
-        """
-        uri = settings.TEAMROSTER_URI + 'api/query/profile'
-        if type(employee_id) == str:
-            emplid = employee_id
-        elif type(employee_id) == list:
-            emplid = ','.join(list(map(str, employee_id)))
-        else:
-            emplid = ''
 
-        params = {'emplid': emplid}
+        `Args`:
+        - employee_id ([str], optional): Employee id. Defaults to None.
+        - employee_list ([list(str)], optional): Employee id list. Defaults to None.
+        - field ([type], optional): Query data field. Defaults to None. It will use default_param.
+        - The value of employee_id nor employee_list could not both be None.
+
+        `Raises`:
+        - requests.HTTPError: If the http status code of the response is not 200, it will be raised.
+        - ValueError : If the value of department_id nor department_list both be None, it will be raised.
+        - Other error will handle by `requests library.
+
+        `Returns`:
+        - employees [dict(dict)]: This is the dictionary that contains employees dictionary.
+
+        `Usage Note`:
+        - Please use the function with try catch.
+        """
+        default_param = {
+            'wee': True,
+            'avatar': True,
+            'dept_category': True,
+            'dept_role': True,
+            'dept_proxy': True,
+            'proj_all': True,
+            'proj_all_role': True,
+            'acct_all': True,
+            'proj_own': True,
+            'proj_own_role': True,
+            'acct_own': True,
+            'proj_support': True,
+            'proj_support_role': True,
+            'acct_support': True
+        }
+
+        payload = dict()
+
+        if employee_id is not None:
+            payload['emplid'] = employee_id
+        elif employee_list is not None:
+            payload['emplid'] = ','.join(list(map(str, employee_list)))
+        elif employee_id is None and employee_list is None:
+            raise ValueError('This is not reasonable input argument')
 
         if field is None:
-            params.update(
-                {
-                    'wee': True,
-                    'avatar': True,
-                    'dept_category': True,
-                    'dept_role': True,
-                    'dept_proxy': True,
-                    'proj_all': True,
-                    'proj_all_role': True,
-                    'acct_all': True,
-                    'proj_own': True,
-                    'proj_own_role': True,
-                    'acct_own': True,
-                    'proj_support': True,
-                    'proj_support_role': True,
-                    'acct_support': True
-                }
-            )
+            payload.update(default_param)
         else:
-            params.update(field)
+            payload.update(field)
 
+        uri = settings.TEAMROSTER_URI + 'api/query/profile'
         headers = {'X-Authorization': settings.TEAMROSTER_TOKEN}
-        r = requests.get(uri, params=params, headers=headers, timeout=3)
+        try:
+            r = requests.get(uri, params=payload, headers=headers, timeout=3)
+        except Exception as err:
+            logger.warn(err)
+            raise
 
         if r.status_code != 200:
-            error_message = (
-                f"Status Code : {r.status_code}. Error Message : " +
-                f"{r.text}. It can't get project info by Account Project System."
-            )
-            logger.warn(error_message)
-            return False, None
+            message = f"Status Code : {r.status_code}. It can't get employee info by <{r.url}>."
+            logger.warn(message)
+            raise requests.HTTPError
 
-        return True, r.json()
+        try:
+            employees = r.json()
+        except Exception as err:
+            logger.warn(err)
+            raise
+
+        return employees
 
 
 class SignatureMixin(QueryDataMixin):
@@ -399,14 +525,14 @@ class SignatureMixin(QueryDataMixin):
 
         count = self.count_zero_occurence(department_id)
 
-        status, result = self.get_department_via_query(department_id)
-        if not (status and result):
-            warn_message = 'TeamRoster 2.0 System is not available'
-            logger.warning(warn_message)
+        try:
+            departments = self.get_department_via_query(department_id)
+        except Exception as err:
+            logger.warning(err)
             raise ServiceUnavailable
 
-        if department_id in result:
-            function_head_employee_id = result[department_id].get('dm', None)
+        if department_id in departments:
+            function_head_employee_id = departments[department_id].get('dm', None)
 
         if count > 4:
             identitiy_flag = True
@@ -432,28 +558,29 @@ class SignatureMixin(QueryDataMixin):
         """ Find next signer until the signer isn't equal next_signer """
         # Find next Singer
         signer_department_id = Employee.objects.using('hr').get(employee_id__iexact=signer).department_id
-        status, result = self.get_department_via_query(department_id=signer_department_id)
-        if not (status and result):
-            warn_message = 'TeamRoster 2.0 System is not available'
-            logger.warning(warn_message)
+        try:
+            departments = self.get_department_via_query(department_id=signer_department_id)
+        except Exception as err:
+            logger.warning(err)
             raise ServiceUnavailable
 
-        if signer_department_id in result:
-            next_signer = result[signer_department_id].get('dm', None)
-        # If assigner is equal to next_signer
+        if signer_department_id in departments:
+            next_signer = departments[signer_department_id].get('dm', None)
+        # If signer is equal to next_signer
         count = self.count_zero_occurence(signer_department_id)
         next_signer_department_id = signer_department_id
         while (signer == next_signer and count < 5):
             non_zero_part = len(signer_department_id) - count - 1
             next_signer_department_id = signer_department_id[:non_zero_part] + '0' * (count + 1)
-            status, result = self.get_department_via_query(department_id=next_signer_department_id)
-            if not (status and result):
-                warn_message = 'TeamRoster 2.0 System is not available'
-                logger.warning(warn_message)
+
+            try:
+                departments = self.get_department_via_query(department_id=signer_department_id)
+            except Exception as err:
+                logger.warning(err)
                 raise ServiceUnavailable
 
-            if next_signer_department_id in result:
-                next_signer = result[next_signer_department_id].get('dm', None)
+            if next_signer_department_id in departments:
+                next_signer = departments[next_signer_department_id].get('dm', None)
             count += 1
         return next_signer, next_signer_department_id
 

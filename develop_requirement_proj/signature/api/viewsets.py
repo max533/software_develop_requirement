@@ -5,7 +5,9 @@ from develop_requirement_proj.employee.api.serializers import (
     EmployeeSerializer,
 )
 from develop_requirement_proj.employee.models import Employee
-from develop_requirement_proj.utils.exceptions import Conflict
+from develop_requirement_proj.utils.exceptions import (
+    Conflict, ServiceUnavailable,
+)
 from develop_requirement_proj.utils.mixins import (
     MessageMixin, QueryDataMixin, SignatureMixin,
 )
@@ -48,9 +50,14 @@ class AccountViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericView
     def get_queryset(self):
         """ Get queryset from Account Project System """
         queryset = []
-        status, results = self.get_account_via_search()
-        if status and results:
-            queryset = [Account(**result) for result in results]
+        params = self.request.query_params.dict()
+        try:
+            accounts = self.get_account_via_search(**params)
+        except Exception as err:
+            logger.error(err)
+            raise ServiceUnavailable
+
+        queryset = [Account(**account) for account in accounts]
 
         return queryset
 
@@ -63,9 +70,14 @@ class ProjectViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericView
         """ Get queryset from Account Project System """
         queryset = []
         params = self.request.query_params.dict()
-        status, results = self.get_project_via_search(**params)
-        if status and results:
-            queryset = [Project(**result) for result in results]
+
+        try:
+            projects = self.get_project_via_search(**params)
+        except Exception as err:
+            logger.error(err)
+            raise ServiceUnavailable
+
+        queryset = [Project(**project) for project in projects]
 
         return queryset
 
@@ -75,13 +87,20 @@ class OptionView(QueryDataMixin, views.APIView):
 
     def get(self, request, *args, **kwargs):
         """ Get result from TeamRoster 2.0 System and Account Project System """
-        final_result = {}
+        options = {}
         params = self.request.query_params.dict()
-        status, result = self.get_option_value(**params)
-        if status and result:
-            final_result = result
+        if not params:
+            raise serializers.ValidationError({"field": "This parameter is required."})
+        try:
+            options = self.get_option_value(field=params)
+        except ValueError as err:
+            logger.error(err)
+            raise serializers.ValidationError({"field": "This value is not reasonable."})
+        except Exception as err:
+            logger.error(err)
+            raise ServiceUnavailable
 
-        return response.Response(final_result)
+        return response.Response(options)
 
 
 class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -100,7 +119,7 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
         3. Other project-based assigner is the deparment manager of the project owner
         """
         queryset = []
-        # Exanmie the required kwargs information
+        # Examine the required kwargs information
         kwarg, error = {}, {}
         kwarg['sub_function'] = self.request.query_params.get('sub_function', None)
         kwarg['project_id'] = self.request.query_params.get('project_id', None)
@@ -116,16 +135,22 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
             # Use kwarg['sub_function'] to search department id of the assigner
             params['fn_lvl1'] = 'QT'
             params['fn_lvl2'] = kwarg['sub_function']
-            status, results = self.get_department_via_search(**params)
-            if not (status and results):
-                return queryset
-            department_id = results[0]
+            try:
+                departments = self.get_department_via_search(**params)
+            except Exception as err:
+                logger.warning(err)
+                raise ServiceUnavailable
+
+            department_id = departments[0]
             # Use department_id to query employee_id of the department manager
-            status, results = self.get_department_via_query(department_id=department_id)
-            if not (status and results):
-                return queryset
-            for result in results:
-                assigner_list.append(results[department_id]['dm'])
+            try:
+                departments = self.get_department_via_query(department_id=department_id)
+            except Exception as err:
+                logger.warning(err)
+                raise ServiceUnavailable
+
+            for department in departments:
+                assigner_list.append(department[department_id]['dm'])
             # Query the assigner via assigner_list
             queryset.extend(Employee.objects.using('hr').filter(employee_id__in=assigner_list))
 
@@ -133,27 +158,36 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
             # Use kwarg['sub_function'] to search department id of the assigner
             params['fn_lvl1'] = 'SW'
             params['fn_lvl2'] = 'PM'
-            status, results = self.get_department_via_search(**params)
-            if not (status and results):
-                return queryset
-            assigner_dept_list = [result for result in results]
+            try:
+                departments = self.get_department_via_search(**params)
+            except Exception as err:
+                logger.warning(err)
+                raise ServiceUnavailable
+
             # Query the assigner via assigner_dept_list
-            queryset.extend(Employee.objects.using('hr').filter(department_id__in=assigner_dept_list))
+            queryset.extend(Employee.objects.using('hr').filter(department_id__in=departments))
 
         else:
             # Use kwarg['sub_function'] and kwarg['project_id'] to get the project leader
             params['fn_lvl2'] = kwarg['sub_function']
             params['projid'] = kwarg['project_id']
-            status, results = self.get_project_via_teamroaster_project_serach(**params)
-            if not (status and results):
-                return queryset
-            assigner_dept_list = [result.get('lead_dept', '') for result in results]
+            try:
+                projects = self.get_project_via_teamroaster_project_serach(**params)
+            except Exception as err:
+                logger.warning(err)
+                raise ServiceUnavailable
+
+            assigner_dept_list = [project.get('lead_dept', '') for project in projects]
             # Get the department list of the project leader
-            status, results = self.get_department_via_query(*assigner_dept_list)
-            if not (status and results):
-                return queryset
-            for key, value in results.items():
+            try:
+                departments = self.get_department_via_query(*assigner_dept_list)
+            except Exception as err:
+                logger.warning(err)
+                raise ServiceUnavailable
+
+            for key, value in departments.items():
                 assigner_list.append(value.get('dm', ''))
+
             # Query the assigner via asssigner_list
             queryset.extend(Employee.objects.using('hr').filter(employee_id__in=assigner_list))
 
@@ -198,13 +232,13 @@ class ScheduleViewSet(SignatureMixin, viewsets.ModelViewSet):
     def group_tracker(self, request, *args, **kwargs):
         """ Provide schedule history resource group by version """
         queryset = self.filter_queryset(self.get_queryset())
-        result = dict()
+        data = dict()
         for obj in queryset.values():
-            if obj['version'] not in result:
-                result[obj['version']] = [obj]
+            if obj['version'] not in data:
+                data[obj['version']] = [obj]
             else:
-                result[obj['version']].append(obj)
-        return response.Response(result)
+                data[obj['version']].append(obj)
+        return response.Response(data)
 
     def perform_create(self, serializer):
         serializer.save()
@@ -402,30 +436,38 @@ class OrderViewSet(MessageMixin,
         project_object = cache.get('projects', None)
         if project_object is None:
             project_object = {}
-            status, results = self.get_project_via_search()
+            try:
+                projects = self.get_project_via_search()
+            except Exception as err:
+                logger.error(err)
+                raise ServiceUnavailable
 
-            if status and results:
-                serializer = ProjectEasySerializer(results, many=True)
-                for project in serializer.data:
-                    project_id = project['id']
-                    if project_id not in project_object:
-                        project_object[project_id] = project
-                cache.set('projects', project_object, 60 * 60)
+            serializer = ProjectEasySerializer(projects, many=True)
+            for project in serializer.data:
+                project_id = project['id']
+                if project_id not in project_object:
+                    project_object[project_id] = project
+            cache.set('projects', project_object, 60 * 60)
+
         context['projects'] = project_object
 
         # Get account information
         account_object = cache.get('accounts', None)
         if account_object is None:
             account_object = {}
-            status, results = self.get_account_via_search()
+            try:
+                accounts = self.get_account_via_search()
+            except Exception as err:
+                logger.error(err)
+                raise ServiceUnavailable
 
-            if status and results:
-                serializer = AccountEasySerializer(results, many=True)
-                for account in serializer.data:
-                    account_id = account['id']
-                    if account_id not in account_object:
-                        account_object[account_id] = account
-                cache.set('accounts', account_object, 60 * 60)
+            serializer = AccountEasySerializer(accounts, many=True)
+            for account in serializer.data:
+                account_id = account['id']
+                if account_id not in account_object:
+                    account_object[account_id] = account
+            cache.set('accounts', account_object, 60 * 60)
+
         context['accounts'] = account_object
 
         # Get employee information
@@ -450,18 +492,21 @@ class OrderViewSet(MessageMixin,
             if function_team_object is None or sub_function_team_object is None:
                 function_team_object, sub_function_team_object = [], []
 
-                status, result = self.get_option_value(**{'field': 'dept_category'})
+                try:
+                    options = self.get_option_value(**{'field': 'dept_category'})
+                except Exception as err:
+                    logger.error(err)
+                    raise ServiceUnavailable
 
-                if status and result:
-                    if 'EBG' in result:
-                        function_team_object = list(result['EBG'].keys())
-                        cache.set('function_team', function_team_object, 60 * 60)
-                        sub_fun_list = []
-                        for key in result['EBG'].keys():
-                            sub_fun = result['EBG'][key]
-                            sub_fun_list.extend(sub_fun)
-                        sub_function_team_object = sub_fun_list
-                        cache.set('sub_function_team', sub_function_team_object, 60 * 60)
+                if 'EBG' in options:
+                    function_team_object = list(options['EBG'].keys())
+                    cache.set('function_team', function_team_object, 60 * 60)
+                    sub_fun_list = []
+                    for key in options['EBG'].keys():
+                        sub_fun = options['EBG'][key]
+                        sub_fun_list.extend(sub_fun)
+                    sub_function_team_object = sub_fun_list
+                    cache.set('sub_function_team', sub_function_team_object, 60 * 60)
             context['function_team'] = function_team_object
             context['sub_function_team'] = sub_function_team_object
 
@@ -797,11 +842,11 @@ class OrderViewSet(MessageMixin,
                         obj.version = new_version
                         obj.confirm_status = True
                     Schedule.objects.bulk_update(objs, ['version', 'confirm_status'])
-                    result = ScheduleTracker.objects.aggregate(Max('id'))['id__max']
-                    new_id = 0 if result is None else result
+                    sequence_max = ScheduleTracker.objects.aggregate(Max('id'))['id__max']
+                    sequence_max = 0 if sequence_max is None else sequence_max
                     for obj in objs:
-                        new_id += 1
-                        obj.id = new_id
+                        sequence_max += 1
+                        obj.id = sequence_max
                     ScheduleTracker.objects.bulk_create(objs)
 
                 if skip_signature_flag:
@@ -1048,30 +1093,38 @@ class SignatureViewSet(MessageMixin,
         project_object = cache.get('projects', None)
         if project_object is None:
             project_object = {}
-            status, results = self.get_project_via_search()
+            try:
+                projects = self.get_project_via_search()
+            except Exception as err:
+                logger.error(err)
+                raise ServiceUnavailable
 
-            if status and results:
-                serializer = ProjectEasySerializer(results, many=True)
-                for project in serializer.data:
-                    project_id = project['id']
-                    if project_id not in project_object:
-                        project_object[project_id] = project
-                cache.set('projects', project_object, 60 * 60)
+            serializer = ProjectEasySerializer(projects, many=True)
+            for project in serializer.data:
+                project_id = project['id']
+                if project_id not in project_object:
+                    project_object[project_id] = project
+            cache.set('projects', project_object, 60 * 60)
+
         context['projects'] = project_object
 
         # Get account information
         account_object = cache.get('accounts', None)
         if account_object is None:
             account_object = {}
-            status, results = self.get_account_via_search()
+            try:
+                accounts = self.get_account_via_search()
+            except Exception as err:
+                logger.error(err)
+                raise ServiceUnavailable
 
-            if status and results:
-                serializer = AccountEasySerializer(results, many=True)
-                for account in serializer.data:
-                    account_id = account['id']
-                    if account_id not in account_object:
-                        account_object[account_id] = account
-                cache.set('accounts', account_object, 60 * 60)
+            serializer = AccountEasySerializer(accounts, many=True)
+            for account in serializer.data:
+                account_id = account['id']
+                if account_id not in account_object:
+                    account_object[account_id] = account
+            cache.set('accounts', account_object, 60 * 60)
+
         context['accounts'] = account_object
 
         # Get employee information

@@ -213,8 +213,8 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "verbose": {
-            "format": "%(levelname)s %(asctime)s %(module)s "
-            "%(process)d %(thread)d %(message)s"
+            "format": "[{asctime}] {levelname:8} | {process} {thread} | {module}.{funcName} {lineno:3} @ {filename} => {message}",
+            'style': '{',
         }
     },
     "handlers": {
@@ -224,8 +224,8 @@ LOGGING = {
             "formatter": "verbose",
         }
     },
-    # "root": {"level": "INFO", "handlers": ["console"]},
-    "root": {"level": "DEBUG", "handlers": ["console"]},
+    "root": {"level": "INFO", "handlers": ["console"]},
+    # "root": {"level": "DEBUG", "handlers": ["console"]},
 }
 
 

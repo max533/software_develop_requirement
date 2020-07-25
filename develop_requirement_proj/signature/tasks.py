@@ -1,43 +1,25 @@
-import json
-
 from celery import shared_task
+from develop_requirement_proj.utils.mixins import QueryDataMixin
 
-from django.forms.models import model_to_dict
-
-from .models import History, Order, OrderTracker
-
-
-@shared_task
-def save_order_tarcker(order_id):
-    order = Order.objects.get(order_id)
-    order_dict = model_to_dict(order)
-    del order_dict['parent']
-    order_dict['order'] = order
-    OrderTracker.objects.save(**order_dict)
+from django.core.cache import cache
 
 
-@shared_task
-def save_order_history(order_id, update_content):
-    comment = {
-        'last_order': '',
-        'update_content': update_content
-    }
+@shared_task()
+def update_accounts_cache():
 
-    try:
-        last_order = OrderTracker.objects.filter(order=order_id).latest('created_time')
-    except:
-        last_order = None
 
-    if last_order is not None:
-        comment['last_order'] = model_to_dict(OrderTracker)
+@shared_task()
+def update_project_cache():
 
-    history = {
-        'editor': 'system',
-        'comment': json.dumps(comment),
-        'order': Order.objects.get(pk=order_id)
-    }
 
-    History.objects.create(**history)
+@shared_task()
+def update_employees_cache():
+
+
+@shared_task()
+def update_department_categorys_cache()
+
+
 
 
 @shared_task()
