@@ -1,0 +1,60 @@
+#TimelineHint ul li {
+    list-style-type: none;
+}
+.calendar {
+    color: black;
+}
+.phase {
+    color: black;
+    font-weight: bold;
+    text-shadow: 0 0 4px white;
+}
+.phase-hovered {
+    border: dotted 2px black;
+}
+.milestone {
+    content: "";
+}
+.milestone:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-left: 3px dashed black;
+    transform: translate(-50%);
+    box-shadow: 0px 0px 4px 0px white;
+}
+.timeline>.timemark{
+    content: "";
+}
+.timeline>.timemark:not(.todayline)::after{
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-left: 1px dashed var(--secondary);
+    transform: translate(-50%);
+    box-shadow: 0px 0px 3px 0px rgba(48, 48, 48, 0.123);
+}
+.timeline>.progress-bar:hover~.progress-bar{
+    opacity: .3;
+}
+.timeline>.progress-bar:hover{
+    opacity: .8;
+    box-shadow: 0.15rem 0.15rem 0.25rem rgba(14, 14, 14, 0.247);
+}
+.todayline::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-left: 1.5px dashed var(--dark);
+    transform: translate(-50%);
+    box-shadow: 0px 0px 3px 0px rgba(48, 48, 48, 0.123);
+}
+.cursor-pointer {
+    cursor: pointer!important;
+}
+.tooltip {
+    top: 300px;
+}

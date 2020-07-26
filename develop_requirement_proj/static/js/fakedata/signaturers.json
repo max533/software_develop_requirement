@@ -1,47 +1,47 @@
 [
     {
-        "id": 1,
+        "id": 88,
         "sequence": 1,
-        "employee": {
+        "signer": {
             "employee_id": "10612704",
             "display_name": "Jeff SH Wang/WNH/Wistron",
             "extension": "85014602",
             "job_title": "工程師"
         },
-        "status": "Accept",
-        "comment": "OK",
+        "status": "Approve",
+        "comment": "OK這樣可以",
         "timestamp": "2020-03-10T08:26:38.093183Z",
         "role_group": "initiator",
-        "order": 1
+        "order": 5
     },
     {
         "id": 2,
         "sequence": 2,
-        "employee": {
-            "employee_id": "Z10712718",
-            "display_name": "David Wang/WNH/Wistron",
-            "extension": "85015752",
-            "job_title": "部門主管"
+        "signer": {
+            "employee_id": "10903704",
+            "display_name": "Steven CW Chen/WNH/Wistron",
+            "extension": "85014815",
+            "job_title": "工程師"
         },
-        "status": "",
-        "comment": "",
-        "timestamp": null,
+        "status": "Approve",
+        "comment": "可能還需要在修改~在需求方面需要更具體一點提出見解~以條列式的方式列出",
+        "timestamp": "2020-04-10T08:26:38.093183Z",
         "role_group": "initiator",
         "order": 1
     },
     {
         "id": 3,
         "sequence": 3,
-        "employee": {
+        "signer": {
             "employee_id": "9505005",
             "display_name": "Luis Liao/WNH/Wistron",
             "extension": "85014686",
             "job_title": "處長"
         },
-        "status": "",
-        "comment": "",
-        "timestamp": null,
+        "status": "Approve",
+        "comment": "OK~同意",
+        "timestamp": "2020-05-10T08:26:38.093183Z",
         "role_group": "developers",
         "order": 1
-    },
+    }
 ]

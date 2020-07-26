@@ -1,46 +1,40 @@
 {
-    "id": 2,
+    "id": 5,
     "account": {
-        "id": 1,
-        "code": "Lily",
-    },
+        "id": 8,
+        "code": "Cindy"
+    }, 
     "project": {
-        "id": 2,
-        "name": "Stark"
+        "id": 29,
+        "code": "Durant(5180M5)"
     },
-    "develop_team_function": "QT",
+    "develop_team_function": "EE",
     "develop_team_sub_function": "DQMS",
-    "status": {"p3_initiator_": "Approve"},
+    "status": {
+        "P1": {
+            "10903704":""
+        },
+        "signed":false
+    },
     "initiator": {
-        "employee_id": "10612704",
-        "display_name": "Jeff SH Wang/WHQ/Wistron",
+        "employee_id": "10903704",
+        "display_name": "Steven CW Chen/WNH/Wistron",
+        "extension": "85014815",
+        "job_title": "工程師"
     },
     "assigner": {
-        "employee_id": "10612704",
-        "display_name": "Jeff SH Wang/WHQ/Wistron",
+        "employee_id": "10903704",
+        "display_name": "Steven CW Chen/WNH/Wistron",
+        "extension": "85014815",
+        "job_title": "工程師"
     },
-    "developer": {
-        "member": [
-            {
-                "employee_id": "10612704",
-                "display_name": "Jeff SH Wang/WHQ/Wistron",
-            },
-            {
-                "employee_id": "10712714",
-                "display_name": "Leo Tu/WHQ/Wistron",
-            }
-        ],
-        "contactor":{
-            "employee_id": "9505005",
-            "display_name": "Luis Liao/WHQ/Wistron",
-        }
-    },
-    "title": "DQMS develope requirement system",
-    "description": "<br> Three is description </br>",
-    "form_begin_time": "2020-03-10T08:26:38.093183Z",
-    "form_end_time": "2020-04-10T08:26:38.093183Z",
-    "expected_develop_duration_day": 10.5,
-    "actual_develop_duration_day": 20.0,
-    "repository_url": "www.gitlab.com",
-    "parent": 10,
+    "developers": "",
+    "title": "Smartesting tool apply on the new website.",
+    "description": "Consequat mauris nunc congue nisi vitae suscipit tellus. Pretium nibh ipsum consequat nisl vel pretium lectus quam id. Porttitor rhoncus dolor purus non enim praesent. Egestas fringilla phasellus faucibus scelerisque eleifend donec pretium. Eget lorem dolor sed viverra ipsum. Faucibus ornare suspendisse sed nisi lacus sed viverra. Dui accumsan sit amet nulla facilisi. Egestas egestas fringilla phasellus faucibus.",
+    "form_begin_time": "2015-08-06T13:13:09.015Z",
+    "form_end_time": "",
+    "expected_develop_duration_day": "",
+    "actual_develop_duration_day": "",
+    "repository_url": "",
+    "parent": 10
 }

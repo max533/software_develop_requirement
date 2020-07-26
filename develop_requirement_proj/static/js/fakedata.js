@@ -25,19 +25,19 @@
 
 //  fakedata
 //  loginInfo
-    profile = {
-        '10712714': {
-            'dept':'ESQ200', 
-            'role':'Member',
-            'project':{
-                '11':'leader',
-                '12':'member',
-            }, 
-            'domain': null, 
-            'avatar': '/static/images/minion.gif', 
-            'display_name': 'Leo Tu/WHQ/Wistron',
-        }, 
-    };
+    // profile = {
+    //     '10712714': {
+    //         'dept':'ESQ200', 
+    //         'role':'Member',
+    //         'project':{
+    //             '11':'leader',
+    //             '12':'member',
+    //         }, 
+    //         'domain': null, 
+    //         'avatar': '/static/images/minion.gif', 
+    //         'display_name': 'Leo Tu/WHQ/Wistron',
+    //     }, 
+    // };
     fakedata_path='/static/js/fakedata/' // 測試完請刪除
 
 //  table data start
@@ -52,9 +52,7 @@
 
     let name = [
         'Peter Hsien','Leo Tu','Jeff SH Wang','Steven CW Chen','Luis Liao',
-        'Kevin SJ Huang','Christopher Robert Evans','Robert Downey Jr','Brie Larson','Chris Hemsworth',
-        'Mark Ruffalo','Scarlett Johansson','Karen Sheila','Paul Stephen','Jeremy Lee Renner',
-        'Benedict Cumberbatch','Tom Holland','Elizabeth Olsen','Chris Pratt','Dave Bautista'
+        'Kevin SJ Huang','Bella Pan',
     ];
 
     let record = [
@@ -89,8 +87,8 @@
     if(true){
         for( i=1; i<=50; i++ ){
             let dataObj = {};
-            let namenum_1 = randomnum(0,19);
-            let namenum_2 = randomnum(0,19);
+            let namenum_1 = randomnum(0,8);
+            let namenum_2 = randomnum(0,8);
             let titlenum = randomnum(0,3);
 
             dataObj['id']=i;
@@ -99,8 +97,16 @@
             dataObj['develop_team_function'] = teams[titlenum];
             dataObj['develop_team_sub_function'] = 'DQMS';
             dataObj['status'] = {"p3_initiator_": "Approve"};
-            dataObj['initiator'] = {"employee_id":ids[randomnum(0,7)] ,"display_name":name[namenum_1]+"/WNH/Wistron"};
-            dataObj['assigner'] = {"employee_id":ids[randomnum(0,7)] ,"display_name":name[namenum_2]+"/WNH/Wistron"};
+            dataObj['initiator'] = {"employee_id":ids[randomnum(0,7)] ,"display_name":name[namenum_1]+"/WNH/Wistron","extension": "85014815","job_title": "工程師"};
+            dataObj['assigner'] = {"employee_id":ids[randomnum(0,7)] ,"display_name":name[namenum_2]+"/WNH/Wistron","extension": "85014815","job_title": "工程師"};
+            dataObj['developers'] = {
+                "mebmer":[
+                    {"employee_id":ids[randomnum(0,7)] ,"display_name":name[namenum_2]+"/WNH/Wistron","extension": "85014815","job_title": "工程師"},
+                    {"employee_id":ids[randomnum(0,7)] ,"display_name":name[namenum_2]+"/WNH/Wistron","extension": "85014815","job_title": "技術顧問"},
+                    {"employee_id":ids[randomnum(0,7)] ,"display_name":name[namenum_2]+"/WNH/Wistron","extension": "85014815","job_title": "經理"}
+                ],
+                "contactor":{"employee_id":ids[randomnum(0,7)] ,"display_name":name[namenum_2]+"/WNH/Wistron","extension": "85014815","job_title": "工程師"}
+            };
             dataObj['title'] = title[titlenum];
             dataObj['description'] = descriptions[randomnum(0,2)];
             dataObj['form_begin_time'] = randomDate().toISOString();

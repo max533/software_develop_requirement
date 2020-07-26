@@ -1,28 +1,18 @@
-
-
 $(function(){   
+//  General setting 
+    SCHEDULEstart='Estimated beginning';
+    SCHEDULEend='Estimated end';
 
-    var pressTimer;
-
-    $('#table').mouseup(function(){
-      clearTimeout(pressTimer);
-      // Clear timeout
-      return false;
-    }).mousedown(function(){
-      // Set timeout
-      pressTimer = window.setTimeout(function() {
-          alert('press too long');
-      },1000);
-      return false; 
+    $('#navSelectUser').find('img').data('employee_id',loginInfo['employee_id']);
+    $.when( avatar_reload($('#navSelectUser').find('img')) ).then(function(){
+        loginInfo['avatar']=$('#navSelectUser').find('img').prop('src');
     });
 
-//  Global param
-    // img_h = $('#image_status').find('img').first().css('height').split('px')[0];
 
-//  General setting 
+   
     //  modal basic setting mutli-modal
     $(document).on('hidden.bs.modal','.modal',function(){
-            //  Focus the modal -css -ovwrflow-y
+        //  Focus the modal -css -ovwrflow-y
         $('.modal.show').removeClass('blur');
         //  Show >=2 modals, one close, rest modal can scroll.
         let rest_show_modal_num=$('.modal.show').length;
@@ -32,20 +22,34 @@ $(function(){
     });
     $(document).on('show.bs.modal', '.modal', function() {
         let zIndex = 1040 + (10 * $('.modal:visible').length);
-        $(this).css('z-index', zIndex);
+        $(this).css('z-index', zIndex).data('index',$('.modal:visible').length).addClass('index-'+$('.modal:visible').length);
         setTimeout(function() {
             $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
             if($('.modal.show').length>=1){
-                $('.modal.show').not(this).addClass('blur');
+                $('.modal.show').not('.note-modal').not(this).addClass('blur');
                 $(this).removeClass('blur');
             }
         }, 0);
     });
+    $(document).on('shown.bs.modal', '.modal', function() {
+        if($('body').hasClass('modal-open')==false) $('body').addClass('modal-open');
+    });
 
+    $(document).on('hide.bs.modal', '.modal', function() {
+        let index=$(this).data('index');
+        let target_index=index-1;
+        if(index>=1){
+            let target=$('.modal.show.index-'+target_index+'');
+            target.removeClass('blur');
+        } 
+    });
 
+    
     // image prop path
-    $('#navUser,#user').find('img').prop('src',loginInfo.avatar);
-    $('#user').find('span').text(loginInfo.dispaly_name);
+    $('#navUser,#user').find('img').data('employee_id',loginInfo.employee_id).prop('src',images['defaultavatar']);
+    avatar_reload($('#navUser').find('img'));
+    avatar_reload($('#user').find('img'));
+    $('#user').find('span').text(loginInfo.display_name);
 
 
     //  Toolbar Click #chart_list to call BI chart
@@ -76,8 +80,7 @@ $(function(){
     $(document).on('click','.toggle-dev-list',function(){
         let dot = $('.toggle-dev-list').siblings('span').find('strong');
         $(this).siblings('.dev-list').slideToggle('fast',function(){
-            // if($(this).parents('#requestModal')) comment_area_height('imgage_dev','image_label_dev','authors','FormRequest','comment_area',img_h)     
-            if($(this).parents('#requestModal')) comment_area_height();     
+            if($(this).parents('#requestModal').length==1) comment_area_height();     
         });
         dot.fadeToggle('fast');   
     });
@@ -85,14 +88,15 @@ $(function(){
 //  Table
     //  Initiate Table
     $('#table').bootstrapTable('destroy').bootstrapTable({
-        url:fakedata_path+'table.json', //severside 的網址
-        // classes: 'table-striped',
-        classes: 'table-borderless table-striped',
+        // url:fakedata_path+'table.json', //severside 的網址`//    測試後請刪除
+        url:'/api/orders/', //severside 的網址
+        classes: '',
+        theadClasses:'bg-light',
         pagination:true,
         paginationVAlign:'bottom',
         fixedColumns: true,
         filterControl: true,
-        cache: false,
+        // cache: false,
         sortOrder:'asc',
         contentType:'application/json',
         dataType:'json',
@@ -100,16 +104,24 @@ $(function(){
         showRefresh: true,
         showToggle: true,
         detailView:true,
-        // sidePagination:'server',
-        sidePagination:'client',
+        sidePagination:'server',
+        // sidePagination:'client',
         pageList:[10, 25, 50, 100],
-        // searchOnEnterKey:true,
+        searchOnEnterKey:true,
         clickToSelect: true,  //是否啟用點選選中行
         // trimOnSearch: true,
         buttonsClass: 'btn btn-outline-secondary float-right',
         detailFormatter: 'detailFormatter',
         queryParams:'queryParams',
         iconsPrefix: 'fa',
+        rowStyle: function(row, index) {
+            let status=Object.values(Object.values(row.status)[0])[0];
+            if(status=='Close'){
+                return {css:{opacity:.5}};
+            }else{
+                return {};
+            }
+        },
         icons: {
             paginationSwitchDown: 'fa-caret-down',
             paginationSwitchUp: 'fa-caret-up',
@@ -133,6 +145,36 @@ $(function(){
                 },
             },
             {
+                field:'status',
+                title:'Status',
+                hvalign: 'top',
+                class:'pb-2',
+                formatter:function(value, row, index){
+                    //  測試後  未來請修正~
+                    let status=Object.values(Object.values(value)[0])[0];
+                    let who=Object.keys(Object.values(value)[0])[0];
+                    switch (who) {
+                        case 'initiator':
+                            who='Intiator'
+                            break;
+                        case 'assigner':
+                            who='Form receiver'
+                            break;
+                        case 'developer':
+                            who='Developer'
+                            break;
+                        default:
+                            who='Reviewer'
+                            break;
+                    }
+                    if(status==''){
+                        status='pending...'
+                    }
+                    let html=`<span class="ellipsis">`+who+` `+status+`</span>`
+                    return html;
+                },
+            },
+            {
                 field:'parent',
                 title:'Parent form',
                 align:'center',
@@ -142,8 +184,9 @@ $(function(){
                     return value;
                 },
                 formatter:function(value, row, index){
-                    let html=''
-                    if(value!==null||value!==''){
+                    let html='<span class="text-grey font-weight-bold"> - </span>';
+                    if(value==null||value==''){
+                    }else{
                         html = `<div class="ellipsis">
                                     <span class="col-6">`+value+`</span>
                                     <i class="ml-2 btn btn-success btn-sm fa fa-file-alt ezinfoModal_trigger"  data-id="`+value+`"></i>
@@ -158,7 +201,6 @@ $(function(){
                 filterControl: 'select',
                 filterControlPlaceholder:'Select Account',
                 width:200,
-                // filiterData:'var:accounts.id',
                 filterDataCollector:function(value, row, index){
                     return (value.id+' _ '+value.code);
                 },
@@ -174,10 +216,23 @@ $(function(){
                 filterControlPlaceholder:'Select project',
                 width:200,
                 filterDataCollector:function(value, row, index){
-                    return (value.id+' _ '+value.code);
+                    return (value.id+' _ '+value.name);
                 },
                 formatter:function(value, row, index){
-                    let html=`<span class="ellipsis">`+value.code+`</span>`
+                    let html=`<span class="ellipsis">`+value.name+`</span>`
+                    return html;
+                },
+            },
+            {
+                field:'develop_team_sub_function',
+                title:'Developer function',
+                filterControl: 'select',
+                filterControlPlaceholder:'Select func',
+                filterDataCollector:function(value, row, index){
+                    return value;
+                },
+                formatter:function(value, row, index){
+                    let html=`<span class="ellipsis">`+value+`</span>`
                     return html;
                 },
             },
@@ -187,9 +242,8 @@ $(function(){
                 filterControl:'input',
                 filterControlPlaceholder:'Search name',
                 formatter:function(value, row, index){
-                    let avatar=avatar_get(value.employee_id);
-                    let html=`<div class="d-inline-flex align-items-top">
-                                <img class="sticker mr-2" src="`+avatar+`" onerror="this.src='`+images['defaultavatar']+`'">
+                    let html=`<div class="d-inline-flex align-items-top mt-1">
+                                <img class="sticker mr-2" src="`+images['defaultavatar']+`" data-employee_id="`+value.employee_id+`">
                                 <div>
                                     <small class="ellipsis text-dark mb-1 mr-1">
                                         `+value.display_name.split('/Wistron')[0]+`
@@ -200,24 +254,14 @@ $(function(){
                 },
             },
             {
-                field:'develop_team_sub_function',
-                title:'Developer function',
-                filterControl: 'select',
-                filterControlPlaceholder:'Select func',
-                formatter:function(value, row, index){
-                    let html=`<span class="ellipsis">`+value+`</span>`
-                    return html;
-                },
-            },
-            {
                 field:'assigner',
                 title:'Form receiver',
                 filterControl:'input',
                 filterControlPlaceholder:'Search name',
                 formatter:function(value, row, index){
                     let avatar=avatar_get(value.employee_id);
-                    let html=`<div class="d-inline-flex align-items-top">
-                                    <img class="sticker mr-2" src="`+avatar+`" onerror="this.src='`+images['defaultavatar']+`'">
+                    let html=`<div class="d-inline-flex align-items-top mt-1">
+                                    <img class="sticker mr-2" src="`+images['defaultavatar']+`" data-employee_id="`+value.employee_id+`">
                                     <div>
                                         <small class="ellipsis text-dark mb-1 mr-1">
                                             `+value.display_name.split('/Wistron')[0]+`
@@ -243,6 +287,8 @@ $(function(){
                 filterControl:'input',
                 filterControlPlaceholder:'Search',
                 formatter:function(value, row, index){
+                    //  The code string may include \",so to remove the \"
+                    value=value.replace(/\\/g,'');
                     let html='<div class="ellipsis">'+value+'</div>';
                     return html;
                 },
@@ -269,16 +315,19 @@ $(function(){
                 class:'pb-2',
                 align:'center',
                 formatter:function(value, row, index){
-                    let html='';
+                    let html='<span class="text-grey font-weight-bold"> - </span>';
                     if(value==''||value==null){
-                        html='<a class="fa fa-link" title="nothing" disabled></a>'
                     }else{
-                        html='<a href="'+value+'" class="fa fa-link" title="'+value+'"></a>'
+                        html='<a href="'+value+'" class="fa fa-link" title="'+value+'" target="_blank"></a>'
                     }
                     return html;
                 },
             }
         ],
+        formatNoMatches: function () {
+            let html=NoMatches('...');
+            return html;
+        },
         formatLoadingMessage: function(){ 
             let html=LoadingMessage();
             return html;
@@ -290,31 +339,33 @@ $(function(){
         onPostBody:function(name, args){
             let target = $('#table').find('th[data-field="exp_date"],th[data-field="form_begin_time"]').find('input');
             target.daterangepicker({
+                // maxDate: new Date,
+                minYear: 1985,
+                maxYear: parseInt(moment().format('YYYY'),10),
+                autoUpdateInput: false,
                 applyButtonClasses:'btn btn-info',
                 cancelButtonClasses:'btn btn-warning',
-                // autoApply:true,
-                autoUpdateInput: false,
                 locale: {
                     cancelLabel: 'Clear',
                     format: 'YYYY-MM-DD '
                 }
             });
             target.on('apply.daterangepicker', function(ev, picker) {
-                $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));    
-                $('#table').bootstrapTable('triggerSearch');
+                target.trigger('cancel.daterangepicker');
+                target.val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));    
             });
             target.on('cancel.daterangepicker', function(ev, picker) {
-                $(this).val('');
-                $('#table').bootstrapTable('triggerSearch');
+                target.val("");
             });
+            avatar_reload($('#table').find('img.sticker'));
         },
         onDblClickRow:function(row,$element,field) {},
         onClickRow:function(row,$element,field) {
-            console.log('click row');
-            let authors=author_arr(result);
-            console.log(row);
-            console.log(authors);
-            
+            if(field!=='parent'){
+                // let signaturers=get_signaturers(row.id);
+                // let indentify=indentify_user(loginInfo.employee_id,row,signaturers);
+                indentify_modal_show(row);
+            }
         }
     });
 
@@ -325,8 +376,6 @@ $(function(){
 
 
     
-    //  Delete upload image UI --> disabled upload img funciton
-    $(document).find('.note-group-select-from-files').remove();
-    $(document).find('.note-modal .close').remove();
+    
 
 });
