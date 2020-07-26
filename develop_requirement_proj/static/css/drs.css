@@ -91,12 +91,16 @@
     div#image_status{
         overflow: auto;
         height: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
     }
     div#image_status::-webkit-scrollbar{
         display: none;
     }
     #image_status>div:nth-child(1) img{
         width: 50%;
+        height: auto;
     }
     #image_status div {
         text-shadow: rgba(0, 0, 0, 0.088) 0.1em 0.1em 0.08em;
@@ -215,14 +219,17 @@
         outline: none !important;
         outline-offset: 0px;
     }
-
+    #request_description{width: fit-content!important;}
 
     .comments_shape{
-        border-bottom-right-radius: 5px;
-        border-top-right-radius: 1.4em; 
-        border-bottom-left-radius: 1.4em; 
+        /* border-bottom-right-radius: 5px; */
+        border-top-right-radius: .8em; 
+        border-bottom-left-radius: .8em; 
+        border-bottom-right-radius: .8em; 
         margin-left: 1em; 
-        margin-top:-.6em
+        margin-top:-.6em;
+        width: fit-content;
+        max-width: inherit;
     }
     .comments_shape div{
         overflow: auto;
@@ -233,8 +240,8 @@
     tr td:hover .ellipsis{
         /* overflow:visible; */
         /* text-overflow: unset; */
-        background-color: #f3f3f3;
-        border-radius: 2em;
+        background-color: #dedede;
+        border-radius: 1em;
         left: 0;
         /* word-break: break-word; */
         /* white-space: normal; */
@@ -280,10 +287,17 @@
         z-index: 9;
         right: .5em;
     } */
-
+    #display_comment_area{
+        overflow: scroll;
+        width: -webkit-fill-available;
+        max-width: initial;
+    }
+    #display_comment_area::-webkit-scrollbar{
+        display: none;
+    }
     #comment_area{
         display: none;
-        overflow: scroll;
+        /* overflow: scroll; */
     }
     #comment_area::-webkit-scrollbar{ display: none; }
 
@@ -302,18 +316,46 @@
         background-color: var(--light);
         font-weight: 500;
     }
+    #table .filter-control input,.filter-control select{ background-color:#fdfdfd;}
     .filter-control input::placeholder,.filter-control select::placeholder{ color: var(--disabled); }
     .filter-control input:focus::placeholder,.filter-control select:focus::placeholder{ color: var(--grey); }
     .filter-control input:focus,.filter-control select:focus{
         box-shadow: none;
         border: 1px solid var(--gray);
-        background-color: var(--secondary);
+        background-color: var(--secondary)!important;
         color: var(--light);
     }
 
 
 
 /* tagModal table  start */
+    .table-wapper {
+        max-height: 50px;
+        width: 100%;
+        overflow: hidden;
+        /* display:inline-block; */
+    }
+
+    .table-wapper:hover {
+        overflow: visible;
+        max-height: fit-content;
+        display:inline-block;
+    }
+    .table-wapper table::-webkit-scrollbar{display: none; }
+    .table-wapper tr:hover{
+        background-color: unset !important;
+    }
+    .table-wapper td,.table-wapper th{
+        padding-right: 2.5rem;
+        font-size: .8rem;
+        white-space: nowrap;
+        text-align: start;
+    }
+    .table-wapper td,.table-wapper td *{
+        font-size: .1rem;
+    }
+
+    
     #table tr{
         cursor: pointer;   
     }
@@ -327,10 +369,12 @@
     }
     .modal .table td,.modal .table th {
         padding: .25rem 10px .25rem 10px;
-        max-width: 10rem;
+        /* max-width: 10rem; */
         width: fit-content;
     }
-
+    #TL tbody td:last-child{
+        background-color: #fff !important;
+    }
     .modal .table td:hover {
         overflow:visible;
         text-overflow: unset;
@@ -354,11 +398,7 @@
         height: fit-content;
     }
     #result_tag_table_div{ max-height: 25vh; }
-    .table thead th{
-        position: sticky; 
-        top: 0;
-        background-color: rgba(255, 255, 255, 0.897);
-    }
+
 
     #result_tag_table_div::-webkit-scrollbar,
     #present_tag_table_div::-webkit-scrollbar{
@@ -378,7 +418,7 @@
         max-height: 1rem;
         width: 80%;
         background-color: var(--secondary);
-        box-shadow: 0.08rem 0.08rem 0.15rem rgba(14, 14, 14, 0.37);
+        /* box-shadow: 0.08rem 0.08rem 0.15rem rgba(14, 14, 14, 0.37); */
         /* opacity: .85; */
     }
 

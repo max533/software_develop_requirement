@@ -40,7 +40,7 @@
     }
     .dropdown-menu .selected{
         background-color: var(--secondary);
-        color: var(--primary) !important;
+        color: var(--light) !important;
     }
     .disabled .filter-option .filter-option-inner .filter-option-inner-inner{
         color:var(--deepdark) !important;
@@ -55,6 +55,7 @@
         /* 選擇器寬度 */
         width: 14em !important;
         background: var(--light) !important;
+        border: 1px solid var(--gray) !important;
     }
     .ui-widget-content{
         border: none !important;
@@ -67,14 +68,14 @@
         color: var(--secondary);
     }
     .ui-datepicker table{
-        font-size: .92em;
+        font-size: .9rem;
     }
-    .ui-widget-header{
+    /* .ui-widget-header{
         font-family: 'Rubik', sans-serif;
-    }
+    } */
     .ui-datepicker th {
         padding: 0.1em 0em;
-        font-size: .85em;
+        font-size: .85rem;
         padding-top: .5em;
         color: var(--secondary);
         }
@@ -86,26 +87,32 @@
     .ui-datepicker-prev, .ui-datepicker-next {
         top: 4px !important;
         border: none !important;
-        background: var(--primary) !important;
+        background: var(--light) !important;
     }
     .ui-state-default {
-        margin: 1px 2px;
-        border: 2px solid rgb(190, 229, 235) !important;
+        margin: 3px 2px;
+        border: none !important;
         border-radius: 5em !important;
-        background: var(--lightprimary) !important;
+        background: #fff !important;
         color: var(--secondary) !important;
+        text-align:center !important;
+        /* box-shadow: 0.08rem 0.08rem 0.45rem rgba(14, 14, 14, 0.295); */
+    }
+    .ui-state-default:hover {
+        background: var(--secondary) !important;
+        color: var(--grey) !important;
     }
     .ui-state-highlight {
-        border: 3px solid var(--info) !important;
+        border: 1px solid var(--grey) !important;
         border-radius: 5em!important;
-        background: rgb(190, 229, 235) !important;
+        background: var(--light) !important;
         color: var(--secondary) !important;
     }
     .ui-state-active {
-        border: 2px solid rgb(23, 162, 184) !important;
+        border: 1px solid var(--grey) !important;
         border-radius: 5em !important;
-        background: var(--infohover) !important;
-        color: rgb(252, 253, 253) !important;
+        background: var(--secondary) !important;
+        color: #fff !important;
     }
     .ui-state-disabled, .ui-datepicker-unselectable {
         opacity: .4 !important;

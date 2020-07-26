@@ -4,18 +4,16 @@ $(function(){
     let undos_limit=10;
     let developers_limit=12;
     
-    let developers=get_developers()['developer'];
-    let developer_contacter=[get_developers()['developer_contacter']];
-    //  From backend developers list
-    let original_dev_list=developer_contacter.concat(developers);
-    let current_dev_list=[...original_dev_list];
-
+    let developers=[];
+    let developer_contacter=[];
+    let original_dev_list=[];
+    let current_dev_list=[];
 
 
 //  function
     function undo_limit(){
         let limit=undos_limit+1    //limit=10
-        if(undo_list.length>=undos_limit){
+        if(undo_list.length>=limit){
             undo_list.splice(0,1);
         }
         //  Disabled undo btn or not
@@ -28,13 +26,53 @@ $(function(){
                 break;
         }
     }
-    select_devcontacter('#sel_devcontacter_div','#present_dev_table',current_dev_list);
+    select_devcontacter('#sel_devcontacter_div','#present_dev_table',current_dev_list,developer_contacter);
 
 
 //  Select contact window
     $('#sel_devcontacter_div').find('.selectpicker').on('change',function(){
-        select_devcontacter('#sel_devcontacter_div','#present_dev_table',current_dev_list);
+        developer_contacter=[];
+        select_devcontacter('#sel_devcontacter_div','#present_dev_table',current_dev_list,developer_contacter);
+        if($(this).val()!==null){
+            $(this).selectpicker('setStyle','btn-outline-danger','remove').selectpicker( 'refresh' );
+        }
     });
+
+
+
+//  Dev_modal show --> raw developerlist from button data
+    // $('#developersModal').on('show.bs.modal',function(){
+        // let raw_dev_list=$('#assign_dev_func').find('button').data('raw_dev_list');
+        // developers=[];
+        // developer_contacter=[];
+        // original_dev_list.length=0;
+        // if(raw_dev_list['member'].length==0&&raw_dev_list['contactor']!==''){
+        //     developer_contacter.push(raw_dev_list['contactor']);
+        //     original_dev_list=developer_contacter;
+        //     current_dev_list=[...original_dev_list];
+        // }else if(raw_dev_list['member'].length!==0&&raw_dev_list['contactor']!==''){
+        //     // if(raw_dev_list['member'].length!==0)developers=raw_dev_list['member'];
+        //     developers=raw_dev_list['member']
+            
+        //     developer_contacter.push(raw_dev_list['contactor']);
+        //     //  From backend developers list
+        //     original_dev_list=developer_contacter.concat(developers);
+        //     current_dev_list=[...original_dev_list];
+        // }
+    // });
+    //  dev modal hide --> empty the developers list
+    $('#developersModal').on('hide.bs.modal',function(){
+        // developers.length=0;
+        // developer_contacter.length=0;
+        // original_dev_list.length=0;
+        // current_dev_list.length=0;
+        
+        //  Search fields empty
+        $('#search_dev_site .selectpicker').selectpicker('val','');
+        $('#search_dev').val('');
+        $('#search_dev_field .active').removeClass('active');
+    });
+
 
 
 //  Developers table function    
@@ -49,6 +87,8 @@ $(function(){
 
         let current_employee_id_list=current_id_arr(current_dev_list);
         if_employee_joined(current_employee_id_list,developers_limit,'#result_dev_table','#developers_limit');
+   
+        select_devcontacter('#sel_devcontacter_div','#present_dev_table',current_dev_list,developer_contacter);
     });
 
 
@@ -61,24 +101,44 @@ $(function(){
         $('#present_dev_table').bootstrapTable('load',data);
         current_dev_list=[];
         if_employee_joined([],developers_limit,'#result_dev_table','#developers_limit');
+        select_devcontacter('#sel_devcontacter_div','#present_dev_table',current_dev_list,developer_contacter);
     });
 
 
     $('#developersModal').on('click','#developer_undo',function(){
         let times=undo_list.length;
+        let devdata=[];
         if(times>=1){
-            let data=undo_list[times-1];
+            devdata=undo_list[times-1];
             undo_list.splice(times-1,1);
-            $('#present_dev_table').bootstrapTable('load',data);
-            let current_employee_id_list=current_id_arr(data);
+            $('#present_dev_table').bootstrapTable('load',devdata);
+            let current_employee_id_list=current_id_arr(devdata);
             if_employee_joined(current_employee_id_list,developers_limit,'#result_dev_table','#developers_limit');
         }else console.log('No undo!!');
-
         undo_limit();
+        current_dev_list=devdata;
+        select_devcontacter('#sel_devcontacter_div','#present_dev_table',current_dev_list,developer_contacter);
     });
-
-
     $('#developersModal').on('shown.bs.modal',function(){
+        let raw_dev_list=$('#assign_dev_func').find('button').data('raw_dev_list');
+        developers=[];
+        developer_contacter=[];
+        original_dev_list=[];
+        current_dev_list=[]
+        if(raw_dev_list['member'].length==0&&raw_dev_list['contactor']!==''){
+            developer_contacter.push(raw_dev_list['contactor']);
+            original_dev_list=developer_contacter;
+            current_dev_list=[...original_dev_list];
+        }else if(raw_dev_list['member'].length!==0&&raw_dev_list['contactor']!==''){
+            // if(raw_dev_list['member'].length!==0)developers=raw_dev_list['member'];
+            developers=raw_dev_list['member']
+            
+            developer_contacter.push(raw_dev_list['contactor']);
+            //  From backend developers list
+            original_dev_list=developer_contacter.concat(developers);
+            current_dev_list=[...original_dev_list];
+        }
+
         $(this).find('.devsearch_fade').fadeOut(0);
 
         $('#present_dev_table').bootstrapTable('destroy').bootstrapTable({
@@ -113,15 +173,14 @@ $(function(){
                         rowlist.push(name);
                         return rowlist;
                     },
-                    formatter:function(value, row, index){
-                        let avatar=row['avatar'];
+                    formatter:function(value, row, index){ 
                         let name=row['display_name'];
-                        let html = `<div class="d-inline-flex align-items-center"><img src="`+avatar+`" class="sticker mr-2"><span>`+name+`</span><div>`;
+                        let html = `<div class="d-inline-flex align-items-center"><img src="`+images['defaultavatar']+`" data-employee_id="`+row['employee_id']+`" class="mr-2 sticker"><span>`+name+`</span><div>`;
                         return html;
                     },
                 },
                 {
-                    field:'jobtitle',
+                    field:'job_title',
                     title:'Job title',
                     class:'ellipsis',
                     hvalign:'top',
@@ -145,7 +204,7 @@ $(function(){
                 }
             ],
             formatNoMatches: function () {
-                let html=NoMatches('Try to enter another keyword!');
+                let html=NoMatches('...');
                 return html;
             },
             formatLoadingMessage: function(){ 
@@ -183,12 +242,14 @@ $(function(){
                             let current_employee_id_list=current_id_arr(current_dev_list);
                             if_employee_joined(current_employee_id_list,developers_limit,'#result_dev_table','#developers_limit');
                         });
-                        select_devcontacter('#sel_devcontacter_div','#present_dev_table',current_dev_list);
                     });
                 }
             },
             onPostBody:function(name,args){
-                select_devcontacter('#sel_devcontacter_div','#present_dev_table',current_dev_list);
+                if(current_dev_list.length!==0) {
+                    select_devcontacter('#sel_devcontacter_div','#present_dev_table',current_dev_list,developer_contacter);
+                    avatar_reload($('#present_dev_table').find('img.sticker'));
+                }
             },
             onAll:function(name, args){},
         });
@@ -225,11 +286,10 @@ $(function(){
             data['site__exact']=$('#search_dev_site').find('select').val();
             data[paramkey+'__icontains']=$('#search_dev').val();
 
-
             let employees=get_employees(data);
             //  Ccurrent id list
             $('#result_dev_table').bootstrapTable('destroy').bootstrapTable({
-                data:employees,
+                data:employees['rows'],
                 fixedColumns: true,
                 cache: false,
                 contentType:'application/json',
@@ -244,8 +304,12 @@ $(function(){
                         title:'Name',
                     },
                     {
-                        field:'jobtitle',
+                        field:'job_title',
                         title:'Job title',
+                    },
+                    {
+                        field:'extension',
+                        title:'Extension',
                     },
                     {
                         field:'plus',
@@ -256,7 +320,6 @@ $(function(){
                             let html;
                             let current_employee_id_list=current_id_arr(current_dev_list);
                             let current_devlopers_num=current_employee_id_list.length;
-    
                             if(current_devlopers_num<developers_limit){
                                 if(current_employee_id_list.includes(employee_id)){
                                     html = `<button type="button" class="btn btn-light mt-1 btn-sm" disabled>
@@ -302,6 +365,7 @@ $(function(){
                                         </h6>
                                     </div>`;
                     $(search_complete_html).insertAfter('#result_dev_table'); 
+                    
                 },
                 onClickCell:function(field, value, row, $element){  
                     if(field=='plus'){
@@ -323,7 +387,7 @@ $(function(){
                             });
                             $('#present_dev_table').bootstrapTable('append',row);
     
-                            let targettr=$('#present_dev_table').find('tr').last();
+                            let targettr=$('#present_dev_table').find('tbody').find('tr').last();
                             targettr.fadeOut(0);
                             targettr.find('td').first().append('<h5 class="badge badge-alert badge-pill ml-1">Just joined</h5>')
                             targettr.fadeIn(800);
@@ -337,7 +401,7 @@ $(function(){
                             let current_employee_id_list=current_id_arr(current_dev_list);
                             if_employee_joined(current_employee_id_list,developers_limit,'#result_dev_table','#developers_limit');
     
-                            select_devcontacter('#sel_devcontacter_div','#present_dev_table',current_dev_list);
+                            select_devcontacter('#sel_devcontacter_div','#present_dev_table',current_dev_list,developer_contacter);
                         });
                     }
                 }
@@ -345,4 +409,49 @@ $(function(){
         }
     });
     
+
+
+
+//  Check present_dev_table_div is '' contactor is '' or before updating developers 
+    $('#update_dev_btn').on('click',function(){
+        let contactor_target=$('#sel_devcontacter_div').find('.selectpicker');
+        if(developer_contacter.length==0){
+            $(this).tooltip({title:'Assigne at least one developer contactor'}).tooltip('show');
+            contactor_target.selectpicker('setStyle', 'btn-outline-danger');
+            $('#developersModal').scrollTop(0);
+        }else{
+            $(this).tooltip('dispose');
+            contactor_target.selectpicker('setStyle','btn-outline-danger','remove').selectpicker( 'refresh' );
+            let member_arr=[];
+            let developer_data={};
+            let raw_dev_data={};
+            let raw_member_arr=[]
+            let contactor=developer_contacter[0]['employee_id'];
+            let order_id=$('#requestModal').data('order_id');
+
+            $.each(current_dev_list,function(i,devloper_info){
+                if(devloper_info['employee_id']==contactor){
+                }else{
+                    member_arr.push(devloper_info['employee_id']);
+                    raw_member_arr.push(devloper_info);
+                } 
+            });
+            developer_data['member']=member_arr;
+            developer_data['contactor']=contactor;
+            raw_dev_data['member']=raw_member_arr;
+            raw_dev_data['contactor']=developer_contacter[0];
+            console.log('RAW_DEV_DATA');
+            console.log(raw_dev_data);
+            let respose_order=patch_order(order_id,{'developers':JSON.stringify(developer_data)})
+            if(respose_order){    //  確認patch order正確傳到後端，接續執行
+                $('#ApproveBTN').data('assigned',true);
+                show_author('form_owner',raw_dev_data);
+                $('#sel_devcontacter_div').find('.selectpicker').empty().selectpicker('refresh');
+                
+                //  把更新值存在btn-->在Show modal的值才可以正確
+                $('#assign_dev_func').find('button').data('raw_dev_list',respose_order['developers'])
+                $('#developersModal').modal('hide');
+            }
+        }
+    });
 });

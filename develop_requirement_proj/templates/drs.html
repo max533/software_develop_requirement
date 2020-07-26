@@ -9,7 +9,7 @@
 	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no" />
 	<meta http-equiv="Access-Control-Allow-Origin" content="*" />
 
-	<title>Wistron DQMS/DRS</title>
+	<title>DRS</title>
 	  
 	<link rel="shortcut icon" href="{% static '/images/logoico.ico' %}" type="image/x-icon">
 	<link rel="icon" href="{% static '/images/logoico.ico' %}" type="image/x-icon">
@@ -38,6 +38,7 @@
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+	<!-- <script type="text/javascript" src="{% static '/js/daterangepicker.js' %}"></script> -->
 	<!-- jquery validate -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/additional-methods.min.js"></script>	<!--Plugin tabDrable--><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
@@ -63,26 +64,38 @@
 			"upload":"{% static '/images/upload.svg' %}",
 			"document":"{% static '/images/document.svg' %}",
 			"status":"{% static '/images/service.png' %}",
+			"pending":"{% static '/images/pending.png' %}",
+			"approve":"{% static '/images/approve.png' %}",
+			"assigndev":"{% static '/images/assigndev.png' %}",
+			"signerwait":"{% static '/images/signerwait.PNG' %}",
+			"schedule":"{% static '/images/schedule.png' %}",
+			"pend_schedule":"{% static '/images/pend_schedule.png' %}",
+			"ajaxfail":"{% static '/images/ajaxfail.png' %}",
+			"reject":"{% static '/images/reject.png' %}",
+			"closed":"{% static '/images/closed.png' %}",
+			"developing":"{% static '/images/developing.png' %}",
+			"finalcheck":"{% static '/images/finalcheck.png' %}",
+			"completed":"{% static '/images/completed.png' %}",
 		};
-		let modal={
-			request:"{% static '../templates/modal.html' %}",
-		}
+		let file_template_path="{% static '/images/pending.png' %}";
 	</script>
 	<script type="text/javascript">
-		// $.ajaxSetup({
-		// 	headers: {'X-CSRFToken': "{{ csrf_token }}"}
-		// });	
-		//	imagesrc "{% static 'drs/images/' %}"
+		{% autoescape off %}
+		$.ajaxSetup({
+			headers: {'X-CSRFToken': "{{ csrf_token }}"},
+		});
+		{% endautoescape %} 
 	</script>
 	<link rel="stylesheet" href="{% static '/css/basic.css' %}"/>
 	<link rel="stylesheet" href="{% static '/css/datepicker.css' %}"/>
-	<link rel="stylesheet" href="{% static '/css/timeline.css' %}"/>
+	<link rel="stylesheet" href="{% static '/css/progress.css' %}"/>
 	<link rel="stylesheet" href="{% static '/css/drs.css' %}"/>
 	<link rel="stylesheet" href="{% static '/css/rwd.css' %}"/>
 	<script type="text/javascript" src="{% static '/js/fakedata.js' %}"></script>
 	<script type="text/javascript" src="{% static '/js/modal.js' %}"></script>
 	<script type="text/javascript" src="{% static '/js/component.js' %}"></script>
 	<script type="text/javascript" src="{% static '/js/backend.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/progress.js' %}"></script>
 	<script type="text/javascript" src="{% static '/js/basic.js' %}"></script>
 	<script type="text/javascript" src="{% static '/js/tag_modal.js' %}"></script>
 	<script type="text/javascript" src="{% static '/js/dev_modal.js' %}"></script>
@@ -94,8 +107,8 @@
         <nav class="mt-1 text-secondary align-items-center d-flex justify-content-end" id="navbar">					
             <div class="d-inline-flex align-items-center" id="navBTNs">
                 <form class="form-inline my-2 my-lg-0" >
-					<div class="dropdown ml-3" id="navSelectMessage">
-						<button class="btn btn-outline-light dropdown-toggle" type="button" data-toggle="dropdown" id="message" aria-expanded="false"> <i class="fa fa-bell fa-lg"></i> </button>
+					<div class="dropdown ml-3 mr-3" id="navSelectMessage">
+						<button class="btn btn-outline-light dropdown-toggle" type="button" data-toggle="dropdown" id="message" disabled> <i class="fa fa-bell fa-lg"></i> </button>
 						<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(-135px, 41px, 0px); top: 0px; left: 0px; will-change: transform;">
 							<div class="dropdown-item d-inline-flex align-items-center">
 								<i class="text-light fa fa-signature fa-lg ml-1"></i>
@@ -149,17 +162,17 @@
 								<h6>Read more <i class="fa fa-ellipsis-h ml-1"></i> </h6>
 							</div>
 						</div>
-						<span id="messageCount">9357</span>
+						<span id="messageCount"> --- </span>
 					</div>
 
                     <div class="dropdown" id="navSelectUser">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" id="navUser"> 
 						<!-- <img class="sticker" onerror="this.src='{% static '/images/defaultsticker.png' %}'" > -->
-                            <img class="sticker" onerror="{% static '/images/defaultsticker.png' %}" >
+                            <img class="sticker bg-light">
                         </button>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item align-items-center d-flex" id ="user" target="_blank"> 
-								<img class="sticker mr-2" >
+								<img class="sticker mr-2">
 								<span><!-- Leo Tu/WHQ/Wistron  --></span>
                             </a>
                             <a class="dropdown-divider"></a>
@@ -221,7 +234,7 @@
 										<input type="radio" name="field" value="title" required> Title
 									</label>
 									<label class="btn btn-outline-secondary">
-										<input type="radio" name="field" value="initator" required> Initator
+										<input type="radio" name="field" value="initiator" required> Initator
 									</label>
 									<label class="btn btn-outline-secondary">
 										<input type="radio" name="field" value="assigner" required> Form receiver
@@ -258,200 +271,7 @@
 	</div>
 
 	<!-- record tag_info_Modal -->
-	<div class="modal fade" id="ezinfoModal" tabindex="-1" role="dialog">
-		<div class="modal-dialog modal-dialog-centered modal-lg pl-5" role="document">
-			<div class="modal-content p-3">
-				<div class="modal-body">
-					<div class="col-12">
-						<div class="d-flex justify-content-between align-items-start">
-							<div id="signature_alert_content">
-								<h5 class="text-center"> -- <i class="fa fa-user-check mr-1"></i> Please review/approve this leave application -- </h5>
-								<hr>
-								<p class="text-dark bd-radius-8 font-weight-bold">
-									Please review the following form. Remember click the button on bottom of form and leave comments(required field). Once press the button,
-									The information will record in the comments and process will go on.</br></br>
-									<h6 class="badge badge-success badge-pill" style="width: 5.5rem;"><i class="fa fa-check-double mr-1"></i> Approve </h6> - You agree the form content totally.This form will be sent to another stage. </br>
-									<h6 class="badge badge-danger badge-pill" style="width: 5.5rem;"><i class="fa fa-stop mr-1"></i> Close </h6> - You would like to stop this form,and the form will break</br>
-									<h6 class="badge badge-warning badge-pill" style="width: 5.5rem;"><i class="fa fa-reply mr-1"></i> Return </h6> - There are some fields are wrong or ambiguous. The form will back to last stage.
-								</p>
-								<hr>
-							</div>
-							<button type="button" class="close" data-dismiss="modal">
-								<span> &times; </span>
-							</button>
-						</div>	
-						<div class="bg-light bd-radius-8 p-1 d-inline-flex align-items-baseline w-100">
-							<span class="ml-2 mr-2 text-grey"> Assign who </span>
-							<div class="font-bold-weight">
-								<h6 class="badge badge-grey badge-pill" title="Initiator">Leo Tu/WHQ</h6> &rsaquo; 
-								<h6 class="badge badge-grey badge-pill" title="Team">DQMS &rsaquo;</h6>  
-								<h6 class="badge badge-grey badge-pill" title="Account">WT-EBG</h6> &rsaquo; 
-								<h6 class="badge badge-grey badge-pill" title="Project">R360-EBG</h6> &rsaquo; 
-								<h6 class="badge badge-grey badge-pill" title="Receiver">Luis Liao/WNH</h6>
-							</div>
-						</div>					
-						<form id="" class="w-100 px-5 py-4 bd-radius-8">
-							<h6 class="text-secondary font-weight-bold"> Basic info </h6>
-							<div class="row align-items-baseline mt-3">
-								<label class="col-3 text-grey"> Form id </label>
-								<div class="col-9 bg-light bd-radius-8 p-1">
-									<span class="text-secondary font-weight-bold">12</span>
-								</div>		
-							</div>
-							<div class="row align-items-baseline mt-1">
-								<label class="col-3 text-grey"> Initiator </label>
-								<div class="col-9 bg-light bd-radius-8 p-1">
-									<img class="sticker" src='{% static '/images/defaultsticker.png' %}'">
-									<span class="text-secondary font-weight-bold ml-1">Jeff SH Wang/WHQ</span>
-								</div>
-							</div>
-							<div class="row align-items-baseline mt-1">
-								<label class="col-3 text-grey"> PO/PM </label>
-								<div class="col-9 bg-light bd-radius-8 p-1">
-									<img class="sticker" src='{% static '/images/defaultsticker.png' %}'">
-									<span class="text-secondary font-weight-bold ml-1">Jeff SH Wang/WHQ</span>
-								</div>
-							</div>
-							<div class="row align-items-baseline mt-1">
-								<label class="col-3 text-grey"> Developers </label>
-								<div class="col-9 bg-light bd-radius-8 p-1">
-									<img class="sticker" src='{% static '/images/defaultsticker.png' %}'">
-									<span class="text-secondary font-weight-bold mr-3">Peter Hsien/WHQ <strong>...</strong></span>
-									<button type="button" class="btn btn-outline-secondary btn-sm toggle-dev-list" data-toggle="button">
-										<i class="fa fa-list"></i>
-									</button>
-									<div class="col-12 dev-list" style="display: none;">
-										<ul class="text-grey">
-											<li class="mt-1">Kevin SJ Huang/WHQ</li>
-											<li class="mt-1">Leo Tu/WHQ</li>
-											<li class="mt-1">Peter Hsien/WHQ</li>
-											<li class="mt-1">Jeff SH Wang/WHQ</li>
-											<li class="mt-1">Kevin SJ Huang/WHQ</li>
-											<li class="mt-1">Leo Tu/WHQ</li>
-											<li class="mt-1">Peter Hsien/WHQ</li>
-											<li class="mt-1">Jeff SH Wang/WHQ</li>
-										</ul>
-									</div>
-								</div>
-							</div>
-							<div class="row align-items-baseline mt-1">
-								<label class="col-3 text-grey"> Signature list </label>
-								<div class="col-9 bg-light bd-radius-8 p-1">
-									<img class="sticker" src='{% static '/images/defaultsticker.png' %}'">
-									<span class="text-success font-weight-bold ml-1">
-										Jeff SH Wang/WHQ
-										<i class="fa fa-check-double text-success" title="Approved"></i>
-									</span>
-									
-									<img class="sticker" src='{% static '/images/defaultsticker.png' %}'">
-									<span class="text-secondary font-weight-bold ml-1">Jeff SH Wang/WHQ</span>
-									<img class="sticker" src='{% static '/images/defaultsticker.png' %}'">
-									<span class="text-secondary font-weight-bold ml-1">Jeff SH Wang/WHQ</span>
-									<img class="sticker" src='{% static '/images/defaultsticker.png' %}'">
-									<span class="text-secondary font-weight-bold ml-1">Jeff SH Wang/WHQ</span>
-								</div>
-							</div>
 
-							<hr>
-							<h6 class="text-secondary font-weight-bold"> Form content </h6>
-							<div class="row align-items-baseline mt-3">
-								<label class="col-3 text-grey"> Title </label>
-								<div class="col-9 bg-light bd-radius-8 p-1">
-									<span class="text-secondary font-weight-bold">DQMS develope requirement system</span>
-								</div>
-							</div>
-							<div class="row align-items-baseline mt-1">
-								<label class="col-3 text-grey"> Description </label>
-								<div class="col-9 bg-light bd-radius-8 p-1">
-									<h1><img src="https://s1.thcdn.com/productimg/1600/1600/11489653-1374492597223451.jpg" style="width: 25%; float: left;" class="note-float-left"><b>s<span style="background-color: rgb(255, 255, 0);">as</span>asa</b></h1><h4><b>a</b>adasdasd</h4>
-								</div>
-							</div>
-							<div class="row align-items-top mt-1">
-								<label class="col-3 text-grey"> Files </label>
-								<table class="table table-borderless col-9 bg-light bd-radius-8 table-hover" style="overflow:hidden;">
-									<tbody>
-										<tr>
-											<td>xxx.xml</td>
-											<td>22.00Mb</td>
-											<td><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p></td>
-											<td>
-												<a class="fa fa-cloud-download-alt btn btn-info btn-sm p-1 text-light" style="cursor: pointer;"></a>
-											</td>
-										</tr>
-										<tr>
-											<td>xxx.xml</td>
-											<td>22.00Mb</td>
-											<td><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p></td>
-											<td>
-												<a class="fa fa-cloud-download-alt btn btn-info btn-sm p-1 text-light" style="cursor: pointer;"></a>
-											</td>
-										</tr>
-									</tbody>
-								  </table>
-							</div>
-							<div class="row align-items-center mt-1">
-								<label class="col-3 text-grey"> Result </label>
-								<div class="col-9 bg-light bd-radius-8 p-1">
-									<span class="text-secondary font-weight-bold">www.gitlab.com</span>
-								</div>
-							</div>
-							<hr>
-							<h6 class="text-secondary font-weight-bold"> Time schedule </h6>
-							<div class="row align-items-top mt-1">
-								<label class="col-3 text-grey"> Schedule plan </label>
-								<table class="table table-borderless col-9 bg-light bd-radius-8 table-hover" style="overflow:hidden;">
-									<thead>
-										<tr>
-											<td>Milestone</td>
-											<td>Date</td>
-											<td>Description</td>
-											<td>Estimated complete rate</td>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>Estimated to begin to develop</td>
-											<td>2020-05-06</td>
-											<td><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p></td>
-											<td>0%</td>
-										</tr>
-										<tr>
-											<td>Estimated to end</td>
-											<td>2020-07-26</td>
-											<td><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p></td>
-											<td>100%</td>
-										</tr>
-							
-									</tbody>
-								  </table>
-							</div>
-							<div class="row align-items-center mt-1">
-								<label class="col-3 text-grey"> Estimated developing time  </label>
-								<div class="col-9 bg-light bd-radius-8 p-1">
-									<span class="text-secondary font-weight-bold">20 days (2020-05-06~2020-07-26)</span>
-								</div>
-							</div>
-						</form>	
-						<hr>
-						<h6 class="text-secondary font-weight-bold">Signature</h6>
-						<div class="row align-items-top mt-1">
-							<label class="col-3 text-grey"> Comment </label>
-							<div class="col-9 p-1">
-								<textarea class="w-100 font-weight-bold bd-radius-8 bg-light p-1 bd-none" rows="5" placeholder="Required to leave comments..."></textarea>
-							</div>
-						</div>
-						<hr>
-						<div class="w-100 d-inline-flex justify-content-end mt-2">
-								<button type="button" class="btn btn-success mr-2"><i class="fa fa-check-double mr-1"></i> Approve </button>
-								<button type="button" class="btn btn-warning mr-5"><i class="fa fa-reply mr-1"></i> Return </button>
-			
-								<button type="button" class="btn btn-danger"><i class="fa fa-stop mr-1"></i> Close </button>
-						</div>
-					</div>						
-				</div>		
-			</div>
-		</div>
-	</div>
 
 	<!-- developersModal -->
 	<div class="modal fade" id="developersModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
@@ -460,8 +280,10 @@
 				<div class="modal-body">
 					<div class="col-12 bg-white">	
 						<div class="d-flex justify-content-between align-items-start">
-							<div class="">
+							<div>
 								<h5 class="text-bluegray"> Assign developers </h5>
+								<p class="text-secondary"> The form is divided to two parts. One show the current developers list. Another part provide you to search member to join your developers list.</br> 
+															<strong>Rule: You need to select one developer from developers as contact window.</strong></p>
 							</div>
 							<button type="button" class="close" data-dismiss="modal">
 								<span> &times; </span>
@@ -471,7 +293,7 @@
 						<div class="mt-2">
 							<h6 class="modal-title text-secondary font-weight-bold"> At present, Developer team member list </h6>
 							<div class="row align-items-baseline mt-3">
-								<label class="col-3">&#9733 Developers contact windaw </label>
+								<label class="col-3">&#9733 Developer contact windaw </label>
 								<div class="btn-group btn-group-toggle col-9" data-toggle="buttons" id="sel_devcontacter_div">
 									<select class="field-style form-control selectpicker" title="Select contact window..."></select>
 								</div>
@@ -537,7 +359,7 @@
 						</form>	
 					</div>
 					<div class="d-flex justify-content-end mt-2">
-						<button type="button" class="btn btn-info"> <i class="far fa-paper-plane mr-1"></i> Save </button>
+						<button type="button" class="btn btn-info" id="update_dev_btn"> <i class="far fa-paper-plane mr-1" ></i> Save </button>
 					</div>						
 				</div>		
 			</div>
@@ -606,4 +428,131 @@
 			</div>
 		</div>
 	</div>
+
+<!-- Progress modal -->
+
+	<div id="TimelineHint" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Timeline Hint</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body px-0">
+					<table class="table table-borderless text-nowrap lead mb-0">
+						<tr>
+							<td class="text-center"><span style="border-left: 2px dashed red;"></span></td>
+							<td>Today mark</td>
+						</tr>
+						<tr>
+							<td class="text-center"><span style="border-left: 3px dashed black;"></span></td>
+							<td>Milestone mark</td>
+						</tr>
+						<tr>
+							<td class="text-center"><i class="fas fa-undo-alt fa-fw"></i></td>
+							<td>Reset to default scale</td>
+						</tr>
+						<tr>
+							<td><i class="fas fa-search-minus fa-fw"></i><i class="fas fa-search-plus fa-fw"></i></td>
+							<td>Zoom-out / Zoom-in</td>
+						</tr>
+						<tr>
+							<td><i class="fas fa-chevron-left fa-fw"></i><i class="fas fa-chevron-right fa-fw"></i></td>
+							<td>Scroll left / right</td>
+						</tr>
+						<tr>
+							<td><i class="fas fa-angle-double-left fa-fw"></i><i class="fas fa-angle-double-right fa-fw"></i></td>
+							<td>Scroll left / right faster</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- <div class="modal fade" id="milestoneModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content modal-content-body">
+				<div class="d-inline-flex justify-content-between align-items-baseline col-12 p-2">
+					<h5 class="text-secondary" id="milestone_modal_title"> Add New milestone </h5>
+					<button type="button" class="close" data-dismiss="modal">
+						<span> &times; </span>
+					</button>
+				</div>
+				<form id="FormAddMilestone" class="col-12">
+					<div class="row align-items-center mt-2 editShow readShow" style="display: none;">
+						<label class="col-4">Editor</label>
+						<div class="mb-2 pl-3 col-8 d-inline-flex align-items-center">
+							<img class="sticker mr-2" src="../static/images/defaultsticker.png">
+							<span class="text-grey editor "></span>
+						</div>
+					</div>
+					<div class="row align-items-center mt-2 editShow readShow" style="display: none;">
+						<label class="col-4">Last Updated time</label>
+						<div class="mb-2 pl-3 col-8 d-inline-flex align-items-baseline">
+							<span class="text-grey update_time"></span>
+						</div>
+					</div>
+					<hr>
+					<div class="row align-items-center mt-2">
+						<label class="col-4"> &#9733 Milestone </label>
+						<div class="mb-2 col-8 d-inline-flex align-items-baseline">
+							<input type="text" class="form-control field-style" name="name" placeholder="..." required>
+						</div>
+					</div>
+					<div class="row align-items-top mt-2">
+						<label class="col-4"> &#9733 Description </label>
+						<div class="mb-2 col-8 d-inline-flex align-items-baseline">
+							<textarea type="text" class="form-control field-style bd-radius-8" name="description" placeholder="..." required></textarea>
+						</div>
+					</div>
+					<div class="row align-items-center mt-2">
+						<label class="col-4"> &#9733 Estimated developing period</label>
+						<div class="mb-2 col-8 d-inline-flex align-items-baseline">
+							<div class="input-group">
+								<input type="text" class="form-control field-style" name="est_dev_period" id="est_dev_period" placeholder="YYYY-MM-DD - YYYY-MM-DD" required>
+							</div>
+						</div>
+					</div>
+					<div class="row align-items-center mt-2">
+						<label class="col-4"> &#9733 Complete rate</label>
+						<div class="mb-2 col-8 d-inline-flex align-items-baseline">
+							<div class="input-group">
+								<input type="text" value="0" class="form-control field-style" name="complete_rate" id="progress_complete_rate" style="ime-mode:disabled" onkeyup="return ValidateNumber($(this),value)" placeholder="0~100" required>
+								<div class="input-group-append">
+									<button class="btn btn-light font-weight-bold" type="button"> % </button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<small class="text-secondary d-flex justify-content-end mb-2">
+						★ is required field. Need to fill out before requesting.
+					</small>
+					<hr>
+					<div class="mb-2 d-flex justify-content-between">
+						<div class="d-flex justify-content-start">
+							<button type="button" class="btn btn-danger editShow" id="delProgress" style="display: none;">
+								<i class="fa fa-trash-alt mr-2"></i>Delete
+							</button>
+						</div>
+					
+						<div class="d-flex justify-content-end">
+							<button type="button" class="btn btn-info" id="addProgress">
+								<i class="fa fa-plus mr-2"></i>Add new milestone
+							</button>
+							<button type="button" class="btn btn-info ml-2 editShow" id="updateProgress" style="display: none;">
+								<i class="fa fa-check-double mr-2"></i>Save
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div> -->
+
+
+
+
 </body>

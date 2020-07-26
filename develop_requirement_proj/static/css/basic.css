@@ -53,6 +53,7 @@
     .badge-alert { color: var(--light); background-color: var(--cardDelay); }
     .badge-success { color: var(--light); background-color: var(--success); }
     .badge-primary { color: var(--light); background-color: var(--primary); }
+    .badge-bluegray { color: var(--light); background-color: var(--bluegray); }
     .btn-outline-secondary:hover,.btn-outline-secondary:visited{ color: var(--light); background-color: var(--secondary); }
     a.bg-primary:focus, a.bg-primary:hover, button.bg-primary:focus, button.bg-primary:hover { background-color: var(--info)!important; }
     .btn-success{ background-color: var(--success); border-color: var(--success);}
@@ -62,7 +63,10 @@
     .btn-info{ background-color: var(--primary); border-color: var(--primary);}
     .btn-info:hover{ background-color: var(--info); border-color: var(--info);}
     .bd-radius-8{border-radius: .8rem !important;}
-
+    .border-danger {
+        border-color: var(--danger)!important;
+    }
+    .opacity-8{opacity: .8;}
 
 /*  general */
     body{ font-size: .9rem; }
@@ -77,9 +81,27 @@
         overflow:hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        max-width: 18em;
-        width: fit-content;
+        max-width: 22em;
+        /* width: 18em; */
         padding: .3rem;
+    }
+    .ellipsis:hover{
+        overflow:visable;
+        max-height: unset;
+        max-width: unset !important;
+        /* width: fit-content; */
+        word-break: break-word;
+        white-space: normal;
+    }
+    #form_info .ellipsis {
+        max-width: inherit !important;
+        word-break: break-word;
+        white-space: normal;
+        max-height: 5rem;
+    }
+    #form_info:hover .ellipsis{
+        overflow:visable;
+        max-height: unset;
     }
     .blur{
         -webkit-filter: blur(3px) opacity(80%); /* Safari */
@@ -90,9 +112,8 @@
         padding: .45rem;
         max-height: 5em;
     }
-
-    table tr:hover{
-        background-color: #e0e0e0 !important;
+    table:not(.ui-datepicker-calendar) tr:hover{
+        background-color: var(--light);
         border-radius: .8rem;
     }
     /* table tr:hover>td *,table tr:hover>td{
@@ -104,6 +125,9 @@
         white-space: normal;
         text-overflow: unset;
     }
+    table tr:hover>td small.ellipsis{
+        white-space: nowrap !important;
+    }
     .b-radius-8{
         border-radius: .8em;
     }
@@ -114,7 +138,10 @@
             -ms-transition: opacity 0.1s linear;
              -o-transition: opacity 0.1s linear;
                 transition: opacity 0.1s linear;
-      }
+    }
+    input:disabled,textarea:disabled{
+        box-shadow: none !important;
+    }
 /* button */
     i.btn{ cursor: pointer; }
     .btn-group label{ cursor: pointer; }
@@ -161,6 +188,7 @@
         border-radius: 2em;
         padding: .4rem .5rem .4rem 1rem;
         box-shadow: 0.1rem .15rem .4rem rgba(0, 0, 0, 0.055) !important;
+        font-size: .9rem;
     }
     .field-style::placeholder{
         color: var(--grey);

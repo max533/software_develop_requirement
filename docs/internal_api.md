@@ -1,3 +1,320 @@
+## Development Progress Operation
+
+- [ ]FIXME Adjust progress table for retireve
+
+### `GET` Filter Development Progress Collection by Order Id
+
+```url
+{{service_url}}/api/progress/?param1=value1
+```
+
+Filter progress resource by order id
+
+- PARAMS
+
+    Key|Value|Description
+    :---:|:---:|:---:
+    order| 10 | order id
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {}
+    ```
+
+    Example response
+
+    ```json
+    [
+        {
+            "id": 2,
+            "name": "Spirit 01",
+            "description": "This is a description.",
+            "start_time": "2020-03-20T08:26:38.093183Z",
+            "end_time": "2020-03-20T08:26:38.093183Z",
+            "complete_rate": 10,
+            "editor": {
+                "employee_id": "10612704",
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "extension": "85014815",
+                "job_title": "工程師",
+            },
+            "update_time": "2020-03-20T08:26:38.093183Z",
+            "order": 10,
+        },
+        {
+            "id": 3,
+            "name": "Spirit 02",
+            "description": "This is a description.",
+            "start_time": "2020-03-20T08:26:38.093183Z",
+            "end_time": "2020-03-20T08:26:38.093183Z",
+            "complete_rate": 100,
+            "editor": {
+                "employee_id": "10612704",
+                "display_name": "Jeff SH Wang/WHQ/Wistron",
+                "extension": "85014815",
+                "job_title": "工程師",
+            },
+            "update_time": "2020-03-20T08:26:38.093183Z",
+            "order": 10,
+        },
+    ]
+    ```
+
+### `POST` Create Development Progress
+
+- [ ]FIXME Adjust progress table for create
+
+```url
+{{service_url}}/api/progress/
+```
+
+Create a new development progress on specific order
+
+- PERMISSSION
+
+    Only developers can use
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+    X-CSRFToken | {{ CSRF_COOKIE_NAME }}
+
+- PARAMS
+
+    Key|Value|Description
+    :---:|:---:|:---:
+    name | Progress Name | the name of the progress
+    description | This is a description | the description of progress
+    start_time| Project Begin Time | the name of progress
+    end_time | 2020-03-21T08:59:38.093183Z | the expected_time of progress
+    complete_rate | 15 | the complete_rate of progress
+    order | 2 | it indicate this progress belong to which order
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {
+        "name": "MVP Time",
+        "start_time": "2020-03-20T08:26:38.093183Z",
+        "end_time": "2020-03-20T08:26:38.093183Z",
+        "description": "This is a description.",
+        "complete_rate": 100,
+        "order": 10
+    }
+    ```
+
+    Example response
+
+    ```json
+    {
+        "id": 2,
+        "name": "MVP Time",
+        "description": "This is a description.",
+        "start_time": "2020-03-20T08:26:38.093183Z",
+        "end_time": "2020-03-20T08:26:38.093183Z",
+        "complete_rate": 100,
+        "editor": {
+            "employee_id": "10612704",
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
+            "extension": "85014815",
+            "job_title": "工程師",
+        },
+        "update_time": "2020-03-20T08:26:38.093183Z",
+        "order": 10
+    }
+    ```
+
+### `PUT` Update Development Progress Deatail by Progress Id
+
+- [ ] TODO Add this action with viewset
+
+```url
+{{service_url}}/api/progress/:id/
+```
+
+Update order's progress detail by progress `id`
+
+- PERMISSSION
+
+    Only developers can use
+
+- PATH VARIABLES
+
+    Variable|Description
+    :---: | :---:
+    id | progress id
+
+- PARAMS
+
+    Key|Value|Description
+    :---:|:---:|:---:
+    name | Progress Name | the name of the progress
+    description | This is a description | the description of progress
+    start_time| Project Begin Time | the name of progress
+    end_time | 2020-03-21T08:59:38.093183Z | the expected_time of progress
+    complete_rate | 15 | the complete_rate of progress
+    order | 2 | it indicate this progress belong to which order
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+    X-CSRFToken | {{ CSRF_COOKIE_NAME }}
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {
+        "id": 1,
+        "name": "MVP Time",
+        "description": "This is a description.",
+        "start_time": "2020-03-20T08:26:38.093183Z",
+        "end_time": "2020-03-20T08:26:38.093183Z",
+        "complete_rate": 100,
+        "editor": {
+            "employee_id": "10612704",
+            "display_name": "Jeff SH Wang/WHQ/Wistron",
+            "extension": "85014815",
+            "job_title": "工程師",
+        },
+        "update_time": "2020-03-20T08:26:38.093183Z",
+        "order": 10
+    }
+    ```
+
+    Example response
+
+    ```json
+    {
+        "id": 1,
+        "name": "MVP Time",
+        "description": "This is a description.",
+        "start_time": "2020-03-20T08:26:38.093183Z",
+        "end_time": "2020-03-20T08:26:38.093183Z",
+        "complete_rate": 100,
+        "order": 10
+    }
+    ```
+
+### `PATCH` Update Partially Development Progress Detail
+
+- [ ] TODO Add this action with viewset
+
+```url
+{{service_url}}/api/progress/:id/
+```
+
+Update partial details of progress by progress `id`
+
+- PERMISSSION
+
+    Only developers can use
+
+- PATH VARIABLES
+
+    Variable|Description
+    :---: | :---:
+    id | progress id
+
+- PARAMS
+
+    Key|Value|Description
+    :---:|:---:|:---:
+    name | Progress Name | the name of the progress
+    description | This is a description | the description of progress
+    start_time| Project Begin Time | the name of progress
+    end_time | 2020-03-21T08:59:38.093183Z | the expected_time of progress
+    complete_rate | 15 | the complete_rate of progress
+    order | 2 | it indicate this progress belong to which order
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+    X-CSRFToken | {{ CSRF_COOKIE_NAME }}
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {
+        "id": 1,
+        "name": "MVP Time",
+        "start_time": "2020-03-21T08:59:38.093183Z",
+    }
+    ```
+
+    Example response
+
+    ```json
+    {
+        "id": 1,
+        "name": "MVP Time",
+        "start_time": "2020-03-21T08:59:38.093183Z",
+    }
+    ```
+
+### `DEL` Delete Development Progress Detail
+
+- [ ] TODO Add this action with viewset
+
+```url
+{{service_url}}/api/progress/:id/
+```
+
+Delete a progress detail by progress `id`
+
+- PERMISSSION
+
+    Only developers can use
+
+- PATH VARIABLES
+
+    Variable|Description
+    :---: | :---:
+    id | progress id
+
+- HEADERS
+
+    Key|Value
+    :---: | :---:
+    Content-Type | application/json
+    X-CSRFToken | {{ CSRF_COOKIE_NAME }}
+
+- BODY (raw)
+
+    Example request
+
+    ```json
+    {}
+    ```
+
+    Example response
+
+    ```json
+    {}
+    ```
+
+---
+
 # Develop Requirement System API Document
 
 ## Outline
