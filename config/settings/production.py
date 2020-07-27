@@ -129,3 +129,11 @@ sentry_sdk.init(
     dsn=SENTRY_DSN,
     integrations=[sentry_logging, DjangoIntegration(), CeleryIntegration()],
 )
+
+
+# Migrations Settings
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
+MIGRATION_MODULES = {
+    'employee': 'develop_requirement_proj.employee.migrations.0001_initial',
+}

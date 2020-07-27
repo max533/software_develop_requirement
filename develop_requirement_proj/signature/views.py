@@ -10,7 +10,8 @@ from .models import Document
 logger = logging.getLogger(__name__)
 
 
-class IndexView(TemplateView):
+class IndexView(LoginRequiredMixin, TemplateView):
+    login = "/cas/login"
     template_name = "drs.html"
 
 

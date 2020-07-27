@@ -64,8 +64,8 @@ class ProjectModelTestCase(TestCase):
         self.assertEqual(
             self.select_project.__repr__(),
             (
-                f"Project(3, None, Anders4, A191TB1, QRQY00000718, 5PD05L010001, "
-                f"None, NPI, Anders4, QRQY00000718, On-going, Server, JDM, "
-                f"{{'id': 2, 'name': 'HPE', 'code': 'Apollo', 'business_unit': 2}})"
+                "Project(3, None, Anders4, A191TB1, QRQY00000718, 5PD05L010001, "
+                "None, NPI, Anders4, QRQY00000718, On-going, Server, JDM, "
+                "{{'id': 2, 'name': 'HPE', 'code': 'Apollo', 'business_unit': 2}})"
             )
         )

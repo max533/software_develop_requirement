@@ -16,6 +16,7 @@ from email.utils import getaddresses
 from pathlib import Path
 
 import environ
+from celery.schedules import crontab
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 
@@ -213,7 +214,7 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "verbose": {
-            "format": "[{asctime}] {levelname:8} | {process} {thread} | {module}.{funcName} {lineno:3} @ {filename} => {message}",
+            "format": "[{asctime}] {levelname:8} | {process} {thread} | {module}.{funcName} {lineno:3} @ {filename} => {message}", # noqa
             'style': '{',
         }
     },
@@ -252,6 +253,21 @@ CELERY_TASK_TIME_LIMIT = 5 * 60
 CELERY_TASK_SOFT_TIME_LIMIT = 60
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#beat-scheduler
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+# https://docs.celeryproject.org/en/latest/userguide/configuration.html#beat-schedule
+CELERY_BEAT_SCHEDULE = {
+    "update-simple-accounts-cache": {
+        "task": 'signature.tasks.update_simple_accounts_cache',
+        "schedule": crontab(minute=0, hour='*'),
+    },
+    "update-simple-projects-cache": {
+        "task": 'signature.tasks.update_simple_projects_cache',
+        "schedule": crontab(minute=0, hour='*'),
+    },
+    "update-simple-employees-cache": {
+        "task": 'signature.tasks.update_simple_employees_cache',
+        "schedule": crontab(minute=0, hour='*'),
+    },
+}
 
 
 # DJANGO REST FRAMEWORK
