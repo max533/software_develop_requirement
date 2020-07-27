@@ -1877,8 +1877,8 @@
                     $('#tag_div').parent('div').fadeIn(0);
                     show_author('form_owner',raw_dev_data);
                     //  schedule list
-                    let scheduleStart=schedule_data[0]['actual_time'];
-                    let scheduleEnd=schedule_data[schedule_data.length-1]['actual_time'];
+                    let scheduleStart=schedule_data[0]['timestamp'];
+                    let scheduleEnd=schedule_data[schedule_data.length-1]['timestamp'];
                     let schedule={'start':scheduleStart,'end':scheduleEnd};
                     $('#requestModal').data('schedule',schedule);
 
@@ -1898,10 +1898,9 @@
                     }
                     if(actor=='developers') request_image_module('developing');    
                     else if(actor=='initiator'&&oringinal_status==''){}
-                
                     if(actor=='initiator'&&oringinal_status=='Approve'){ 
                         request_image_module('form_completed');
-                        $('#tag_div,#trigger_dev_modal,#add_milestone,.update_progress,.del_progress,#add_milestone').prop('style','display:none !important;');
+                        $('#tag_div,#trigger_dev_modal,#add_milestone,.update_progress,.del_progress,#add_milestone').prop('style','display:none !important;');                       
                     }else{
                         if(role.includes('initiator')){
                             $('#progress_area').find('.update_progress,.del_progress,#add_milestone').fadeOut(0);
@@ -1918,16 +1917,18 @@
                         }else if(role.includes('contactor')){
                             $('#progress_area').find('.read_progress').fadeOut(0);
                             if(actor=='developers'){
+                                $('#repository_url').prop('disabled',false);
+                                $('#submit_result').parent('div').fadeIn(0);
                             }else if(actor=='initiator'&&oringinal_status==''){
                                 request_image_module('initiator_pend');
-                            }else if(actor=='initiator'&&oringinal_status==''){
+                                $('#repository_url').prop('disabled',true);
+                                $('#submit_result').parent('div').fadeOut(0);
                             }
                         }else if(role.includes('member')){
                             $('#progress_area').find('.read_progress').fadeOut(0);
                             if(actor=='developers'){
                             }else if(actor=='initiator'&&oringinal_status==''){
                                 request_image_module('initiator_pend');
-                            }else if(actor=='initiator'&&oringinal_status==''){
                             }
                         }else{
                             $('#tag_div').fadeOut(0);
@@ -1935,7 +1936,6 @@
                             if(actor=='developers'){
                             }else if(actor=='initiator'&&oringinal_status==''){
                                 request_image_module('initiator_pend');
-                            }else if(actor=='initiator'&&oringinal_status==''){
                             }
                         }
                         if(role.includes('assigner')) $('#show_shcedule_area').fadeIn(0);
