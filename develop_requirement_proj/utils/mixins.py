@@ -122,18 +122,27 @@ class QueryDataMixin:
             'product_line',
             'business_model'
         ]
+
+        try:
+            field_value = field['field']
+        except KeyError as err:
+            logger.warn(f"There is not correct input argument. Error Message : {err}")
+            raise KeyError
+
         # Choose the which uri will send request
-        if field in teamroster_options:
+
+        if field_value in teamroster_options:
             uri = settings.TEAMROSTER_URI + 'api/get/options'
             headers = {'X-Authorization': settings.TEAMROSTER_TOKEN}
-        elif field in account_project_options:
+        elif field_value in account_project_options:
             uri = settings.ACCOUNT_PROJECT_URI + 'api/get/options'
             headers = {'X-Authorization': settings.ACCOUNT_PROJECT_TOKEN}
         else:
-            logger.warn("There is not correct input with field")
+            logger.warn("There is not correct input with field.")
             raise ValueError
 
-        payload = {"field": field}
+        payload = field
+
         try:
             r = requests.get(uri, params=payload, headers=headers, timeout=3)
         except Exception as err:

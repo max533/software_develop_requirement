@@ -46,7 +46,7 @@ services:
     networks:
       - frontend
     ports:
-      - 45000:80
+      - 9999:80
     command: /start
 
   django: &django

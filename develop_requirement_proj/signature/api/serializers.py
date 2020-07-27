@@ -103,7 +103,7 @@ class ProgressSerializer(serializers.ModelSerializer):
         read_only_fields = ['editor', 'udpate_time']
 
 
-class EmployeeNonModelSerializer(serializers.Serializer):
+class EmployeeSimpleSerializer(serializers.Serializer):
 
     employee_id = serializers.CharField()
     display_name = serializers.SerializerMethodField()
@@ -242,6 +242,7 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
 
     def validate_developers(self, value):
         """ Check whether the developers in the EBG HR database or not """
+
         if 'contactor' not in value:
             raise serializers.ValidationError('There are not contactor in developers.')
         else:
@@ -476,12 +477,12 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
         ]
 
 
-class ProjectEasySerializer(serializers.Serializer):
+class ProjectSimpleSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField()
 
 
-class AccountEasySerializer(serializers.Serializer):
+class AccountSimpleSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     code = serializers.CharField()
 

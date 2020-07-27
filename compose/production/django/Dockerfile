@@ -75,8 +75,7 @@ RUN sed -i 's/\r$//g' /start-celerybeat \
 
 COPY ./compose/production/django/celery/flower/start /start-flower
 RUN sed -i 's/\r$//g' /start-flower \
-  && chmod +x /start-flower \
-  && chown django /start-flower
+  && chmod +x /start-flower
 
 # Set source code to app home directoty
 COPY --chown=django:django . /app

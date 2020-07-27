@@ -6,13 +6,13 @@ from develop_requirement_proj.utils.exceptions import (
 )
 from develop_requirement_proj.utils.mixins import QueryDataMixin
 
-from django.core import cache
+from django.core.cache import cache
 from django.core.mail import send_mail
 from django.db.models import Max
 
 from ..models import Notification, Order
 from .serializers import (
-    AccountEasySerializer, EmployeeNonModelSerializer, ProjectEasySerializer,
+    AccountSimpleSerializer, EmployeeSimpleSerializer, ProjectSimpleSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ class CacheMixin(QueryDataMixin):
         simple_employees = cache.get('simple_employees')
         if simple_employees is None:
             instance = Employee.objects.using('hr').all().values()
-            serializer = EmployeeNonModelSerializer(instance, many=True)
+            serializer = EmployeeSimpleSerializer(instance, many=True)
 
             simple_employees = {}
             for simple_employee in serializer.data:
@@ -43,7 +43,7 @@ class CacheMixin(QueryDataMixin):
                 logger.error(err)
                 raise ServiceUnavailable
 
-            serializer = AccountEasySerializer(accounts, many=True)
+            serializer = AccountSimpleSerializer(accounts, many=True)
 
             for simple_account in serializer.data:
                 account_id = simple_account['id']
@@ -62,7 +62,7 @@ class CacheMixin(QueryDataMixin):
                 logger.error(err)
                 raise ServiceUnavailable
 
-            serializer = ProjectEasySerializer(projects, many=True)
+            serializer = ProjectSimpleSerializer(projects, many=True)
             for simple_project in serializer.data:
                 project_id = simple_project['id']
                 if project_id not in simple_projects:
@@ -192,7 +192,7 @@ class SignatureMixin(QueryDataMixin):
             next_signer_department_id = signer_department_id[:non_zero_part] + '0' * (count + 1)
 
             try:
-                departments = self.get_department_via_query(department_id=signer_department_id)
+                departments = self.get_department_via_query(department_id=next_signer_department_id)
             except Exception as err:
                 logger.warning(err)
                 raise ServiceUnavailable

@@ -8,9 +8,7 @@ from develop_requirement_proj.employee.models import Employee
 from develop_requirement_proj.utils.exceptions import (
     Conflict, ServiceUnavailable,
 )
-from develop_requirement_proj.utils.mixins import (
-    MessageMixin, QueryDataMixin, SignatureMixin,
-)
+from develop_requirement_proj.utils.mixins import QueryDataMixin
 
 from django.core.cache import cache
 from django.db.models import Max
@@ -26,7 +24,7 @@ from ..models import (
     Schedule, ScheduleTracker, Signature,
 )
 from .filters import OrderFilter, OrderFilterBackend
-from .mixins import CacheMixin
+from .mixins import CacheMixin, MessageMixin, SignatureMixin
 from .paginations import OrderPagination
 from .permissions import (
     CommentPermission, DocumentPermission, NotificationPermission,
@@ -89,10 +87,14 @@ class OptionView(QueryDataMixin, views.APIView):
         """ Get result from TeamRoster 2.0 System and Account Project System """
         options = {}
         params = self.request.query_params.dict()
+
         if not params:
             raise serializers.ValidationError({"field": "This parameter is required."})
         try:
             options = self.get_option_value(field=params)
+        except KeyError as err:
+            logger.error(err)
+            raise serializers.ValidationError({"field": "This parameter is required."})
         except ValueError as err:
             logger.error(err)
             raise serializers.ValidationError({"field": "This value is not reasonable."})
@@ -328,7 +330,7 @@ class ProgressViewSet(CacheMixin, viewsets.ModelViewSet):
         return context
 
 
-class CommentViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+class CommentViewSet(CacheMixin, mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     """ Provide Comments resource with `list` and `create` action """
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
@@ -387,7 +389,8 @@ class NotificationVewSet(mixins.ListModelMixin,
         )
 
 
-class OrderViewSet(MessageMixin,
+class OrderViewSet(CacheMixin,
+                   MessageMixin,
                    SignatureMixin,
                    mixins.ListModelMixin,
                    mixins.RetrieveModelMixin,
@@ -1001,7 +1004,8 @@ class OrderViewSet(MessageMixin,
                     self.send_notification(order_id, link, category, actor, verb, action_object)
 
 
-class SignatureViewSet(MessageMixin,
+class SignatureViewSet(CacheMixin,
+                       MessageMixin,
                        SignatureMixin,
                        mixins.ListModelMixin,
                        mixins.UpdateModelMixin,
