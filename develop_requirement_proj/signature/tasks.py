@@ -1,5 +1,4 @@
 from celery import chain, shared_task
-from celery.schedules import crontab
 from develop_requirement_proj.employee.models import Employee
 
 from django.core import cache
@@ -8,26 +7,6 @@ from .api.mixins import QueryDataMixin
 from .api.serializers import (
     AccountSimpleSerializer, EmployeeSimpleSerializer, ProjectSimpleSerializer,
 )
-
-# @shared_task.on_after_configure.connect
-# def setup_periodic_tasks(sender, **kwargs):
-#     sender.add_periodic_task(
-#         schedule=crontab(minute=0, hour='*'),
-#         sig=update_simple_accounts_cache.s(),
-#         name='Update simple accounts cache'
-#     )
-
-#     sender.add_periodic_task(
-#         schedule=crontab(minute=0, hour='*'),
-#         sig=update_simple_projects_cache.s(),
-#         name='Update simple projects cache'
-#     )
-
-#     sender.add_periodic_task(
-#         schedule=crontab(minute=0, hour='*'),
-#         sig=update_simple_employees_cache.s(),
-#         name='Update simple employees cache'
-#     )
 
 
 @shared_task(autoretry_for=(Exception,), retry_kwargs={'max_retries': 3})
