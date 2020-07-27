@@ -428,7 +428,7 @@ class OrderViewSet(CacheMixin,
                 function_team_object, sub_function_team_object = [], []
 
                 try:
-                    options = self.get_option_value(**{'field': 'dept_category'})
+                    options = self.get_option_value(field={'field': 'dept_category'})
                 except Exception as err:
                     logger.error(err)
                     raise ServiceUnavailable
