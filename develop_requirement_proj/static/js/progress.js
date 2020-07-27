@@ -124,7 +124,8 @@ function render_progress_schedule(progress_json,
             let completeWidth = Math.round(barWidth*complete_percent);
             let estimated_completeWidth;
             let estimated_completetRate;
-
+console.log('scheduleStart_date-----------------------------------------------');
+console.log(scheduleStart);
             let schedule_start=new Date(scheduleStart);
             let schedule_end=new Date(scheduleEnd);
             let schedule_barStart = Math.round((schedule_start - new Date(yearStart, monthStart-1, 1))/86400000/duration*100);
@@ -441,28 +442,51 @@ $(function(){
             });	
             // $('.daterangepicker').find('.cancelBtn').trigger('click');
             // $('#est_dev_period').trigger('cancel.daterangepicker');
+            $('body').append(milestoneModal);
+
+            //	Init Daterangepicker
+                $('#est_dev_period').daterangepicker({
+                    applyButtonClasses:'btn btn-info',
+                    cancelButtonClasses:'btn btn-warning',
+                    autoUpdateInput: false,
+                    locale: {
+                        cancelLabel: 'Clear',
+                        format: 'YYYY-MM-DD '
+                    }
+                });
+                $('#est_dev_period').on('apply.daterangepicker', function(ev, picker) {
+                    $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));   
+                    $('#est_dev_period').valid();
+                    $(this).trigger('change');
+                });
+                $('#est_dev_period').on('cancel.daterangepicker', function(ev, picker) {
+                    $(this).val('');
+                });
+
+
+
             $('#milestoneModal').modal('show');
         });
     
     
-    //	Init Daterangepicker
-        $('#est_dev_period').daterangepicker({
-            applyButtonClasses:'btn btn-info',
-            cancelButtonClasses:'btn btn-warning',
-            autoUpdateInput: false,
-            locale: {
-                cancelLabel: 'Clear',
-                format: 'YYYY-MM-DD '
-            }
-        });
-        $('#est_dev_period').on('apply.daterangepicker', function(ev, picker) {
-            $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));   
-            $('#est_dev_period').valid();
-            $(this).trigger('change');
-        });
-        $('#est_dev_period').on('cancel.daterangepicker', function(ev, picker) {
-            $(this).val('');
-        });
+    // //	Init Daterangepicker
+    //     $('#est_dev_period').daterangepicker({
+    //         applyButtonClasses:'btn btn-info',
+    //         cancelButtonClasses:'btn btn-warning',
+    //         autoUpdateInput: false,
+    //         locale: {
+    //             cancelLabel: 'Clear',
+    //             format: 'YYYY-MM-DD '
+    //         }
+    //     });
+    //     $('#est_dev_period').on('apply.daterangepicker', function(ev, picker) {
+    //         $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));   
+    //         $('#est_dev_period').valid();
+    //         $(this).trigger('change');
+    //     });
+    //     $('#est_dev_period').on('cancel.daterangepicker', function(ev, picker) {
+    //         $(this).val('');
+    //     });
 
         $(document).on('click','#addProgress,.update_progress,.read_progress',function (){
             $('body').append(milestoneModal);
@@ -472,7 +496,7 @@ $(function(){
         });
         
     //	Click add milestone button
-        $('#addProgress').on('click',function(){
+        $(document).on('click','#addProgress',function(){
             if($('#FormAddMilestone').validate().form()){
                 $('#milestoneModal .editShow').fadeOut(0);
                 let formdata=package_data('#FormAddMilestone');
@@ -494,7 +518,7 @@ $(function(){
             }
             $('#FormAddMilestone').find('input textarea').prop('disabled',false);
         });
-        $('#delProgress').on('click',function(){
+        $(document).on('click','#delProgress',function(){
             let id=$('#FormAddMilestone').data('id');
             delete_progress(id);
             $('#milestoneModal').modal('hide');
