@@ -77,7 +77,6 @@ class ScheduleSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = [
             'confirm_status',
-            'timestamp',
             'created_time'
             'update_time',
             'version',

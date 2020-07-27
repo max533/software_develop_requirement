@@ -1146,7 +1146,6 @@ class SignatureViewSet(CacheMixin,
                         'sign_unit': next_signer_department_id,
                         'status': '',
                         'comment': '',
-                        'signed_time': '',
                         'role_group': signature.role_group,
                         'order': order
                     }
