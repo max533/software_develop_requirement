@@ -151,8 +151,8 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
                 logger.error(err, exc_info=True)
                 raise ServiceUnavailable
 
-            for department in departments:
-                assigner_list.append(department[department_id]['dm'])
+            for department_id, department in departments.items():
+                assigner_list.append(department.get('dm', ''))
             # Query the assigner via assigner_list
             queryset.extend(Employee.objects.using('hr').filter(employee_id__in=assigner_list))
 
@@ -187,8 +187,8 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
                 logger.error(err, exc_info=True)
                 raise ServiceUnavailable
 
-            for key, value in departments.items():
-                assigner_list.append(value.get('dm', ''))
+            for department_id, department in departments.items():
+                assigner_list.append(department.get('dm', ''))
 
             # Query the assigner via asssigner_list
             queryset.extend(Employee.objects.using('hr').filter(employee_id__in=assigner_list))
