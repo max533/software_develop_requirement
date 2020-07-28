@@ -131,7 +131,6 @@ $(function(){
                 field:'id',
                 title:'Form id',
                 filterControl:'input',
-                align:'center',
                 filterControlPlaceholder:'Search id',
                 formatter:function(value, row, index){
                     let html=`<span class="ellipsis">`+value+`</span>`
@@ -171,7 +170,6 @@ $(function(){
             {
                 field:'parent',
                 title:'Parent form',
-                align:'center',
                 filterControl:'input',
                 filterControlPlaceholder:'Search id',
                 filterDataCollector:function(value, row, index){
