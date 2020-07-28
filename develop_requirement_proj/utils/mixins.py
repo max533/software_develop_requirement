@@ -217,7 +217,7 @@ class QueryDataMixin:
         - Other error will handle by `requests` library.
 
         `Returns`:
-        - projects [dict(dict)]: This is the list that contain project dictionary.
+        - projects [list(dict)]: This is the list that contain project dictionary.
         Key is the department_id and value is department property.
 
         `Usage Note`:
