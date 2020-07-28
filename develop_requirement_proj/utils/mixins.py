@@ -217,7 +217,7 @@ class QueryDataMixin:
         - Other error will handle by `requests` library.
 
         `Returns`:
-        - projects [list(dict)]: This is the list that contain project dictionary.
+        - projects [dict(dict)]: This is the list that contain project dictionary.
         Key is the department_id and value is department property.
 
         `Usage Note`:
@@ -261,8 +261,9 @@ class QueryDataMixin:
         - Other error will handle by `requests library.
 
         `Returns`:
-        - departments [dict(dict)]: This is the dictionary that contain department dictionary.
+        - departments [dict(dict) / empty_list]: This is the dictionary that contain department dictionary.
         Key is the department_id and value is department property.
+        If TR2 can't find the data or the query is not valid, it will return empty list.
 
         `Usage Note`:
         - Please use the function with try catch.
