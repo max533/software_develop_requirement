@@ -104,16 +104,13 @@ class OrderFilter(filters.FilterSet):
 
     def initiator_filter(self, queryset, name, value):
         lookup = '__'.join([name, 'in'])
-        print(123)
         return queryset.filter(**{lookup: ast.literal_eval(value)})
 
     def assigner_filter(self, queryset, name, value):
-        print(123)
         lookup = '__'.join([name, 'in'])
         return queryset.filter(**{lookup: ast.literal_eval(value)})
 
     def developers_filter(self, queryset, name, value):
-        print(123)
         lookup_contactor = '__'.join([name, 'contactor', 'contained_by'])
         lookup_member = '__'.join([name, 'member', 'contained_by'])
         value = ast.literal_eval(value)
