@@ -91,7 +91,7 @@ class OptionView(QueryDataMixin, views.APIView):
         if not params:
             raise serializers.ValidationError({"field": "This parameter is required."})
         try:
-            options = self.get_option_value(**params)
+            options = self.get_option_value(field=params)
         except KeyError as err:
             logger.error(err, exc_info=True)
             raise serializers.ValidationError({"field": "This parameter is required."})
