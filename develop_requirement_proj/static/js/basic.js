@@ -8,8 +8,6 @@ $(function(){
         loginInfo['avatar']=$('#navSelectUser').find('img').prop('src');
     });
 
-
-   
     //  modal basic setting mutli-modal
     $(document).on('hidden.bs.modal','.modal',function(){
         //  Focus the modal -css -ovwrflow-y
@@ -44,7 +42,7 @@ $(function(){
         } 
     });
 
-    
+
     // image prop path
     $('#navUser,#user').find('img').data('employee_id',loginInfo.employee_id).prop('src',images['defaultavatar']);
     avatar_reload($('#navUser').find('img'));
@@ -88,7 +86,6 @@ $(function(){
 //  Table
     //  Initiate Table
     $('#table').bootstrapTable('destroy').bootstrapTable({
-        // url:fakedata_path+'table.json', //severside 的網址`//    測試後請刪除
         url:'/api/orders/', //severside 的網址
         classes: '',
         theadClasses:'bg-light',
@@ -96,7 +93,6 @@ $(function(){
         paginationVAlign:'bottom',
         fixedColumns: true,
         filterControl: true,
-        // cache: false,
         sortOrder:'asc',
         contentType:'application/json',
         dataType:'json',
@@ -105,11 +101,9 @@ $(function(){
         showToggle: true,
         detailView:true,
         sidePagination:'server',
-        // sidePagination:'client',
         pageList:[10, 25, 50, 100],
         searchOnEnterKey:true,
         clickToSelect: true,  //是否啟用點選選中行
-        // trimOnSearch: true,
         buttonsClass: 'btn btn-outline-secondary float-right',
         detailFormatter: 'detailFormatter',
         queryParams:'queryParams',
@@ -339,7 +333,6 @@ $(function(){
         onPostBody:function(name, args){
             let target = $('#table').find('th[data-field="exp_date"],th[data-field="form_begin_time"]').find('input');
             target.daterangepicker({
-                // maxDate: new Date,
                 minYear: 1985,
                 maxYear: parseInt(moment().format('YYYY'),10),
                 autoUpdateInput: false,
@@ -361,11 +354,7 @@ $(function(){
         },
         onDblClickRow:function(row,$element,field) {},
         onClickRow:function(row,$element,field) {
-            if(field!=='parent'){
-                // let signaturers=get_signaturers(row.id);
-                // let indentify=indentify_user(loginInfo.employee_id,row,signaturers);
-                indentify_modal_show(row);
-            }
+            if(field!=='parent') indentify_modal_show(row);
         }
     });
 
@@ -373,9 +362,4 @@ $(function(){
     $(document).find('.fixed-table-toolbar').addClass('d-flex align-items-center justify-content-end');
     $('<button class="btn btn-warning text-secondary ml-2" id="addRequestBtn"><i class="fa fa-plus mr-1"></i>Add Request</button>').insertAfter($(document).find('.fixed-table-toolbar .btn-group')[0]);
     $('<button class="btn btn-outline-secondary" id="chart_list" title="Chart"><i class="fa fa-chart-bar"></i></button>').insertAfter($(document).find('.fixed-table-toolbar .btn-group').last()[0]);
-
-
-    
-    
-
 });

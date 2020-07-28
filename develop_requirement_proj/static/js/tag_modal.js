@@ -100,11 +100,12 @@ $(function(){
                     title:'Form end',
                     valign:'top',
                     formatter:function(value, row, index){
-                        let localdate = new Date(value).toLocaleDateString({timeZone: 'Asia/Taipei'}).replace(/\//g, "-");
-                        let localtime = new Date(value).toLocaleTimeString('en-US',{timeZone: 'Asia/Taipei', hour12: true});
-                        let date = localdate+" "+localtime;
-                        let html='<div class="ellipsis">'+date+'</div>';
-                        return html;
+                        let date=' - ';
+                        if(value!==null){
+                            let localdate = new Date(value).toLocaleDateString({timeZone: 'Asia/Taipei'}).replace(/\//g, "-");
+                            let localtime = new Date(value).toLocaleTimeString('en-US',{timeZone: 'Asia/Taipei', hour12: true});
+                            date = localdate+" "+localtime;
+                        }
                     },
                 }
             ],
@@ -147,9 +148,6 @@ $(function(){
         else if(keyword.length!==0&&field.length==0) $('#search_tag_btn').prop('title','Search field required').tooltip('dispose').tooltip('show');
         else if(keyword.length!==0&&field.length!==0){
 
-            //  GET tags 測試完請刪除
-            // let url_select=randomnum(0,2);
-            // let urls=[fakedata_path+'tagtable.json',fakedata_path+'empty_table.json'][url_select];
             let present_tag_id=$('#tag_div').find('.ezinfoModal_trigger').data('id');
             let filter_data={}
             let filter=field.find('input').val();
@@ -158,7 +156,6 @@ $(function(){
             let filter_orders=get_filter_orders(filter_data)['rows'];
 
             $('#result_tag_table').bootstrapTable('destroy').bootstrapTable({
-                // url:fakedata_path+'tagtable.json',
                 data:filter_orders,
                 pagination:true,
                 fixedColumns: true,
@@ -252,9 +249,12 @@ $(function(){
                         title:'Form end',
                         valign:'center',
                         formatter:function(value, row, index){
-                            let localdate = new Date(value).toLocaleDateString({timeZone: 'Asia/Taipei'}).replace(/\//g, "-");
-                            let localtime = new Date(value).toLocaleTimeString('en-US',{timeZone: 'Asia/Taipei', hour12: true});
-                            let date = localdate+" "+localtime;
+                            let date=' - ';
+                            if(value!==null){
+                                let localdate = new Date(value).toLocaleDateString({timeZone: 'Asia/Taipei'}).replace(/\//g, "-");
+                                let localtime = new Date(value).toLocaleTimeString('en-US',{timeZone: 'Asia/Taipei', hour12: true});
+                                date = localdate+" "+localtime;
+                            }
                             let html='<div class="ellipsis">'+date+'</div>';
                             return html;
                         }
