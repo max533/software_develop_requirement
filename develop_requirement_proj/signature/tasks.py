@@ -1,7 +1,7 @@
 from celery import chain, shared_task
 from develop_requirement_proj.employee.models import Employee
 
-from django.core import cache
+from django.core.cache import cache
 
 from .api.mixins import QueryDataMixin
 from .api.serializers import (
