@@ -3,7 +3,7 @@ import json
 import logging
 
 from develop_requirement_proj.employee.models import Employee
-from django_filters import rest_framework as filters
+from django_filters import rest_framework as filters, utils
 
 from django.db.models import Q
 
@@ -67,6 +67,22 @@ class OrderFilterBackend(filters.DjangoFilterBackend):
 
         return kwargs
 
+    def filter_queryset(self, request, queryset, view):
+        filterset = self.get_filterset(request, queryset, view)
+        if filterset is None:
+            return queryset
+
+        # If there are not any query user in hr database, it will return empty queryset
+        for query_item in ['initiator', 'assigner', 'developers']:
+            if query_item in filterset.data:
+                query_value = filterset.data[query_item]
+                if not query_value:
+                    return Order.objects.none()
+
+        if not filterset.is_valid() and self.raise_exception:
+            raise utils.translate_validation(filterset.errors)
+        return filterset.qs
+
 
 class OrderFilter(filters.FilterSet):
 
@@ -86,15 +102,18 @@ class OrderFilter(filters.FilterSet):
             'parent': ['exact'],
         }
 
-    def initiator_filter(slef, queryset, name, value):
+    def initiator_filter(self, queryset, name, value):
+        lookup = '__'.join([name, 'in'])
+        print(123)
+        return queryset.filter(**{lookup: ast.literal_eval(value)})
+
+    def assigner_filter(self, queryset, name, value):
+        print(123)
         lookup = '__'.join([name, 'in'])
         return queryset.filter(**{lookup: ast.literal_eval(value)})
 
-    def assigner_filter(slef, queryset, name, value):
-        lookup = '__'.join([name, 'in'])
-        return queryset.filter(**{lookup: ast.literal_eval(value)})
-
-    def developers_filter(slef, queryset, name, value):
+    def developers_filter(self, queryset, name, value):
+        print(123)
         lookup_contactor = '__'.join([name, 'contactor', 'contained_by'])
         lookup_member = '__'.join([name, 'member', 'contained_by'])
         value = ast.literal_eval(value)

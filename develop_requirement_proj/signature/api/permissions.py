@@ -57,7 +57,7 @@ class DocumentPermission(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         if view.action in ['update', 'partial_update', 'destroy']:
-            if request.user.username != obj.initiator:
+            if request.user.username != obj.order.initiator:
                 return False
         return True
 

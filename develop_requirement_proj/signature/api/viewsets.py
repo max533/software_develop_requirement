@@ -52,7 +52,7 @@ class AccountViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericView
         try:
             accounts = self.get_account_via_search(**params)
         except Exception as err:
-            logger.error(err)
+            logger.error(err, exc_info=True)
             raise ServiceUnavailable
 
         queryset = [Account(**account) for account in accounts]
@@ -72,7 +72,7 @@ class ProjectViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericView
         try:
             projects = self.get_project_via_search(**params)
         except Exception as err:
-            logger.error(err)
+            logger.error(err, exc_info=True)
             raise ServiceUnavailable
 
         queryset = [Project(**project) for project in projects]
@@ -93,13 +93,13 @@ class OptionView(QueryDataMixin, views.APIView):
         try:
             options = self.get_option_value(field=params)
         except KeyError as err:
-            logger.error(err)
+            logger.error(err, exc_info=True)
             raise serializers.ValidationError({"field": "This parameter is required."})
         except ValueError as err:
-            logger.error(err)
+            logger.error(err, exc_info=True)
             raise serializers.ValidationError({"field": "This value is not reasonable."})
         except Exception as err:
-            logger.error(err)
+            logger.error(err, exc_info=True)
             raise ServiceUnavailable
 
         return response.Response(options)
@@ -140,7 +140,7 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
             try:
                 departments = self.get_department_via_search(**params)
             except Exception as err:
-                logger.warning(err)
+                logger.error(err, exc_info=True)
                 raise ServiceUnavailable
 
             department_id = departments[0]
@@ -148,11 +148,11 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
             try:
                 departments = self.get_department_via_query(department_id=department_id)
             except Exception as err:
-                logger.warning(err)
+                logger.error(err, exc_info=True)
                 raise ServiceUnavailable
 
-            for department in departments:
-                assigner_list.append(department[department_id]['dm'])
+            for department_id, department in departments.items():
+                assigner_list.append(department.get('dm', ''))
             # Query the assigner via assigner_list
             queryset.extend(Employee.objects.using('hr').filter(employee_id__in=assigner_list))
 
@@ -163,7 +163,7 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
             try:
                 departments = self.get_department_via_search(**params)
             except Exception as err:
-                logger.warning(err)
+                logger.error(err, exc_info=True)
                 raise ServiceUnavailable
 
             # Query the assigner via assigner_dept_list
@@ -176,7 +176,7 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
             try:
                 projects = self.get_project_via_teamroaster_project_serach(**params)
             except Exception as err:
-                logger.warning(err)
+                logger.error(err, exc_info=True)
                 raise ServiceUnavailable
 
             assigner_dept_list = [project.get('lead_dept', '') for project in projects]
@@ -184,11 +184,11 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
             try:
                 departments = self.get_department_via_query(*assigner_dept_list)
             except Exception as err:
-                logger.warning(err)
+                logger.error(err, exc_info=True)
                 raise ServiceUnavailable
 
-            for key, value in departments.items():
-                assigner_list.append(value.get('dm', ''))
+            for department_id, department in departments.items():
+                assigner_list.append(department.get('dm', ''))
 
             # Query the assigner via asssigner_list
             queryset.extend(Employee.objects.using('hr').filter(employee_id__in=assigner_list))
@@ -430,7 +430,7 @@ class OrderViewSet(CacheMixin,
                 try:
                     options = self.get_option_value(field={'field': 'dept_category'})
                 except Exception as err:
-                    logger.error(err)
+                    logger.error(err, exc_info=True)
                     raise ServiceUnavailable
 
                 if 'EBG' in options:
@@ -640,7 +640,7 @@ class OrderViewSet(CacheMixin,
                     self.send_mail_2_single_user(next_signer, link, category='signing')
                 else:
                     error_message = "This operation is not correct"
-                    logger.error(error_message)
+                    logger.error(error_message, exc_info=True)
                     raise Conflict
 
                 # Send notification to all order attendent

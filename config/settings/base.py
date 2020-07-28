@@ -256,15 +256,15 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 # https://docs.celeryproject.org/en/latest/userguide/configuration.html#beat-schedule
 CELERY_BEAT_SCHEDULE = {
     "update-simple-accounts-cache": {
-        "task": 'signature.tasks.update_simple_accounts_cache',
+        "task": 'develop_requirement_proj.signature.tasks.update_simple_accounts_cache',
         "schedule": crontab(minute=0, hour='*'),
     },
     "update-simple-projects-cache": {
-        "task": 'signature.tasks.update_simple_projects_cache',
+        "task": 'develop_requirement_proj.signature.tasks.update_simple_projects_cache',
         "schedule": crontab(minute=0, hour='*'),
     },
     "update-simple-employees-cache": {
-        "task": 'signature.tasks.update_simple_employees_cache',
+        "task": 'develop_requirement_proj.signature.tasks.update_simple_employees_cache',
         "schedule": crontab(minute=0, hour='*'),
     },
 }
