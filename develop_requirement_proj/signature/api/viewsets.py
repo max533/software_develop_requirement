@@ -182,7 +182,7 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
             assigner_dept_list = [project.get('lead_dept', '') for project in projects]
             # Get the department list of the project leader
             try:
-                departments = self.get_department_via_query(*assigner_dept_list)
+                departments = self.get_department_via_query(department_list=assigner_dept_list)
             except Exception as err:
                 logger.error(err, exc_info=True)
                 raise ServiceUnavailable
