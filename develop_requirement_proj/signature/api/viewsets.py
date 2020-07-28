@@ -151,6 +151,9 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
                 logger.error(err, exc_info=True)
                 raise ServiceUnavailable
 
+            if not departments:
+                return Employee.objects.none()
+
             for department_id, department in departments.items():
                 assigner_list.append(department.get('dm', ''))
             # Query the assigner via assigner_list
@@ -160,6 +163,7 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
             # Use kwarg['sub_function'] to search department id of the assigner
             params['fn_lvl1'] = 'SW'
             params['fn_lvl2'] = 'PM'
+
             try:
                 departments = self.get_department_via_search(**params)
             except Exception as err:
@@ -173,19 +177,28 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
             # Use kwarg['sub_function'] and kwarg['project_id'] to get the project leader
             params['fn_lvl2'] = kwarg['sub_function']
             params['projid'] = kwarg['project_id']
+
             try:
                 projects = self.get_project_via_teamroaster_project_serach(**params)
             except Exception as err:
                 logger.error(err, exc_info=True)
                 raise ServiceUnavailable
 
-            assigner_dept_list = [project.get('lead_dept', '') for project in projects]
+            assigner_dept_list = []
+            for project_id, project in projects.items():
+                department = project['leader_detail'].get('department', '')
+                if department:
+                    assigner_dept_list.append(department)
+
             # Get the department list of the project leader
             try:
                 departments = self.get_department_via_query(department_list=assigner_dept_list)
             except Exception as err:
                 logger.error(err, exc_info=True)
                 raise ServiceUnavailable
+
+            if not departments:
+                return Employee.objects.none()
 
             for department_id, department in departments.items():
                 assigner_list.append(department.get('dm', ''))
