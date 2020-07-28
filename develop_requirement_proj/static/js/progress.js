@@ -108,11 +108,8 @@ function render_progress_schedule(progress_json,
         $.each(progress_json, function(){
             let row=$(this)[0]
             let phase_index = 0;
-            // let TL_ID = row['order'].replace(/ /g, '_');
             let TL_ID = row['order'];
 
-            // let phaseStart = new Date(row['sta']);
-            // let phaseEnd = new Date(Dates.End);
             let Start=new Date(row['start_time']);
             let End=new Date(row['end_time']);
             let today=new Date();
@@ -124,8 +121,7 @@ function render_progress_schedule(progress_json,
             let completeWidth = Math.round(barWidth*complete_percent);
             let estimated_completeWidth;
             let estimated_completetRate;
-console.log('scheduleStart_date-----------------------------------------------');
-console.log(scheduleStart);
+
             let schedule_start=new Date(scheduleStart);
             let schedule_end=new Date(scheduleEnd);
             let schedule_barStart = Math.round((schedule_start - new Date(yearStart, monthStart-1, 1))/86400000/duration*100);
@@ -467,26 +463,6 @@ $(function(){
 
             $('#milestoneModal').modal('show');
         });
-    
-    
-    // //	Init Daterangepicker
-    //     $('#est_dev_period').daterangepicker({
-    //         applyButtonClasses:'btn btn-info',
-    //         cancelButtonClasses:'btn btn-warning',
-    //         autoUpdateInput: false,
-    //         locale: {
-    //             cancelLabel: 'Clear',
-    //             format: 'YYYY-MM-DD '
-    //         }
-    //     });
-    //     $('#est_dev_period').on('apply.daterangepicker', function(ev, picker) {
-    //         $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));   
-    //         $('#est_dev_period').valid();
-    //         $(this).trigger('change');
-    //     });
-    //     $('#est_dev_period').on('cancel.daterangepicker', function(ev, picker) {
-    //         $(this).val('');
-    //     });
 
         $(document).on('click','#addProgress,.update_progress,.read_progress',function (){
             $('body').append(milestoneModal);
@@ -598,6 +574,4 @@ $(function(){
         $('#milestoneModal').on('hide.bs.modal',function(){
             $('#FormAddMilestone').find('input,textarea').removeClass('border-danger');
         });
-
-
 });

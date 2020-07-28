@@ -40,33 +40,8 @@ $(function(){
 
 
 
-//  Dev_modal show --> raw developerlist from button data
-    // $('#developersModal').on('show.bs.modal',function(){
-        // let raw_dev_list=$('#assign_dev_func').find('button').data('raw_dev_list');
-        // developers=[];
-        // developer_contacter=[];
-        // original_dev_list.length=0;
-        // if(raw_dev_list['member'].length==0&&raw_dev_list['contactor']!==''){
-        //     developer_contacter.push(raw_dev_list['contactor']);
-        //     original_dev_list=developer_contacter;
-        //     current_dev_list=[...original_dev_list];
-        // }else if(raw_dev_list['member'].length!==0&&raw_dev_list['contactor']!==''){
-        //     // if(raw_dev_list['member'].length!==0)developers=raw_dev_list['member'];
-        //     developers=raw_dev_list['member']
-            
-        //     developer_contacter.push(raw_dev_list['contactor']);
-        //     //  From backend developers list
-        //     original_dev_list=developer_contacter.concat(developers);
-        //     current_dev_list=[...original_dev_list];
-        // }
-    // });
     //  dev modal hide --> empty the developers list
-    $('#developersModal').on('hide.bs.modal',function(){
-        // developers.length=0;
-        // developer_contacter.length=0;
-        // original_dev_list.length=0;
-        // current_dev_list.length=0;
-        
+    $('#developersModal').on('hide.bs.modal',function(){      
         //  Search fields empty
         $('#search_dev_site .selectpicker').selectpicker('val','');
         $('#search_dev').val('');
@@ -400,7 +375,6 @@ $(function(){
                             current_dev_list.push(row);
                             let current_employee_id_list=current_id_arr(current_dev_list);
                             if_employee_joined(current_employee_id_list,developers_limit,'#result_dev_table','#developers_limit');
-    
                             select_devcontacter('#sel_devcontacter_div','#present_dev_table',current_dev_list,developer_contacter);
                         });
                     }
@@ -440,8 +414,6 @@ $(function(){
             developer_data['contactor']=contactor;
             raw_dev_data['member']=raw_member_arr;
             raw_dev_data['contactor']=developer_contacter[0];
-            console.log('RAW_DEV_DATA');
-            console.log(raw_dev_data);
             let respose_order=patch_order(order_id,{'developers':JSON.stringify(developer_data)})
             if(respose_order){    //  確認patch order正確傳到後端，接續執行
                 $('#ApproveBTN').data('assigned',true);

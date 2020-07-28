@@ -1,4 +1,19 @@
 //  Global param
+    //  Get url param
+    function getUrlParameter(sParam) {
+        var sPageURL = window.location.search.substring(1),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+            }
+        }
+    };
+
+
 //  GET Fetch Current Employee
     function get_profile(){
         let path='/api/employees/me/';
@@ -71,10 +86,12 @@
     //  Ajax error
     function alertmodal_show(img=images['404'],
 					title='-- Upload Denied --',
-					content='Upload file selected is oversize. Max-allowed-uploaded-file size is <strong>10 Mb</strong>.'){
+                    content='Upload file selected is oversize. Max-allowed-uploaded-file size is <strong>10 Mb</strong>.',
+                    detail=''){
 					$('#alert_img').prop('src',img);
 					$('#alert_title').text(title);
 					$('#alert_content').html(content);
+					$('#alert_detail').html(detail);
 					$('#alertModal').modal('show');
 				}
     function errormsg( jqXHR, textStatus, errorThrown,exception){
@@ -92,17 +109,19 @@
         }else{
             message=jqXHR['responseText'];
         }
+        detail=jqXHR['responseText']
         console.log('ERROR------------------------------------------------------');
         console.log(jqXHR);
         console.log(textStatus);
         console.log(errorThrown);
         console.log('-----------------------------------------------------------')
         let title=code+" / "+errorThrown;
-        alertmodal_show(images['ajaxfail'],title,message);
+        alertmodal_show(images['ajaxfail'],title,message,detail);
     }
     //  Restrict input number only
     function ValidateNumber(e, pnumber){
-        let reg = /^(([1-9]\d?(\.\d?[1-9])?)|(0(\.\d?[1-9])?)|100)$/;
+        // let reg = /^(([1-9]\d?(\.\d?[1-9])?)|(0(\.\d?[1-9])?)|100)$/;
+        let reg = /^(0?[1-9]|[1-9][0-9])$/;
         if (!reg.test(pnumber)){
             $(e).val(reg.exec($(e).val()));
         }
@@ -153,32 +172,18 @@
         });
         return formdata;
     }
-    function backend_check_fields(formdata){
-        let fields=[];
-        if(formdata!==undefined){
-             $.each(Object.keys(formdata),function(i,field){
-                fields.push(field);
-            });
-            return fields;
-        }else console.log('Data is empty!!')
-    }
+    // function backend_check_fields(formdata){
+    //     let fields=[];
+    //     if(formdata!==undefined){
+    //          $.each(Object.keys(formdata),function(i,field){
+    //             fields.push(field);
+    //         });
+    //         return fields;
+    //     }else console.log('Data is empty!!')
+    // }
 //  Table setting 
     //  click btn to collapse down the more information
     function detailFormatter(index, row) {
-        // let last_comment_obj=[...get_comment_history(row.id)].pop();
-        // let modifiedtime = isotime_local(last_comment_obj['timestamp']);
-        // let record = last_comment_obj['comment'];
-        // let editor_name = last_comment_obj['editor']['display_name'];
-        // let editor_avatar = avatar_get(last_comment_obj['employee_id']);
-        // let html = `<div class="ml-4">
-        //                 <div class="d-inline-flex align-items-center">
-        //                     <small class="font-weight-bold pt-1 mr-2">Last editor/ </small>
-        //                         <img class="sticker mr-2" src="`+editor_avatar+`" onerror="this.src='`+images['defaultavatar']+`'">
-        //                         <h6 class="pt-1">`+editor_name+`</h6></div><div><p>
-        //                     <small class="font-weight-bold">Last record/ </small>`+record+`</p
-        //                     ><small class="text-secondary">Last modified time/ `+modifiedtime+`</small>
-        //                 </div>`
-
         let order_history_track=get_order_histories(row.id);
         let html=''
         $.each(order_history_track,function(i,row){
@@ -276,7 +281,7 @@
 
     //  Set the key and value sent to backend
     function queryParams(params) { 
-        //這裡的鍵的名字和控制器的變量名必須一直，這邊改動，控制器也需要改成一樣的 
+        //  這裡的鍵的名字和控制器的變量名必須一直，這邊改動，控制器也需要改成一樣的 
         let queryParams_temp = { 
             page_size: params.limit, //頁面大小 
             page: (params.offset / params.limit) + 1, //頁碼 
@@ -288,12 +293,10 @@
             if( 'account' in filterObj){
                 let account_id = filterObj['account'].split(' _ ')[0];
                 filterObj['account'] = account_id;
-                // delete filterObj.account;
             }
             if( 'project' in filterObj){
                 let project_id = filterObj['project'].split(' _ ')[0];
                 filterObj['project'] = project_id;
-                // delete filterObj.project;
             }
             if( 'form_begin_time' in filterObj){
                 let start = filterObj['form_begin_time'].split(' - ')[0];
@@ -336,6 +339,17 @@
         image_dev.removeClass('animated zoomInDown').addClass('animated zoomOutUp').fadeOut(0);
         $('#display_comment_area').css('height',h)
         $('#comment_area,#edit_comment_area,#display_comment_area').fadeIn(0);
+
+        let status=$('#requestModal').data('status');
+        let phase=Object.keys(status)[0]
+        let ifClose=Object.values(Object.values(status)[0])[0];
+
+        if(ifClose=='Close'||(ifClose=='Approve'&&phase=='P5')){//  關單或完成單子時,劉訊息的區塊消失
+            $('#comment_area,#display_comment_area').fadeIn(0);
+            $('#edit_comment_area').fadeOut(0);
+        }else{
+            $('#comment_area,#edit_comment_area,#display_comment_area').fadeIn(0);
+        }
     }
 
     function comment_area_height(){        
@@ -344,8 +358,6 @@
         let comment_h=parseInt($('#comment').parent('div').css('height').split('px')[0]);  
         let img_dev_h=parseInt($('#imgage_dev').css('height').split('px')[0]);  
         let h = (form_h-img_dev_h-comment_h-100)+'px';  
-        // $('#display_comment_area').css('height',h)
-        // $('#comment_area').fadeIn(0);
         $('#display_comment_area,#edit_comment_area').prop('style','display:none!important;')
         img_dev.removeClass('animated zoomOutUp').addClass('animated zoomInDown').fadeIn(0);
     }
@@ -469,11 +481,8 @@
     // let timestamp=time.getTime();
     function avatar_get(employee_id,timestamp=(new Date).getHours()){
         let teamroaster_path='http://10.32.20.124:50005/img/avatar/';
-        // let time=new Date;
-        // let timestamp=time.getTime();
         let src_path=teamroaster_path+employee_id+'?'+timestamp;
         return src_path.toString();
-        // return images.defaultavatar;
     }
     function avatar_default_get(employee_id){
         let teamroaster_path='http://10.32.20.124:50005/img/avatar/default-01.svg';
@@ -553,10 +562,6 @@
             });
         }
     }
-
-
-
-
 
 //  requestModal 
     //  selectpicker(When status==p0/p1)
@@ -676,7 +681,6 @@
         //  Update image
         target.find('img').prop('src',img_path);
         target.find('img').one('error',function(){$(this).prop('src',path)});
-        // target.find('img').data('employee_id',roleinfo.employee_id);
 
         //  Update name
         target.find('span').text(name);
@@ -819,7 +823,6 @@
                 detail='The request is already completed! If you want to extend the request(ex:2.0),and you initialize create a new request and tag this form.';
                 break;
             case 'processing':
-        
                 break;
             default:
                 break;
@@ -911,15 +914,11 @@
     
     function get_schedulelist(schedule_data){
         // let schedule=get_current_schedule(order_id); 
-        console.log('----------------------------------SCHEDULE DATA---------------------------------------')
-        console.log(schedule_data)
         $('#schedulelist').bootstrapTable('destroy').bootstrapTable({
             data:schedule_data,
             cache: false,
             classes:'',
             iconsPrefix: 'fa',
-            // detailView:true,
-            // detailFormatter: 'filedetailFormatter',
             rowAttributes:function(row,index) {
                 let time=row['expected_time']
                 return {'data-id':row['id'],'data-time':time,'data-update_fields_obj':'{}'};
@@ -940,13 +939,12 @@
                     width:250,
                     formatter:function(value, row, index){
                         let html=`<span class="ellipsis">`+value+`</span>`
-                        if(row['id']==1||row['id']==2){}
+                        if(row.complete_rate==0||row.complete_rate==100){}
                         else {html=`<input class="field-style mr-2" data-field="event_name" placeholder="Milestone..." value="`+value+`" required>`;}
                         return html;
                     }
                 },
                 {
-                    // field:'expected_time',
                     field:'timestamp',
                     title:'Exp date',
                     width:100,
@@ -982,10 +980,10 @@
                     width:50,
                     formatter:function(value, row, index){
                         let html=value;
-                        if(value==' - '){}
+                        if(value==0||value==100){}
                         else{
                             html=`<div class="input-group mr-2">
-                                <input type="text" value="`+value+`" class="form-control field-style" name="complete_rate" data-field="complete_rate" style="ime-mode:disabled" onkeyup="return ValidateNumber($(this),value)" placeholder="0~100 complete">
+                                <input type="text" value="`+value+`" class="form-control field-style" name="complete_rate" data-field="complete_rate" style="ime-mode:disabled" onkeyup="return ValidateNumber($(this),value)" placeholder="1~99 complete">
                                 <div class="input-group-append">
                                     <button class="btn btn-light font-weight-bold" type="button"> % </button>
                                 </div>
@@ -1002,7 +1000,6 @@
                     width:50,
                     formatter:function(value, row, index){
                         let html=value;
-                        // if(row['event_name']==SCHEDULEstart||row['event_name']==SCHEDULEend){}
                         if(value==' - '){}
                         else html=`<span>`+isotime_local(value)+`</span>`
                         return html;
@@ -1015,7 +1012,7 @@
                     valign:'top',
                     formatter:function(value, row, index){
                         let html='';
-                        if(row['id']==1||row['id']==2){}
+                        if(row.complete_rate==0||row.complete_rate==100){}
                         else {
                             html=`<button data-event_name="`+row['event_name']+`" type="button" class="btn btn-danger btn-sm mt-1 delete">
                                     <i class="fas fa-trash-alt"></i>
@@ -1041,12 +1038,10 @@
                 $('#schedule_area').find('.date')
                             .datepicker({ dateFormat: 'yy-mm-dd',
                                             beforeShowDay: $.datepicker.noWeekends,
-                                            // minDate: new Date(2020, 6, 18),
-                                            // maxDate: new Date(2020, 6, 21), 
                                         });
                 $('#schedulelist').find('tbody tr').each(function(){
-                    // if($(this).data('id')=='New'){$(this).prop('style','background-color:rgba(255, 209, 154, 0.4) !important;');}
-                    if($(this).data('id')=='New'){
+                    let id=$(this).data('id')
+                    if(typeof(id)!=='number'){
                         $(this).find('td').first().append('<h5 class="badge badge-alert badge-pill mt-2 position-absolute showedit" style="left:-20px;"> New </h5>');
                         $(this).addClass('Newschedule');
                     }
@@ -1127,7 +1122,6 @@
                     valign:'top',
                     formatter:function(value, row, index){
                         let html=value;
-                        // if(row['event_name']==SCHEDULEstart||row['event_name']==SCHEDULEend){}
                         if(value==' - '){}
                         else html=`<span>`+isotime_local(value)+`</span>`
                         return html;
@@ -1170,10 +1164,7 @@
         }else{
             contactwindow=sel.val();
         }
-        
         sel.empty();
-        
-
         sel.append('<option value=""> Select contact window... </option>');
         $.each(data,function(i,v){
             sel.append('<option value="'+v.employee_id+'">'+v.display_name+'</option>');
@@ -1517,10 +1508,6 @@
                 ['para', ['ul', 'ol', 'paragraph']],
                 ['insert', ['link','picture']],
                 ['view', ['help']]
-                // ['font', ['bold', 'underline', 'clear']],
-                // ['table', ['table']],
-                // ['insert', ['link', 'picture', 'video']],
-                // ['view', ['fullscreen', 'codeview','help']]
             ],
             callbacks: {
                 onInit: function() {
@@ -1536,15 +1523,7 @@
                 onKeydown: function(e) {
                     if(e.keyCode==13) console.log('Enter/Return key pressed');
                 },
-                onFocus: function() {
-                    // switch ($(this).data('position')) {
-                    //     case 'comment':
-                    //         if($('#toggle-commentarea.active').length==0) $('#toggle-commentarea').trigger('click');
-                    //         break;
-                    //     default:
-                    //         break;
-                    // }
-                },
+                onFocus: function() {},
             }
         });
         //  selectpicker_option_render
@@ -1614,15 +1593,17 @@
         });
         return temp;
     }
-    function pend_schedule(order_id,status,role){
+    function pend_schedule(order_id,status,role_arr){
         let formdata=''
         $(document).on('click','#pend_schedule_div button',function(){
             let decide='';
             if($(this).hasClass('approve')){      decide='Approve'
             }else if($(this).hasClass('return')){ decide='Return' }
-            let phase=Object.keys(status)[0];
-            // status[phase][role]=decide;
-            status['P3'][role]=decide;
+            role_arr=JSON.parse(role_arr);
+            $.each(role_arr,function (i,role){
+                if(role=='contactor'){role='developers'}
+                status['P3'][role]=decide;
+            })
             formdata=JSON.stringify(status);
             $.when( patch_order(order_id,{'status':formdata})).then(refresh_requestModal(order_id));
         });
@@ -1662,7 +1643,11 @@
         });
         let status=singnature_response[singnature_response.length-1]['status']
         
-        if(login_id in signaturer_obj){         Indentification={'identity':['signature'],'index':signaturer_obj[login_id]};
+        if(login_id in signaturer_obj){         
+            Indentification={'identity':['signature'],'index':signaturer_obj[login_id]};
+            if(login_id in author_obj){
+                Indentification={'identity':['signature','assigner'],'index':signaturer_obj[login_id]};
+            }
         }else if(login_id in author_obj){
             let role_arr=[];
             $.each(author_obj,function( employee_id,role ){
@@ -1690,9 +1675,6 @@
         let loginId=loginInfo.employee_id;
         let signature_id=userobj['index'];
         let role=userobj['identity'];
-        console.log('ROLE TYPE')
-        console.log(typeof(role))
-        console.log(role)
         let raw_dev_data=order_response['developers'];
 
         //  確認是否因為signer return 造成phase退回的(因為status清空，所以光看status無法得知)
@@ -1704,10 +1686,6 @@
         //  schedule list
         let schedule_data=get_current_schedule(id); 
 
-        console.log('singnature_status---------------------------------------------')
-        console.log(singnature_status)
-        console.log('ROLE:'+role);
-        console.log(signature_id)
         //initialize_request/waiting_signature/notify_signing/waiting_receiver_accept_request/receiver_assign_developers
         if(role=='guest'){
             render_ezinfo(id);
@@ -1717,9 +1695,6 @@
             $('#requestModal').data('status',status)
             show_request_info(order_response);
             show_author('form_initiator',order_response['initiator']);
-
-            // $('#display_comment_area').fadeIn(0);
-            // $('#edit_comment_area').fadeOut(0);
 
             switch (phase) {
 //  Initiator initialize request...
@@ -1765,7 +1740,6 @@
                     $('#FormUpload').prop('style','display:none !important;');
                     get_filelist(id);
                     $('#tag_div').parent('div').fadeIn(0);
-
                     if(role.includes('assigner')){
                         request_image_module('notify_signing');
                         $('#signature_func').fadeIn(0);
@@ -1803,6 +1777,8 @@
                     $('#schedule_status').empty().append(temp);
                     $('#schedule_status').parent('div').fadeIn(0);
                     switch (assigner_status) {
+                        case 'Close':
+                            $('#schedule_status').parent('div').prop('style','display:none !important;');
                         case '':
                             if(role.includes('assigner')){
                                 request_image_module('receiver_proposal_schedule');
@@ -1900,9 +1876,23 @@
                     else if(actor=='initiator'&&oringinal_status==''){}
                     if(actor=='initiator'&&oringinal_status=='Approve'){ 
                         request_image_module('form_completed');
-                        $('#tag_div,#trigger_dev_modal,#add_milestone,.update_progress,.del_progress,#add_milestone').prop('style','display:none !important;');                       
+                        $('#tag_div,#trigger_dev_modal,.update_progress,.del_progress,#add_milestone').prop('style','display:none !important;');                       
                     }else{
-                        if(role.includes('initiator')){
+
+                        if(role.includes('initiator')||role.includes('contactor')){
+                            $('#progress_area').find('.read_progress').fadeOut(0);
+                            if(actor=='developers'){
+                                $('#repository_url').prop('disabled',false);
+                                $('#submit_result').parent('div').fadeIn(0);
+                            }else if(actor=='initiator'&&oringinal_status==''){
+                                request_image_module('notify_signing');
+                                $('#signature_func').fadeIn(0);
+                                $('#sign_comment').parent('div').parent('div').fadeOut(0);
+                                $('#sign_comment').parent('div').parent('div').siblings('h6').fadeOut(0);
+
+                                pend_sign(id,status,'P5','initiator');
+                            }
+                        }else if(role.includes('initiator')){
                             $('#progress_area').find('.update_progress,.del_progress,#add_milestone').fadeOut(0);
                             if(actor=='developers'){
                             }else if(actor=='initiator'&&oringinal_status==''){
@@ -1912,7 +1902,6 @@
                                 $('#sign_comment').parent('div').parent('div').siblings('h6').fadeOut(0);
 
                                 pend_sign(id,status,'P5','initiator');
-                            }else if(actor=='initiator'&&oringinal_status==''){
                             }
                         }else if(role.includes('contactor')){
                             $('#progress_area').find('.read_progress').fadeOut(0);
@@ -1950,7 +1939,9 @@
             render_tag_button(order_response['parent']);
         }
         if(oringinal_status=='Close'){
-            $('#FormRequest,#FormUpload,#schedule_area,#schedule_status,#signature_func').prop('style','display:none !important;');
+            $('#FormRequest,#FormUpload,#schedule_area,#schedule_status,#signature_func,#trigger_dev_modal').prop('style','display:none !important;');
+            $('.update_progress,.del_progress,#add_milestone').prop('style','display:none !important;'); 
+            $('#progress_area').find('.read_progress').fadeIn(0);
             request_image_module('form_closed');
         }
 
@@ -1959,13 +1950,6 @@
         $('#assign_dev_func').find('button').data('raw_dev_list',order_response['developers']);
         $('.toggle-dev-list').trigger('click')
     }
-
-
-
-
-
-
-
 
 
     function reinit_value(order_reponse){

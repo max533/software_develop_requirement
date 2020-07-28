@@ -32,7 +32,6 @@
 	<link href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/filter-control/bootstrap-table-filter-control.css">
 	
-	
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	<!-- Plugin date rangepicker -->
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
@@ -84,7 +83,7 @@
 		$.ajaxSetup({
 			headers: {'X-CSRFToken': "{{ csrf_token }}"},
 		});
-		{% endautoescape %} 
+		{% endautoescape %}
 	</script>
 	<link rel="stylesheet" href="{% static '/css/basic.css' %}"/>
 	<link rel="stylesheet" href="{% static '/css/datepicker.css' %}"/>
@@ -371,21 +370,26 @@
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content modal-content-body bg-grey">
 				<div class="mt-2 mb-3">
-					<div class="cover mx-auto">
+					<div class="cover mx-auto mb-2">
 						<img id="alert_img">
 					</div>
 					<h3 class="ml-3 text-secondary text-center" id="alert_title"> -- Upload Denied -- </h3>
 					<hr class="text-secondary">
-					<p class="ml-3 text-secondary">
+					<p class="text-secondary">
 						<i class="fa fa-bullhorn text-danger mr-2"></i>
-						<span id="alert_content">Upload file selected is oversize. Max-allowed-uploaded-file size is <strong>10 Mb</strong>.</span></br>
+						<span id="alert_content"> Upload file selected is oversize. Max-allowed-uploaded-file size is <strong>10 Mb</strong>.</span></br>
 					</p>
+					<div style="max-height:12em; overflow:auto;">
+						<p id="alert_detail" class="text-secondary mt-2" style="word-break: break-all;"></p>
+					</div>
+					<hr>
 					<div class="col-6">
+						
+						<h6 class="text-secondary">Free to contact:</h6></br>
 						<small class="mt-2 text-grey">
-							Free to contact:</br>
-							Luis Liao    #5610</br>
-							Jeff SH Wang #4815</br>
-							Leo Tu       #6207
+							<a href="http://10.32.20.124:50005/profile/9505005" target="_blank" class="fa fa-external-link-alt mr-2"></a>Luis Liao    #5610</br>
+							<a href="http://10.32.20.124:50005/profile/10612704" target="_blank" class="fa fa-external-link-alt mr-2"></a>Jeff SH Wang #4815</br>
+							<a href="http://10.32.20.124:50005/profile/10712714" target="_blank" class="fa fa-external-link-alt mr-2"></a>Leo Tu       #6207
 						</small>
 					</div>
 					<div class="text-center mt-3 mb-3">

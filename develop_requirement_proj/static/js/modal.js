@@ -185,7 +185,7 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                         </form>	
                         <div style="display : none !important;">
                             <div class="d-inline-flex align-items-top w-100 mb-4 file bg-light bd-radius-8 p-1 mt-2" id="show_file_div">
-                                <h6 class="col-4 pt-1 text-secondary font-weight-bold"> Attached-file list </h6>
+                                <h6 class="col-4 pt-1 text-secondary font-weight-bold"> Attached-file list <i id="file_div_toggle" class="ml-2 fa fa-angle-up btn btn-light btn-sm" title="Expand"></i></h6>
                                 <div class="col-8">
                                     <hr>
                                     <table class="w-100" id="filelist"></table>
@@ -217,14 +217,14 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                             <!-- Assign content -->
                             <form class="row align-items-top mt-2 file" id="FormUpload">
                                 <div class="col-4">
-                                    <h6 class="text-secondary font-weight-bold mt-3" id="file_div_toggle"> Attached files <i class="ml-2 fa fa-angle-up btn btn-light btn-sm" title="Expand"></i></h6>
+                                    <h6 class="text-secondary font-weight-bold mt-3"> Attached files </h6>
                                     <span class="mt-1 text-danger font-weight-bold"><i class="fa fa-bullhorn mr-2"></i>Necessary file/ 
                                     <a class="btn btn-warning btn-sm" href="#" id="file_template_download" download><i class="fa fa-file-download mr-1"></i>Template</a> 
                                     </span>
                                     <li class="text-danger">Systems architecture</li><li class="text-danger">Benefit assessment</li>
                                 </div>
                                 <div class="col-8">
-                                    <label for="file" class="mt-2 upload-style form-control d-flex align-items-center justify-content-between bd-radius-8">											
+                                    <label for="file" class="mt-2 upload-style form-control d-flex align-items-center justify-content-between bd-radius-8 bg-light">											
                                         <input type="file" class="custom-file-input" id="files" name="files[]" multiple size="5" title="No file selected." required>
                                     </label>
                                     <h6 class="text-grey caption"> Drag&Drop or Click to choose your file.<i class="fa fa-cloud-upload-alt fa-lg ml-2"></i></h6>
@@ -257,7 +257,7 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                                             <td style="min-width:320px;"><textarea class="form-control field-style bd-radius-8 mr-2" rows="2" name="description" placeholder="Description..." required></textarea></td>
                                             <td style="max-width:100px;">
                                                 <div class="input-group mr-2">
-                                                    <input type="text" class="form-control field-style" name="complete_rate" id="schedule_complete_rate" style="ime-mode:disabled" onkeyup="return ValidateNumber($(this),value)" placeholder="0~100 complete" required>
+                                                    <input type="text" class="form-control field-style" name="complete_rate" id="schedule_complete_rate" style="ime-mode:disabled" onkeyup="return ValidateNumber($(this),value)" placeholder="1~99 complete" required>
                                                     <div class="input-group-append">
                                                         <button class="btn btn-light font-weight-bold" type="button"> % </button>
                                                     </div>

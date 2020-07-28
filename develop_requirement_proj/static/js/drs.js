@@ -1,9 +1,10 @@
 $(function(){
-    //  All modal hide --> #table refresh
-    // $(document).on('hide.bs.modal','.modal',function(){
-    //     $('#table').bootstrapTable('refresh');
-    // });
-
+    //  Decode URL open coresponding to request
+    let order_id=getUrlParameter('order');
+    if(order_id!==undefined){
+        let order_response=get_single_order(order_id);
+        indentify_modal_show(order_response);
+    }
     //  Press shift+mousewheel  <- -> 左右移動
     $(document).bind('mousewheel DOMMouseScroll','#table', function (event) {
         if(event.shiftKey === true) {
@@ -33,7 +34,6 @@ $(function(){
             let order_id=order_data['id'];
             //  Store order_id to requestModal
             $('#requestModal').data('order_id',order_id);
-            // request_image_status();
             //  Collapse Request which team info
             show_request_info(order_data);
             //  Show upload file
@@ -67,39 +67,29 @@ $(function(){
         $(this).remove();
     });
 
-
-    //  Request modal show
-    // $(document).on('shown.bs.modal','#requestModal', function () {
-    //     comment_area_height();
-    // });
-
-
 //  Schedule
     $(document).on('click','#add_schedule_btn',function(){
         let order_id=$('#requestModal').data('order_id');
         if($('#FormSchedule').validate().form()){
-            // if(order_id==undefined||order_id=='New'){console.log('Schedule plan get order_id WRONG');}   //測試後請還原
-            // else{
-                let eventname=$('#FormSchedule').find('td').eq(0).find('input').val();
-                let expdate=new Date($('#FormSchedule').find('td').eq(1).find('.date').val()).toISOString();
-                let description=$('#FormSchedule').find('td').eq(2).find('textarea').val();
-                let completerate=$('#FormSchedule').find('td').eq(3).find('input').val();
-        
-                let newschedule={
-                    "id": 'New',
-                    "event_name": eventname,
-                    "description": description,
-                    "expected_time": expdate,
-                    "complete_rate": completerate,
-                    "version": null,
-                    "update_time": " - ",
-                    "created_time": " - ",
-                    "order": order_id
-                };
+            let eventname=$('#FormSchedule').find('td').eq(0).find('input').val();
+            let expdate=new Date($('#FormSchedule').find('td').eq(1).find('.date').val()).toISOString();
+            let description=$('#FormSchedule').find('td').eq(2).find('textarea').val();
+            let completerate=$('#FormSchedule').find('td').eq(3).find('input').val();
+            let fake_id='New_'+$('#schedulelist').find('.Newschedule').length
+            let newschedule={
+                "id": fake_id,
+                "event_name": eventname,
+                "description": description,
+                "timestamp": expdate,
+                "complete_rate": completerate,
+                "version": null,
+                "update_time": " - ",
+                "created_time": " - ",
+                "order": order_id
+            };
 
-                $('#schedulelist').bootstrapTable('append',newschedule);
-                $('#FormSchedule').find('input,textarea').val('');
-            // }
+            $('#schedulelist').bootstrapTable('append',newschedule);
+            $('#FormSchedule').find('input,textarea').val('');
         }
     });
     //  Restrict input directly from field
@@ -108,10 +98,11 @@ $(function(){
     });
     $(document).on('click','#schedulelist tbody .delete',function(){
         let id=$(this).parents('tr').data('id');
-        let del_id_arr=$('#schedulelist').data('del_id_arr').concat(id);
 
-        $('#schedulelist').data('del_id_arr',del_id_arr);
-        // $('#schedulelist').bootstrapTable('remove',{field:'event_name',values:[$(this).data('event_name')]});
+        if(id.match('New')==null){
+            let del_id_arr=$('#schedulelist').data('del_id_arr').concat(id);
+            $('#schedulelist').data('del_id_arr',del_id_arr);
+        }
         $('#schedulelist').bootstrapTable('remove',{field:'id',values:[id]});
     });
     //  Update schedule
@@ -150,7 +141,7 @@ $(function(){
         status['P3']['assigner']='Close';
         let formdata={'status':JSON.stringify(status)};
         patch_order(order_id,formdata);
-
+        $('#requestModal').modal('hide');
     });
     $(document).on('click','#update_schedule_btn',function(){
         let if_no_blank=1
@@ -175,7 +166,6 @@ $(function(){
             else update_list.push($('#schedulelist').data('updatelist_obj'));
 
             scheduleData=$('#schedulelist').bootstrapTable('getData',{useCurrentPage:true,includeHiddenRows:true});
-            // function schedule_proposal(update_list,del_id_arr){
                 //  POST schedule
                 $('#schedulelist').find('.Newschedule').each(function(){
                     let index=$(this).data('index');
@@ -204,8 +194,7 @@ $(function(){
                     });
                     $('#schedulelist').data('del_id_arr',[]);
                 }
-            // }
-            
+          
             //  Change order status
             // let order_response=get_single_order(order_id);
                 let status=$('#requestModal').data('status');
@@ -234,20 +223,10 @@ $(function(){
     $(document).on('click','.ezinfoModal_trigger',function(){
         let id=$(this).data('id');
         if(id==undefined||id==null||id==''){}
-        else{
-            render_ezinfo(id);
-        }
+        else render_ezinfo(id);
+
         $('#ezinfoModal').modal('show');
     });
-
-
-
-
-
-
-  
-
-
 
 
 
@@ -292,7 +271,6 @@ $(function(){
             }
         });       
         $(document).on('click','#attached_file_btn',function(){
-
             if($('#FormUpload').validate().form()){
                 let tr_num=$('#filelist').find('tbody').find('tr').length;
                 if(tr_num>=fileslimit) {
@@ -333,7 +311,7 @@ $(function(){
                                 let newfile={
                                     "id": 'New',
                                     "name": file_name,
-                                    "path": '-',
+                                    "path": images.loadinggif_path,
                                     "order": order_id,
                                     "description": description,
                                     "size": file['size'],
@@ -341,7 +319,7 @@ $(function(){
                                 };
                                 $('#filelist').bootstrapTable('append',newfile);
                                 target=$('#filelist').find('tbody').find('tr').last().find('td').eq(1);
-                                let loadinghtml=`<div class="loadingbar">
+                                let loadinghtml=`<div class="loadingbar position-absolute">
                                                     <div class="progress mx-auto">
                                                         <div class="progress-bar progress-bar-striped bg-success font-weight-bold progress-bar-animated" style="width: 20%;"></div>
                                                     </div>
@@ -354,7 +332,12 @@ $(function(){
                             },
                             success: function ( result, textStatus, XMLHttpRequest ){ 
                                 let id=result.id
-                                $('#filelist').find('tbody').find('tr').last().data('id',id);
+                                let row_index=$('#filelist').find('tbody').find('tr').last().data('index');
+                                $('#filelist').bootstrapTable('updateRow',{
+                                    index: row_index, 
+                                    row: {id: id},
+                                });
+                                $('#filelist').find('tbody').find('tr').last().find('img').prop('src',result.path);
                             },
                             complete: function ( result, textStatus, XMLHttpRequest ){// 測試後請刪除
                                 //  Remove progress bar and animation
@@ -417,8 +400,8 @@ $(function(){
             
         });
     //  toggle file div // Close filediv or hide
-        $(document).on('click','#file_div_toggle i',function(){
-            let file_div=$('#show_file_div');
+        $(document).on('click','#file_div_toggle',function(){
+            let file_div=$('#filelist').parents('.col-8');
             $(this).toggleClass('fa-angle-up fa-angle-down');
             if($(this).hasClass('fa-angle-down')) file_div.slideUp();   
             else file_div.slideDown();      
@@ -442,8 +425,6 @@ $(function(){
                     $('#files').parent('label').siblings('h6').html(' Drag&Drop or Click to choose your file.<i class="fa fa-cloud-upload-alt fa-lg ml-2"></i> ');
                 }
             });
-            
-            
         });
         $(document).on('click','#filelist .description_edit,#schedulelist .description_edit',function(){
             let target=$(this).parents('.detail-view')
@@ -499,33 +480,22 @@ $(function(){
  
 
     //  Comment area
-        // $(document).on('click','#toggle-commentarea',function(){ 
-        //     if($(this).hasClass('active'))  comment_area_height_expand();
-        //     else comment_area_height();
-        //     $(this).find('i').toggleClass('fa-chevron-down fa-chevron-up');
-        // });
-        $(document).on('click','#hide_commentarea',function(){ 
-            comment_area_height();
-        });
-        $(document).on('click','#show_commentarea',function(){ 
-            comment_area_height_expand();
-        });
-
-
-
-        //  Add comment
+        $(document).on('click','#hide_commentarea',function(){ comment_area_height();});  
+        $(document).on('click','#show_commentarea',function(){ comment_area_height_expand();});
+            
+    //  Add comment
         $(document).on('click','#sendcomment_btn',function(){
             let order_id=$('#requestModal').data("order_id");
             if($('#comment').summernote('isEmpty')){         
             }else{  //  Comment content is not null
                 let comment_html=$('#comment').summernote('code');
                 let comment_obj={
-                        // "comment":  comment_html,
                         "content":  comment_html,
                         "order": order_id
                 };
                 post_comment_history(comment_obj);
-                let all_comments=get_comment_history(order_id)
+                let all_comments=get_comment_history(order_id);
+                $('#comment_area').empty();
                 $.each(all_comments,function(i,res){
                     append_comment_template('#comment_area',res);
                 });
@@ -535,10 +505,6 @@ $(function(){
         });
 
     
-
-
-
-
 //  Submit result
         $(document).on('click','#submit_result',function(){
             let order_id=$('#requestModal').data('order_id');
@@ -564,15 +530,19 @@ $(function(){
         });
 
 
-
-
-
-
-
-
-
-
-
+    // Searchbutton click 跳轉問題
+    $('#search_tag').on('keypress',function(event) {
+        if (event.keyCode == 13) { 
+            $('#search_tag_btn').trigger('click');
+            return false;
+        }
+    })
+    $('#search_dev').on('keypress',function(event) {
+        if (event.keyCode == 13) { 
+            $('#search_dev_btn').trigger('click');
+            return false;
+        }
+    })
 });
 
 
