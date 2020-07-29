@@ -100,6 +100,7 @@ class OrderFilter(filters.FilterSet):
             'account': ['exact'],
             'project': ['exact'],
             'parent': ['exact'],
+            'develop_team_sub_function': ['exact'],
         }
 
     def initiator_filter(self, queryset, name, value):
