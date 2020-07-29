@@ -7,6 +7,10 @@ ENV PYTHONDONTWRITEBYTECODE 1
 
 COPY ./utility/instantclient-basic-linux.x64-12.2.0.1.0.zip /opt/instantclient-basic-linux.x64-12.2.0.1.0.zip
 
+RUN echo "deb http://opensource.nchc.org.tw/debian/ buster main" > /etc/apt/sources.list \
+  && echo "deb http://opensource.nchc.org.tw/debian/ buster-updates main" >> /etc/apt/sources.list \
+  && echo "deb http://opensource.nchc.org.tw/debian/ buster-proposed-updates main" >> /etc/apt/sources.list
+
 RUN apt-get update \
   # Dependencies for connet oralce database
   && apt-get install --no-install-recommends -y libaio1=0.3.112-3 build-essential=12.6 unzip=6.0-23+deb10u1 \
