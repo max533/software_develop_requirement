@@ -102,7 +102,7 @@ $(function(){
         detailView:true,
         sidePagination:'server',
         pageList:[10, 25, 50, 100],
-        searchOnEnterKey:true,
+        searchOnEnterKey:false,
         clickToSelect: true,  //是否啟用點選選中行
         buttonsClass: 'btn btn-outline-secondary float-right',
         detailFormatter: 'detailFormatter',
