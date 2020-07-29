@@ -37,6 +37,10 @@ COPY --from=builder /opt/instantclient_12_2 /opt/instantclient_12_2
 
 COPY ./compose/production/django/uwsgi.ini /etc/uwsgi/uwsgi.ini
 
+RUN echo "deb http://opensource.nchc.org.tw/debian/ buster main" > /etc/apt/sources.list \
+  && echo "deb http://opensource.nchc.org.tw/debian/ buster-updates main" >> /etc/apt/sources.list \
+  && echo "deb http://opensource.nchc.org.tw/debian/ buster-proposed-updates main" >> /etc/apt/sources.list
+
 RUN apt-get update \
   # Dependencies for connet oralce database
   && apt-get install --no-install-recommends -y libaio1=0.3.112-3 \
