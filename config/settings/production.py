@@ -101,6 +101,10 @@ LOGGING = {
         "verbose": {
             "format": "%(levelname)s %(asctime)s %(module)s "
             "%(process)d %(thread)d %(message)s"
+        },
+        "debug": {
+            "format": "[{asctime}] {levelname:8} | {process} {thread} | {module}.{funcName} {lineno:3} @ {filename} => {message}", # noqa
+            'style': '{',
         }
     },
     "handlers": {
@@ -108,20 +112,27 @@ LOGGING = {
             "level": "DEBUG",
             "class": "logging.StreamHandler",
             "formatter": "verbose",
+        },
+        "log_file": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "debug",
+            "filename": env("DJANGO_LOG_FILEPATH"),
+            "maxBytes": 1024 * 1024 * 5,
         }
     },
-    "root": {"level": "INFO", "handlers": ["console"]},
+    "root": {"level": "INFO", "handlers": ["console", "log_file"]},
     "loggers": {
         "django.db.backends": {
             "level": "ERROR",
-            "handlers": ["console"],
+            "handlers": ["console", "log_file"],
             "propagate": False,
         },
         # Errors logged by the SDK itself
-        "sentry_sdk": {"level": "ERROR", "handlers": ["console"], "propagate": False},
+        "sentry_sdk": {"level": "ERROR", "handlers": ["console", "log_file"], "propagate": False},
         "django.security.DisallowedHost": {
             "level": "ERROR",
-            "handlers": ["console"],
+            "handlers": ["console", "log_file"],
             "propagate": False,
         },
     },

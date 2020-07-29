@@ -1,11 +1,11 @@
 # my_nginx.conf
 
 upstream app_cluster {
-    ${SERVICE_DECLARE_1};
-    ${SERVICE_DECLARE_2};
-    ${SERVICE_DECLARE_3};
-    ${SERVICE_DECLARE_4};
-    ${SERVICE_DECLARE_5};
+    ${DJANGO_APP_1};
+    ${DJANGO_APP_2};
+    ${DJANGO_APP_3};
+    ${DJANGO_APP_4};
+    ${DJANGO_APP_5};
 }
 
 server {

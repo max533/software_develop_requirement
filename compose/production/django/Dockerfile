@@ -15,7 +15,7 @@ RUN apt-get update \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
 
-COPY ./requirements/production.txt /requirements/production.txt
+COPY ./requirements /requirements
 
 RUN pip wheel --wheel-dir=/tmp/wheels -r /requirements/production.txt
 

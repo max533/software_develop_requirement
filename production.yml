@@ -121,3 +121,5 @@ services:
       - frontend
       - backend
     command: /start-flower
+    ports:
+      - 50133:5555

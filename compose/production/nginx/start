@@ -4,10 +4,4 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-echo ${SERVICE_DECLARE_1}
-echo ${SERVICE_DECLARE_2}
-echo ${SERVICE_DECLARE_3}
-echo ${SERVICE_DECLARE_4}
-echo ${SERVICE_DECLARE_5}
-
 envsubst < /etc/nginx/conf.d/my_nginx.conf.template > /etc/nginx/conf.d/my_nginx.conf && exec nginx -g 'daemon off;'
