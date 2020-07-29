@@ -56,9 +56,8 @@ RUN pip install --no-index --find-links=/tmp/wheels -r /requirements/production.
     && rm -rf /tmp/wheels
 
 # To avoid execute with root permission, it create django user and group
-RUN addgroup --system django \
-    && adduser --system --ingroup django django
-
+RUN addgroup django \
+    && adduser --gecos "" --ingroup django django
 
 # Make image entripoint shell script with different need
 COPY ./compose/production/django/docker-entrypoint.sh /docker-entrypoint.sh
@@ -95,6 +94,7 @@ RUN mkdir -p /shared \
   && mkdir -p /log \
   && chown -R django:django /shared \
   && chown -R django:django /log \
+  && chown -R django:django /mnt \
   && rm -rf /app/utility/instantclient-basic-linux.x64-12.2.0.1.0.zip
 
 USER django
