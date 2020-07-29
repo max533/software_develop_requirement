@@ -173,9 +173,10 @@
                             <a class="dropdown-item align-items-center d-flex" id ="user" target="_blank"> 
 								<img class="sticker mr-2">
 								<span><!-- Leo Tu/WHQ/Wistron  --></span>
-                            </a>
+							</a>
+							<a class="dropdown-item" data-toggle="modal" data-target="#instructionModal" style="cursor: pointer;"> <i class="fas fa-chalkboard-teacher" style="width: 1.5rem;"></i> Instruction </i></a>
                             <a class="dropdown-divider"></a>
-                            <a class="dropdown-item" id ="logout" href="./cas/logout"> <i class="fas fa-sign-out-alt fa-fw"></i> Log Out </i></a>
+                            <a class="dropdown-item" id ="logout" href="./cas/logout"> <i class="fas fa-sign-out-alt fa-fw" style="width: 1.5rem;"></i> Log Out </i></a>
                         </div>
 					</div>
 					
@@ -258,10 +259,6 @@
 							<div id="result_tag_table_div">			
 								<table class="table table-borderless mt-1 devsearch_fade" id="result_tag_table" style="display: none;"></table>
 							</div>	
-							<!-- <hr>
-							<div class="d-flex justify-content-end mt-4">
-								<button type="button" class="btn btn-info" id="tagBTN"> <i class="far fa-paper-plane mr-1"></i> Save </button>
-							</div> -->
 						</form>	
 					</div>						
 				</div>		
@@ -401,46 +398,14 @@
 		</div>
 	</div>
 
-	<div class="modal fade bg-light" id="errorModal" tabindex="-1" data-backdrop="static" data-keyboard="false">
-		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-			<div class="modal-content modal-content-transparent">
-				<div class="mt-2 mb-2 d-flex justify-content-between align-items-baseline">
-					<h6 class="modal-title text-secondary" id="error"> Error | <span></span> </h6>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="modal fade bg-light" id="emailModal" tabindex="-1" data-backdrop="static" data-keyboard="false">
-		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-			<div class="modal-content modal-content-transparent">
-				<div class="wrapper">
-					<svg class="plane" viewBox="0 0 139 139">
-						<defs>
-							<linearGradient id="a" x1="147.152%" x2="0%" y1="-47.397%" y2="100%">
-								<stop offset="0%" stop-color="#4b586e"/><stop offset="100%" stop-color="#4b586e"/>
-							</linearGradient>
-						</defs>
-						<path fill="#4b586e" stroke="url(#a)" stroke-width="1" d="M171.1455 37.3577l-131.69 71.251a2.7136 2.7136 0 0 0-1.4535 2.5092 2.7138 2.7138 0 0 0 1.6436 2.3892l22.4823 8.4671a5.2937 5.2937 0 0 1 2.9597 2.7138l17.4183 35.9715c.3259 1.5876 3.2583 2.0083 3.299.3935l-2.7152-29.7026c.157-2.2004.997-4.297 2.403-5.9975L153.795 58.471a1.6162 1.6162 0 0 1 1.4798-.4207c.526.1172.9531.4993 1.1277 1.0088a1.5462 1.5462 0 0 1-.2724 1.488l-58.8803 71.9973a13.1443 13.1443 0 0 0-2.308 5.9297l-3.5298 25.659c.2986 2.239 2.05 3.0938 3.462 1.0855l12.6802-14.926c.8703-1.1836 2.525-1.4602 3.7334-.624l32.6917 23.8136a2.635 2.635 0 0 0 2.5231.3387 2.6328 2.6328 0 0 0 1.6313-1.9534l26.8131-131.6197a2.713 2.713 0 0 0-1.004-2.6831 2.7164 2.7164 0 0 0-2.8516-.2886l.0543.0815z" transform="translate(-37 -36)"/>
-					</svg>
-				</div>
-				<hr class="line">
-				<div class="mr-3 pl-5 text-right">
-					<h6 class="text-secondary"> <span> This request is closed.</span> Successfully email to </h6>
-					<span class="text-secondary" id="emailwho"> Luis Liao/ Leo Tu/ Helen Chang</span></br>
-				</div>
-			</div>
-		</div>
-	</div>
 
 <!-- Progress modal -->
-
 	<div id="TimelineHint" class="modal fade" tabindex="-1" role="dialog">
 		<div class="modal-dialog modal-sm" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title">Timeline Hint</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
@@ -476,85 +441,23 @@
 		</div>
 	</div>
 
-	<!-- <div class="modal fade" id="milestoneModal" tabindex="-1" role="dialog">
-		<div class="modal-dialog modal-dialog-centered" role="document">
-			<div class="modal-content modal-content-body">
-				<div class="d-inline-flex justify-content-between align-items-baseline col-12 p-2">
-					<h5 class="text-secondary" id="milestone_modal_title"> Add New milestone </h5>
+
+	<div class="modal fade" id="instructionModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content modal-content-body bg-transparent" style="box-shadow: none;">
+				<div class="d-flex justify-content-end">
 					<button type="button" class="close" data-dismiss="modal">
-						<span> &times; </span>
+						<span class="text-white">&times;</span>
 					</button>
 				</div>
-				<form id="FormAddMilestone" class="col-12">
-					<div class="row align-items-center mt-2 editShow readShow" style="display: none;">
-						<label class="col-4">Editor</label>
-						<div class="mb-2 pl-3 col-8 d-inline-flex align-items-center">
-							<img class="sticker mr-2" src="../static/images/defaultsticker.png">
-							<span class="text-grey editor "></span>
-						</div>
-					</div>
-					<div class="row align-items-center mt-2 editShow readShow" style="display: none;">
-						<label class="col-4">Last Updated time</label>
-						<div class="mb-2 pl-3 col-8 d-inline-flex align-items-baseline">
-							<span class="text-grey update_time"></span>
-						</div>
-					</div>
+				<div class="text-center">
+					<img src="{% static '/images/instruction.svg' %}" style="width: 80%;">
 					<hr>
-					<div class="row align-items-center mt-2">
-						<label class="col-4"> &#9733 Milestone </label>
-						<div class="mb-2 col-8 d-inline-flex align-items-baseline">
-							<input type="text" class="form-control field-style" name="name" placeholder="..." required>
-						</div>
-					</div>
-					<div class="row align-items-top mt-2">
-						<label class="col-4"> &#9733 Description </label>
-						<div class="mb-2 col-8 d-inline-flex align-items-baseline">
-							<textarea type="text" class="form-control field-style bd-radius-8" name="description" placeholder="..." required></textarea>
-						</div>
-					</div>
-					<div class="row align-items-center mt-2">
-						<label class="col-4"> &#9733 Estimated developing period</label>
-						<div class="mb-2 col-8 d-inline-flex align-items-baseline">
-							<div class="input-group">
-								<input type="text" class="form-control field-style" name="est_dev_period" id="est_dev_period" placeholder="YYYY-MM-DD - YYYY-MM-DD" required>
-							</div>
-						</div>
-					</div>
-					<div class="row align-items-center mt-2">
-						<label class="col-4"> &#9733 Complete rate</label>
-						<div class="mb-2 col-8 d-inline-flex align-items-baseline">
-							<div class="input-group">
-								<input type="text" value="0" class="form-control field-style" name="complete_rate" id="progress_complete_rate" style="ime-mode:disabled" onkeyup="return ValidateNumber($(this),value)" placeholder="0~100" required>
-								<div class="input-group-append">
-									<button class="btn btn-light font-weight-bold" type="button"> % </button>
-								</div>
-							</div>
-						</div>
-					</div>
-					<small class="text-secondary d-flex justify-content-end mb-2">
-						★ is required field. Need to fill out before requesting.
-					</small>
-					<hr>
-					<div class="mb-2 d-flex justify-content-between">
-						<div class="d-flex justify-content-start">
-							<button type="button" class="btn btn-danger editShow" id="delProgress" style="display: none;">
-								<i class="fa fa-trash-alt mr-2"></i>Delete
-							</button>
-						</div>
-					
-						<div class="d-flex justify-content-end">
-							<button type="button" class="btn btn-info" id="addProgress">
-								<i class="fa fa-plus mr-2"></i>Add new milestone
-							</button>
-							<button type="button" class="btn btn-info ml-2 editShow" id="updateProgress" style="display: none;">
-								<i class="fa fa-check-double mr-2"></i>Save
-							</button>
-						</div>
-					</div>
-				</form>
+					<small class="d-flex justify-content-center text-white"> Copyright © 2020 Wistron </small>
+				</div>
 			</div>
 		</div>
-	</div> -->
+	</div>
 
 
 
