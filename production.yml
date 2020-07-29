@@ -46,7 +46,7 @@ services:
     networks:
       - frontend
     ports:
-      - 9999:80
+      - 50132:80
     command: /start
 
   django: &django
@@ -60,6 +60,7 @@ services:
     env_file:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
+      - ./.envs/.production/.oracle
     volumes:
       - type: volume
         source: staticfiles
