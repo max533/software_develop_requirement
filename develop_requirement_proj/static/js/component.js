@@ -864,8 +864,10 @@
                     field:'path',
                     align:'right',
                     formatter:function(value, row, index){
+                        console.log('ROW------------------------')
+                        console.log(row);
                         let path=value;
-                        let html=`<a class="btn btn-info btn-sm mt-2" href="`+path+`" download >
+                        let html=`<a class="btn btn-info btn-sm mt-2 filedownload" href="`+path+`" download >
                                     <i class="fa fa-cloud-download-alt "></i>
                                 </a>`
                         return html;
@@ -877,6 +879,14 @@
                         let filesize=Number(row['size']);
                         let html=` <p class="font-weight-bold ellipsis pl-2 pr-2 mb-0 filename">`+value+`</p>
                                     <small class="pl-2">`+bytesChange(filesize)+`</small>`;
+                        return html;
+                    }
+                },
+                {
+                    field:'update_time',
+                    formatter:function(value, row, index){
+                        let time=isotime_local(value);
+                        let html=`<small class="text-grey fileupdate">Update/ `+time+`</small>`
                         return html;
                     }
                 },
@@ -1453,7 +1463,6 @@
         });
     }
     function pend_sign(order_id,status,phase,role){
-        console.log(status);
         $('#signature_func').fadeIn(0);
         //  Review btn
         $('#ApproveBTN,#ReturnBTN,#CloseBTN').off().on('click',function(){
@@ -1462,9 +1471,6 @@
             let formdata={
                 'status':JSON.stringify(status),
             }
-            console.log('FORMDATA---------------------------')
-            console.log(formdata)
-            console.log(status)
             $.when(patch_order(order_id,formdata)).done(refresh_requestModal(order_id));   
         });
     }
