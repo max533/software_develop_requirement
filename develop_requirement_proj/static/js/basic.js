@@ -1,5 +1,5 @@
-$(function(){   
-//  General setting 
+$(function(){
+//  General setting
     SCHEDULEstart='Estimated beginning';
     SCHEDULEend='Estimated end';
 
@@ -14,7 +14,7 @@ $(function(){
         $('.modal.show').removeClass('blur');
         //  Show >=2 modals, one close, rest modal can scroll.
         let rest_show_modal_num=$('.modal.show').length;
-        if(rest_show_modal_num>=1){                
+        if(rest_show_modal_num>=1){
             if($('body').hasClass('modal-open')==false) $('body').addClass('modal-open');
         }
     });
@@ -39,7 +39,7 @@ $(function(){
         if(index>=1){
             let target=$('.modal.show.index-'+target_index+'');
             target.removeClass('blur');
-        } 
+        }
     });
 
 
@@ -78,9 +78,9 @@ $(function(){
     $(document).on('click','.toggle-dev-list',function(){
         let dot = $('.toggle-dev-list').siblings('span').find('strong');
         $(this).siblings('.dev-list').slideToggle('fast',function(){
-            if($(this).parents('#requestModal').length==1) comment_area_height();     
+            if($(this).parents('#requestModal').length==1) comment_area_height();
         });
-        dot.fadeToggle('fast');   
+        dot.fadeToggle('fast');
     });
 
 //  Table
@@ -320,7 +320,7 @@ $(function(){
             let html=NoMatches('...');
             return html;
         },
-        formatLoadingMessage: function(){ 
+        formatLoadingMessage: function(){
             let html=LoadingMessage();
             return html;
         },
@@ -343,7 +343,7 @@ $(function(){
             });
             target.on('apply.daterangepicker', function(ev, picker) {
                 target.trigger('cancel.daterangepicker');
-                target.val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));    
+                target.val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
             });
             target.on('cancel.daterangepicker', function(ev, picker) {
                 target.val("");

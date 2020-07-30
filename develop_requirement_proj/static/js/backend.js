@@ -4,7 +4,7 @@
         let path='/api/orders/'+order_id+'/ancestors/';
         let res='';
         $.ajax({
-            url:path, 
+            url:path,
             method:"GET",
             dataType: "json",
             async: false,
@@ -13,7 +13,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -21,7 +21,7 @@
         let path='/api/orders/';
         let res='';
         $.ajax({
-            url:path, 
+            url:path,
             method:"GET",
             data:{"filter":JSON.stringify(filter_data)},
             dataType: "json",
@@ -31,7 +31,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -52,16 +52,16 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
 
-    
+
 
     //  GET Fetch Order's Signature Collection by Order Id
     function get_signaturers(id){
-        let path='/api/orders/'+id+'/signatures/';       
+        let path='/api/orders/'+id+'/signatures/';
         let res='';
         $.ajax({
             url:path,
@@ -73,7 +73,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -82,7 +82,7 @@
     //  PUT Update Order's Signature Deatail by Order Id and Signature Id
     function put_signaturers(order_id,signature_id,formdata){
         let path='/api/orders/'+order_id+'/signatures/'+signature_id+'/'
-        let res='';         
+        let res='';
         $.ajax({
             url:path,
             method:"PUT",
@@ -94,14 +94,14 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
 
     //  POST Create an Orders
     function post_order(formdata){
-        let path='/api/orders/'; 
+        let path='/api/orders/';
         let res='';
         $.ajax({
             url:path,
@@ -114,7 +114,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -134,7 +134,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -153,7 +153,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -173,7 +173,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -182,7 +182,7 @@
     // POST Create User's Comment Histories
     function post_comment_history(comment_obj){
         let path='/api/comments/';
-        let res='';   
+        let res='';
         $.ajax({
             url:path,
             method:"POST",
@@ -194,7 +194,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -223,7 +223,7 @@
                 error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
                 success: function ( result, textStatus, XMLHttpRequest ){
                     res=result;
-                }    
+                }
             });
         }
         return res;
@@ -247,7 +247,7 @@
             success: function ( result, textStatus, XMLHttpRequest ){
                 console.log('Update file deatil successfully~');
                 res=true;
-            }    
+            }
         });
         return res;
     }
@@ -265,7 +265,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -288,7 +288,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -306,7 +306,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -325,7 +325,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -344,7 +344,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -362,7 +362,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -388,7 +388,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -406,7 +406,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -424,7 +424,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -441,7 +441,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -467,7 +467,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -483,7 +483,7 @@
         let path='/api/accounts/';
         let res='';
         $.ajax({
-            url:path, 
+            url:path,
             method:'GET',
             dataType: 'json',
             data: {
@@ -495,10 +495,10 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
-    }    
+    }
 
 
 
@@ -507,7 +507,7 @@
         let path='/api/projects/';
         let res='';
         $.ajax({
-            url:path, 
+            url:path,
             method:'GET',
             dataType: 'json',
             data: {'acct_id':acct_id},
@@ -517,10 +517,10 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
-    }  
+    }
 
 
 
@@ -540,7 +540,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }    
+            }
         });
         return res;
     }
@@ -565,7 +565,7 @@
             error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
             success: function ( result, textStatus, XMLHttpRequest ){
                 assigners=result;
-            }    
+            }
         });
         return assigners;
     }

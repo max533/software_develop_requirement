@@ -5,14 +5,14 @@ function render_tag_button(parent_id){
 
     if(parent_id==undefined||parent_id==''){
         target.data('id',null);
-        show_form_target.text('No tag');    
+        show_form_target.text('No tag');
         target.addClass('btn-light').removeClass('btn-success');
         $('.apply_tag').removeClass('active');
     }else{
         target.data('id',parent_id);
-        show_form_target.text('Tag Form : '+parent_id+'');    
+        show_form_target.text('Tag Form : '+parent_id+'');
         target.removeClass('btn-light').addClass('btn-success');
-    }   
+    }
 }
 //  選出的單號秀在按鈕上
 function apply_remove_tag(parent_id){
@@ -85,7 +85,7 @@ $(function(){
                         let html='<div class="ellipsis">'+value+'</div>';
                         return html;
                     },
-                }, 
+                },
                 {
                     field:'description',
                     title:'Description',
@@ -113,7 +113,7 @@ $(function(){
                 let html=NoMatches('No parent form record');
                 return html;
             },
-            formatLoadingMessage: function(){ 
+            formatLoadingMessage: function(){
                 let html=LoadingMessage();
                 return html;
             },
@@ -281,7 +281,7 @@ $(function(){
                                         <i class="fa fa-tag"></i>
                                     </button>`;
                             }
-                                
+
                             return html;
                         }
                     }
@@ -290,7 +290,7 @@ $(function(){
                     let html=NoMatches('...');
                     return html;
                 },
-                formatLoadingMessage: function(){ 
+                formatLoadingMessage: function(){
                     let html=LoadingMessage();
                     return html;
                 },

@@ -18,9 +18,9 @@
     #requestModal .modal-dialog.modal-lg {
         max-width: 95vw;
     }
-    
+
     /* .bg-water-gradient{
-        box-shadow: 0 0rem 1rem .3rem rgba(0, 0, 0, 0.068); 
+        box-shadow: 0 0rem 1rem .3rem rgba(0, 0, 0, 0.068);
     } */
 }
 @media (min-width: 1200px){
@@ -53,5 +53,5 @@
     .container {
         max-width: 85vw;
     }
- 
+
 }

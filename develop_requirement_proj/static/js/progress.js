@@ -8,7 +8,7 @@ const timelineConfig = {
     showCalendar: true,
     showTodayMark: true,
     showScheduleMark: true,
-    
+
     scaleStep: '50%',
     scalerMin: 1,
     scalerMax: 5,
@@ -29,7 +29,7 @@ function render_progress_schedule(progress_json,
     $('#TimelimeTitle').text(timelineConfig.title);
         // Find min and max date of schedules
         let dates = [];
-        
+
         if(scheduleStart==undefined||scheduleEnd==undefined){ console.log('WRONG SCHEDULE'); }
 
 
@@ -79,7 +79,7 @@ function render_progress_schedule(progress_json,
                                 <th class="pl-2 pb-2""><h6>Complete</h6></th>
                                 <th class="w-100 px-0 pb-3">
                                     <div class="timeline-frame border border-grey rounded-lg" style="overflow-x: hidden;">
-                                        <div id="TL-Calendar" class="timeline position-relative progress bg-transparent" style="width: ` + 
+                                        <div id="TL-Calendar" class="timeline position-relative progress bg-transparent" style="width: ` +
                                             timelineConfig.defaultScale + `; height: ` + timelineConfig.height + `px;">
                                         </div>
                                     </div></th>
@@ -96,7 +96,7 @@ function render_progress_schedule(progress_json,
                     let barColor = m%2 ? '#FEFEFE' : '#EEEEEE';
                     $('#TL-Calendar').append(
                         '<div class="position-absolute progress-bar h-100 calendar" title="' + monthStartDate(y, m) + ' ~ ' + monthEndDate(y, m) + '"' +
-                        'style="width: 0; margin-left: 0; background-color: ' + barColor + '; z-index: 99;">' + 
+                        'style="width: 0; margin-left: 0; background-color: ' + barColor + '; z-index: 99;">' +
                         ((m == 1 || m == 12) ? y + ' ' + monthNames[m-1].substring(0, 3) : monthNames[m-1]) + '</div>'
                     );
                     $('#TL-Calendar .calendar').last().data('width', barWidth + '%').data('margin-left', barStart + '%');
@@ -135,7 +135,7 @@ function render_progress_schedule(progress_json,
             if(End.getTime() < today.getTime()){
                 estimated_completeWidth=barWidth;
                 estimated_completetRate=100;
-            }else{ 
+            }else{
                 // estimated_completeWidth=(new Date(today-Start)/new Date(new Date(monthEndDate(yearEnd, monthEnd)) - new Date(monthStartDate(yearStart, monthStart))))*100
                 estimated_completeWidth=(today - new Date(yearStart, monthStart-1, 1))/86400000/duration*100-barStart;
                 estimated_completetRate=Math.round(new Date(today-Start)/new Date(End - Start)*100)-Number(row['complete_rate']);
@@ -162,9 +162,9 @@ function render_progress_schedule(progress_json,
                             <td><span class="text-secondary">`+row['complete_rate']+` %</span></td>
                             <td class="w-100 px-0">
                                 <div class="timeline-frame border rounded-lg" style="overflow-x: hidden;">
-                                    <div id="TL-` + TL_ID + `" class="timeline position-relative progress bg-secondary" 
+                                    <div id="TL-` + TL_ID + `" class="timeline position-relative progress bg-secondary"
                                         style="width:`+timelineConfig.defaultScale +`; height:` +timelineConfig.height+ `px;">
-                                        <div class="position-absolute progress-bar h-100 milestone bg-transparent px-2" 
+                                        <div class="position-absolute progress-bar h-100 milestone bg-transparent px-2"
                                             data-width="`+barWidth+`%" data-margin-left="`+barStart+`%"
                                             style="width:0; margin-left:0; z-index: `+barIndex+`;">
                                         </div>
@@ -172,12 +172,12 @@ function render_progress_schedule(progress_json,
                                 </div>
                             </td>
                         </tr>`;
-                        
+
             }else{
                 // Phase
-                let barRandomColor = 'rgba(' + 
-                    Math.floor(Math.random()*180 + 50) + ',' + 
-                    Math.floor(Math.random()*180 + 50) + ',' + 
+                let barRandomColor = 'rgba(' +
+                    Math.floor(Math.random()*180 + 50) + ',' +
+                    Math.floor(Math.random()*180 + 50) + ',' +
                     Math.floor(Math.random()*180 + 50) + ', .5)';
                 let scheduleObj={
                     "devloping_schedule":scheduleStart_date+" ~ "+scheduleEnd_date,
@@ -238,7 +238,7 @@ function render_progress_schedule(progress_json,
             }
             $('#TL>tbody').append(row_html);
             $('#TL .sticker').each(function(){
-                target=$(this)                
+                target=$(this)
                 avatar_reload(target);
             })
         });
@@ -254,7 +254,7 @@ function render_progress_schedule(progress_json,
                 $('.timeline .'+markname+'').data('width', barWidth+'%').data('margin-left', barStart+'%');
                 $('.timeline .'+markname+'').tooltip({
                     html: true,
-                    title: '<small>'+markname+'</small><br>' + 
+                    title: '<small>'+markname+'</small><br>' +
                         time.getFullYear() + '-' + twoDigit(time.getMonth()+1) + '-' + twoDigit(time.getDate()) +
                         ' (' + dayNames[time.getDay()] + ')',
                     boundary: 'window'
@@ -329,7 +329,7 @@ function render_progress_schedule(progress_json,
             curDown = true;
             curXPos = e.pageX;
             if(timelineConfig.currentTransform!==0)$(this).css('cursor', 'grabbing');
-            else $(this).css('cursor', 'default');				
+            else $(this).css('cursor', 'default');
         });
         $(window).mouseup(function (e) {
             curDown = false;
@@ -435,7 +435,7 @@ $(function(){
             //	Reset the modal value
             $('#FormAddMilestone').find('input,textarea').each(function(){
                 $(this).val('');
-            });	
+            });
             // $('.daterangepicker').find('.cancelBtn').trigger('click');
             // $('#est_dev_period').trigger('cancel.daterangepicker');
             $('body').append(milestoneModal);
@@ -451,7 +451,7 @@ $(function(){
                     }
                 });
                 $('#est_dev_period').on('apply.daterangepicker', function(ev, picker) {
-                    $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));   
+                    $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
                     $('#est_dev_period').valid();
                     $(this).trigger('change');
                 });
@@ -470,7 +470,7 @@ $(function(){
                 $(this).remove();
             });
         });
-        
+
     //	Click add milestone button
         $(document).on('click','#addProgress',function(){
             if($('#FormAddMilestone').validate().form()){
@@ -482,7 +482,7 @@ $(function(){
                 let ROWS;
                 formdata['start_time']=start_time;
                 formdata['end_time']=end_time;
-              
+
                 formdata['order']=order_id;
                 delete formdata['est_dev_period'];
                 $.when(post_progress(formdata)).then(
@@ -506,7 +506,7 @@ $(function(){
         $(document).on('click','.update_progress',function (){
             let row=$(this).parents('tr').data('row');
             fillin_milestone(row);
-            //	Show button 
+            //	Show button
             $('#milestoneModal .editShow').fadeIn(0);
             $('#addProgress').fadeOut(0);
 
@@ -521,7 +521,7 @@ $(function(){
         $(document).on('click','.read_progress',function (){
             let row=$(this).parents('tr').data('row');
             fillin_milestone(row);
-            //	Show button 
+            //	Show button
             $('#milestoneModal .editShow').not('.readShow').fadeOut(0);
             $('#milestoneModal .readShow').fadeIn(0);
             $('#addProgress').fadeOut(0);
@@ -537,7 +537,7 @@ $(function(){
         let patch_progress_field=[];
         $('#FormAddMilestone').find('input,textarea').on('change',function(){
             let target=$(this).prop('name');
-  
+
             if(patch_progress_field.includes(target)==false)patch_progress_field.push(target);
         });
         $(document).on('click','#updateProgress',function (){
@@ -561,16 +561,16 @@ $(function(){
                 $('#milestoneModal').modal('hide');
             }
         });
-    //	Delete milestone button		
+    //	Delete milestone button
         $(document).on('click','.del_progress',function (){
             $('#FormAddMilestone').removeData('id');
             let id=$(this).parents('tr').data('row')['id'];
             delete_progress(id);
             $(this).parents('tr').fadeOut(300,function(){
                 $(this).remove();
-            });	
+            });
         });
-    
+
         $('#milestoneModal').on('hide.bs.modal',function(){
             $('#FormAddMilestone').find('input,textarea').removeClass('border-danger');
         });

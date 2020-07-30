@@ -10,7 +10,7 @@
         -webkit-animation-timing-function: ease-in-out;
         animation-timing-function: ease-in-out;
         }
-    
+
         20%,
         60% {
         -webkit-transform: rotate3d(0, 0, 1, 80deg);
@@ -20,7 +20,7 @@
         -webkit-animation-timing-function: ease-in-out;
         animation-timing-function: ease-in-out;
         }
-    
+
         40%,
         80% {
         -webkit-transform: rotate3d(0, 0, 1, 40deg);
@@ -31,14 +31,14 @@
         animation-timing-function: ease-in-out;
         opacity: 1;
         }
-    
+
         to {
         -webkit-transform: translate3d(0, 250px, 0);
         transform: translate3d(0, 250px, 0);
         opacity: 0;
         }
     }
-  
+
   .hingedown {
     -webkit-animation-duration: 3s;
     animation-duration: 3s;
@@ -50,21 +50,21 @@
         animation-duration: 5s;
         animation-iteration-count: infinite;
     }
- 
+
     @-webkit-keyframes slideOutUpBig {
         from {
             -webkit-transform: translate3d(0, 0, 0);
             transform: translate3d(0, 0, 0);
             opacity: 1;
         }
-      
+
         to {
             opacity: 0;
             -webkit-transform: translate3d(0, -200px, 0);
             transform: translate3d(0, -200px, 0);
         }
       }
-      
+
       @keyframes slideOutUpBig {
         from {
             opacity: 1;
@@ -72,21 +72,21 @@
             transform: translate3d(0, 0, 0);
             position: absolute;
         }
-      
+
         to {
             opacity: 0;
             -webkit-transform: translate3d(0, -200px, 0);
             transform: translate3d(0, -200px, 0);
         }
       }
-      
+
       .slideOutUpBig {
         -webkit-animation-name: slideOutUpBig;
         animation-name: slideOutUpBig;
       }
 
     .animation-wrap{ display: none !important;}
-    
+
 /*  image */
     div#image_status{
         overflow: auto;
@@ -109,7 +109,7 @@
     .bg-water-gradient{
         background:#ACB6E5;
         background: linear-gradient(20deg, #74ebd5, #ACB6E5 );
-        box-shadow: 0 0rem 1rem .3rem rgba(0, 0, 0, 0.068); 
+        box-shadow: 0 0rem 1rem .3rem rgba(0, 0, 0, 0.068);
         z-index: 1;
     }
 
@@ -138,12 +138,12 @@
         border-radius: 2em;
         width: fit-content;
         height: auto;
-        font-size: x-small; 
+        font-size: x-small;
         margin-left: -1.8rem;
         position: absolute;
         background-color: var(--danger);
         box-shadow: 0.15rem 0.15rem 0.25rem rgba(14, 14, 14, 0.247);
-    }  
+    }
 
 
     .fa-user,.fa-users { color: #eceff1; cursor: pointer; }
@@ -163,7 +163,7 @@
         margin-left: 1rem;
         width: 20rem;
         overflow: hidden;
-        text-overflow: ellipsis; 
+        text-overflow: ellipsis;
         font-size: .9rem;
         font-weight: 600;
     }
@@ -171,10 +171,10 @@
 
     .upload-style:hover+.caption{
         overflow: visible !important;
-        text-overflow: unset !important; 
-        text-overflow: unset !important; 
-        width: inherit !important; 
-        white-space:normal !important; 
+        text-overflow: unset !important;
+        text-overflow: unset !important;
+        width: inherit !important;
+        white-space:normal !important;
         max-width: inherit !important;
     }
     .upload-style{
@@ -223,10 +223,10 @@
 
     .comments_shape{
         /* border-bottom-right-radius: 5px; */
-        border-top-right-radius: .8em; 
-        border-bottom-left-radius: .8em; 
-        border-bottom-right-radius: .8em; 
-        margin-left: 1em; 
+        border-top-right-radius: .8em;
+        border-bottom-left-radius: .8em;
+        border-bottom-right-radius: .8em;
+        margin-left: 1em;
         margin-top:-.6em;
         width: fit-content;
         max-width: inherit;
@@ -235,7 +235,7 @@
         overflow: auto;
         word-break: break-word;
     }
-    
+
 /* #filelist tr td>.ellipsis:hover{ */
     tr td:hover .ellipsis{
         /* overflow:visible; */
@@ -263,19 +263,19 @@
     #filelist tr td{
         padding: .4rem;
     }
-    #filelist tr td:nth-child(2)>img{ 
+    #filelist tr td:nth-child(2)>img{
         margin-top: .3rem;
         width: 3.5em;
         height: 3.5em;
         border-radius: .5rem;
-        object-fit: cover; 
+        object-fit: cover;
         box-shadow: 0.08rem 0.08rem 0.2rem rgba(14, 14, 14, 0.11);
     }
     #filelist .detail-view td{
         background-color: #f0f0f0;
         border-radius: .8rem;;
     }
- 
+
     /* #filelist tr td:nth-child(1):hover>img{ filter: opacity(.5) blur(1px); } */
     /* #filelist tr td:nth-child(1):hover>a{ display: unset; } */
     /* #filelist tr td:nth-child(1)>a{
@@ -355,9 +355,9 @@
         font-size: .1rem;
     }
 
-    
+
     #table tr{
-        cursor: pointer;   
+        cursor: pointer;
     }
     .table td{
         max-height: 10rem;
@@ -393,7 +393,7 @@
         border-bottom-right-radius: .8em;
     }
     #result_tag_table_div,#present_tag_table_div,#result_tag_table_div{
-        overflow-y: auto; 
+        overflow-y: auto;
         max-height: 45vh;
         height: fit-content;
     }
@@ -442,7 +442,7 @@
     }
     #present_dev_table_div .fixed-table-toolbar button{
         font-size: 50%;
-    }  
+    }
     #developersModal .th-inner{
         padding-left: .8rem;
     }
@@ -458,7 +458,7 @@
         margin-top: -.1rem;
         font-size: 90%;
         margin-bottom: 5px;
-    }   
+    }
 
 
 /*  Summernote */
@@ -470,11 +470,11 @@
         border-radius:.8rem;
         border: none !important;
     }
-    .note-editable{ 
+    .note-editable{
         border-radius:.8rem;
         border: 1px solid var(--gray);
-        padding: .4rem .5rem .4rem 1rem !important;       
-        min-height: 50px; 
+        padding: .4rem .5rem .4rem 1rem !important;
+        min-height: 50px;
         line-height: 1;
     }
     #comment+.note-editor .note-editable{
@@ -487,7 +487,7 @@
         font-size: .9rem;
         margin-left: .5rem;
     }
-    #requestModal .note-editable{ 
+    #requestModal .note-editable{
         box-shadow: 0.1rem .15rem .4rem rgba(0, 0, 0, 0.055) !important;
     }
     .note-popover{
@@ -503,11 +503,11 @@
         box-shadow: none;
     }
     .note-editable::-webkit-scrollbar,
-    .note-modal .modal-body::-webkit-scrollbar{ 
-        display: none; 
+    .note-modal .modal-body::-webkit-scrollbar{
+        display: none;
     }
-    .note-statusbar{ 
-        width:20%; 
+    .note-statusbar{
+        width:20%;
         margin: -2px auto;
         background-color: var(--secondary) !important;
     }
@@ -517,9 +517,9 @@
         border: 1px solid var(--gray) !important;
         box-shadow: none;
     }
-    .note-modal .modal-content{ 
+    .note-modal .modal-content{
         background-color: #fff;
-        padding: 1rem; 
+        padding: 1rem;
     }
     #toggle-commentarea{
         right:.8rem;
@@ -554,7 +554,7 @@
         bottom: 10px;
         opacity: 0;
         rotate: 30deg;
-        animation: plane-loop 1.8s  ease-out; 
+        animation: plane-loop 1.8s  ease-out;
     }
     @keyframes plane-loop {
         0% { transform: scale(0.7); left:0em;opacity: 1; }
@@ -567,7 +567,7 @@
         margin-top: -1.8em;
         margin-left:0 !important;
         transform-origin: left;
-        animation: line-loop 4s  ease-out; 
+        animation: line-loop 4s  ease-out;
     }
     @keyframes line-loop {
         0% { width: 0%; }
@@ -576,7 +576,7 @@
         100% {  width:30%; transform: translateX(110%); opacity: 0;}
     }
 
-    
+
 /* image edge blur */
 .cover img{
     max-width:30em;

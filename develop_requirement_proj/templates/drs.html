@@ -1,6 +1,6 @@
 {% load static %}
-<!DOCTYPE html> 
-<head> 
+<!DOCTYPE html>
+<head>
 	<meta name="Author" content="Leo Tu" />
 	<meta name="Copyright" content="&copy; 2020 Leo Tu" />
 	<meta http-equiv="Content-Type" content="text/html"; charset="uft-8" />
@@ -10,14 +10,14 @@
 	<meta http-equiv="Access-Control-Allow-Origin" content="*" />
 
 	<title>DRS</title>
-	  
+
 	<link rel="shortcut icon" href="{% static '/images/logoico.ico' %}" type="image/x-icon">
 	<link rel="icon" href="{% static '/images/logoico.ico' %}" type="image/x-icon">
 
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
 	<!-- Bootstrap XXL CSS --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xbrain-bootstrap-xxl@1.0.1/css/xbrain-bootstrap-xxl.min.css">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">
-	
+
 	<link href="https://fonts.googleapis.com/css?family=Nunito:700i&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Nunito:400i&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karla" >
@@ -31,7 +31,7 @@
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote.min.css" rel="stylesheet">
 	<link href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/filter-control/bootstrap-table-filter-control.css">
-	
+
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	<!-- Plugin date rangepicker -->
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
@@ -103,7 +103,7 @@
 </head>
 <body class="bg-white">
     <div class="container bg-white">
-        <nav class="mt-1 text-secondary align-items-center d-flex justify-content-end" id="navbar">					
+        <nav class="mt-1 text-secondary align-items-center d-flex justify-content-end" id="navbar">
             <div class="d-inline-flex align-items-center" id="navBTNs">
                 <form class="form-inline my-2 my-lg-0" >
 					<div class="dropdown ml-3 mr-3" id="navSelectMessage">
@@ -165,12 +165,12 @@
 					</div>
 
                     <div class="dropdown" id="navSelectUser">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" id="navUser"> 
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" id="navUser">
 						<!-- <img class="sticker" onerror="this.src='{% static '/images/defaultsticker.png' %}'" > -->
                             <img class="sticker bg-light">
                         </button>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item align-items-center d-flex" id ="user" target="_blank"> 
+                            <a class="dropdown-item align-items-center d-flex" id ="user" target="_blank">
 								<img class="sticker mr-2">
 								<span><!-- Leo Tu/WHQ/Wistron  --></span>
 							</a>
@@ -179,7 +179,7 @@
                             <a class="dropdown-item" id ="logout" href="./cas/logout"> <i class="fas fa-sign-out-alt fa-fw" style="width: 1.5rem;"></i> Log Out </i></a>
                         </div>
 					</div>
-					
+
                 </form>
             </div>
         </nav>
@@ -196,7 +196,7 @@
 			</div>
         </div>
 	</div>
-	
+
 <!-- RequestModal form -->
 
 
@@ -205,7 +205,7 @@
 		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 		  	<div class="modal-content p-3">
 				<div class="modal-body">
-					<div class="col-12 bg-white">	
+					<div class="col-12 bg-white">
 						<div class="d-flex justify-content-between align-items-start">
 							<div class="">
 								<h5 class="text-bluegray"> Depending on which form</h5>
@@ -214,7 +214,7 @@
 								<span> &times; </span>
 							</button>
 						</div>
-						
+
 						<div class="d-inline-flex align-items-baseline w-100 ">
 							<h6 class="modal-title text-secondary text-center font-weight-bold"> At present, depened-on form parents record </h6>
 							<button type="button" class="btn btn-danger btn-sm ml-2" id="remove_tag"><i class="fas fa-trash-alt"></i> Remove parent tag</button>
@@ -256,12 +256,12 @@
 							<hr class="devsearch_fade" style="display: none;">
 							<!-- Assign content -->
 							<h6 class="text-secondary font-weight-bold mt-3 devsearch_fade" style="display: none;"> Search result </h6>
-							<div id="result_tag_table_div">			
+							<div id="result_tag_table_div">
 								<table class="table table-borderless mt-1 devsearch_fade" id="result_tag_table" style="display: none;"></table>
-							</div>	
-						</form>	
-					</div>						
-				</div>		
+							</div>
+						</form>
+					</div>
+				</div>
 		  	</div>
 		</div>
 	</div>
@@ -274,11 +274,11 @@
 		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 			<div class="modal-content p-3">
 				<div class="modal-body">
-					<div class="col-12 bg-white">	
+					<div class="col-12 bg-white">
 						<div class="d-flex justify-content-between align-items-start">
 							<div>
 								<h5 class="text-bluegray"> Assign developers </h5>
-								<p class="text-secondary"> The form is divided to two parts. One show the current developers list. Another part provide you to search member to join your developers list.</br> 
+								<p class="text-secondary"> The form is divided to two parts. One show the current developers list. Another part provide you to search member to join your developers list.</br>
 															<strong>Rule: You need to select one developer from developers as contact window.</strong></p>
 							</div>
 							<button type="button" class="close" data-dismiss="modal">
@@ -305,7 +305,7 @@
 						<form id="FormDevelopers" class="w-100">
 							<!-- Assign which team -->
 							<h6 class="text-secondary font-weight-bold"> Search developer to add </h6>
-							<small class="font-weight-bold text-secondary mr-2 mt-2" id="developers_limit"> Current team member 
+							<small class="font-weight-bold text-secondary mr-2 mt-2" id="developers_limit"> Current team member
 								<span class="badge badge-light badge-pill p-1 pr-2 font-weight-bold">
 									<i class="fa fa-users mr-1 ml-2 text-secondary"></i><!-- current developers number -->
 								</span>
@@ -352,12 +352,12 @@
 								<table class="table table-borderless mt-1 devsearch_fade" id="result_dev_table"></table>
 							</div>
 							<hr>
-						</form>	
+						</form>
 					</div>
 					<div class="d-flex justify-content-end mt-2">
 						<button type="button" class="btn btn-info" id="update_dev_btn"> <i class="far fa-paper-plane mr-1" ></i> Save </button>
-					</div>						
-				</div>		
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -381,7 +381,7 @@
 					</div>
 					<hr>
 					<div class="col-6">
-						
+
 						<h6 class="text-secondary">Free to contact:</h6></br>
 						<small class="mt-2 text-grey">
 							<a href="http://10.32.20.124:50005/profile/9505005" target="_blank" class="fa fa-external-link-alt mr-2"></a>Luis Liao    #5610</br>

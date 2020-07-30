@@ -28,7 +28,7 @@ $(function(){
             let init_data=package_data('#FormRequest');
             init_data['status']=JSON.stringify(statusObj)
 
-            init_data['initiator']=loginInfo.employee_id; 
+            init_data['initiator']=loginInfo.employee_id;
 
             let order_data=post_order(init_data);
             let order_id=order_data['id'];
@@ -40,7 +40,7 @@ $(function(){
             afterInit(order_id);
             //  image_status
             request_image_module('waiting_signature');
-        }else console.log('#FormRequest valid false');  
+        }else console.log('#FormRequest valid false');
     });
     $(document).on('click','#Reinitialize_btn',function(){
         if($('#FormRequest').validate().form()){
@@ -50,7 +50,7 @@ $(function(){
             let patch_data=package_data('#FormRequest');
             patch_data['status']=JSON.stringify(statusObj);
             $.when( patch_order(order_id,patch_data) ).then( refresh_requestModal(order_id) );
-        }else console.log('#FormRequest valid false');  
+        }else console.log('#FormRequest valid false');
     });
     $(document).on('click','#close_init_btn',function(){
         let signed=$('#requestModal').data('status')['signed'];
@@ -117,7 +117,7 @@ $(function(){
             field: field,
             value: value
         });
-        
+
         //  Store change field into obj--> to sent ajax list
         let id=$(this).parents('tr').data('id');
         let update_obj=$('#schedulelist').data('updatelist_obj');
@@ -129,7 +129,7 @@ $(function(){
                 let row_obj={};
                 row_obj[field]=value
                 update_obj[id]=row_obj
-            }else{               
+            }else{
                 update_obj[id][field]=value
             }
             $('#schedulelist').data('updatelist_obj',update_obj);
@@ -190,11 +190,11 @@ $(function(){
                 if(del_id_arr==[]) console.log('No delete schedule update')
                 else{
                     $.each(del_id_arr,function(i,id){
-                        delete_schedule(id); 
+                        delete_schedule(id);
                     });
                     $('#schedulelist').data('del_id_arr',[]);
                 }
-          
+
             //  Change order status
             // let order_response=get_single_order(order_id);
                 let status=$('#requestModal').data('status');
@@ -218,7 +218,7 @@ $(function(){
         $('#schedule_area').fadeIn(0);
         $('#readonly_schedule_div').fadeOut(0);
     });
- 
+
 //  Global application
     $(document).on('click','.ezinfoModal_trigger',function(){
         let id=$(this).data('id');
@@ -235,13 +235,13 @@ $(function(){
         $('#ezinfoModal').modal('show');
     });
 
-//  #requestModal    
+//  #requestModal
     //  Form fields - Upload animation
     fileLists = [];
     let fileslimit = 5 //  Restrict file upload total number
     let file_size_limit = 10000000 //bites  file_size <= 10mb
 
-    $('#restrict_file_num').text(fileslimit);  
+    $('#restrict_file_num').text(fileslimit);
     //  Upload file ui layout
         $(document).on('change','#files',function(event) {
             let tr_num=$('#filelist').find('tbody').find('tr').length;
@@ -269,7 +269,7 @@ $(function(){
                     $('#selected_file').html('').fadeOut(0);
                 }
             }
-        });       
+        });
         $(document).on('click','#attached_file_btn',function(){
             if($('#FormUpload').validate().form()){
                 let tr_num=$('#filelist').find('tbody').find('tr').length;
@@ -304,7 +304,7 @@ $(function(){
                             data: formdata,
                             timeout:50000,
                             cache: false,
-                            processData: false, 
+                            processData: false,
                             contentType : false,
                             beforeSend: function ( XMLHttpRequest ){
                                 formdata_console(formdata);
@@ -327,14 +327,14 @@ $(function(){
                                                 </div>`;
                                 target.append(loadinghtml);
                             },
-                            error: function ( result, textStatus, XMLHttpRequest ){ 
-                                console.log( result );  console.log( textStatus ); console.log('Uploading fail~') 
+                            error: function ( result, textStatus, XMLHttpRequest ){
+                                console.log( result );  console.log( textStatus ); console.log('Uploading fail~')
                             },
-                            success: function ( result, textStatus, XMLHttpRequest ){ 
+                            success: function ( result, textStatus, XMLHttpRequest ){
                                 let id=result.id
                                 let row_index=$('#filelist').find('tbody').find('tr').last().data('index');
                                 $('#filelist').bootstrapTable('updateRow',{
-                                    index: row_index, 
+                                    index: row_index,
                                     row: {id: id},
                                 });
                                 let filename=result['name'];
@@ -349,7 +349,7 @@ $(function(){
                             complete: function ( result, textStatus, XMLHttpRequest ){// 測試後請刪除
                                 //  Remove progress bar and animation
                                 target.find('.loadingbar').remove();
-                                //  remove #files value --> so the change event can continue    
+                                //  remove #files value --> so the change event can continue
                                 $('#files').val('');
                                 $('#file_description').val('');
                                 $('#files').trigger('change');
@@ -404,17 +404,17 @@ $(function(){
                 }
             }
 
-            
+
         });
     //  toggle file div // Close filediv or hide
         $(document).on('click','#file_div_toggle',function(){
             let file_div=$('#filelist').parents('.col-8');
             $(this).toggleClass('fa-angle-up fa-angle-down');
-            if($(this).hasClass('fa-angle-down')) file_div.slideUp();   
-            else file_div.slideDown();      
+            if($(this).hasClass('fa-angle-down')) file_div.slideUp();
+            else file_div.slideDown();
         });
 
-    //  filelist table button action    
+    //  filelist table button action
         $(document).on('click','#filelist button.btn-danger',function(){
             let id=$(this).parents('tr').data('id');
 
@@ -462,11 +462,11 @@ $(function(){
             }
             if(update_document_detail(update_file_data)){
                 $('#filelist').bootstrapTable('updateRow',{
-                    index: row_index, 
+                    index: row_index,
                     row: {
                         description: editcontent,
                     },
-                }); 
+                });
                 $('#filelist').find('tr[data-index='+row_index+']').find('td').first().find('.detail-icon').trigger('click');
                 collapse_description(target);
             }else console.log('Update fail~');
@@ -484,16 +484,16 @@ $(function(){
                 if(target.find('.description_alert').length==0) $(alerthtml).insertAfter(target.find('textarea'));
             });
         });
- 
+
 
     //  Comment area
-        $(document).on('click','#hide_commentarea',function(){ comment_area_height();});  
+        $(document).on('click','#hide_commentarea',function(){ comment_area_height();});
         $(document).on('click','#show_commentarea',function(){ comment_area_height_expand();});
-            
+
     //  Add comment
         $(document).on('click','#sendcomment_btn',function(){
             let order_id=$('#requestModal').data("order_id");
-            if($('#comment').summernote('isEmpty')){         
+            if($('#comment').summernote('isEmpty')){
             }else{  //  Comment content is not null
                 let comment_html=$('#comment').summernote('code');
                 let comment_obj={
@@ -511,7 +511,7 @@ $(function(){
             }
         });
 
-    
+
 //  Submit result
         $(document).on('click','#submit_result',function(){
             let order_id=$('#requestModal').data('order_id');
@@ -539,17 +539,15 @@ $(function(){
 
     // Searchbutton click 跳轉問題
     $('#search_tag').on('keypress',function(event) {
-        if (event.keyCode == 13) { 
+        if (event.keyCode == 13) {
             $('#search_tag_btn').trigger('click');
             return false;
         }
     })
     $('#search_dev').on('keypress',function(event) {
-        if (event.keyCode == 13) { 
+        if (event.keyCode == 13) {
             $('#search_dev_btn').trigger('click');
             return false;
         }
     })
 });
-
-

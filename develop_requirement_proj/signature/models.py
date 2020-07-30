@@ -1,19 +1,14 @@
 """ signature database model """
-from pathlib import Path
-
 from mptt.models import MPTTModel, TreeForeignKey
 
-from django.conf import settings
 from django.contrib.postgres import fields
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
 def upload_document(instance, filename):
-    # folder_path = Path(settings.MEDIA_ROOT) / str(instance.order.id)
     folder_path = str(instance.order.id)
     filepath = folder_path + "/" + filename
-    print(filepath)
     return filepath
 
 

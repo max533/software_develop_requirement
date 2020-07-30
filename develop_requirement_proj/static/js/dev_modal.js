@@ -1,9 +1,9 @@
 $(function(){
-//  Param    
+//  Param
     let undo_list=[]
     let undos_limit=10;
     let developers_limit=12;
-    
+
     let developers=[];
     let developer_contacter=[];
     let original_dev_list=[];
@@ -41,7 +41,7 @@ $(function(){
 
 
     //  dev modal hide --> empty the developers list
-    $('#developersModal').on('hide.bs.modal',function(){      
+    $('#developersModal').on('hide.bs.modal',function(){
         //  Search fields empty
         $('#search_dev_site .selectpicker').selectpicker('val','');
         $('#search_dev').val('');
@@ -50,7 +50,7 @@ $(function(){
 
 
 
-//  Developers table function    
+//  Developers table function
     //  Reset developer list
     $('#developersModal').on('click','#developer_reset',function(){
         //  Store to undo list
@@ -62,7 +62,7 @@ $(function(){
 
         let current_employee_id_list=current_id_arr(current_dev_list);
         if_employee_joined(current_employee_id_list,developers_limit,'#result_dev_table','#developers_limit');
-   
+
         select_devcontacter('#sel_devcontacter_div','#present_dev_table',current_dev_list,developer_contacter);
     });
 
@@ -107,7 +107,7 @@ $(function(){
         }else if(raw_dev_list['member'].length!==0&&raw_dev_list['contactor']!==''){
             // if(raw_dev_list['member'].length!==0)developers=raw_dev_list['member'];
             developers=raw_dev_list['member']
-            
+
             developer_contacter.push(raw_dev_list['contactor']);
             //  From backend developers list
             original_dev_list=developer_contacter.concat(developers);
@@ -148,7 +148,7 @@ $(function(){
                         rowlist.push(name);
                         return rowlist;
                     },
-                    formatter:function(value, row, index){ 
+                    formatter:function(value, row, index){
                         let name=row['display_name'];
                         let html = `<div class="d-inline-flex align-items-center"><img src="`+images['defaultavatar']+`" data-employee_id="`+row['employee_id']+`" class="mr-2 sticker"><span>`+name+`</span><div>`;
                         return html;
@@ -182,7 +182,7 @@ $(function(){
                 let html=NoMatches('...');
                 return html;
             },
-            formatLoadingMessage: function(){ 
+            formatLoadingMessage: function(){
                 let html=LoadingMessage();
                 return html;
             },
@@ -194,25 +194,25 @@ $(function(){
                 let html=LoadingMessage();
                 return html;
             },
-            onClickCell:function(field, value, row, $element) { 
+            onClickCell:function(field, value, row, $element) {
                 if(field=='edit'){
                     triggerRowDel = true;
                     $element.closest('tr').find('td').eq(0).trigger('click');
-                    
+
                     //  Delete developer from present_dev_table
                     $('#present_dev_table_div').off().on('click','tbody .del',function(){
                         //  Store to undo list
                         undo_list.push([...current_dev_list]);
                         undo_limit();
 
-                        let index=$(this).parents('tr').data('index');                       
+                        let index=$(this).parents('tr').data('index');
                         current_dev_list.splice(index,1);
 
                         $(this).parents('tr').fadeOut('fast',function(){
-                            //  會直接把current_dev_list的資料刪除 
+                            //  會直接把current_dev_list的資料刪除
                             $('#present_dev_table').bootstrapTable('remove',{field:'employee_id',values:[parseInt(row.employee_id)]});
                             $('#present_dev_table').bootstrapTable('load',current_dev_list);
-     
+
                             //  Refresh search Table 刪除後可以重新加入 -> btn change
                             let current_employee_id_list=current_id_arr(current_dev_list);
                             if_employee_joined(current_employee_id_list,developers_limit,'#result_dev_table','#developers_limit');
@@ -228,7 +228,7 @@ $(function(){
             },
             onAll:function(name, args){},
         });
-        
+
         let appendbtn_html=`<button type="button" class="btn btn-secondary btn-sm ml-2" id="developer_undo" disabled>
                                 <i class="fas fa-undo-alt"></i> Undo
                             </button>
@@ -245,11 +245,11 @@ $(function(){
         $(appendbtn_html).insertAfter($('#present_dev_table_div .fixed-table-toolbar .btn-group')[0]);
         $(undo_limit_alert).insertAfter($('#present_dev_table_div').find('.fixed-table-toolbar')[0]);
 
-        //  Show count developers 
+        //  Show count developers
         let count_number=current_dev_list.length;
         cuunt_current_developers('#developers_limit',count_number,developers_limit);
     });
-       
+
 
 
 
@@ -313,12 +313,12 @@ $(function(){
                             return html;
                         },
                     }
-                ],  
+                ],
                 formatNoMatches: function () {
                     let html=NoMatches('Try to enter another keyword!');
                     return html;
                 },
-                formatLoadingMessage: function(){ 
+                formatLoadingMessage: function(){
                     let html=LoadingMessage();
                     return html;
                 },
@@ -335,18 +335,18 @@ $(function(){
                     //  Show table
                     $('#developersModal').find('.devsearch_fade').fadeIn(0);
                     let search_complete_html=`<div class="d-flex justify-content-center align-items-center bg-grey mt-2 p-2" style="border-radius:.8rem;">
-                                        <h6 class="text-secondary font-weight-bold animated shake slower"> 
+                                        <h6 class="text-secondary font-weight-bold animated shake slower">
                                             - - -&emsp;Search complete&emsp;- - -
                                         </h6>
                                     </div>`;
-                    $(search_complete_html).insertAfter('#result_dev_table'); 
-                    
+                    $(search_complete_html).insertAfter('#result_dev_table');
+
                 },
-                onClickCell:function(field, value, row, $element){  
+                onClickCell:function(field, value, row, $element){
                     if(field=='plus'){
                         $('#result_dev_table').off().on('click','.add',function(){
                             let addbtn=$(this);
-    
+
                             addbtn.addClass('animated slideOutUpBig');//    位移的動畫
                             let btnhtml=`<button type="button" class="btn btn-light mt-1 btn-sm" style="display:none" disabled>
                                             <i class="fas fa-signature mr-2"></i>Already joined
@@ -356,21 +356,21 @@ $(function(){
                             addbtn.fadeOut(300,function(){
                                 disabledbtn.fadeIn(100);
                             });
-    
+
                             addbtn.on('animationend webkitAnimationEnd', function () {
                                 addbtn.remove();
                             });
                             $('#present_dev_table').bootstrapTable('append',row);
-    
+
                             let targettr=$('#present_dev_table').find('tbody').find('tr').last();
                             targettr.fadeOut(0);
                             targettr.find('td').first().append('<h5 class="badge badge-alert badge-pill ml-1">Just joined</h5>')
                             targettr.fadeIn(800);
-    
+
                             //  Store to undo list
                             undo_list.push([...current_dev_list]);
                             undo_limit();
-    
+
                             //  current employee id list
                             current_dev_list.push(row);
                             let current_employee_id_list=current_id_arr(current_dev_list);
@@ -382,11 +382,11 @@ $(function(){
             });
         }
     });
-    
 
 
 
-//  Check present_dev_table_div is '' contactor is '' or before updating developers 
+
+//  Check present_dev_table_div is '' contactor is '' or before updating developers
     $('#update_dev_btn').on('click',function(){
         let contactor_target=$('#sel_devcontacter_div').find('.selectpicker');
         if(developer_contacter.length==0){
@@ -408,7 +408,7 @@ $(function(){
                 }else{
                     member_arr.push(devloper_info['employee_id']);
                     raw_member_arr.push(devloper_info);
-                } 
+                }
             });
             developer_data['member']=member_arr;
             developer_data['contactor']=contactor;
@@ -419,7 +419,7 @@ $(function(){
                 $('#ApproveBTN').data('assigned',true);
                 show_author('form_owner',raw_dev_data);
                 $('#sel_devcontacter_div').find('.selectpicker').empty().selectpicker('refresh');
-                
+
                 //  把更新值存在btn-->在Show modal的值才可以正確
                 $('#assign_dev_func').find('button').data('raw_dev_list',respose_order['developers'])
                 $('#developersModal').modal('hide');

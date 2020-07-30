@@ -1,6 +1,6 @@
 let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-backdrop="static" data-keyboard="false" data-order_id="New">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">						
+            <div class="modal-content">
                 <div class="modal-body row">
                     <div class="col-12 col-lg-4 bg-water-gradient">
                         <div id="image_status" class="pt-5 animated zoomInDown faster">
@@ -14,12 +14,12 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                                     <div id="status_text">
                                         <!--<h6 class="text-secondary font-weight-bold">
                                             <small class="badge badge-light badge-pill">Initaiator</small>
-                                            Leo Tu 
+                                            Leo Tu
                                             <strong>Initialized</strong>
                                         </h6>-->
                                     </div>
                                     <button type="button" class="btn btn-dark text-info" id="show_commentarea"><i class="far fa-comments mr-2"></i> Leave comments </button>
-                                </div> 
+                                </div>
                             </div>
                             <div id="display_comment_area" style="display:none !important;">
                                 <hr>
@@ -42,13 +42,13 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="col-lg-8 px-5 py-3 bg-white" id="FormRequest_div">	
+
+                    <div class="col-lg-8 px-5 py-3 bg-white" id="FormRequest_div">
                         <div class="d-inline-flex justify-content-between align-items-center w-100">
                             <div>
-                                <h6 class="modal-title text-secondary text-center font-weight-bold"> Request 
-                                    <span class="badge badge-light badge-pill" id="order_id">Form id: - </span> 
-                                    <span class="badge badge-light badge-pill" id="parent_id">Parent form id: - </span> 
+                                <h6 class="modal-title text-secondary text-center font-weight-bold"> Request
+                                    <span class="badge badge-light badge-pill" id="order_id">Form id: - </span>
+                                    <span class="badge badge-light badge-pill" id="parent_id">Parent form id: - </span>
                                 </h6>
                             </div>
                             <button type="button" class="close" data-dismiss="modal">
@@ -58,10 +58,10 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                         <div class="bg-light bd-radius-8 p-1 d-inline-flex align-items-baseline w-100" id="form_breadcrumb" style="display:none !important;">
                             <span class="col-2 text-grey"> Assign </span>
                             <div class="font-bold-weight pt-2">
-                                <!--<h6 class="badge badge-bluegray badge-pill" title="Initiator">Leo Tu/WHQ</h6> &rsaquo; 
-                                <h6 class="badge badge-bluegray badge-pill" title="Team">DQMS &rsaquo;</h6>  
-                                <h6 class="badge badge-bluegray badge-pill" title="Account">WT-EBG</h6> &rsaquo; 
-                                <h6 class="badge badge-bluegray badge-pill" title="Project">R360-EBG</h6> &rsaquo; 
+                                <!--<h6 class="badge badge-bluegray badge-pill" title="Initiator">Leo Tu/WHQ</h6> &rsaquo;
+                                <h6 class="badge badge-bluegray badge-pill" title="Team">DQMS &rsaquo;</h6>
+                                <h6 class="badge badge-bluegray badge-pill" title="Account">WT-EBG</h6> &rsaquo;
+                                <h6 class="badge badge-bluegray badge-pill" title="Project">R360-EBG</h6> &rsaquo;
                                 <h6 class="badge badge-bluegray badge-pill" title="Receiver">Luis Liao/WNH</h6>-->
                             </div>
                         </div>
@@ -76,13 +76,13 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                             </div>
                         </div>
     <!-- authors initiator assigner developers -->
-                        <div id="authors" class="mt-2 bg-light bd-radius-8 p-1">			
+                        <div id="authors" class="mt-2 bg-light bd-radius-8 p-1">
                             <div class="d-inline-flex align-items-center w-100 author">
                                 <span class="text-grey col-2"> Initiator </span>
                                 <div class="d-inline-flex align-items-center" id="form_initiator">
                                     <img class="sticker mr-2" src="">
                                     <span class="text-grey"></span>
-                                </div>	
+                                </div>
                             </div>
                             <div class="d-inline-flex align-items-center w-100 mt-2 author" style="display:none !important;">
                                 <span class="text-grey col-2"> Receiver </span>
@@ -107,7 +107,7 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                                             <!-- <li class="mt-1">Kevin SJ Huang/WHQ</li>
                                             <li class="mt-1">Leo Tu/WHQ</li>
                                             <li class="mt-1">Peter Hsien/WHQ</li> -->
-                                        </ul>	
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -115,7 +115,7 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                                 <span class="text-grey col-2 mt-1"> ReviewerList </span>
                                 <div class="ReviewerList"></div>
                             </div>
-                        </div>	
+                        </div>
     <!-- Form Request -->
                         <form id="FormRequest" enctype="multipart/form-data">
                             <hr>
@@ -135,7 +135,7 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                                 <select type="select" class="selectpicker col-8" name="account" id="sel_accounts" data-width="auto" data-size="7" data-live-search="true" title="Select..." required>
                                     <option value=""> Select... </option>
                                 </select>
-                            </div>				
+                            </div>
                             <div class="row align-items-center mt-3">
                                 <label class="col-4"> &#9733 Project </label>
                                 <select type="select" class="selectpicker col-8" name="project" id="sel_projects" data-width="auto" data-size="7" title="Select account first" required>
@@ -163,7 +163,7 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                                 <div class="col-8">
                                     <textarea type="text" class="summernote field-style bd-radius-8" name="description" id="description" data-postion="requestform" placeholder="Develop deatail or purpose" required></textarea>
                                 </div>
-                            </div>                            
+                            </div>
                             <small class="position-absolute text-secondary" style="bottom: .7rem; right:3rem">
                                 &#9733 is required field. Need to fill out before requesting.
                             </small>
@@ -182,7 +182,7 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                                     <span> Init request </span>
                                 </button>
                             </div>
-                        </form>	
+                        </form>
                         <div style="display : none !important;">
                             <div class="d-inline-flex align-items-top w-100 mb-4 file bg-light bd-radius-8 p-1 mt-2" id="show_file_div">
                                 <h6 class="col-4 pt-1 text-secondary font-weight-bold"> Attached-file list <i id="file_div_toggle" class="ml-2 fa fa-angle-up btn btn-light btn-sm" title="Expand"></i></h6>
@@ -201,8 +201,8 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                                 <div class="mb-2 col-8 d-inline-flex align-items-baseline">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <button class="btn btn-light ezinfoModal_trigger font-weight-bold" type="button"> 
-                                                <i class="fa fa-file-alt"></i> 
+                                            <button class="btn btn-light ezinfoModal_trigger font-weight-bold" type="button">
+                                                <i class="fa fa-file-alt"></i>
                                                 <span></span>
                                             </button>
                                         </div>
@@ -218,13 +218,13 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                             <form class="row align-items-top mt-2 file" id="FormUpload">
                                 <div class="col-4">
                                     <h6 class="text-secondary font-weight-bold mt-3"> Attached files </h6>
-                                    <span class="mt-1 text-danger font-weight-bold"><i class="fa fa-bullhorn mr-2"></i>Necessary file/ 
-                                    <a class="btn btn-warning btn-sm" href="#" id="file_template_download" download><i class="fa fa-file-download mr-1"></i>Template</a> 
+                                    <span class="mt-1 text-danger font-weight-bold"><i class="fa fa-bullhorn mr-2"></i>Necessary file/
+                                    <a class="btn btn-warning btn-sm" href="#" id="file_template_download" download><i class="fa fa-file-download mr-1"></i>Template</a>
                                     </span>
                                     <li class="text-danger">Systems architecture</li><li class="text-danger">Benefit assessment</li>
                                 </div>
                                 <div class="col-8">
-                                    <label for="file" class="mt-2 upload-style form-control d-flex align-items-center justify-content-between bd-radius-8 bg-light">											
+                                    <label for="file" class="mt-2 upload-style form-control d-flex align-items-center justify-content-between bd-radius-8 bg-light">
                                         <input type="file" class="custom-file-input" id="files" name="files[]" multiple size="5" title="No file selected." required>
                                     </label>
                                     <h6 class="text-grey caption"> Drag&Drop or Click to choose your file.<i class="fa fa-cloud-upload-alt fa-lg ml-2"></i></h6>
@@ -277,7 +277,7 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                         </div>
                         <div id="readonly_schedule_div" style="display:none !important;">
                             <div class="class="mt-2 bg-light bd-radius-8">
-                                <h6 class="text-secondary font-weight-bold mt-3"> Estimated schedule (Only for form receiver editing.)  
+                                <h6 class="text-secondary font-weight-bold mt-3"> Estimated schedule (Only for form receiver editing.)
                                     <button class="btn btn-sm bg-cardDelay ml-2" type="button" id="show_shcedule_area" style="display:none !important;"> <i class="fa fa-pen"></i> Re-schedule </button>
                                 </h6>
                                 <table class="table table-borderless bg-light bd-radius-8 table-hover w-100" id="readonly_schedule"></table>
@@ -353,7 +353,7 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                                         <input type="text" class="form-control field-style" name="repository_url" id="repository_url" placeholder="http(s)://..." disabled required>
                                         <div class="input-group-append">
                                             <a class="btn btn-light" target="_blank">
-                                                <i class="fa fa-link"></i> 
+                                                <i class="fa fa-link"></i>
                                             </a>
                                         </div>
                                     </div>
@@ -397,12 +397,12 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                             <div class="w-100 d-inline-flex justify-content-end">
                                 <button type="button" class="btn btn-success mr-2" id="ApproveBTN"><i class="fa fa-check-double mr-1"></i> Approve </button>
                                 <button type="button" class="btn btn-warning mr-5" id="ReturnBTN"><i class="fa fa-reply mr-1"></i> Return </button>
-            
+
                                 <button type="button" class="btn btn-danger" id="CloseBTN"><i class="fa fa-stop mr-1"></i> Close </button>
                             </div>
                         </div>
                     </div>
-                </div>				
+                </div>
             </div>
         </div>
     </div>`;
@@ -410,7 +410,7 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
 
 
 
-    
+
 let ezinfoModal=`<div class="modal fade" id="ezinfoModal" tabindex="-1" role="dialog">
 <div class="modal-dialog modal-dialog-centered modal-lg pl-5" role="document">
     <div class="modal-content p-3">
@@ -421,15 +421,15 @@ let ezinfoModal=`<div class="modal fade" id="ezinfoModal" tabindex="-1" role="di
                     <button type="button" class="close" data-dismiss="modal">
                         <span> &times; </span>
                     </button>
-                </div>	
-                <hr>				
+                </div>
+                <hr>
                 <div class="bg-light bd-radius-8 p-1 d-inline-flex align-items-baseline w-100">
                     <span class="ml-2 mr-2 text-grey"> Assign </span>
-                    <div class="font-bold-weight pt-2" id="ez_breadcrumb"> 
-                        <!--<h6 class="badge badge-bluegray badge-pill" title="Initiator"> - </h6> › 
-                        <h6 class="badge badge-bluegray badge-pill mr-2" title="Team"> - </h6> ›  
-                        <h6 class="badge badge-bluegray badge-pill mr-2" title="Account"> - </h6> › 
-                        <h6 class="badge badge-bluegray badge-pill mr-2" title="Project"> - </h6> › 
+                    <div class="font-bold-weight pt-2" id="ez_breadcrumb">
+                        <!--<h6 class="badge badge-bluegray badge-pill" title="Initiator"> - </h6> ›
+                        <h6 class="badge badge-bluegray badge-pill mr-2" title="Team"> - </h6> ›
+                        <h6 class="badge badge-bluegray badge-pill mr-2" title="Account"> - </h6> ›
+                        <h6 class="badge badge-bluegray badge-pill mr-2" title="Project"> - </h6> ›
                         <h6 class="badge badge-bluegray badge-pill" title="Receiver"> - </h6>-->
                     </div>
                 </div>
@@ -439,19 +439,19 @@ let ezinfoModal=`<div class="modal fade" id="ezinfoModal" tabindex="-1" role="di
                         <label class="col-3 text-grey"> Status </label>
                         <div class="col-9 bg-light bd-radius-8 p-1">
                             <span class="pl-2 text-secondary font-weight-bold" name="status">Supervisor pending...</span>
-                        </div>		
+                        </div>
                     </div>
                     <div class="row align-items-baseline mt-1">
                         <label class="col-3 text-grey"> Form id </label>
                         <div class="col-9 bg-light bd-radius-8 p-1">
                             <span class="pl-2 text-secondary font-weight-bold" name="id"> - </span>
-                        </div>		
+                        </div>
                     </div>
                     <div class="row align-items-baseline mt-1">
                         <label class="col-3 text-grey"> Parent form </label>
                         <div class="col-9 bg-light bd-radius-8 p-1">
                             <span class="pl-2 text-secondary font-weight-bold" name="parent"> - </span>
-                        </div>		
+                        </div>
                     </div>
                     <div class="row align-items-baseline mt-1">
                         <label class="col-3 text-grey"> Initiator </label>
@@ -591,9 +591,9 @@ let ezinfoModal=`<div class="modal fade" id="ezinfoModal" tabindex="-1" role="di
                             <h5 class="text-secondary mr-2"> - </h5>
                         </div>
                     </div>
-                </form>	
-            </div>						
-        </div>		
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 </div>`;
@@ -665,7 +665,7 @@ let milestoneModal=`<div class="modal fade" id="milestoneModal" tabindex="-1" ro
                         <i class="fa fa-trash-alt mr-2"></i>Delete
                     </button>
                 </div>
-            
+
                 <div class="d-flex justify-content-end">
                     <button type="button" class="btn btn-info" id="addProgress">
                         <i class="fa fa-plus mr-2"></i>Add new milestone

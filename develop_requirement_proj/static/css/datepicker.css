@@ -1,7 +1,7 @@
 /*  date range picker start */
     .daterangepicker{
         border-radius: 2rem;
-        box-shadow: 0.05rem 0.05rem 0.45rem 0.08rem rgba(0,0,0,.09); 
+        box-shadow: 0.05rem 0.05rem 0.45rem 0.08rem rgba(0,0,0,.09);
     }
     .daterangepicker:before {
         display: none !important;
@@ -51,7 +51,7 @@
 
 
 /*  Datepicker */
-    .ui-datepicker { 
+    .ui-datepicker {
         /* 選擇器寬度 */
         width: 14em !important;
         background: var(--light) !important;
@@ -62,7 +62,7 @@
         border-radius: .5em;
         box-shadow: 0.08rem 0.08rem 0.45rem rgba(14, 14, 14, 0.295);
     }
-    .ui-datepicker-week-end { 
+    .ui-datepicker-week-end {
         /* 週末隱藏 */
         display: none;
         color: var(--secondary);
