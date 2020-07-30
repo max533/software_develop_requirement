@@ -315,7 +315,7 @@ $(function(){
                                     "order": order_id,
                                     "description": description,
                                     "size": file['size'],
-                                    "created_time": ""
+                                    "update_time": ""
                                 };
                                 $('#filelist').bootstrapTable('append',newfile);
                                 target=$('#filelist').find('tbody').find('tr').last().find('td').eq(1);
@@ -337,7 +337,14 @@ $(function(){
                                     index: row_index, 
                                     row: {id: id},
                                 });
-                                $('#filelist').find('tbody').find('tr').last().find('img').prop('src',result.path);
+                                let filename=result['name'];
+                                let filetype=filename.split('.')[1];
+                                let imgsrc=result['path'];
+                                if(isImage(filetype)!==true) imgsrc=images['document'];
+
+                                $('#filelist').find('tbody').find('tr').last().find('img').prop('src',imgsrc);
+                                $('#filelist').find('tbody').find('tr').last().find('.filedownload').prop('href',result['path']);
+                                $('#filelist').find('tbody').find('tr').last().find('.fileupdate').text(isotime_local(result['update_time']));
                             },
                             complete: function ( result, textStatus, XMLHttpRequest ){// 測試後請刪除
                                 //  Remove progress bar and animation
