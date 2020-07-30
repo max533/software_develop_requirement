@@ -343,7 +343,7 @@ $(function(){
                                 if(isImage(filetype)!==true) imgsrc=images['document'];
 
                                 $('#filelist').find('tbody').find('tr').last().find('img').prop('src',imgsrc);
-                                $('#filelist').find('tbody').find('tr').last().find('.filedownload').prop('href',result['path']);
+                                $('#filelist').find('tbody').find('tr').last().find('.filedownload').prop('href',result['path']).prop('download',result['name']);
                                 $('#filelist').find('tbody').find('tr').last().find('.fileupdate').text(isotime_local(result['update_time']));
                             },
                             complete: function ( result, textStatus, XMLHttpRequest ){// 測試後請刪除
