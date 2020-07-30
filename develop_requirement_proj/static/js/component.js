@@ -864,10 +864,8 @@
                     field:'path',
                     align:'right',
                     formatter:function(value, row, index){
-                        console.log('ROW------------------------')
-                        console.log(row);
                         let path=value;
-                        let html=`<a class="btn btn-info btn-sm mt-2 filedownload" href="`+path+`" download >
+                        let html=`<a class="btn btn-info btn-sm mt-2 filedownload" href="`+path+`" download="`+row['name']+`" >
                                     <i class="fa fa-cloud-download-alt "></i>
                                 </a>`
                         return html;
