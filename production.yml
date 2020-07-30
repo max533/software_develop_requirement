@@ -46,7 +46,7 @@ services:
     networks:
       - frontend
     ports:
-      - 50132:80
+      - ${NGINX_SERVICE_PORT}:80
     command: /start
 
   django: &django
@@ -88,8 +88,8 @@ services:
       dockerfile: ./compose/production/postgres/Dockerfile
     image: ${PROJECT_SLUG}_production_postgres
     volumes:
-      - production_postgres_data:/var/lib/postgresql/data
-      - production_postgres_data_backups:/backups
+      - ${POSTGRES_FOLDER}:/var/lib/postgresql/data
+      - ${POSTGRES_BACKUP_FOLDER}:/backups
     networks:
       - backend
     env_file:
@@ -122,4 +122,4 @@ services:
       - backend
     command: /start-flower
     ports:
-      - 50133:5555
+      - ${FLOWER_SERVICE_PORT}:5555

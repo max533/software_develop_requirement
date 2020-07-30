@@ -1,4 +1,5 @@
 import logging
+from urllib.parse import quote
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -18,7 +19,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
 class DownloadView(LoginRequiredMixin, View):
     login_url = '/cas/login'
 
-    def get(self, request, order_id, relative_filename, *args, **kwargs):
+    def get(self, request, order_id, filename, *args, **kwargs):
         """
         Provide web server redirect download file feature.
 
@@ -26,7 +27,7 @@ class DownloadView(LoginRequiredMixin, View):
 
         filename : the the name of the file which user named it.
         """
-        relative_filename = settings.MEDIA_ROOT + str(order_id) + '/' + relative_filename
+        relative_filename = str(order_id) + '/' + filename
         instance = Document.objects.filter(order=order_id, path=relative_filename).first()
         # Check document exist and file exist filesystem or not
         if instance is None:
@@ -46,8 +47,11 @@ class DownloadView(LoginRequiredMixin, View):
             response = HttpResponse(open(instance.path.path, 'rb'))
         else:
             response = HttpResponse()
+        encode_filename = quote(filename)
         response['Content-Type'] = 'application/octet-stream; charset=utf-8'
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        response['Content-Disposition'] = (
+            f'attachment; filename="{encode_filename}"; ' + f'filename*=utf-8\'\'{encode_filename}'
+        )
         response['Content-Length'] = size
         if settings.DEBUG:
             return response

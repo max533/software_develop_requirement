@@ -10,8 +10,10 @@ from django.utils.translation import gettext_lazy as _
 
 
 def upload_document(instance, filename):
-    folder_path = Path(settings.MEDIA_ROOT) / str(instance.order.id)
-    filepath = folder_path / filename
+    # folder_path = Path(settings.MEDIA_ROOT) / str(instance.order.id)
+    folder_path = str(instance.order.id)
+    filepath = folder_path + "/" + filename
+    print(filepath)
     return filepath
 
 
