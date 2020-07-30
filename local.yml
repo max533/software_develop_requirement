@@ -16,7 +16,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
-    image: develop_requirement_proj_local_django
+    image: ${PROJECT_SLUG}_local_django
     depends_on:
       - postgres
       - redis
@@ -28,6 +28,7 @@ services:
     env_file:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres
+      - ./.envs/.local/.oracle
     ports:
       - "8000:8000"
     command: /start
@@ -36,7 +37,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
-    image: develop_requirement_proj_production_postgres
+    image: ${PROJECT_SLUG}_production_postgres
     volumes:
       - local_postgres_data:/var/lib/postgresql/data
       - local_postgres_data_backups:/backups
@@ -52,7 +53,7 @@ services:
 
   celeryworker:
     <<: *django
-    image: develop_requirement_proj_local_celeryworker
+    image: ${PROJECT_SLUG}_local_celeryworker
     depends_on:
       - redis
       - postgres
@@ -63,7 +64,7 @@ services:
 
   celerybeat:
     <<: *django
-    image: develop_requirement_proj_local_celerybeat
+    image: ${PROJECT_SLUG}_local_celerybeat
     depends_on:
       - redis
       - postgres
@@ -74,7 +75,7 @@ services:
 
   flower:
     <<: *django
-    image: develop_requirement_proj_local_flower
+    image: ${PROJECT_SLUG}_local_flower
     networks:
       - backend
     ports:

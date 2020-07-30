@@ -94,6 +94,7 @@ ADMIN_URL = env("DJANGO_ADMIN_URL")
 # https://docs.djangoproject.com/en/dev/ref/settings/#logging
 # See https://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
+LOG_FILEPATH = env("DJANGO_LOG_FILEPATH")
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": True,
@@ -117,7 +118,7 @@ LOGGING = {
             "level": "DEBUG",
             "class": "logging.handlers.RotatingFileHandler",
             "formatter": "debug",
-            "filename": env("DJANGO_LOG_FILEPATH"),
+            "filename": LOG_FILEPATH,
             "maxBytes": 1024 * 1024 * 5,
         }
     },
