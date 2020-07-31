@@ -28,7 +28,7 @@
             error: function ( result, textStatus, XMLHttpRequest ){ console.log( result );  console.log( textStatus ); },
             success: function ( result, textStatus, XMLHttpRequest ){
                 res=result;
-            }
+            }    
         });
         return res;
     }
@@ -68,14 +68,14 @@
         let day = 24*60*60*1000;
         let diffDays = Math.round( Math.abs((begin - end )/(day)) );
         return diffDays;
-    }
+    } 
     function formdata_console(target){
         for(var pair of target.entries()) {
-            console.log(pair[0]+ ', '+ pair[1]);
+            console.log(pair[0]+ ', '+ pair[1]); 
         }
     }
 
-    function limit0to100(e,v){
+    function limit0to100(e,v){    
         let reg = /^(([1-9]\d?(\.\d?[1-9])?)|(0(\.\d?[1-9])?)|100)$/;
         if(v.match(reg)){
             return false;
@@ -97,7 +97,7 @@
     function errormsg( jqXHR, textStatus, errorThrown,exception){
         let message=''
         let code=jqXHR.status
-        if (code == 401 || code==403) {
+        if (code == 401 || code==403) { 
         window.location.reload();
             message = 'Reload page...';
         }else if( code == 500 ) {
@@ -134,7 +134,7 @@
             if($(this).prop('required')){
                 let field=$(this).prop('name');
                 let value=$(this).val();
-
+                
                 switch( $(this).attr('type') ){
                     case 'radio':
                         if( $(this).prop('checked') ){
@@ -145,7 +145,7 @@
                         if ($(this).val()!==null){
                             formdata[field]=value;
                         }
-                        break;
+                        break;    
                     case 'select':
                         if ($(this).val()!==null){
                             let name=$(this).prop('name');
@@ -168,7 +168,7 @@
                         break;
                 }
             }
-
+            
         });
         return formdata;
     }
@@ -181,7 +181,7 @@
     //         return fields;
     //     }else console.log('Data is empty!!')
     // }
-//  Table setting
+//  Table setting 
     //  click btn to collapse down the more information
     function detailFormatter(index, row) {
         let order_history_track=get_order_histories(row.id);
@@ -207,12 +207,12 @@
                 status='pending...'
             }
             let status_html=`<span class="ellipsis">`+who+` `+status+`</span>`
-
+            
             let dev='';
             if(row.developers.member!==[]){
                 $.each(row.developers.member,function(i,info) {
                     let person_name=info.display_name;
-                    dev+=person_name+'/ '
+                    dev+=person_name+'/ '  
                 })
             }
             let developers_html=`<span class="ellipsis">`+dev+`</span>`;
@@ -280,11 +280,11 @@
     }
 
     //  Set the key and value sent to backend
-    function queryParams(params) {
-        //  這裡的鍵的名字和控制器的變量名必須一直，這邊改動，控制器也需要改成一樣的
-        let queryParams_temp = {
-            page_size: params.limit, //頁面大小
-            page: (params.offset / params.limit) + 1, //頁碼
+    function queryParams(params) { 
+        //  這裡的鍵的名字和控制器的變量名必須一直，這邊改動，控制器也需要改成一樣的 
+        let queryParams_temp = { 
+            page_size: params.limit, //頁面大小 
+            page: (params.offset / params.limit) + 1, //頁碼 
             sortOrder: params.order, //排位命令（desc，asc）
         };
         //  Redefine filter data
@@ -310,7 +310,7 @@
 
             queryParams_temp['filter'] = JSON.stringify(filterObj);
         }
-        return queryParams_temp;
+        return queryParams_temp; 
     }
     //  Format
     //  Table-formatNoMatches
@@ -352,12 +352,12 @@
         }
     }
 
-    function comment_area_height(){
+    function comment_area_height(){        
         let img_dev = $('#imgage_dev');
         let form_h=parseInt($('#FormRequest_div').css('height').split('px')[0]);
-        let comment_h=parseInt($('#comment').parent('div').css('height').split('px')[0]);
-        let img_dev_h=parseInt($('#imgage_dev').css('height').split('px')[0]);
-        let h = (form_h-img_dev_h-comment_h-100)+'px';
+        let comment_h=parseInt($('#comment').parent('div').css('height').split('px')[0]);  
+        let img_dev_h=parseInt($('#imgage_dev').css('height').split('px')[0]);  
+        let h = (form_h-img_dev_h-comment_h-100)+'px';  
         $('#display_comment_area,#edit_comment_area').prop('style','display:none!important;')
         img_dev.removeClass('animated zoomOutUp').addClass('animated zoomInDown').fadeIn(0);
     }
@@ -401,10 +401,10 @@
                 num = (bytes).toFixed(2)+" B";; //B
             }
             return num;
-
+        
         }else  console.log( bytes+"is not number. typeof "+typeof(bytes) );
     }
-    //  TODO BUG Scroll to bottom
+    //  TODO BUG Scroll to bottom 
     function scrollToBottom(scroll_tar,position_tar){
         let distance=position_tar.offset().top-Number(position_tar.css('height').slice(0,-2));
         $(scroll_tar).animate({ scrollTop: distance }, 1000);
@@ -417,7 +417,7 @@
         ignore: ':hidden:not(".summernote"),.note-editor *',
         debug: true, //只驗證  不提交
         invalidHandler: function() {},
-        highlight: function(element, errorClass, validClass) {
+        highlight: function(element, errorClass, validClass) {  
             invalidEffect( $(element) );
             callValidation ();
         },
@@ -436,7 +436,7 @@
         $(document).on('change keyup','.note-editable.border-danger',function() {
             $(this).parents('.note-editor').siblings('.summernote').valid();
         });
-    }
+    }     
     function invalidEffect(field){
         switch( field.prop('type') ) {
             case 'radio':
@@ -445,17 +445,17 @@
             case 'select-one':
                 field.selectpicker('setStyle', 'btn-outline-danger');
                 break;
-            case 'file':
+            case 'file':         
                 field.parent('label').addClass('border-danger');
                 break;
-            case 'textarea':
+            case 'textarea':      
                 field.siblings('.note-editor').find('.note-editable').addClass('border-danger');
                 field.addClass('border-danger');
                 break;
             default:
                 field.addClass('border-danger');
                 break;
-        }
+        } 
     }
     function resetInvalid(field){
         switch(field.prop('type')) {
@@ -466,9 +466,9 @@
                 field.selectpicker('setStyle','btn-outline-danger','remove').selectpicker( 'refresh' );
                 break;
             case 'file':
-                field.parent( 'label' ).removeClass( 'border-danger' );
+                field.parent( 'label' ).removeClass( 'border-danger' );    
                 break;
-            case 'textarea':
+            case 'textarea':      
                 field.siblings('.note-editor').find('.note-editable').removeClass('border-danger');
                 field.removeClass('border-danger');
                 break;
@@ -546,7 +546,7 @@
                 }
                 if(comment==null||comment==''){}
                 else{ comment_html='<p class="ellipsis bg-grey bd-radius-8">'+comment+'</p>'; }
-
+                    
                 let html=`<div class="mt-1">
                             <div class="d-inline-flex align-items-center">
                                 <img class="sticker mr-2" src="`+images['defaultavatar']+`" data-employee_id="`+employee_id+`">
@@ -563,7 +563,7 @@
         }
     }
 
-//  requestModal
+//  requestModal 
     //  selectpicker(When status==p0/p1)
     function request_selectpicker(){
         $('#requestModal').find('.selectpicker').selectpicker('render');
@@ -578,7 +578,7 @@
                     $.each(options,function(i,subfunc){
                         let el=$('#sel_function').find('optgroup').last()[0];
                         let func_subfunc=groupname+"_"+subfunc;
-                        $("<option>").text(subfunc).val(func_subfunc).appendTo(el);
+                        $("<option>").text(subfunc).val(func_subfunc).appendTo(el);            
                     })
                 }
             });
@@ -587,19 +587,19 @@
             $('#sel_function').on('change',function(){
                 let sub_function=$('#sel_function').val();
                 let accounts=get_accounts(sub_function);
-
+        
                 $('#sel_accounts').empty().selectpicker('refresh');
                 $('#sel_projects').empty().selectpicker('refresh');
                 $('#sel_assigners').empty().selectpicker('refresh');
                 reset_author('form_assigner');
 
                 $('#sel_accounts').append('<option value="" selected> Select... </option>');
-
+                
                 //  DQMS tricky rule
                 if(sub_function=='QT_DQMS'){
                     $.each(accounts,function(){
                         let account_info=$(this)[0];
-                        if(account_info['code']=='WT-EBG') $('#sel_accounts').append('<option value="'+account_info['id']+'">'+account_info['code']+'</option>');
+                        if(account_info['code']=='WT-EBG') $('#sel_accounts').append('<option value="'+account_info['id']+'">'+account_info['code']+'</option>'); 
                     });
                 }else{
                     $.each(accounts,function(){
@@ -608,7 +608,7 @@
                     });
                 }
                 $('#sel_accounts').selectpicker('refresh');
-            });
+            });    
         //  Form fields - Select projects
             $('#sel_accounts').on('change',function(){
                 let acc_id=$('#sel_accounts').val();
@@ -618,7 +618,7 @@
                 reset_author('form_assigner');
 
                 $('#sel_projects').append('<option value="" selected> Select... </option>');
-
+                
                 //  DQMS tricky rule
                 $.each(projects,function(){
                     let project_info=$(this)[0];
@@ -660,7 +660,7 @@
     function show_author(form_role,info){
         let roleinfo;
         let target=$('#'+form_role);
-
+        
         if(form_role=='form_owner') {
             roleinfo=info['contactor'];
             if(info['member']==''||info['member']==null||info['member']==[]){
@@ -669,7 +669,7 @@
                 target.find('.dev-list ul').empty();
                 target.find('.toggle-dev-list').fadeIn(0);
                 $.each(info['member'],function(i,member){
-                let html='<li class="mt-1">'+member['display_name']+'</li>'
+                let html='<li class="mt-1">'+member['display_name']+'</li>' 
                 target.find('.dev-list ul').append(html);
                 });
             }
@@ -702,10 +702,10 @@
 
         $('#form_breadcrumb').find('div').empty();
         $('#request_title,#request_description').empty();
-        let breadcrumb_html=` <h6 class="badge badge-bluegray badge-pill" title="Initiator">`+order_data['initiator']['display_name']+`</h6> &rsaquo;
-                                <h6 class="badge badge-bluegray badge-pill mr-2" title="Team">`+order_data['develop_team_function']+`_`+order_data['develop_team_sub_function']+`</h6> &rsaquo;
-                                <h6 class="badge badge-bluegray badge-pill mr-2" title="Account">`+order_data['account']['code']+`</h6> &rsaquo;
-                                <h6 class="badge badge-bluegray badge-pill mr-2" title="Project">`+order_data['project']['name']+`</h6> &rsaquo;
+        let breadcrumb_html=` <h6 class="badge badge-bluegray badge-pill" title="Initiator">`+order_data['initiator']['display_name']+`</h6> &rsaquo; 
+                                <h6 class="badge badge-bluegray badge-pill mr-2" title="Team">`+order_data['develop_team_function']+`_`+order_data['develop_team_sub_function']+`</h6> &rsaquo;  
+                                <h6 class="badge badge-bluegray badge-pill mr-2" title="Account">`+order_data['account']['code']+`</h6> &rsaquo; 
+                                <h6 class="badge badge-bluegray badge-pill mr-2" title="Project">`+order_data['project']['name']+`</h6> &rsaquo; 
                                 <h6 class="badge badge-bluegray badge-pill" title="Receiver">`+order_data['assigner']['display_name']+`</h6>`;
         let title=order_data['title'];
         let description_html=order_data['description'].replace(/\\/g,'');
@@ -830,7 +830,7 @@
         request_image_status(image_path,title,detail);
     }
     function get_filelist(order_id){
-        let documents=get_documents(order_id);
+        let documents=get_documents(order_id); 
         $('#filelist').bootstrapTable('destroy').bootstrapTable({
             data:documents,
             cache: false,
@@ -846,7 +846,7 @@
                 detailClose: 'fa-angle-up',
             },
             columns: [
-                {
+                {   
                     field:'id',
                     width:100,
                     formatter:function(value, row, index){
@@ -855,7 +855,7 @@
 
                         let imgsrc=row['path'];
                         if(isImage(filetype)!==true) imgsrc=images['document'];
-
+                        
                         let html=`<img title="`+filename+`" src="`+imgsrc+`" /> `;
                         return html;
                     }
@@ -902,7 +902,7 @@
                 let html=NoMatches('No file uploaded.');
                 return html;
             },
-            formatLoadingMessage: function(){
+            formatLoadingMessage: function(){ 
                 let html=LoadingMessage();
                 return html;
             },
@@ -919,9 +919,9 @@
         $('#tag_div').parent('div').fadeIn(0);
         get_filelist(order_id);
     }
-
+    
     function get_schedulelist(schedule_data){
-        // let schedule=get_current_schedule(order_id);
+        // let schedule=get_current_schedule(order_id); 
         $('#schedulelist').bootstrapTable('destroy').bootstrapTable({
             data:schedule_data,
             cache: false,
@@ -1034,7 +1034,7 @@
                 let html=NoMatches('No file uploaded.');
                 return html;
             },
-            formatLoadingMessage: function(){
+            formatLoadingMessage: function(){ 
                 let html=LoadingMessage();
                 return html;
             },
@@ -1078,12 +1078,12 @@
                     valign:'top',
                     width:250,
                     formatter:function(value, row, index){
-                        let html=`<span class="ellipsis">`+value+`</span>`
+                        let html=`<span class="ellipsis">`+value+`</span>`                   
                         return html;
                     }
                 },
                 {
-                    field:'expected_time',
+                    field:'timestamp',
                     title:'Exp date',
                     width:100,
                     valign:'top',
@@ -1140,7 +1140,7 @@
                 let html=NoMatches('...');
                 return html;
             },
-            formatLoadingMessage: function(){
+            formatLoadingMessage: function(){ 
                 let html=LoadingMessage();
                 return html;
             },
@@ -1195,14 +1195,14 @@
                 }
             });
         }
-
+        
     }
     function if_employee_joined(currentIdList,limitation,table,show_count_Target){
         let count_number=currentIdList.length;
         $(table).find('tbody').find('tr').each(function(){
             let Id=$(this).data('employee_id');
             if(typeof($(this).data('employee_id'))=="number"){Id=JSON.stringify($(this).data('employee_id'));}
-
+            
             let target=$(this).find('td').last().find('button');
             if(count_number>=limitation){
                 target.removeClass('btn-success add').addClass('btn-light');
@@ -1223,8 +1223,8 @@
         cuunt_current_developers(show_count_Target,count_number,limitation)
     }
     function cuunt_current_developers(show_count_Target,count_number,limitation){
-        $(show_count_Target).find('span').eq(0).html('<i class="fa fa-users mr-1 ml-2 text-secondary"></i>'+count_number+'');
-        $(show_count_Target).find('span').eq(1).html('Limitation '+limitation+'');
+        $(show_count_Target).find('span').eq(0).html('<i class="fa fa-users mr-1 ml-2 text-secondary"></i>'+count_number+'');   
+        $(show_count_Target).find('span').eq(1).html('Limitation '+limitation+'');   
         if(count_number>=limitation){
             $(show_count_Target).find('span').removeClass('badge-light').addClass('badge-danger');
             $(show_count_Target).find('span').eq(0).addClass('animated rubberBand infinite');
@@ -1233,7 +1233,7 @@
             $(show_count_Target).find('span').removeClass('badge-danger').addClass('badge-light');
             $(show_count_Target).find('span').eq(0).removeClass('animated rubberBand infinite');
             $(show_count_Target).find('span').find('i').addClass('text-secondary');
-        }
+        } 
     }
 
 
@@ -1287,10 +1287,10 @@
             current_rate=progress_info['complete_rate'];
         }
 
-        let breadcrumb_html=` <h6 class="badge badge-bluegray badge-pill" title="Initiator">`+initiator+`</h6> &rsaquo;
-                                <h6 class="badge badge-bluegray badge-pill mr-2" title="Team">`+team+`</h6> &rsaquo;
-                                <h6 class="badge badge-bluegray badge-pill mr-2" title="Account">`+account+`</h6> &rsaquo;
-                                <h6 class="badge badge-bluegray badge-pill mr-2" title="Project">`+project+`</h6> &rsaquo;
+        let breadcrumb_html=` <h6 class="badge badge-bluegray badge-pill" title="Initiator">`+initiator+`</h6> &rsaquo; 
+                                <h6 class="badge badge-bluegray badge-pill mr-2" title="Team">`+team+`</h6> &rsaquo;  
+                                <h6 class="badge badge-bluegray badge-pill mr-2" title="Account">`+account+`</h6> &rsaquo; 
+                                <h6 class="badge badge-bluegray badge-pill mr-2" title="Project">`+project+`</h6> &rsaquo; 
                                 <h6 class="badge badge-bluegray badge-pill" title="Receiver">`+assigner+`</h6>`;
         $('#ez_breadcrumb').append(breadcrumb_html);
 
@@ -1318,7 +1318,7 @@
                         field.text('-');
                     }else{
                         field.html(form_data[field_name]['contactor']['display_name']+'<strong>...</strong>');
-                        field.siblings('img').prop('src',images['defaultavatar']).data('employee_id',form_data[field_name]['contactor']['employee_id']);
+                        field.siblings('img').prop('src',images['defaultavatar']).data('employee_id',form_data[field_name]['contactor']['employee_id']);    
                         avatar_reload(field.siblings('img'));
                         let target=field.siblings('.dev-list').find('ul');
                         target.empty()
@@ -1329,7 +1329,7 @@
                                 let name=info['display_name'];
                                 target.append('<li class="mt-1">'+ name +'</li>');
                             });
-                        }
+                        }                        
                     }
                     break;
                 case 'form_begin_time':
@@ -1395,7 +1395,7 @@
                     }
                     break;
                 case 'develop_time':
-                    if(schedule_data==null||schedule_data==''||schedule_data==[]) field.text(' - ');
+                    if(schedule_data==null||schedule_data==''||schedule_data==[]) field.text(' - ');    
                     else {
                         field.text(days+' days ('+b_day+'~'+e_day+')');
                     }
@@ -1410,12 +1410,12 @@
                     field.find('.progress-bar').css('width',current_rate+'%');
                     break;
                 case 'progress_status':
-                    let target=field.find('h5');
+                    let target=field.find('h5');    
                     if(progress_data==null||progress_data==''||progress_data==[]){
                         target.addClass('text-secondary');
                         target.html('<em>Uninitiated - </em>');
-                    }else{
-                        if(current_rate>est_rate){
+                    }else{       
+                        if(current_rate>est_rate){ 
                             target.addClass('text-success');
                             target.html('<em>Advanced +'+Number(current_rate)-Number(est_rate)+'%</em>');
                         }else if(current_rate==est_rate){
@@ -1432,9 +1432,9 @@
                         field.html(form_data[field_name]);
                     }else field.html(' - ');
                     break;
-            }
+            }        
         });
-
+        
         $('#ezinfoModal').modal('show');
 
     }
@@ -1456,8 +1456,8 @@
                 'status':status,
                 'comment':comment
             }
-            $.when(put_signaturers(order_id,signature_id,formdata)).done(refresh_requestModal(order_id));
-            // put_signaturers(order_id,signature_id,formdata)
+            $.when(put_signaturers(order_id,signature_id,formdata)).done(refresh_requestModal(order_id));   
+            // put_signaturers(order_id,signature_id,formdata)        
         });
     }
     function pend_sign(order_id,status,phase,role){
@@ -1469,7 +1469,7 @@
             let formdata={
                 'status':JSON.stringify(status),
             }
-            $.when(patch_order(order_id,formdata)).done(refresh_requestModal(order_id));
+            $.when(patch_order(order_id,formdata)).done(refresh_requestModal(order_id));   
         });
     }
     function refresh_requestModal(order_id){
@@ -1487,12 +1487,12 @@
             theme: 'journal',
             placeholder: '...',
             tabsize: 2,
-            spellCheck: true,
+            spellCheck: true,     
             minheight: 40,    // set editor height
-            height: 'fitcontent',
+            height: 'fitcontent', 
             lineHeights: '1.0',
-            disableDragAndDrop: false,
-            focus: true,
+            disableDragAndDrop: false,  
+            focus: true, 
             hint: {
                 mentions: ['jeff', 'peter'],
                     match: /\B@(\w*)$/,
@@ -1503,7 +1503,7 @@
                     },
                     content: function (item) {
                     return '@' + item;
-                    },
+                    },    
             },
             toolbar: [
                 ['style', ['style']],
@@ -1545,7 +1545,7 @@
             console.log('The order_id is '+order_id);
             $('#show_commentarea').fadeOut(0);
         }
-
+       
         $('#requestModal').modal('show');
     }
     function schedule_status_template(order_data){
@@ -1560,12 +1560,12 @@
         $.each(author_arr,function(i,author){
             let author_data='';
             if(author=='developers'){
-                author_data=order_data[author]['contactor'];
+                author_data=order_data[author]['contactor'];   
                 author_data['role']='Contact';
             }else{
                 author_data=order_data[author];
                 author_data['role']='Initiator';
-            }
+            }    
             let name=author_data['display_name'].split('/Wistron')[0];
             switch (order_data['status']['P3'][author]) {
                 case 'Approve':
@@ -1585,7 +1585,7 @@
                     break;
                 default:
                     break;
-            }
+            }    
             template=`<div class="d-flex align-items-center mr-2 badge badge-light badge-pill" style="border:1px solid var(--`+color+`)" title="`+title+`">
                         <img class="sticker mr-1" src="`+images['defaultavatar']+`" data-employee_id="`+author_data['employee_id']+`">
                         <div>
@@ -1616,7 +1616,7 @@
 
     function indentify_user(login_id,order_reponse){
         let singnature_response=get_signaturers(order_reponse.id);
-
+        
         let initiator=order_reponse['initiator']['employee_id'];
         let assigner=order_reponse['assigner']['employee_id'];
         let author_obj={};
@@ -1624,7 +1624,7 @@
         //  假如initiator和addigner或contactor 為同一人  -->{9505005:['initiator','assigner','contactor']}
         if(author_obj[assigner]==undefined)author_obj[assigner]=['assigner'];
         else if(author_obj[assigner].length!==0)author_obj[assigner].push('assigner');
-
+        
         let members=order_reponse['developers']['member'];
         let member_obj={};
         if(order_reponse['developers'].length!==0){
@@ -1640,14 +1640,14 @@
         }
         let signaturer_obj={};
         let Indentification='';
-
+    
         $.each(singnature_response,function(index,signaturer_info){
             let employee_id=signaturer_info.signer.employee_id;
             signaturer_obj[employee_id]=signaturer_info.id; //signature_id
         });
         let status=singnature_response[singnature_response.length-1]['status']
-
-        if(login_id in signaturer_obj){
+        
+        if(login_id in signaturer_obj){         
             Indentification={'identity':['signature'],'index':signaturer_obj[login_id]};
             if(login_id in author_obj){
                 Indentification={'identity':['signature','assigner'],'index':signaturer_obj[login_id]};
@@ -1656,7 +1656,7 @@
             let role_arr=[];
             $.each(author_obj,function( employee_id,role ){
                 if(employee_id==login_id) role_arr=role;
-            });
+            });       
             // Indentification={'identity':author_obj[login_id],'index':0};
             Indentification={'identity':JSON.stringify(role_arr),'index':0};
         }else if(login_id in member_obj){       Indentification={'identity':['member'],'index':member_obj[login_id]};
@@ -1670,7 +1670,7 @@
         let userobj=indentify_user(loginInfo.employee_id,order_response);
 
         //  identify_user format {'identity':'guest'.'index':0}
-        //  'identity' initiator/ assigner/ contactor/ member/ signaturer/
+        //  'identity' initiator/ assigner/ contactor/ member/ signaturer/ 
         let status=order_response['status'];
         let phase=Object.keys(order_response['status'])[0];
         let id=order_response.id;
@@ -1686,9 +1686,9 @@
         //  Example {'staus':{'P0':{ 'initiataor':'Close' },'signed':flase }} 解析後結果--> 'Closed'
         //  但如果有多人(Phase3 則會有bugs),目前流程多人時，不能Closed
         let oringinal_status=Object.values(Object.values(status)[0])[0];
-
+        
         //  schedule list
-        let schedule_data=get_current_schedule(id);
+        let schedule_data=get_current_schedule(id); 
 
         //initialize_request/waiting_signature/notify_signing/waiting_receiver_accept_request/receiver_assign_developers
         if(role=='guest'){
@@ -1719,7 +1719,7 @@
 //  Initiator supervisor signing...
                 case 'P1':
                     $('#FormRequest').fadeOut(0);
-                    //  Store order_id to requestModal
+                    //  Store order_id to requestModal                   
                     if(loginId==actor){
                         //  image_status
                         request_image_module('notify_signing');
@@ -1787,9 +1787,9 @@
                             if(role.includes('assigner')){
                                 request_image_module('receiver_proposal_schedule');
                                 $('#schedule_area').fadeIn(0);
-                            }else{ request_image_module('pending_schedule'); }
+                            }else{ request_image_module('pending_schedule'); }                
                             break;
-                        case 'Approve':
+                        case 'Approve':                            
                             $('#schedule_status').find('.sticker').each(function(){
                                 avatar_reload($(this));
                             });
@@ -1805,8 +1805,8 @@
                                     ifsigned=ifsigned*(v.length);
                                 });
                                 if(ifsigned==0) {
-                                    $('#pend_schedule_div').fadeIn(0);
-                                    pend_schedule(id,status,role)
+                                    $('#pend_schedule_div').fadeIn(0);    
+                                    pend_schedule(id,status,role)       
                                 };
                             }else if(role.includes('initiator')||role.includes('contactor')){
                                 let r=role
@@ -1817,7 +1817,7 @@
                                     $('#pend_schedule_div').fadeIn(0);
                                     pend_schedule(id,status,r);
                                 }
-                            }else if(role.includes('assigner')){}
+                            }else if(role.includes('assigner')){}                                
                             break;
                         default:
                             break;
@@ -1876,11 +1876,11 @@
                         $('#repository_url').siblings('div').find('a').removeClass('btn-light').addClass('btn-success')
                                                                         .prop('href',order_response['repository_url']);
                     }
-                    if(actor=='developers') request_image_module('developing');
+                    if(actor=='developers') request_image_module('developing');    
                     else if(actor=='initiator'&&oringinal_status==''){}
-                    if(actor=='initiator'&&oringinal_status=='Approve'){
+                    if(actor=='initiator'&&oringinal_status=='Approve'){ 
                         request_image_module('form_completed');
-                        $('#tag_div,#trigger_dev_modal,.update_progress,.del_progress,#add_milestone').prop('style','display:none !important;');
+                        $('#tag_div,#trigger_dev_modal,.update_progress,.del_progress,#add_milestone').prop('style','display:none !important;');                       
                     }else{
 
                         if(role.includes('initiator')||role.includes('contactor')){
@@ -1936,15 +1936,15 @@
                     break;
                 default:
                     break;
-            }
-
+            }  
+            
         }
         if($('#tag_div').parent('div').css('display')!=='none'){
             render_tag_button(order_response['parent']);
         }
         if(oringinal_status=='Close'){
             $('#FormRequest,#FormUpload,#schedule_area,#schedule_status,#signature_func,#trigger_dev_modal').prop('style','display:none !important;');
-            $('.update_progress,.del_progress,#add_milestone').prop('style','display:none !important;');
+            $('.update_progress,.del_progress,#add_milestone').prop('style','display:none !important;'); 
             $('#progress_area').find('.read_progress').fadeIn(0);
             request_image_module('form_closed');
         }
