@@ -333,18 +333,21 @@ $(function(){
                             success: function ( result, textStatus, XMLHttpRequest ){
                                 let id=result.id
                                 let row_index=$('#filelist').find('tbody').find('tr').last().data('index');
-                                $('#filelist').bootstrapTable('updateRow',{
-                                    index: row_index,
-                                    row: {id: id},
-                                });
                                 let filename=result['name'];
                                 let filetype=filename.split('.')[1];
-                                let imgsrc=result['path'];
-                                if(isImage(filetype)!==true) imgsrc=images['document'];
-
-                                $('#filelist').find('tbody').find('tr').last().find('img').prop('src',imgsrc);
-                                $('#filelist').find('tbody').find('tr').last().find('.filedownload').prop('href',result['path']).prop('download',result['name']);
-                                $('#filelist').find('tbody').find('tr').last().find('.fileupdate').text(isotime_local(result['update_time']));
+                                let path=result['path'];
+                                if(isImage(filetype)!==true) path=images['document'];
+                                $('#filelist').bootstrapTable('updateRow',{
+                                    index: row_index,
+                                    row: {
+                                        id: id,
+                                        name: filename,
+                                        path: path,
+                                        description: result['description'],
+                                        size: result['size'],
+                                        update_time: result['update_time']
+                                    },
+                                });
                             },
                             complete: function ( result, textStatus, XMLHttpRequest ){// 測試後請刪除
                                 //  Remove progress bar and animation

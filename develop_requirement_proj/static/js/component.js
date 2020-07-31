@@ -1451,12 +1451,18 @@
             let comment=$('#sign_comment').val();
             // let order_id=$('#requestModal').data('order_id');
             let formdata={};
-            formdata={
-                'id':signature_id,
-                'status':status,
-                'comment':comment
+            if(comment.length==0){
+                $('#sign_comment').addClass('border-danger').removeClass('bd-none');
+            }else{
+                $('#sign_comment').addClass('bd-none').removeClass('border-danger');
+                formdata={
+                    'id':signature_id,
+                    'status':status,
+                    'comment':comment
+                }
+                $.when(put_signaturers(order_id,signature_id,formdata)).done(refresh_requestModal(order_id)); 
             }
-            $.when(put_signaturers(order_id,signature_id,formdata)).done(refresh_requestModal(order_id));   
+             
             // put_signaturers(order_id,signature_id,formdata)        
         });
     }
@@ -1772,7 +1778,6 @@
                 case 'P3':
                     let assigner_status=status['P3']['assigner'];
                     $('#FormRequest').fadeOut(0);
-                    $('#FormUpload').prop('style','display:none !important;');
                     get_schedulelist(schedule_data);
                     get_filelist(id);
                     $('#tag_div').parent('div').fadeIn(0);
@@ -1780,6 +1785,7 @@
                     let temp=schedule_status_template(order_response);
                     $('#schedule_status').empty().append(temp);
                     $('#schedule_status').parent('div').fadeIn(0);
+                    $('#FormUpload').prop('style','display:none !important;');
                     switch (assigner_status) {
                         case 'Close':
                             $('#schedule_status').parent('div').prop('style','display:none !important;');
@@ -1787,7 +1793,10 @@
                             if(role.includes('assigner')){
                                 request_image_module('receiver_proposal_schedule');
                                 $('#schedule_area').fadeIn(0);
-                            }else{ request_image_module('pending_schedule'); }                
+                            }else{ 
+                                request_image_module('pending_schedule'); 
+                                $('#FormUpload').fadeIn(0);
+                            }                
                             break;
                         case 'Approve':                            
                             $('#schedule_status').find('.sticker').each(function(){
@@ -1799,6 +1808,7 @@
                             request_image_module('pending_schedule');
                             if(role.includes('initiator')&&role.includes('contactor')){
                                 console.log('自己發起自己做的狀況');
+                                $('#FormUpload').fadeIn(0);
                                 let status_arr=Object.values(status['P3']);
                                 let ifsigned=1
                                 $.each(status_arr,function(i,v){
@@ -1809,6 +1819,7 @@
                                     pend_schedule(id,status,role)       
                                 };
                             }else if(role.includes('initiator')||role.includes('contactor')){
+                                $('#FormUpload').fadeIn(0);
                                 let r=role
                                 if(role.includes('contactor')) r='developers'
                                 else if(role.includes('initiator')) r='initiator'
@@ -1817,7 +1828,9 @@
                                     $('#pend_schedule_div').fadeIn(0);
                                     pend_schedule(id,status,r);
                                 }
-                            }else if(role.includes('assigner')){}                                
+                            }else if(role.includes('assigner')){
+                                $('#show_shcedule_area').fadeIn(0);
+                            }                                
                             break;
                         default:
                             break;
