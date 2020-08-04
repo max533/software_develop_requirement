@@ -1957,7 +1957,7 @@
         }
         if(oringinal_status=='Close'){
             $('#FormRequest,#FormUpload,#schedule_area,#schedule_status,#signature_func,#trigger_dev_modal').prop('style','display:none !important;');
-            $('.update_progress,.del_progress,#add_milestone').prop('style','display:none !important;'); 
+            $('.update_progress,.del_progress,#add_milestone,#show_shcedule_area').prop('style','display:none !important;'); 
             $('#progress_area').find('.read_progress').fadeIn(0);
             request_image_module('form_closed');
         }
