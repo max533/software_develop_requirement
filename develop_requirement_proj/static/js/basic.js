@@ -45,9 +45,10 @@ $(function(){
 
     // image prop path
     $('#navUser,#user').find('img').data('employee_id',loginInfo.employee_id).prop('src',images['defaultavatar']);
+    $('#user').prop('href','http://10.32.20.124:50005/profile/'+loginInfo.employee_id);
     avatar_reload($('#navUser').find('img'));
     avatar_reload($('#user').find('img'));
-    $('#user').find('span').text(loginInfo.display_name);
+    $('#user,#navUser').find('span').text(loginInfo.display_name.split('/Wistron')[0]);
 
 
     //  Toolbar Click #chart_list to call BI chart

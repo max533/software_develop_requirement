@@ -116,20 +116,21 @@
 
     #logout:hover{ border-bottom-left-radius: 1em;border-bottom-right-radius: 1em; }
     #navUser {
-        font-size: 1.3em;
-        border: none;
+        font-size: 1rem;
+        /* border: none; */
         vertical-align: middle;
         text-align: center;
-        color: transparent;
-        background-color: transparent;
-        border-radius: .2rem;
-        padding: .4rem .5rem;
+        color: var(--secondary);
+        /* background-color: transparent; */
+        border-radius: 2em;
+        padding: .2rem .3rem;
         transition: ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-        box-shadow:none!important;
+        /* box-shadow:none!important; */
     }
+    /* #navUser:hover{color: var(--secondary);} */
     #navUser:focus { box-shadow: none; }
-    #navSelectMessage.show button{ background-color: var(--dark); border: none; }
-    #navSelectMessage.show button i{ color:var(--primary); }
+    #navSelectMessage.show button,#navSelectUser.show button{ background-color: var(--dark); border: none; }
+    #navSelectMessage.show button i,#navSelectUser.show #navUser span{ color:var(--primary); }
     #navSelectMessage button i{ color:var(--secondary); }
     #messageCount {
         color: var(--light);
@@ -584,4 +585,8 @@
     height: auto;
     display: block;
     margin-bottom: 20px;
+}
+
+.notification_item,#notification_read_more{
+    cursor: pointer;
 }

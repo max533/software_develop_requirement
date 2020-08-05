@@ -103,76 +103,38 @@
 </head>
 <body class="bg-white">
     <div class="container bg-white">
-        <nav class="mt-1 text-secondary align-items-center d-flex justify-content-end" id="navbar">
+        <nav class="navbar navbar-expand-lg navbar-light sticky-top row d-flex justify-content-between" id="navbar">
+			<div class="d-inline-flex align-items-center">
+				<a class="navbar-brand" href="">
+					<img width="75" src="{% static '/images/logolandscape.svg' %}">
+				</a>
+				<!-- title -->
+				<h4 class="text-secondary pt-3" id="pagetitle"> Development Requirement List </h4>
+			</div>
+				
+			
             <div class="d-inline-flex align-items-center" id="navBTNs">
                 <form class="form-inline my-2 my-lg-0" >
 					<div class="dropdown ml-3 mr-3" id="navSelectMessage">
-						<button class="btn btn-outline-light dropdown-toggle" type="button" data-toggle="dropdown" id="message" disabled> <i class="fa fa-bell fa-lg"></i> </button>
-						<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(-135px, 41px, 0px); top: 0px; left: 0px; will-change: transform;">
-							<div class="dropdown-item d-inline-flex align-items-center">
-								<i class="text-light fa fa-signature fa-lg ml-1"></i>
-								<div class="ml-3">
-									<img class="sticker" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
-									<span class="text-grey">Jeff SH Wang/</span><small class="text-grey ml-2">2020-08-26</small>
-									<h6 class="ellipsis text-grey">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</h6>
-								</div>
-							</div>
-							<div class="dropdown-item d-inline-flex align-items-center">
-								<i class="text-primary fas fa-puzzle-piece fa-lg ml-1"></i>
-								<div class="ml-3">
-									<img class="sticker" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
-									<span>Jeff SH Wang/</span><small class="text-grey ml-2">2020-08-26</small>
-									<h6 class="ellipsis">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</h6>
-								</div>
-							</div>
-							<div class="dropdown-item d-inline-flex align-items-center">
-								<i class="text-primary fa fa-pen fa-lg ml-1"></i>
-								<div class="ml-3">
-									<img class="sticker" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
-									<span>Jeff SH Wang/</span><small class="text-grey ml-2">2020-08-26</small>
-									<h6 class="ellipsis">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</h6>
-								</div>
-							</div>
-							<div class="dropdown-item d-inline-flex align-items-center">
-								<i class="text-primary fa fa-pen fa-lg ml-1"></i>
-								<div class="ml-3">
-									<img class="sticker" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
-									<span>Jeff SH Wang/</span><small class="text-grey ml-2">2020-08-26</small>
-									<h6 class="ellipsis">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</h6>
-								</div>
-							</div>
-							<div class="dropdown-item d-inline-flex align-items-center">
-								<i class="text-primary fa fa-signature fa-lg ml-1"></i>
-								<div class="ml-3">
-									<img class="sticker" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
-									<span>Jeff SH Wang/</span><small class="text-grey ml-2">2020-08-26</small>
-									<h6 class="ellipsis">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</h6>
-								</div>
-							</div>
-							<div class="dropdown-item d-inline-flex align-items-center">
-								<i class="text-light fa fa-signature fa-lg ml-1"></i>
-								<div class="ml-3">
-									<img class="sticker" src="" onerror="this.src='{% static '/images/defaultsticker.png' %}'">
-									<span class="text-grey">Jeff SH Wang/</span><small class="text-grey ml-2">2020-08-26</small>
-									<h6 class="ellipsis text-grey">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley</h6>
-								</div>
-							</div>
-							<div class="dropdown-item text-center align-items-baseline">
+						<button class="btn btn-outline-light dropdown-toggle" type="button" data-toggle="dropdown" id="message"> <i class="fa fa-bell fa-lg"></i> </button>
+						<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(-135px, 41px, 0px); top: 0px; left: 0px; will-change: transform;" id="notification_div">
+							<!-- <div class="dropdown-item text-center align-items-baseline">
 								<h6>Read more <i class="fa fa-ellipsis-h ml-1"></i> </h6>
-							</div>
+							</div> -->
 						</div>
-						<span id="messageCount"> --- </span>
+						<span id="messageCount"> --- </span> 
 					</div>
 
                     <div class="dropdown" id="navSelectUser">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" id="navUser">
+                        <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center" type="button" data-toggle="dropdown" id="navUser">
 						<!-- <img class="sticker" onerror="this.src='{% static '/images/defaultsticker.png' %}'" > -->
-                            <img class="sticker bg-light">
+							<img class="sticker bg-light mr-2">
+							<span style="font-size: .9rem;font-weight: 600;"> </span>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item align-items-center d-flex" id ="user" target="_blank">
+                            <a class="dropdown-item align-items-center d-flex" id ="user" target="_blank" style="cursor: pointer;">
 								<img class="sticker mr-2">
-								<span><!-- Leo Tu/WHQ/Wistron  --></span>
+								<span> </span>
 							</a>
 							<a class="dropdown-item" data-toggle="modal" data-target="#instructionModal" style="cursor: pointer;"> <i class="fas fa-chalkboard-teacher" style="width: 1.5rem;"></i> Instruction </i></a>
                             <a class="dropdown-divider"></a>
@@ -185,8 +147,6 @@
         </nav>
         <div class="pb-2">
 			<div class="col-12">
-				<!-- title -->
-				<h3 class="text-secondary pl-1" id="pagetitle"> Development Requirement List </h3>
 				<div id="chartDiv" class="mb-5 mt-3" style="display: none;">
 					<iframe class="chart-container" id="chart" frameborder="0" allowFullScreen="true" responsive="true" maintainAspectRatio="false" ></iframe>
 				</div>
