@@ -14,7 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 import django_cas_ng.views
-from develop_requirement_proj.signature.views import DownloadView, IndexView
+from develop_requirement_proj.signature.views import (
+    DownloadView, IndexView, NotificationView,
+)
 
 from django.conf import settings
 from django.contrib import admin
@@ -27,6 +29,7 @@ urlpatterns = [
     path('cas/logout', django_cas_ng.views.LogoutView.as_view(), name='cas_ng_logout'),
     path('cas/callback', django_cas_ng.views.CallbackView.as_view(), name='cas_ng_proxy_callback'),
     path('download/<int:order_id>/<str:filename>/', DownloadView.as_view(), name='download'),
+    path('notification/', NotificationView.as_view(), name='notification')
 ]
 
 
