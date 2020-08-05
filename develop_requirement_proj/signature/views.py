@@ -16,6 +16,11 @@ class IndexView(LoginRequiredMixin, TemplateView):
     template_name = "drs.html"
 
 
+class NotificationView(LoginRequiredMixin, TemplateView):
+    login = "/cas/login"
+    template_name = "notification.html"
+
+
 class DownloadView(LoginRequiredMixin, View):
     login_url = '/cas/login'
 
