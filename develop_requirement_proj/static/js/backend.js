@@ -569,3 +569,46 @@
         });
         return assigners;
     }
+
+
+//  Notifications Operation
+    //  GET Fetch Notifications Collection by Current User
+    function get_notifications_currentUser(){
+        let path='/api/notifications/';
+        let res='';
+        $.ajax({
+            url:path,
+            method:'GET',
+            dataType: 'json',
+            async: false,
+            timeout: 5000,
+            beforeSend: function ( XMLHttpRequest ){},
+            error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
+            success: function ( result, textStatus, XMLHttpRequest ){
+                res=result;
+            }
+        });
+        return res;
+    }
+    //  PUT Update Notifications Detail
+    function put_notifications_currentUser(id){
+        let path='/api/notifications/'+id+'/';
+        let res='';
+        $.ajax({
+            url:path,
+            method:'PUT',
+            dataType: 'json',
+            data:{
+                'id':id,
+                'read_status':true
+            },
+            async: false,
+            timeout: 5000,
+            beforeSend: function ( XMLHttpRequest ){},
+            error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
+            success: function ( result, textStatus, XMLHttpRequest ){
+                res=result;
+            }
+        });
+        return res;
+    }

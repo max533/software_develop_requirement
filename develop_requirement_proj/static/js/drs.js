@@ -553,4 +553,86 @@ $(function(){
             return false;
         }
     })
+
+
+    //  Notification
+    let msg=get_notifications_currentUser();
+    let unread_count=msg['unread_count'];
+    $('#messageCount').text(unread_count);
+
+    $('#message').on('click',function(){
+        let msg=get_notifications_currentUser();
+        let unread_count=msg['unread_count'];
+        let notification=msg['data'];
+        $('#notification_div').empty();
+
+        $.each(notification,function (i,info) {
+            let max_num=7
+            if(i<=max_num){
+                let category=info['category'];
+                let icon;
+                switch (category) {
+                    case 'initialization':
+                        icon='fa fa-paper-plane';
+                        break;
+                    case 'signature':
+                        icon='fa fa-signature';
+                        break;
+                    case 'negotiation':
+                        icon='fa fa-comment-dots';
+                        break;
+                    case 'response':
+                        icon='fa fa-ellipsis-h';
+                        break;
+                    case 'completion':
+                        icon='fa fa-thumbs-up';
+                        break;
+                    default:
+                        break;
+                };
+                let icon_color='text-info';
+                console.log(info);
+                if(info['read_status']) icon_color='text-light';
+
+                let order_id=info['link'].split('?order=').pop();
+                let message=info['actor']+' '+info['verb']+' '+info['action_object'];
+                let html_temp=`<div class="dropdown-item d-inline-flex align-items-center notification_item" data-order_id="`+order_id+`" data-id="`+info['id']+`">
+                                    <i class="`+icon+` `+icon_color+` fa-lg ml-1"></i>
+                                    <div class="ml-3">
+                                        <!--<img class="sticker" src="">-->
+                                        <span class="text-grey pl-1">`+info['actor']+`/</span><small class="text-grey">`+isotime_local(info['created_time'])+`</small>
+                                        <h6 class="ellipsis text-grey">`+message+`</h6>
+                                    </div>
+                                </div>`;
+                $('#notification_div').append(html_temp); 
+            }
+        });
+        let read_more_temp=`<div class="dropdown-item text-center align-items-baseline" id="notification_read_more">
+                                <h6 clasee="text-secondary">Read more <i class="fa fa-ellipsis-h ml-1"></i> </h6>
+                            </div>`;
+        $('#notification_div').append(read_more_temp);  
+    });
+        $(document).on('click','#navSelectMessage .notification_item',function(){
+            let order_id=$(this).data('order_id');
+            let id=$(this).data('id');
+            //  notificaiton read status change to true
+            put_notifications_currentUser(id);
+            //  Show request modal
+            let order_response=get_single_order(order_id);
+            indentify_modal_show(order_response);
+            //  change icon color
+            $(this).find('span').removeClass('text-info').addClass('text-light');
+        });
+
+
+   
+
+    
+
 });
+
+
+
+
+
+
