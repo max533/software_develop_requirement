@@ -541,7 +541,6 @@
                         status_html='<small class="badge badge-info badge-pill p-1 ml-1"> <i class="fa fa-pen"></i> Pending... </small>';
                         break;
                     default:
-
                         break;
                 }
                 if(comment==null||comment==''){}
@@ -1714,7 +1713,11 @@
                             request_image_module('Reinitialize_request');
                             //  把過去的值填上
                             reinit_value(order_response);
-                            $('#initialize_btn').fadeOut(0);
+                            $('#initialize_btn,#form_breadcrumb,#form_info').fadeOut(0);
+                            $('#Reinit_div').fadeIn(0);
+                            get_filelist(id);
+                            $('#tag_div').parent('div').fadeIn(0);
+                            // $('#FormUpload').fadeIn(0);
                             $('#initialize_btn').siblings('button').fadeIn(0);
                         }else if(singnature_status==''){}
                     }else{

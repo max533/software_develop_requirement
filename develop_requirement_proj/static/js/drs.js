@@ -555,10 +555,10 @@ $(function(){
     })
 
 
-    //  Notification
+    //  Notification  未開發完成
     let msg=get_notifications_currentUser();
     let unread_count=msg['unread_count'];
-    $('#messageCount').text(unread_count);
+    // $('#messageCount').text(unread_count);
 
     $('#message').on('click',function(){
         let msg=get_notifications_currentUser();
@@ -591,7 +591,6 @@ $(function(){
                         break;
                 };
                 let icon_color='text-info';
-                console.log(info);
                 if(info['read_status']) icon_color='text-light';
 
                 let order_id=info['link'].split('?order=').pop();

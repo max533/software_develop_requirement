@@ -169,14 +169,6 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                             </small>
                             <hr>
                             <div class="d-flex justify-content-end mt-4 mb-4">
-                                <button type="button" class="btn btn-danger mr-3 text-left" id="close_init_btn" style="display:none; position:absolute !important; left:3em;">
-                                    <i class="fa fa-stop"></i>
-                                    <span> Close </span>
-                                </button>
-                                <button type="button" class="btn bg-primary" id="Reinitialize_btn" style="display:none;">
-                                    <i class="fa fa-paper-plane"></i>
-                                    <span> Reinit request </span>
-                                </button>
                                 <button type="button" class="btn btn-info" id="initialize_btn">
                                     <i class="fa fa-paper-plane"></i>
                                     <span> Init request </span>
@@ -236,6 +228,19 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                                     </div>
                                 </div>
                             </form>
+                        </div>
+                        <div class="mb-4" id="Reinit_div" style="display:none !important;">
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-danger mr-3 text-left" id="close_init_btn" style="left:3em;">
+                                    <i class="fa fa-stop"></i>
+                                    <span> Close </span>
+                                </button>
+                                <button type="button" class="btn bg-primary" id="Reinitialize_btn">
+                                    <i class="fa fa-paper-plane"></i>
+                                    <span> Reinit request </span>
+                                </button>
+                            </div>
                         </div>
         <!-- Schedule -->
                         <div id="schedule_area" style="display:none !important;">
