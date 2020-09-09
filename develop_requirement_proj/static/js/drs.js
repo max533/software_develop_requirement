@@ -14,6 +14,14 @@ $(function(){
         }
     });
 
+    //  STICKER to teamroster profile page
+    $(document).on('click','.sticker',function(){
+        let employee_id=$(this).data('employee_id');
+        let teamroster_profile_path='http://10.32.20.124:50005/profile/'+employee_id;
+        window.open(teamroster_profile_path, '_blank');
+    });
+
+
 //  Add Request
     //  Reset modal
     $(document).on('click','#addRequestBtn',function(){

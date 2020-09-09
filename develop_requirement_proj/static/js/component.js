@@ -216,47 +216,53 @@
                 })
             }
             let developers_html=`<span class="ellipsis">`+dev+`</span>`;
+            function empty_value(value){
+                if(value==null||value==undefined||value=='') return ' - ';
+                else return value;
+            }
+            let link_color='';
+            if(row.repository_url==''||row.repository_url==null) link_color='text-grey'
             let row_html=`<tr>
                             <td>`+status_html+`</td>
-                            <td>`+row.account.code+`</td>
-                            <td>`+row.project.name+`</td>
-                            <td>`+row.develop_team_function+`</td>
-                            <td>`+row.develop_team_sub_function+`</td>
-                            <td>`+row.initiator.display_name+`</td>
-                            <td>`+row.assigner.display_name+`</td>
-                            <td>`+row.developers.contactor.display_name+`</td>
-                            <td>`+developers_html+`</td>
-                            <td>`+row.title+`</td>
-                            <td>`+row.description+`</td>
-                            <td>`+row.expected_develop_duration_day+`</td>
-                            <td>`+row.actual_develop_duration_day+`</td>
-                            <td><a class="fa fa-link" href="`+row.repository_url+`" title="`+row.repository_url+`"></a></td>
-                            <td>`+row.parent+`</td>
-                            <td>`+row.update_staff+`</td>
-                            <td>`+row.update_time+`</td>
+                            <td>`+empty_value(row.account.code)+`</td>
+                            <td>`+empty_value(row.project.name)+`</td>
+                            <td>`+empty_value(row.develop_team_function)+`</td>
+                            <td>`+empty_value(row.develop_team_sub_function)+`</td>
+                            <td>`+empty_value(row.initiator.display_name)+`</td>
+                            <td>`+empty_value(row.assigner.display_name)+`</td>
+                            <td>`+empty_value(row.developers.contactor.display_name)+`</td>
+                            <td>`+empty_value(developers_html)+`</td>
+                            <td>`+empty_value(row.title)+`</td>
+                            <td>`+empty_value(row.description)+`</td>
+                            <td>`+empty_value(row.expected_develop_duration_day)+`</td>
+                            <td>`+empty_value(row.actual_develop_duration_day)+`</td>
+                            <td><a class="fa fa-link `+link_color+`" href="`+row.repository_url+`" title="`+row.repository_url+`"></a></td>
+                            <td>`+empty_value(row.parent)+`</td>
+                            <td>`+empty_value(row.update_staff)+`</td>
+                            <td>`+empty_value(row.update_time)+`</td>
                           </tr>`;
             html+=row_html;
         });
         let table_html=`<table class="table-bordered table-sm" style="max-height:20em;overflow:scroll;display:block;">
                             <thead>
                             <tr>
-                                <th>Status</th>
-                                <th>Account</th>
-                                <th>Project</th>
-                                <th>Dev fn team</th>
-                                <th>Dev Sub fn team</th>
-                                <th>Initiator</th>
-                                <th>Form receiver</th>
-                                <th>Contact</th>
-                                <th>Developers</th>
-                                <th>Title</th>
-                                <th>Description</th>
-                                <th>Est dev day</th>
-                                <th>Act dev day</th>
-                                <th>Result</th>
-                                <th>Parent form</th>
-                                <th>Editor</th>
-                                <th>Update time</th>
+                                <th class="align-top">Status</th>
+                                <th class="align-top">Account</th>
+                                <th class="align-top">Project</th>
+                                <th class="align-top">Dev fn team</th>
+                                <th class="align-top">Dev Sub fn team</th>
+                                <th class="align-top">Initiator</th>
+                                <th class="align-top">Form receiver</th>
+                                <th class="align-top">Contact</th>
+                                <th class="align-top">Developers</th>
+                                <th class="align-top">Title</th>
+                                <th class="align-top">Description</th>
+                                <th class="align-top">Est dev day</th>
+                                <th class="align-top">Act dev day</th>
+                                <th class="align-top">Result</th>
+                                <th class="align-top">Parent form</th>
+                                <th class="align-top">Editor</th>
+                                <th class="align-top">Update time</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -1250,7 +1256,7 @@
         let assigner=form_data.assigner.display_name;
         let team=form_data.develop_team_function+'_'+form_data.develop_team_sub_function;
         let account=form_data.account.code;
-        let project=form_data.project.code;
+        let project=form_data.project.name;
         let begin;
         let end;
         let days;
