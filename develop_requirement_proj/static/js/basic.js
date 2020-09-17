@@ -280,7 +280,6 @@ $(function(){
                 filterControl:'input',
                 filterControlPlaceholder:'Search',
                 formatter:function(value, row, index){
-                    //  The code string may include \",so to remove the \"
                     value=value.replace(/\\/g,'');
                     let html='<div class="ellipsis">'+value+'</div>';
                     return html;
@@ -293,9 +292,9 @@ $(function(){
                 sortable: true,
                 filterControl:'input',
                 formatter:function(value, row, index){
-                    let localdate = new Date(value).toLocaleDateString({timeZone: 'Asia/Taipei'}).replace(/\//g, "-");
-                    let localtime = new Date(value).toLocaleTimeString('en-US',{timeZone: 'Asia/Taipei', hour12: true});
-                    let date = localdate+" "+localtime;
+                    // let localdate = new Date(value).toLocaleDateString({timeZone: 'Asia/Taipei'}).replace(/\//g, "-");
+                    // let localtime = new Date(value).toLocaleTimeString('en-US',{timeZone: 'Asia/Taipei', hour12: true});
+                    let date = isotime_local(value);
                     let html='<div class="ellipsis">'+date+'</div>';
                     return html;
                 },

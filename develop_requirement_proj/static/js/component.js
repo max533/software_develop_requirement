@@ -59,7 +59,7 @@
         let format_date = new Date(timestamp)
                 .toLocaleString('zh', { hour12: false }) // 2020/3/21 04:26:38
                 .replace(/\//g, '-') // 2020-3-21 04:26:38
-                .slice(0,10); // 2020-3-21 04:26
+                .slice(0,-9); // 2020-3-21 04:26
         return format_date;
     }
     function daysCalculate (begin,end){// Formate:"2020-01-20T08:59:38.093183Z"
@@ -1271,16 +1271,17 @@
         let develop_date='-';
         let current_rate=0;
 
-        if(schedule_data==null||schedule_data==''||schedule_data==[]){
+        if(schedule_data[0].timestamp==null){
         }else {
-            begin=schedule_data[0].current_time
-            end=schedule_data[schedule_data.length-1].current_time
+            begin=schedule_data[0].timestamp
+            end=schedule_data[schedule_data.length-1].timestamp
             days=daysCalculate(begin,end);
             b_day=isodate_local(begin);
             e_day=isodate_local(end);
             now=new Date().getTime();
             b=new Date(b_day).getTime();
             e=new Date(e_day).getTime();
+
             est_rate=100;
             if(now<e) est_rate=Math.round((now-b)/(e-b)*100);
         }
@@ -1390,7 +1391,7 @@
                         $.each(schedule_data,function(i,info){
                             schedule_html=`<tr data-id=`+info.id+`>
                                                 <td class="font-weight-bold text-secondary ellipsis">`+info.event_name+`</td>
-                                                <td>`+isodate_local(info.current_time)+`</td>
+                                                <td>`+isodate_local(info.timestamp)+`</td>
                                                 <td class="ellipsis">`+info.description+`</td>
                                                 <td class="text-center">`+info.complete_rate+`%</td>
                                                 <td class="ellipsis">`+isotime_local(info.created_time)+`</td>
@@ -1432,10 +1433,34 @@
                         }
                     }
                     break;
+                case 'status':
+                    let value=form_data[field_name];
+                    let status=Object.values(Object.values(value)[0])[0];
+                    let who=Object.keys(Object.values(value)[0])[0];
+                    switch (who) {
+                        case 'initiator':
+                            who='Intiator'
+                            break;
+                        case 'assigner':
+                            who='Form receiver'
+                            break;
+                        case 'developer':
+                            who='Developer'
+                            break;
+                        default:
+                            who='Reviewer'
+                            break;
+                    }
+                    if(status==''){
+                        status='pending...'
+                    }
+                    let html=`<span class="ellipsis">`+who+` `+status+`</span>`
+                    field.html(who+` `+status);
+                    break;
                 default:
-                    if(form_data[field_name]!==undefined){
-                        field.html(form_data[field_name]);
-                    }else field.html(' - ');
+                    if(form_data[field_name]==undefined || form_data[field_name]==null){
+                        field.html(' - ');
+                    }else field.html(form_data[field_name]);
                     break;
             }        
         });
