@@ -1614,9 +1614,12 @@
             let decide='';
             if($(this).hasClass('approve')){      decide='Approve'
             }else if($(this).hasClass('return')){ decide='Return' }
+            console.log(role_arr)
             role_arr=JSON.parse(role_arr);
             $.each(role_arr,function (i,role){
                 if(role=='contactor'){role='developers'}
+                console.log(status['P3'])
+                console.log(role)
                 status['P3'][role]=decide;
             })
             formdata=JSON.stringify(status);
@@ -1815,6 +1818,7 @@
                             get_readonly_schedule(id);
                             $('#readonly_schedule_div').fadeIn(0);
                             request_image_module('pending_schedule');
+         
                             if(role.includes('initiator')&&role.includes('contactor')){
                                 console.log('自己發起自己做的狀況');
                                 $('#FormUpload').fadeIn(0);
@@ -1832,10 +1836,11 @@
                                 let r=role
                                 if(role.includes('contactor')) r='developers'
                                 else if(role.includes('initiator')) r='initiator'
+
                                 let ifreviewed=status['P3'][r].length
                                 if(ifreviewed==0){
                                     $('#pend_schedule_div').fadeIn(0);
-                                    pend_schedule(id,status,r);
+                                    pend_schedule(id,status,role);
                                 }
                             }else if(role.includes('assigner')){
                                 $('#show_shcedule_area').fadeIn(0);
