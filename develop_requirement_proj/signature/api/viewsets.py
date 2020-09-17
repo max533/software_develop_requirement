@@ -1135,16 +1135,6 @@ class SignatureViewSet(CacheMixin,
                     Signature.objects.create(**next_signature)
                     # Send email to next signer
                     self.send_mail_2_single_user(next_signer, link, category='signing')
-                elif not skip_signature_flag and not create_new_signaure_flag:
-                    # Find next signer
-                    next_signer, next_signer_department_id = self.find_next_signer(order.id, signature.signer)
-                    # Order Status Change
-                    order.status = {
-                        'P1': {
-                            next_signer: ''
-                        },
-                    }
-                    order.save()
             elif 'P4' in order.status:
                 skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order.id, 'P4')
                 # Debug Code
@@ -1193,16 +1183,6 @@ class SignatureViewSet(CacheMixin,
                     Signature.objects.create(**next_signature)
                     # Send email to next signer
                     self.send_mail_2_single_user(next_signer, link, category='signing')
-                elif not skip_signature_flag and create_new_signaure_flag:
-                    # Find next signer
-                    next_signer, next_signer_department_id = self.find_next_signer(order.id, signature.signer)
-                    # Order Status Change
-                    order.status = {
-                        'P4': {
-                            next_signer: ''
-                        },
-                    }
-                    order.save()
             # Send notification to all order attendent
             category = 'signature'
             actor = self.request.user.get_english_name()
@@ -1264,6 +1244,8 @@ class SignatureViewSet(CacheMixin,
                 }
                 order.form_end_time = timezone.now()
                 order.save()
+                # Send close order mail to all member
+                self.send_mail_2_all(order.id, link, category='close')
             elif 'P4' in order.status:
                 # Order staus change
                 order.status = {
