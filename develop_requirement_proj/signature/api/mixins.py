@@ -304,7 +304,8 @@ class MessageMixin:
             status, action = 'pending', 'schedule'
 
         recipient_list = list(Employee.objects.using('hr').filter(
-            employee_id__in=recipient_employee_id_list).values_list('mail'))
+            employee_id__in=recipient_employee_id_list).values_list('mail', flat=True)
+        )
         email_subject = f"<{category.title()}> There is a software development order waiting your {action}"
         email_message = (
             "Dear all,\n" +
