@@ -879,6 +879,7 @@ class OrderViewSet(CacheMixin,
                     f"skip_signature_flag:'{skip_signature_flag}'"
                 )
                 logger.debug(debug_message)
+                # Order Status Change
                 order.status = {
                     "P3": {
                         "assigner": "Close",
@@ -905,6 +906,16 @@ class OrderViewSet(CacheMixin,
                     f"skip_signature_flag:'{skip_signature_flag}'"
                 )
                 logger.debug(debug_message)
+                # Order Status Change
+                order.status = {
+                    "P3": {
+                        "initiator": "",
+                        "assigner": "Approve",
+                        "developers": ""
+                    },
+                    "signed": skip_signature_flag
+                }
+                order.save()
                 # Send mail to initiator and developers contactor
                 recipient_employee_id_list = [
                     Employee.objects.using('hr').get(employee_id=order.initiator).employee_id,
@@ -926,6 +937,16 @@ class OrderViewSet(CacheMixin,
                     f"skip_signature_flag:'{skip_signature_flag}'"
                 )
                 logger.debug(debug_message)
+                # Order Status Change
+                order.status = {
+                    "P3": {
+                        "initiator": order.status['P3']['initiator'],
+                        "assigner": "Approve",
+                        "developers": order.status['P3']['developers']
+                    },
+                    "signed": skip_signature_flag
+                }
+                order.save()
                 # Send notification to all order attendent
                 category = 'negotiation'
                 actor = self.request.user.get_english_name()
@@ -967,6 +988,13 @@ class OrderViewSet(CacheMixin,
                 )
                 logger.debug(debug_message)
                 if direction_flag == "Approve":
+                    # Order status change
+                    order.status = {
+                        "P5": {
+                            "initiator": "Approve"
+                        }
+                    }
+                    order.save()
                     # Send complete order mail to all member
                     self.send_mail_2_all(order_id, link, category='complete')
                     # Send notification to all order attendent
