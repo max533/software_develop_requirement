@@ -49,18 +49,24 @@
         return now;
     }
     function isotime_local(timestamp){
-        let format_time = new Date(timestamp)
+        if(timestamp==null||timestamp=='') return timestamp
+        else{
+            let format_time = new Date(timestamp)
                 .toLocaleString('zh', { hour12: false }) // 2020/3/21 04:26:38
                 .replace(/\//g, '-') // 2020-3-21 04:26:38
                 .slice(0,-3); // 2020-3-21 04:26
-        return format_time;
+            return format_time;
+        }
     }
     function isodate_local(timestamp){
-        let format_date = new Date(timestamp)
-                .toLocaleString('zh', { hour12: false }) // 2020/3/21 04:26:38
-                .replace(/\//g, '-') // 2020-3-21 04:26:38
-                .slice(0,-9); // 2020-3-21 04:26
-        return format_date;
+        if(timestamp==null||timestamp=='') return timestamp
+        else{
+            let format_date = new Date(timestamp)
+                    .toLocaleString('zh', { hour12: false }) // 2020/3/21 04:26:38
+                    .replace(/\//g, '-') // 2020-3-21 04:26:38
+                    .slice(0,-9); // 2020-3-21 04:26
+            return format_date;
+        }
     }
     function daysCalculate (begin,end){// Formate:"2020-01-20T08:59:38.093183Z"
         begin=new Date(begin).getTime();
@@ -221,7 +227,8 @@
                 else return value;
             }
             let link_color='';
-            if(row.repository_url==''||row.repository_url==null) link_color='text-grey'
+            if(row.repository_url==''||row.repository_url==null) link_color='text-grey';
+            console.log(row.update_time);
             let row_html=`<tr>
                             <td>`+status_html+`</td>
                             <td>`+empty_value(row.account.code)+`</td>
@@ -239,30 +246,30 @@
                             <td><a class="fa fa-link `+link_color+`" href="`+row.repository_url+`" title="`+row.repository_url+`"></a></td>
                             <td>`+empty_value(row.parent)+`</td>
                             <td>`+empty_value(row.update_staff)+`</td>
-                            <td>`+empty_value(row.update_time)+`</td>
+                            <td>`+empty_value( isotime_local(row.update_time) )+`</td>
                           </tr>`;
             html+=row_html;
         });
         let table_html=`<table class="table-bordered table-sm" style="max-height:20em;overflow:scroll;display:block;">
                             <thead>
                             <tr>
-                                <th class="align-top">Status</th>
-                                <th class="align-top">Account</th>
-                                <th class="align-top">Project</th>
-                                <th class="align-top">Dev fn team</th>
-                                <th class="align-top">Dev Sub fn team</th>
-                                <th class="align-top">Initiator</th>
-                                <th class="align-top">Form receiver</th>
-                                <th class="align-top">Contact</th>
-                                <th class="align-top">Developers</th>
-                                <th class="align-top">Title</th>
-                                <th class="align-top">Description</th>
-                                <th class="align-top">Est dev day</th>
-                                <th class="align-top">Act dev day</th>
-                                <th class="align-top">Result</th>
-                                <th class="align-top">Parent form</th>
-                                <th class="align-top">Editor</th>
-                                <th class="align-top">Update time</th>
+                                <th nowrap="nowrap" class="align-top">Status</th>
+                                <th nowrap="nowrap" class="align-top">Account</th>
+                                <th nowrap="nowrap" class="align-top">Project</th>
+                                <th nowrap="nowrap" class="align-top">Dev fn team</th>
+                                <th nowrap="nowrap" class="align-top">Dev Sub fn team</th>
+                                <th nowrap="nowrap" class="align-top">Initiator</th>
+                                <th nowrap="nowrap" class="align-top">Form receiver</th>
+                                <th nowrap="nowrap" class="align-top">Contact</th>
+                                <th nowrap="nowrap" class="align-top">Developers</th>
+                                <th nowrap="nowrap" class="align-top">Title</th>
+                                <th nowrap="nowrap" class="align-top">Description</th>
+                                <th nowrap="nowrap" class="align-top">Est dev day</th>
+                                <th nowrap="nowrap" class="align-top">Act dev day</th>
+                                <th nowrap="nowrap" class="align-top">Result</th>
+                                <th nowrap="nowrap" class="align-top">Parent form</th>
+                                <th nowrap="nowrap" class="align-top">Editor</th>
+                                <th nowrap="nowrap" class="align-top">Update time</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -1366,12 +1373,13 @@
                         field.find('tbody').append(file_html);
                     }else {
                         $.each(files_data,function(i,info){
+                            console.log(info);
                             file_html=`<tr data-id=`+info.id+`>
                                             <td class="font-weight-bold text-secondary ellipsis">`+info.name+`</td>
                                             <td>`+bytesChange(Number(info.size))+`</td>
                                             <td class="ellipsis">`+info.description+`</td>
                                             <td class="text-center"><a href="`+info.path+`" class="fa fa-cloud-download-alt btn btn-info btn-sm p-1 text-light" style="cursor: pointer;" download></a></td>
-                                            <td class="ellipsis">`+isotime_local(info.created_time)+`</td>
+                                            <td class="ellipsis">`+isotime_local(info.update_time)+`</td>
                                         </tr>`;
                             field.find('tbody').append(file_html);
                         });
@@ -1385,7 +1393,8 @@
                                             <td> - </td>
                                             <td> - </td>
                                         </tr>`;
-                    if(schedule_data==null||schedule_data==''||schedule_data==[]){
+   
+                    if(schedule_data[0].timestamp==null){
                         field.find('tbody').append(schedule_html);
                     }else {
                         $.each(schedule_data,function(i,info){
@@ -1401,7 +1410,7 @@
                     }
                     break;
                 case 'develop_time':
-                    if(schedule_data==null||schedule_data==''||schedule_data==[]) field.text(' - ');    
+                    if( schedule_data[0].timestamp==null ) field.text(' - ');    
                     else {
                         field.text(days+' days ('+b_day+'~'+e_day+')');
                     }

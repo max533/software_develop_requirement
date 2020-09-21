@@ -555,7 +555,7 @@ let ezinfoModal=`<div class="modal fade" id="ezinfoModal" tabindex="-1" role="di
                                     <td>Milestone</td>
                                     <td>Estimated date</td>
                                     <td>Description</td>
-                                    <td class="text-center">Estimated complete rate(%)</td>
+                                    <td>Estimated complete rate(%)</td>
                                     <td>Created time</td>
                                 </tr>
                             </thead>

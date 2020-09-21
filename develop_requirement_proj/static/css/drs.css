@@ -250,6 +250,9 @@
     .detail-view{
         background-color: transparent !important;
     }
+    .detail-view table::-webkit-scrollbar{
+        display: none; 
+    }
     .detail-view td{
         padding: 0 !important;
     }
