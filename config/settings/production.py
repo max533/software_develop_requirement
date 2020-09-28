@@ -162,3 +162,11 @@ sentry_sdk.init(
 MIGRATION_MODULES = {
     'employee': 'develop_requirement_proj.employee.migrations.0001_initial',
 }
+
+
+# DJANGO REST FRAMEWORK
+# -------------------------------------------------------------------------------
+# django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
+REST_FRAMEWORK.update({ # noqa
+    'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer'),
+})
