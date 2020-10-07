@@ -267,6 +267,10 @@ CELERY_BEAT_SCHEDULE = {
         "task": 'develop_requirement_proj.signature.tasks.update_simple_employees_cache',
         "schedule": crontab(minute=0, hour='*'),
     },
+    "send_no_sign_signature": {
+        "task": 'develop_requirement_proj.signature.tasks.send_no_sign_signature',
+        "schedule": crontab(minute=30, hour='12', day_of_week='tue,thu'),
+    },
 }
 
 
@@ -274,9 +278,9 @@ CELERY_BEAT_SCHEDULE = {
 # -------------------------------------------------------------------------------
 # django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework.authentication.SessionAuthentication'),
-    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated'),
-    'DEFAULT_VERSIONING_CLASS': ('rest_framework.versioning.AcceptHeaderVersioning'),
+    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework.authentication.SessionAuthentication'],
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.AcceptHeaderVersioning',
 }
 
 
