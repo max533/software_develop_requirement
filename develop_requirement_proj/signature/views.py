@@ -61,6 +61,6 @@ class DownloadView(LoginRequiredMixin, View):
         if settings.DEBUG:
             return response
         # Assign web server (nginx) to serve file for downloading
-        redirect_path = f'/protected_file/{instance.path}'
+        redirect_path = f'/protected_file/{str(order_id)}/{encode_filename}'
         response['X-Accel-Redirect'] = redirect_path
         return response
