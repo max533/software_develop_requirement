@@ -182,8 +182,8 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                                     <hr>
                                     <table class="w-100" id="filelist"></table>
                                     <hr>
-                                    <small class="ml-3 text-secondary">Restrict number of files limit less than <strong id="restrict_file_num"></strong>.
-                                            and size of file limit less than <strong id="restrict_file_size">10 Mb</strong>.
+                                    <small class="ml-3 text-secondary">Restrict number of files limit less than <strong id="restrict_file_num">100</strong>.
+                                            and size of file limit less than <strong id="restrict_file_size"> 5GB </strong>.
                                     </small>
                                 </div>
                             </div>

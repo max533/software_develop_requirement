@@ -6,13 +6,13 @@ $(function(){
         indentify_modal_show(order_response);
     }
     //  Press shift+mousewheel  <- -> 左右移動
-    $(document).bind('mousewheel DOMMouseScroll','#table', function (event) {
-        if(event.shiftKey === true) {
-            $('#table').closest('.fixed-table-body').scrollLeft(
-                $('#table').closest('.fixed-table-body').scrollLeft() - event.originalEvent.wheelDelta/4
-            );
-        }
-    });
+    // $(document).bind('mousewheel DOMMouseScroll','#table', function (event) {
+    //     if(event.shiftKey === true) {
+    //         $('#table').closest('.fixed-table-body').scrollLeft(
+    //             $('#table').closest('.fixed-table-body').scrollLeft() - event.originalEvent.wheelDelta/4
+    //         );
+    //     }
+    // });
 
     //  STICKER to teamroster profile page
     $(document).on('click','.sticker',function(){
@@ -246,8 +246,8 @@ $(function(){
 //  #requestModal
     //  Form fields - Upload animation
     fileLists = [];
-    let fileslimit = 5 //  Restrict file upload total number
-    let file_size_limit = 10000000 //bites  file_size <= 10mb
+    let fileslimit = 100 //  Restrict file upload total number
+    let file_size_limit = 5368709120 //bites  file_size <= 10mb
 
     $('#restrict_file_num').text(fileslimit);
     //  Upload file ui layout
@@ -310,7 +310,7 @@ $(function(){
                             method:'POST',
                             dataType: 'json',
                             data: formdata,
-                            timeout:50000,
+                            timeout:5000000,
                             cache: false,
                             processData: false,
                             contentType : false,
@@ -344,7 +344,7 @@ $(function(){
                                 let filename=result['name'];
                                 let filetype=filename.split('.')[1];
                                 let path=result['path'];
-                                if(isImage(filetype)!==true) path=images['document'];
+                                // if(isImage(filetype)!==true) path=images['document'];
                                 $('#filelist').bootstrapTable('updateRow',{
                                     index: row_index,
                                     row: {
