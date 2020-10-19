@@ -258,7 +258,7 @@ class QueryDataMixin:
         `Raises`:
         - requests.HTTPError: If the http status code of the response is not 200, it will be raised.
         - ValueError : If the value of department_id nor department_list both be None, it will be raised.
-        - Other error will handle by `requests library.
+        - Other error will handle by `requests` library.
 
         `Returns`:
         - departments [dict(dict) / empty_list]: This is the dictionary that contain department dictionary.

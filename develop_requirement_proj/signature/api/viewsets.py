@@ -143,10 +143,10 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
                 logger.error(err, exc_info=True)
                 raise ServiceUnavailable
 
-            department_id = departments[0]
+            department_list = departments
             # Use department_id to query employee_id of the department manager
             try:
-                departments = self.get_department_via_query(department_id=department_id)
+                departments = self.get_department_via_query(department_list=department_list)
             except Exception as err:
                 logger.error(err, exc_info=True)
                 raise ServiceUnavailable
