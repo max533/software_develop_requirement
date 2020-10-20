@@ -140,31 +140,100 @@ $(function(){
             },
             {
                 field:'status',
+                title:'Phase',
+                hvalign: 'top',
+                class:'pb-2',
+                formatter:function(value, row, index){
+                    let p=Object.keys(value)[0],
+                        phase='';
+                    switch (p) {
+                        case 'P0':
+                            phase='Initiatized order';  
+                            break;
+                        case 'P1':
+                            phase="Initiator's supervisor review"  
+                            break;
+                        case 'P2':
+                            phase="Receiver accept order"    
+                            break;
+                        case 'P3':  
+                            phase="All participates negotiate schedule"  
+                            break;
+                        case 'P4': 
+                            phase="Receiver's supervisor review" 
+                            break;
+                        case 'P5':
+                            phase="Developer develop"  
+                            break;
+                        default:
+                            break;
+                    }
+                    return phase;
+                },
+            },
+            
+            {
+                field:'status_detail',
                 title:'Status',
                 hvalign: 'top',
                 class:'pb-2',
                 formatter:function(value, row, index){
-                    //  測試後  未來請修正~
-                    let status=Object.values(Object.values(value)[0])[0];
-                    let who=Object.keys(Object.values(value)[0])[0];
-                    switch (who) {
-                        case 'initiator':
-                            who='Intiator'
-                            break;
-                        case 'assigner':
-                            who='Form receiver'
-                            break;
-                        case 'developer':
-                            who='Developer'
-                            break;
-                        default:
-                            who='Reviewer'
-                            break;
+                    function status_temp(d){
+                        let employee_id=d.employee_id,
+                            display_name=d.display_name,
+                            role=d.role,
+                            status=d.response,
+                            status_color='text-info';
+                        switch (status) {
+                            case 'Approve':
+                                status='approve';
+                                status_color='text-success';
+                                break;
+                            case 'Return':
+                                status='reject';
+                                status_color='text-danger';
+                                break;
+                            case 'Close':
+                                status='close';
+                                status_color='text-light';
+                                break;
+                            case '':
+                                status='in progress...';
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (role) {
+                            case 'assigner':
+                                role='Receiver';
+                                break;
+                            case 'signaturer':
+                                role='Reviewer';
+                                break;
+                            case 'initiator':
+                                role='Initiator';
+                                break;
+                            case 'developers':
+                                role='Dev contact';
+                                break;
+                            default:
+                                break;
+                        }
+                        let html=`<div class="d-inline-flex align-items-top mt-1">
+                                    <img class="sticker mr-2" src="`+images['defaultavatar']+`" data-employee_id="`+employee_id+`">
+                                    <div class="d-inline-flex align-items-baseline" style="white-space: nowrap;">
+                                        <small class="ellipsis text-dark mb-1 mr-1">`+role+`/ `+display_name.split('/')[0]+`</small>
+                                        <small class="`+status_color+`" style="font-weight: 700;">`+status+`</small> 
+                                    </div>
+                                </div>`;
+                        return html;
                     }
-                    if(status==''){
-                        status='pending...'
-                    }
-                    let html=`<span class="ellipsis">`+who+` `+status+`</span>`
+                    let html=``
+                    $.each(value.action,function(key,whoturn){
+                        console.log(whoturn)
+                        html+=status_temp(whoturn);
+                    });
+                    html=`<div>`+html+`</div>`
                     return html;
                 },
             },

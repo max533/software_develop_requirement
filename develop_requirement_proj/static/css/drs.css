@@ -238,6 +238,9 @@
     }
 
 /* #filelist tr td>.ellipsis:hover{ */
+    /* #table thead>tr th .th-inner {
+        position: flex;
+    } */
     tr td:hover .ellipsis{
         /* overflow:visible; */
         /* text-overflow: unset; */
@@ -322,17 +325,18 @@
         text-align: left !important;
     }
     .filter-control input,.filter-control select{
-        width:80% !important;
+        width:100% !important;
         margin-bottom: 5px;
         border: 1px solid var(--gray);
-        border-radius: 2em;
-        margin-left: .3rem;
+        border-radius: .5rem;
+        padding-right: 1.5rem;
         background-color: var(--light);
         font-weight: 500;
+        color: var(--disabled);
     }
     #table .filter-control input,.filter-control select{ background-color:#fdfdfd;}
     .filter-control input::placeholder,.filter-control select::placeholder{ color: var(--disabled); }
-    .filter-control input:focus::placeholder,.filter-control select:focus::placeholder{ color: var(--grey); }
+    .filter-control input:focus::placeholder,.filter-control select:focus::placeholder{ color: var(--grey) !important; }
     .filter-control input:focus,.filter-control select:focus{
         box-shadow: none;
         border: 1px solid var(--gray);

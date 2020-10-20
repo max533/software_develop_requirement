@@ -417,7 +417,6 @@
         
         }else  console.log( bytes+"is not number. typeof "+typeof(bytes) );
     }
-    //  TODO BUG Scroll to bottom 
     function scrollToBottom(scroll_tar,position_tar){
         let distance=position_tar.offset().top-Number(position_tar.css('height').slice(0,-2));
         $(scroll_tar).animate({ scrollTop: distance }, 1000);
