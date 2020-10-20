@@ -1,4 +1,5 @@
 """ signature app's api serializers.py """
+import re
 from pathlib import Path
 from urllib.parse import urlparse, urlunparse
 
@@ -151,6 +152,8 @@ class NotificationSerializer(serializers.ModelSerializer):
 
 class OrderDynamicSerializer(serializers.ModelSerializer):
     """ Order Serializer with Dynamic Field """
+    status_detail = serializers.SerializerMethodField()
+
     def __init__(self, *args, **kwargs):
         # Don't pass the 'fields' arg up to the superclass
         fields = kwargs.pop('fields', None)
@@ -165,6 +168,37 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
             existing = set(self.fields)
             for field_name in existing - allowed:
                 self.fields.pop(field_name)
+
+    def get_status_detail(self, obj):
+        for key in obj.status.keys():
+            match = re.fullmatch('^P[0-5]$', key)
+            if match:
+                phase = match.string
+                break
+
+        actions = []
+        for key, value in obj.status[phase].items():
+            action = dict()
+            if key in ['initiator', 'assigner']:
+                employee_id = getattr(obj, key)
+                action.update({'role': key})
+                action.update({'response': obj.status[phase][key]})
+            elif key == 'developers':
+                employee_id = (getattr(obj, key))['contactor']
+                action.update({'role': key})
+                action.update({'response': obj.status[phase][key]})
+            elif key.isdigit():
+                employee_id = key
+                action.update({'role': 'signaturer'})
+                action.update({'response': obj.status[phase][employee_id]})
+
+            employee = self.context['employees'][employee_id]
+            action.update(employee)
+            actions.append(action)
+
+        status_detail = {'phase': phase, 'action': actions}
+
+        return status_detail
 
     def to_representation(self, instance):
         """
@@ -472,7 +506,8 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
             'form_begin_time',
             'form_end_time',
             'update_time',
-            'update_staff'
+            'update_staff',
+            'status_detail'
         ]
 
 
