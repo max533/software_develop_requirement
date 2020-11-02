@@ -45,22 +45,23 @@ class DownloadView(LoginRequiredMixin, View):
             logger.info(message)
             message = '<h1>There is no file which you want to find.</h1>'
             return HttpResponse(message, status=404)
-        # Get user's deafult filename and filesize
-        filename, size = instance.name, instance.size
+        # Get user's deafult filename and fielname in system and filesize
+        user_filename, system_filename, size = instance.name, instance.path.name.split('/')[-1], instance.size
+
         # Add filename and size in HTTP header
         if settings.DEBUG:
             response = HttpResponse(open(instance.path.path, 'rb'))
         else:
             response = HttpResponse()
-        encode_filename = quote(filename)
+
         response['Content-Type'] = 'application/octet-stream; charset=utf-8'
         response['Content-Disposition'] = (
-            f'attachment; filename="{encode_filename}"; ' + f'filename*=utf-8\'\'{encode_filename}'
+            f'attachment; filename="{quote(user_filename)}"; ' + f'filename*=utf-8\'\'{quote(user_filename)}'
         )
         response['Content-Length'] = size
         if settings.DEBUG:
             return response
         # Assign web server (nginx) to serve file for downloading
-        redirect_path = f'/protected_file/{str(order_id)}/{encode_filename}'
+        redirect_path = f'/protected_file/{str(order_id)}/{quote(system_filename)}'
         response['X-Accel-Redirect'] = redirect_path
         return response
