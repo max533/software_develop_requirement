@@ -18,10 +18,6 @@
     #requestModal .modal-dialog.modal-lg {
         max-width: 95vw;
     }
-
-    /* .bg-water-gradient{
-        box-shadow: 0 0rem 1rem .3rem rgba(0, 0, 0, 0.068);
-    } */
 }
 @media (min-width: 1200px){
     .modal-dialog.modal-lg {
@@ -40,7 +36,7 @@
         width: 75vw;
     }
     .container {
-        max-width: 85vw;
+        max-width: 95vw;
     }
 }
 @media (min-width: 3000px){
