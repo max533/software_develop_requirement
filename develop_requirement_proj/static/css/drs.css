@@ -144,6 +144,7 @@
         position: absolute;
         background-color: var(--danger);
         box-shadow: 0.15rem 0.15rem 0.25rem rgba(14, 14, 14, 0.247);
+        padding: 0 5px;
     }
 
 
@@ -238,17 +239,12 @@
     }
 
 /* #filelist tr td>.ellipsis:hover{ */
-    /* #table thead>tr th .th-inner {
-        position: flex;
-    } */
-    tr td:hover .ellipsis{
-        /* overflow:visible; */
-        /* text-overflow: unset; */
-        /* background-color: #dedede; */
+    tr:hover td .ellipsis{
+        overflow: visible;
+        word-wrap: break-word;
+        white-space: normal;
         border-radius: 1em;
         left: 0;
-        /* word-break: break-word; */
-        /* white-space: normal; */
     }
     .detail-view{
         background-color: transparent !important;
@@ -262,6 +258,13 @@
     .detail-view td .ellipsis{
         background-color: transparent !important;
     }
+    #table .detail-view div{
+        background-color: var(--light);
+        margin-left: 7rem;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
 
     #filelist tr>td:first-child{padding-left: 1.5rem !important;}
     #filelist tr>td:last-child{padding-right: 1.5rem !important;}
@@ -373,10 +376,51 @@
         font-size: .1rem;
     }
 
+    #table .no-records-found>td{
+        width: 100% !important;
+        /* position: absolute; */
+    }
+    #table .no-records-found td>div{
+        width: 100% !important;
+        min-height: 70vh;
+    }
+    #table .tag_404_result{
+        border-radius: .8rem;
+        overflow: hidden;
+    }
+    #table .tag_404_result img{
+        max-width: 18rem;
+        max-height: 13rem;
+    }
+    
 
     #table tr{
         cursor: pointer;
     }
+    
+    #table tr th {
+        white-space: nowrap;
+        text-align: left !important;
+        vertical-align: top;
+        padding: 0 1rem;
+    }
+    #table tr td{
+        border-top:unset;
+        border-bottom:unset;
+        padding: 0 1rem;
+    }
+    #table tr:hover td{
+        background-color: var(--light);
+    }
+    #table tr:hover td:first-child{
+        border-bottom-left-radius: 8px;
+        border-top-left-radius: 8px;
+    }
+    #table tr:hover td:last-child{
+        border-bottom-right-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
     .table td{
         max-height: 10rem;
         overflow: hidden;
@@ -606,4 +650,13 @@
 
 .notification_item,#notification_read_more{
     cursor: pointer;
+}
+#notification_div{
+    position: absolute; 
+    transform: translate3d(-135px, 41px, 0px);
+    top: 0px; left: 0px;
+    will-change: transform;
+    max-height:45rem;
+    height: fit-content;
+    overflow: scroll;
 }

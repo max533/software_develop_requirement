@@ -99,8 +99,8 @@
 	<script type="text/javascript" src="{% static '/js/drs.js' %}"></script>
 	<script type="text/javascript" src="{% static '/js/flow.js' %}"></script>
 </head>
-<body class="bg-white">
-    <div class="container bg-white">
+<body class="bg-light">
+    <div class="container">
         <nav class="navbar navbar-expand-lg navbar-light row d-flex justify-content-between" id="navbar">
 			<div class="d-inline-flex align-items-center">
 				<a class="navbar-brand" href="">
@@ -113,17 +113,17 @@
             <div class="d-inline-flex align-items-center" id="navBTNs">
                 <form class="form-inline my-2 my-lg-0" >
 					<div class="dropdown ml-3 mr-3" id="navSelectMessage">
-						<button class="btn btn-outline-light dropdown-toggle" type="button" data-toggle="dropdown" id="message" disabled> <i class="fa fa-bell fa-lg"></i> </button>
-						<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(-135px, 41px, 0px); top: 0px; left: 0px; will-change: transform;" id="notification_div">
+						<button class="btn btn-outline-light dropdown-toggle" type="button" data-toggle="dropdown" id="message"> <i class="fa fa-bell fa-lg"></i> </button>
+						<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end"  id="notification_div">
 							<!-- <div class="dropdown-item text-center align-items-baseline">
 								<h6>Read more <i class="fa fa-ellipsis-h ml-1"></i> </h6>
 							</div> -->
 						</div>
-						<span id="messageCount"> --- </span> 
+						<span id="messageCount" style="display:none;"> 0 </span> 
 					</div>
 
                     <div class="dropdown" id="navSelectUser">
-                        <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center" type="button" data-toggle="dropdown" id="navUser">
+                        <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" data-toggle="dropdown" id="navUser">
 						<!-- <img class="sticker" onerror="this.src='{% static '/images/defaultsticker.png' %}'" > -->
 							<img class="sticker bg-light mr-2">
 							<span style="font-size: .9rem;font-weight: 600;"> </span>
@@ -142,13 +142,13 @@
                 </form>
             </div>
         </nav>
-        <div class="pb-2">
-			<div class="col-12">
+        <div class="pb-2 mt-2">
+			<div class="col-12 bg-white bd-radius-8 p-3" style="box-shadow: 0.05rem 0.05rem 0.55rem rgba(14, 14, 14, 0.18);">
 				<div id="chartDiv" class="mb-5 mt-3" style="display: none;">
 					<iframe class="chart-container" id="chart" frameborder="0" allowFullScreen="true" responsive="true" maintainAspectRatio="false" ></iframe>
 				</div>
 				<!-- main table -->
-				<table class="table table-hover" id="table">
+				<table class="table" id="table">
 				</table>
 			</div>
         </div>
@@ -418,5 +418,24 @@
 
 
 
+<footer>
+    <div class="footer-copyright py-1 text-secondary row align-items-center justify-content-center font-weight-bold mt-5" style="z-index:99999;margin-top: auto;">
+        <div class="row align-items-baseline pl-1 pr-1">
+            <img src="{% static 'images/logolandscape.svg' %}" width="50" style="max-width: 5rem;" class="mr-1">
+            <img src="{% static 'images/wistron_SVG.svg' %}" width="50" style="max-width: 5rem;" class="mr-2">
+            © 2020 Copyright
+        </div>
+        <div class="pt-2 pl-1 pr-1">
+            &emsp;&Iota;&emsp;
+            <a href="http://dqms.wistron.com/">dqms.wistron.com</a>
+            &emsp;&Iota;&emsp;
+        </div>
+        <div class="pt-2 pl-1 pr-1" style="font-size: .8rem; font-weight: 500;">
+            DQMS Dev team/
+            <a href="http://10.32.20.124:50005/department/ESQD00" class="text-primary ml-1">ESQD00</a>,
+            <a href="http://10.32.20.124:50005/department/ESQE00" class="text-primary">ESQE00</a>
+        </div>
+    </div>
+</footer>
 
 </body>
