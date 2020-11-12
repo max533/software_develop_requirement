@@ -228,29 +228,29 @@
             }
             let link_color='';
             if(row.repository_url==''||row.repository_url==null) link_color='text-grey';
-            console.log(row.update_time);
             let row_html=`<tr>
                             <td>`+status_html+`</td>
                             <td>`+empty_value(row.account.code)+`</td>
                             <td>`+empty_value(row.project.name)+`</td>
-                            <td>`+empty_value(row.develop_team_function)+`</td>
-                            <td>`+empty_value(row.develop_team_sub_function)+`</td>
+                            <td class="text-center">`+empty_value(row.develop_team_function)+`</td>
+                            <td class="text-center">`+empty_value(row.develop_team_sub_function)+`</td>
                             <td>`+empty_value(row.initiator.display_name)+`</td>
                             <td>`+empty_value(row.assigner.display_name)+`</td>
-                            <td>`+empty_value(row.developers.contactor.display_name)+`</td>
+                            <td class="text-center">`+empty_value(row.developers.contactor.display_name)+`</td>
                             <td>`+empty_value(developers_html)+`</td>
                             <td>`+empty_value(row.title)+`</td>
                             <td>`+empty_value(row.description)+`</td>
-                            <td>`+empty_value(row.expected_develop_duration_day)+`</td>
-                            <td>`+empty_value(row.actual_develop_duration_day)+`</td>
-                            <td><a class="fa fa-link `+link_color+`" href="`+row.repository_url+`" title="`+row.repository_url+`"></a></td>
-                            <td>`+empty_value(row.parent)+`</td>
-                            <td>`+empty_value(row.update_staff)+`</td>
+                            <td class="text-center">`+empty_value(row.expected_develop_duration_day)+`</td>
+                            <td class="text-center">`+empty_value(row.actual_develop_duration_day)+`</td>
+                            <td class="text-center"><a class="fa fa-link `+link_color+`" href="`+row.repository_url+`" title="`+row.repository_url+`"></a></td>
+                            <td class="text-center">`+empty_value(row.parent)+`</td>
+                            <td class="text-center">`+empty_value(row.update_staff)+`</td>
                             <td>`+empty_value( isotime_local(row.update_time) )+`</td>
                           </tr>`;
             html+=row_html;
         });
-        let table_html=`<table class="table-bordered table-sm" style="max-height:20em;overflow:scroll;display:block;">
+        let table_html=`<div class="bd-radius-8">
+                            <table class="table-bordered table-sm" style="max-height:20em;overflow:scroll;display:block;">
                             <thead>
                             <tr>
                                 <th nowrap="nowrap" class="align-top">Status</th>
@@ -275,7 +275,7 @@
                             <tbody>
                                 `+html+`
                             </tbody>
-                        </table>`
+                        </table></div>`
         return table_html;
     }
     function filedetailFormatter(index, row) {

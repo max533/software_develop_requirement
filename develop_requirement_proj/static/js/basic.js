@@ -11,7 +11,7 @@ $(function(){
     //  modal basic setting mutli-modal
     $(document).on('hidden.bs.modal','.modal',function(){
         //  Focus the modal -css -ovwrflow-y
-        $('.modal.show').removeClass('blur');
+        // $('.modal.show').removeClass('blur');
         //  Show >=2 modals, one close, rest modal can scroll.
         let rest_show_modal_num=$('.modal.show').length;
         if(rest_show_modal_num>=1){
@@ -23,24 +23,24 @@ $(function(){
         $(this).css('z-index', zIndex).data('index',$('.modal:visible').length).addClass('index-'+$('.modal:visible').length);
         setTimeout(function() {
             $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
-            if($('.modal.show').length>=1){
-                $('.modal.show').not('.note-modal').not(this).addClass('blur');
-                $(this).removeClass('blur');
-            }
+            // if($('.modal.show').length>=1){
+                // $('.modal.show').not('.note-modal').not(this).addClass('blur');
+                // $(this).removeClass('blur');
+            // }
         }, 0);
     });
     $(document).on('shown.bs.modal', '.modal', function() {
         if($('body').hasClass('modal-open')==false) $('body').addClass('modal-open');
     });
 
-    $(document).on('hide.bs.modal', '.modal', function() {
-        let index=$(this).data('index');
-        let target_index=index-1;
-        if(index>=1){
-            let target=$('.modal.show.index-'+target_index+'');
-            target.removeClass('blur');
-        }
-    });
+    // $(document).on('hide.bs.modal', '.modal', function() {
+    //     let index=$(this).data('index');
+    //     let target_index=index-1;
+    //     if(index>=1){
+    //         let target=$('.modal.show.index-'+target_index+'');
+    //         target.removeClass('blur');
+    //     }
+    // });
 
 
     // image prop path
@@ -88,8 +88,8 @@ $(function(){
     //  Initiate Table
     $('#table').bootstrapTable('destroy').bootstrapTable({
         url:'/api/orders/', //severside 的網址
-        classes: '',
-        theadClasses:'bg-light',
+        classes: 'table-responsive',
+        theadClasses:'',
         pagination:true,
         paginationVAlign:'bottom',
         fixedColumns: true,
@@ -141,7 +141,6 @@ $(function(){
             {
                 field:'status',
                 title:'Phase',
-                hvalign: 'top',
                 class:'pb-2',
                 formatter:function(value, row, index){
                     let p=Object.keys(value)[0],
@@ -246,7 +245,7 @@ $(function(){
                     return value;
                 },
                 formatter:function(value, row, index){
-                    let html='<span class="text-grey font-weight-bold"> - </span>';
+                    let html='<span class="text-grey font-weight-bold ml-3"> - </span>';
                     if(value==null||value==''){
                     }else{
                         html = `<div class="ellipsis">
@@ -361,8 +360,6 @@ $(function(){
                 sortable: true,
                 filterControl:'input',
                 formatter:function(value, row, index){
-                    // let localdate = new Date(value).toLocaleDateString({timeZone: 'Asia/Taipei'}).replace(/\//g, "-");
-                    // let localtime = new Date(value).toLocaleTimeString('en-US',{timeZone: 'Asia/Taipei', hour12: true});
                     let date = isotime_local(value);
                     let html='<div class="ellipsis">'+date+'</div>';
                     return html;

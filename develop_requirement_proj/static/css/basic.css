@@ -67,9 +67,46 @@
         border-color: var(--danger)!important;
     }
     .opacity-8{opacity: .8;}
+/* Scrollbar */
+    ::-webkit-scrollbar {
+        height: 8px;
+        width: 8px;
+        cursor:pointer;
+    }
+    div:hover::-webkit-scrollbar{
+        height: 12px;
+    }
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: var(--light);
+        border-radius:2em;
+    }
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: var(--grey);
+        border-radius:2em;
+    }
+    /* Handle on hover */
+    div:hover ::-webkit-scrollbar-thumb{
+        background: var(--secondary);
+        border-radius:2em;
+        height: 15px;
+    }
+
+
 
 /*  general */
-    body{ font-size: .9rem; }
+    body {
+        background-color: var(--light);
+        background-repeat: no-repeat, cover;
+        background-size: 100%;
+        font-size: .9rem;
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+    }
+    
     .sticker{
         width:1.8em;
         height: 1.8em;
@@ -86,17 +123,16 @@
         white-space: nowrap;
         text-overflow: ellipsis;
         max-width: 22em;
-        /* width: 18em; */
         padding: .3rem;
     }
-    .ellipsis:hover{
-        overflow:visable;
+    /* .ellipsis:hover{ */
+        /* overflow:visable;
         max-height: unset;
-        max-width: unset !important;
+        max-width: unset !important; */
         /* width: fit-content; */
-        word-break: break-word;
-        white-space: normal;
-    }
+        /* word-break: break-word;
+        white-space: normal; */
+    /* } */
     #form_info .ellipsis {
         max-width: inherit !important;
         word-break: break-word;
@@ -107,32 +143,22 @@
         overflow:visable;
         max-height: unset;
     }
-    .blur{
-        -webkit-filter: blur(3px) opacity(80%); /* Safari */
+    /* .blur{
+        -webkit-filter: blur(3px) opacity(80%); 
         filter: blur(3px) opacity(80%);
-    }
+    } */
     /* #developersModal table { border: none;} */
     .table td, .table th {
         padding: .45rem;
         max-height: 5em;
     }
-    table:not(.ui-datepicker-calendar) tr:hover{
-        background-color: var(--light);
-        border-radius: .8rem;
-    }
-    /* table tr:hover>td *,table tr:hover>td{
-        color: var(--light) !important;
-    } */
-    table tr:hover>td .ellipsis{
+    table tr:hover>td .ellipsis {
         overflow: visible;
-        word-break: break-word;
-        white-space: normal;
-        text-overflow: unset;
     }
     table tr:hover>td small.ellipsis{
         white-space: nowrap !important;
     }
-    .b-radius-8{
+    .b-radius-8 {
         border-radius: .8em;
     }
     .fade {
@@ -305,3 +331,6 @@
     .dropdown-item{padding: .5rem;}
     .dropdown-item.active, .dropdown-item:active {  background-color: #fff;color: var(--secondary) !important; }
     .dropdown-item:focus, .dropdown-item:hover { background-color: var(--secondary); color: var(--info) !important;}
+
+    #navSelectMessage .dropdown-item.active,#navSelectMessage .dropdown-item:active {  background-color: #fff;color: var(--secondary) !important; }
+    #navSelectMessage .dropdown-item:focus,#navSelectMessage .dropdown-item:hover {  background-color: var(--light); color: var(--info) !important; }

@@ -566,17 +566,19 @@ $(function(){
     //  Notification  未開發完成
     let msg=get_notifications_currentUser();
     let unread_count=msg['unread_count'];
-    // $('#messageCount').text(unread_count);
+    if(unread_count!==0) {
+        $('#messageCount').fadeIn(0);
+        $('#message').addClass('text-danger').removeClass('text-secondary');
+    }
+    $('#messageCount').text(unread_count);
 
     $('#message').on('click',function(){
-        let msg=get_notifications_currentUser();
-        let unread_count=msg['unread_count'];
         let notification=msg['data'];
         $('#notification_div').empty();
-
         $.each(notification,function (i,info) {
-            let max_num=7
-            if(i<=max_num){
+            // let max_num=7
+            // if(i<=max_num){
+            if(i<=500){
                 let category=info['category'];
                 let icon;
                 switch (category) {
@@ -598,38 +600,65 @@ $(function(){
                     default:
                         break;
                 };
-                let icon_color='text-info';
-                if(info['read_status']) icon_color='text-light';
+                let icon_color='color:var(--info);',
+                    text_color='color:var(--secondary);',
+                    badge_color='',
+                    read=false;
+
+
+                if(info['read_status']){
+                    icon_color='color:var(--grey);';
+                    text_color='color:var(--grey); opacity:.5;';
+                    badge_color='background-color:var(--grey); opacity:.5';
+                    read=true;
+                } 
 
                 let order_id=info['link'].split('?order=').pop();
                 let message=info['actor']+' '+info['verb']+' '+info['action_object'];
-                let html_temp=`<div class="dropdown-item d-inline-flex align-items-center notification_item" data-order_id="`+order_id+`" data-id="`+info['id']+`">
-                                    <i class="`+icon+` `+icon_color+` fa-lg ml-1"></i>
+                let html_temp=`<div class="dropdown-item d-inline-flex align-items-center notification_item" 
+                                style=`+text_color+`" data-order_id="`+order_id+`" data-id="`+info['id']+`" data-read="`+read+`"
+                                >
+                                    <h6 class="badge badge-secondary mr-3" style="`+badge_color+`"> Form`+order_id+`</h6>
+                                    <div style="width:6.2rem">
+                                        <i class="ml-1 `+icon+`" style="`+icon_color+`"></i>
+                                        <h6 class="ellipsis">`+info['category']+`</h6>
+                                    </div>
                                     <div class="ml-3">
-                                        <!--<img class="sticker" src="">-->
-                                        <span class="text-grey pl-1">`+info['actor']+`/</span><small class="text-grey">`+isotime_local(info['created_time'])+`</small>
-                                        <h6 class="ellipsis text-grey">`+message+`</h6>
+                                        <span class=" pl-1">`+info['actor']+`/</span><small class="text-grey ml-2" style="opacity:.5;">`+isotime_local(info['created_time'])+`</small>
+                                        <h6 class="ellipsis">`+message+`</h6>
                                     </div>
                                 </div>`;
                 $('#notification_div').append(html_temp); 
             }
         });
-        let read_more_temp=`<div class="dropdown-item text-center align-items-baseline" id="notification_read_more">
-                                <h6 clasee="text-secondary">Read more <i class="fa fa-ellipsis-h ml-1"></i> </h6>
-                            </div>`;
-        $('#notification_div').append(read_more_temp);  
+        // let read_more_temp=`<div class="dropdown-item text-center align-items-baseline" id="notification_read_more">
+        //                         <h6 clasee="text-secondary">Read more <i class="fa fa-ellipsis-h ml-1"></i> </h6>
+        //                     </div>`;
+        // $('#notification_div').append(read_more_temp);      
     });
-        $(document).on('click','#navSelectMessage .notification_item',function(){
-            let order_id=$(this).data('order_id');
-            let id=$(this).data('id');
-            //  notificaiton read status change to true
-            put_notifications_currentUser(id);
-            //  Show request modal
-            let order_response=get_single_order(order_id);
-            indentify_modal_show(order_response);
-            //  change icon color
-            $(this).find('span').removeClass('text-info').addClass('text-light');
-        });
+    $(document).on('click','#navSelectMessage .notification_item',function(){
+        if($(this).data('read')==false ) {
+            unread_count = msg['unread_count']-1;
+            if(unread_count==0) {
+                $('#messageCount').fadeOut(0);
+                $('#message').removeClass('text-danger').addClass('text-secondary');
+            }else{
+                $('#messageCount').fadeIn(0);
+                $('#message').addClass('text-danger').removeClass('text-secondary');
+            }
+        }
+        $('#messageCount').text(unread_count);
+        let order_id=$(this).data('order_id');
+        let id=$(this).data('id');
+        //  notificaiton read status change to true
+        put_notifications_currentUser(id);
+        //  Show request modal
+        let order_response=get_single_order(order_id);
+        indentify_modal_show(order_response);
+        //  change icon color
+        $(this).find('span').removeClass('text-info').addClass('text-light');
+        msg = get_notifications_currentUser();
+    });
 
 
    
