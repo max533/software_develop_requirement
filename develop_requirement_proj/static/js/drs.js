@@ -512,16 +512,18 @@ $(function(){
                         "order": order_id
                 };
                 post_comment_history(comment_obj);
+                $('#comment').summernote('reset');
                 let all_comments=get_comment_history(order_id);
                 $('#comment_area').empty();
                 $.each(all_comments,function(i,res){
                     append_comment_template('#comment_area',res);
                 });
-                let position_tar=$('#comment_area').find('div.mb-2').last();
-                scrollToBottom($('#comment_area'),position_tar);
+                scrollToBottom();
             }
         });
-
+        $(document).on('click','#show_commentarea',function(){
+            scrollToBottom();
+        });
 
 //  Submit result
         $(document).on('click','#submit_result',function(){

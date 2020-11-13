@@ -417,9 +417,9 @@
         
         }else  console.log( bytes+"is not number. typeof "+typeof(bytes) );
     }
-    function scrollToBottom(scroll_tar,position_tar){
-        let distance=position_tar.offset().top-Number(position_tar.css('height').slice(0,-2));
-        $(scroll_tar).animate({ scrollTop: distance }, 1000);
+    function scrollToBottom(){
+        let moveto = Number($('#comment_area').css('height').slice(0,-2));
+        $('#display_comment_area').stop(true, true).animate({ scrollTop: moveto }, 500);
     }
     //  Validate fields
     $.validator.setDefaults({

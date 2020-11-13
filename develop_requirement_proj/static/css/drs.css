@@ -524,6 +524,9 @@
 
 
 /*  Summernote */
+.note-group-select-from-files{
+    display: none !important;
+}
     .note-editor.note-frame .note-editing-area {
         overflow: unset;
     }
@@ -536,12 +539,13 @@
         border-radius:.8rem;
         border: 1px solid var(--gray);
         padding: .4rem .5rem .4rem 1rem !important;
-        min-height: 50px;
+        max-height: 60px;
         line-height: 1;
     }
     #comment+.note-editor .note-editable{
         padding-right: 2rem !important;
-        width: 80% !important;
+        max-width: 90% !important;
+        overflow: scroll;
     }
     .note-placeholder{
         color: var(--grey);
@@ -568,6 +572,12 @@
     .note-modal .modal-body::-webkit-scrollbar{
         display: none;
     }
+    .note-modal .modal-title{
+        order: 1;
+    }
+    .note-modal .close{
+        order: 2;
+    }
     .note-statusbar{
         width:20%;
         margin: -2px auto;
@@ -593,13 +603,13 @@
         position: absolute;
         right: 1em;
         margin-top: -4.5em;
-
     }
-    /* #sendcomment_btn:focus,
-    #sendcomment_btn:hover,
-    #sendcomment_btn.active{
-        opacity: 1;
-    } */
+    #hide_commentarea{
+        z-index: 99;
+    }
+    #edit_comment_area{
+       width: 100%; 
+    }
 
 /* transition plane */
     .wrapper {

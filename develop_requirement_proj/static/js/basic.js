@@ -229,7 +229,6 @@ $(function(){
                     }
                     let html=``
                     $.each(value.action,function(key,whoturn){
-                        console.log(whoturn)
                         html+=status_temp(whoturn);
                     });
                     html=`<div>`+html+`</div>`
