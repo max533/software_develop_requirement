@@ -419,7 +419,7 @@ $(function(){
         });
     //  toggle file div // Close filediv or hide
         $(document).on('click','#file_div_toggle',function(){
-            let file_div=$('#filelist').parents('.col-8');
+            let file_div=$('#filelist').parents('.col-9');
             $(this).toggleClass('fa-angle-up fa-angle-down');
             if($(this).hasClass('fa-angle-down')) file_div.slideUp();
             else file_div.slideDown();

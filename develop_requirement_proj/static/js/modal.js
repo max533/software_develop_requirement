@@ -177,8 +177,8 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                         </form>
                         <div style="display : none !important;">
                             <div class="d-inline-flex align-items-top w-100 mb-4 file bg-light bd-radius-8 p-1 mt-2" id="show_file_div">
-                                <h6 class="col-4 pt-1 text-secondary font-weight-bold"> Attached-file list <i id="file_div_toggle" class="ml-2 fa fa-angle-up btn btn-light btn-sm" title="Expand"></i></h6>
-                                <div class="col-8">
+                                <h6 class="col-3 pt-1 text-secondary font-weight-bold"> Attached-file <i id="file_div_toggle" class="ml-2 fa fa-angle-up btn btn-light btn-sm" title="Expand"></i></h6>
+                                <div class="col-9">
                                     <hr>
                                     <table class="w-100" id="filelist"></table>
                                     <hr>
@@ -189,8 +189,8 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                             </div>
                             <div class="row align-items-center mt-2" id="tag_div">
                                 <hr>
-                                <h6 class="col-4 text-secondary font-weight-bold"> Depend on which form </h6>
-                                <div class="mb-2 col-8 d-inline-flex align-items-baseline">
+                                <h6 class="col-3 text-secondary font-weight-bold"> Depend on which form </h6>
+                                <div class="mb-2 col-9 d-inline-flex align-items-baseline">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <button class="btn btn-light ezinfoModal_trigger font-weight-bold" type="button">
@@ -208,14 +208,14 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                             </div>
                             <!-- Assign content -->
                             <form class="row align-items-top mt-2 file" id="FormUpload">
-                                <div class="col-4">
+                                <div class="col-3">
                                     <h6 class="text-secondary font-weight-bold mt-3"> Attached files </h6>
                                     <span class="mt-1 text-danger font-weight-bold"><i class="fa fa-bullhorn mr-2"></i>Necessary file/
                                     <a class="btn btn-warning btn-sm" href="#" id="file_template_download" download><i class="fa fa-file-download mr-1"></i>Template</a>
                                     </span>
                                     <li class="text-danger">Systems architecture</li><li class="text-danger">Benefit assessment</li>
                                 </div>
-                                <div class="col-8">
+                                <div class="col-9">
                                     <label for="file" class="mt-2 upload-style form-control d-flex align-items-center justify-content-between bd-radius-8 bg-light">
                                         <input type="file" class="custom-file-input" id="files" name="files[]" multiple size="5" title="No file selected." required>
                                     </label>
@@ -312,7 +312,7 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
         <!--progress-->
                         <div id="progress_area" class="mt-2" style="display:none !important;">
                             <hr>
-                            <div class="container py-3">
+                            <div class="pt-3 pb-3">
                                 <div class="d-flex flex-column flex-sm-row justify-content-sm-between">
                                     <div class="mb-3 mb-sm-0">
                                         <span id="TimelimeTitle" class="h6 font-weight-bold text-secondary"></span>
@@ -352,8 +352,8 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                             <hr>
                             <h6 class="text-secondary font-weight-bold"> Result link </h6>
                             <div class="row align-items-center mt-2">
-                                <label class="col-4"> Result </label>
-                                <div class="col-8 mb-2">
+                                <label class="col-3"> Result </label>
+                                <div class="col-9 mb-2">
                                     <div class="input-group">
                                         <input type="text" class="form-control field-style" name="repository_url" id="repository_url" placeholder="http(s)://..." disabled required>
                                         <div class="input-group-append">
@@ -533,7 +533,7 @@ let ezinfoModal=`<div class="modal fade" id="ezinfoModal" tabindex="-1" role="di
                                     <td> Size </td>
                                     <td> Description </td>
                                     <td class="text-center"> Download </td>
-                                    <td> Created time </td>
+                                    <td> Created </td>
                                 </tr>
                             </thead>
                             <tbody></tbody>

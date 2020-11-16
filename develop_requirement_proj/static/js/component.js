@@ -279,15 +279,17 @@
         return table_html;
     }
     function filedetailFormatter(index, row) {
-        let html = `<h6 class="badge badge-secondary badge-pill mt-2">
-                        <i class="fas fa-sticky-note mr-2"></i>Description
-                    </h6>
-                    <p class="font-weight-bold bd-radius-8 p-1">`+row['description']+`</p>
-                    <textarea class="w-100 font-weight-bold bd-radius-8 bg-white p-1 bd-none" palceholder="File desciption..." style="display:none;">`+row['description']+`</textarea>
-                    <div class="text-right mb-2 mt-1">
-                        <button type="button" class="btn btn-info btn-sm description_edit"><i class="fa fa-edit mr-1"></i>Edit</button>
-                        <button type="button" class="btn btn-success btn-sm description_save" style="display:none;"><i class="fa fa-check-double mr-1"></i>Save</button>
-                        <button type="button" class="ml-2 btn btn-secondary btn-sm description_cancel" style="display:none;"><i class="fa fa-times mr-1"></i>Cancel</button>
+        let html = `<div style="max-width:29rem;">
+                        <h6 class="badge badge-secondary badge-pill mt-2">
+                            <i class="fas fa-sticky-note mr-2"></i>Description
+                        </h6>
+                        <p class="w-100" style="word-wrap: break-word; word-break: normal; ">`+row['description']+`</p>
+                        <textarea class="w-100 font-weight-bold bd-radius-8 bg-white p-1 bd-none" palceholder="File desciption..." style="display:none;">`+row['description']+`</textarea>
+                        <div class="text-right mb-2 mt-1">
+                            <button type="button" class="btn btn-info btn-sm description_edit"><i class="fa fa-edit mr-1"></i>Edit</button>
+                            <button type="button" class="btn btn-success btn-sm description_save" style="display:none;"><i class="fa fa-check-double mr-1"></i>Save</button>
+                            <button type="button" class="ml-2 btn btn-secondary btn-sm description_cancel" style="display:none;"><i class="fa fa-times mr-1"></i>Cancel</button>
+                        </div>
                     </div>`;
         return html;
     }
@@ -886,7 +888,7 @@
                     field:'name',
                     formatter:function(value, row, index){
                         let filesize=Number(row['size']);
-                        let html=` <p class="font-weight-bold ellipsis pl-2 pr-2 mb-0 filename">`+value+`</p>
+                        let html=` <p class="font-weight-bold ellipsis pl-2 pr-2 mb-0 filename" style="width:10rem;">`+value+`</p>
                                     <small class="pl-2">`+bytesChange(filesize)+`</small>`;
                         return html;
                     }
@@ -1372,10 +1374,9 @@
                         field.find('tbody').append(file_html);
                     }else {
                         $.each(files_data,function(i,info){
-                            console.log(info);
                             file_html=`<tr data-id=`+info.id+`>
                                             <td class="font-weight-bold text-secondary ellipsis">`+info.name+`</td>
-                                            <td>`+bytesChange(Number(info.size))+`</td>
+                                            <td class="ellipsis">`+bytesChange(Number(info.size))+`</td>
                                             <td class="ellipsis">`+info.description+`</td>
                                             <td class="text-center"><a href="`+info.path+`" class="fa fa-cloud-download-alt btn btn-info btn-sm p-1 text-light" style="cursor: pointer;" download></a></td>
                                             <td class="ellipsis">`+isotime_local(info.update_time)+`</td>
@@ -1399,7 +1400,7 @@
                         $.each(schedule_data,function(i,info){
                             schedule_html=`<tr data-id=`+info.id+`>
                                                 <td class="font-weight-bold text-secondary ellipsis">`+info.event_name+`</td>
-                                                <td>`+isodate_local(info.timestamp)+`</td>
+                                                <td class="ellipsis">`+isodate_local(info.timestamp)+`</td>
                                                 <td class="ellipsis">`+info.description+`</td>
                                                 <td class="text-center">`+info.complete_rate+`%</td>
                                                 <td class="ellipsis">`+isotime_local(info.created_time)+`</td>
