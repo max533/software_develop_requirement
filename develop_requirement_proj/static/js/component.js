@@ -104,8 +104,8 @@
         let message=''
         let code=jqXHR.status
         if (code == 401 || code==403) { 
-        window.location.reload();
-            message = 'Reload page...';
+            // window.location.reload();
+            message = 'Permission deny.';
         }else if( code == 500 ) {
             message = 'Server error. Please connect devloper.';
         }else if( textStatus === 'timeout' ) {
@@ -126,8 +126,8 @@
     }
     //  Restrict input number only
     function ValidateNumber(e, pnumber){
-        // let reg = /^(([1-9]\d?(\.\d?[1-9])?)|(0(\.\d?[1-9])?)|100)$/;
-        let reg = /^(0?[1-9]|[1-9][0-9])$/;
+        let reg = /^(([1-9]\d?(\.\d?[1-9])?)|(0(\.\d?[1-9])?)|100)$/;
+        // let reg = /^(0?[1-9]|[1-9][0-9])$/;
         if (!reg.test(pnumber)){
             $(e).val(reg.exec($(e).val()));
         }
@@ -1912,7 +1912,7 @@
 //  Initiator pending...
                 case 'P5':
                     $('#FormRequest').fadeOut(0);
-                    $('#FormUpload').prop('style','display:none !important;');
+                    // $('#FormUpload').prop('style','display:none !important;');
                     get_schedulelist(schedule_data);
                     get_filelist(id);
                     $('#tag_div').parent('div').fadeIn(0);

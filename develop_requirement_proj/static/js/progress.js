@@ -422,7 +422,30 @@ let scheduleEnd='2020-08-20T08:26:38.093183Z';
 
 progress_json=get_progress();
 
+
+
+
 $(function(){
+    //	Init Daterangepicker
+        function init_dev_datepicker(target){
+            $(target).daterangepicker({
+                applyButtonClasses:'btn btn-info',
+                cancelButtonClasses:'btn btn-warning',
+                autoUpdateInput: false,
+                locale: {
+                    cancelLabel: 'Clear',
+                    format: 'YYYY-MM-DD '
+                }
+            });
+            $(target).on('apply.daterangepicker', function(ev, picker) {
+                $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+                $(target).valid();
+                $(this).trigger('change');
+            });
+            $(target).on('cancel.daterangepicker', function(ev, picker) {
+                $(this).val('');
+            });
+        }
     // render_progress_schedule(progress_json,scheduleStart,scheduleEnd);
     //	Add Milestone
         $(document).on('click','#add_milestone',function(){
@@ -441,25 +464,7 @@ $(function(){
             $('body').append(milestoneModal);
 
             //	Init Daterangepicker
-                $('#est_dev_period').daterangepicker({
-                    applyButtonClasses:'btn btn-info',
-                    cancelButtonClasses:'btn btn-warning',
-                    autoUpdateInput: false,
-                    locale: {
-                        cancelLabel: 'Clear',
-                        format: 'YYYY-MM-DD '
-                    }
-                });
-                $('#est_dev_period').on('apply.daterangepicker', function(ev, picker) {
-                    $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
-                    $('#est_dev_period').valid();
-                    $(this).trigger('change');
-                });
-                $('#est_dev_period').on('cancel.daterangepicker', function(ev, picker) {
-                    $(this).val('');
-                });
-
-
+            init_dev_datepicker('#est_dev_period')
 
             $('#milestoneModal').modal('show');
         });
@@ -506,12 +511,13 @@ $(function(){
         $(document).on('click','.update_progress',function (){
             let row=$(this).parents('tr').data('row');
             fillin_milestone(row);
+            init_dev_datepicker('#est_dev_period')
             //	Show button
             $('#milestoneModal .editShow').fadeIn(0);
             $('#addProgress').fadeOut(0);
 
             $('#FormAddMilestone').data('id',row['id']);
-            $('#FormAddMilestone').find('input textarea').prop('disabled',false);
+            $('#FormAddMilestone').find('input,textarea').prop('disabled',false);
 
             $('#milestone_modal_title').text('Edit milestone');
             avatar_reload($('#milestoneModal').find('.sticker'));
@@ -535,10 +541,10 @@ $(function(){
         });
         //  存下變更過的值
         let patch_progress_field=[];
-        $('#FormAddMilestone').find('input,textarea').on('change',function(){
+        // $('#FormAddMilestone').find('input,textarea').on('change',function(){
+        $(document).on('change','#FormAddMilestone input,#FormAddMilestone textarea',function(){
             let target=$(this).prop('name');
-
-            if(patch_progress_field.includes(target)==false)patch_progress_field.push(target);
+            if(patch_progress_field.includes(target)==false) patch_progress_field.push(target);
         });
         $(document).on('click','#updateProgress',function (){
             if($('#FormAddMilestone').validate().form()){
@@ -546,18 +552,20 @@ $(function(){
                 let id=$('#FormAddMilestone').data('id');
                 let order_id=$('#requestModal').data('order_id');
                 let ROWS;
-                $.each(patch_progress_field,function(i,key){
-                    let value=$('#FormAddMilestone').find('[name='+key+']').val()
-                    if(key=='est_dev_period'){
-                        let start_time=new Date(value.split(' - ')[0]).toISOString();
-                        let end_time=new Date(value.split(' - ')[1]).toISOString();
-                        formdata['start_time']=start_time;
-                        formdata['end_time']=end_time;
-                    }else formdata[key]=value;
-                });
-                patch_progress_field=[];
-                $.when(patch_progress(id,formdata)).then(ROWS=get_progress(order_id));
-                render_progress_schedule(ROWS);
+                if(patch_progress_field.length!=0){
+                  $.each(patch_progress_field,function(i,key){
+                      let value=$('#FormAddMilestone').find('[name='+key+']').val()
+                      if(key=='est_dev_period'){
+                          let start_time=new Date(value.split(' - ')[0]).toISOString();
+                          let end_time=new Date(value.split(' - ')[1]).toISOString();
+                          formdata['start_time']=start_time;
+                          formdata['end_time']=end_time;
+                      }else formdata[key]=value;
+                  });
+                  patch_progress_field=[];
+                  $.when(patch_progress(id,formdata)).then(ROWS=get_progress(order_id));
+                  render_progress_schedule(ROWS);
+                }
                 $('#milestoneModal').modal('hide');
             }
         });
@@ -574,4 +582,25 @@ $(function(){
         $('#milestoneModal').on('hide.bs.modal',function(){
             $('#FormAddMilestone').find('input,textarea').removeClass('border-danger');
         });
+        // $('#milestoneModal').on('shown.bs.modal',function(){
+        //     console.log('Progress Modal');
+        //     //	Init Daterangepicker
+        //     $('#est_dev_period').daterangepicker({
+        //         applyButtonClasses:'btn btn-info',
+        //         cancelButtonClasses:'btn btn-warning',
+        //         autoUpdateInput: false,
+        //         locale: {
+        //             cancelLabel: 'Clear',
+        //             format: 'YYYY-MM-DD '
+        //         }
+        //     });
+        //     $('#est_dev_period').on('apply.daterangepicker', function(ev, picker) {
+        //         $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+        //         $('#est_dev_period').valid();
+        //         $(this).trigger('change');
+        //     });
+        //     $('#est_dev_period').on('cancel.daterangepicker', function(ev, picker) {
+        //         $(this).val('');
+        //     });
+        // });
 });
