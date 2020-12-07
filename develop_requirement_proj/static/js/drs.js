@@ -335,8 +335,10 @@ $(function(){
                                                 </div>`;
                                 target.append(loadinghtml);
                             },
-                            error: function ( result, textStatus, XMLHttpRequest ){
-                                console.log( result );  console.log( textStatus ); console.log('Uploading fail~')
+                            error: function ( jqXHR, textStatus, errorThrown,exception ){
+                                console.log('Uploading fail~')
+                                errormsg( jqXHR, textStatus, errorThrown,exception)
+                                $('#filelist').bootstrapTable('remove',{field:'id',values:['New']});
                             },
                             success: function ( result, textStatus, XMLHttpRequest ){
                                 let id=result.id
