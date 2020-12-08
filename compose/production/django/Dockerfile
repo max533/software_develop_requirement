@@ -17,7 +17,8 @@ RUN apt-get update \
   && unzip -d /opt /opt/instantclient-basic-linux.x64-12.2.0.1.0.zip \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-  && rm -rf /var/lib/apt/lists/*
+  && rm -rf /var/lib/apt/lists/* \
+  && rm -rf /app/utility/instantclient-basic-linux.x64-12.2.0.1.0.zip
 
 COPY ./requirements /requirements
 
@@ -94,8 +95,7 @@ RUN mkdir -p /shared \
   && mkdir -p /log \
   && chown -R django:django /shared \
   && chown -R django:django /log \
-  && chown -R django:django /mnt \
-  && rm -rf /app/utility/instantclient-basic-linux.x64-12.2.0.1.0.zip
+  && chown -R django:django /mnt
 
 USER django
 
