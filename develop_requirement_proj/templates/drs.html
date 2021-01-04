@@ -44,7 +44,7 @@
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.18.0/dist/bootstrap-table.min.js"></script>
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.17.1/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.min.js"></script>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/additional-methods.min.js"></script>	
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/additional-methods.min.js"></script>
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote.min.js"></script>
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-numerator@0.2.1/jquery-numerator.min.js"></script>
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/filesize@6.1.0/lib/filesize.min.js"></script>
@@ -107,7 +107,7 @@
 				<!-- title -->
 				<h4 class="text-secondary pt-3" id="pagetitle"> System Develop requirement management/ List </h4>
 			</div>
-				
+
             <div class="d-inline-flex align-items-center" id="navBTNs">
                 <form class="form-inline my-2 my-lg-0" >
 					<div class="dropdown ml-3 mr-3" id="navSelectMessage">
@@ -117,7 +117,7 @@
 								<h6>Read more <i class="fa fa-ellipsis-h ml-1"></i> </h6>
 							</div> -->
 						</div>
-						<span id="messageCount" style="display:none;"> 0 </span> 
+						<span id="messageCount" style="display:none;"> 0 </span>
 					</div>
 
                     <div class="dropdown" id="navSelectUser">
@@ -413,27 +413,31 @@
 			</div>
 		</div>
 	</div>
-
-
-
-<footer>
-    <div class="footer-copyright py-1 text-secondary row align-items-center justify-content-center font-weight-bold mt-5" style="z-index:99999;margin-top: auto;">
-        <div class="row align-items-baseline pl-1 pr-1">
+</body>
+<footer style="font-size: .9rem;">
+    <div class="footer-copyright py-1 text-secondary row align-items-center justify-content-center font-weight-bold mt-3 pl-2 pr-2" style="margin-top: auto;">
+        <div class="row align-items-baseline pl-1 pr-1" style="font-weight: 500;">
             <img src="{% static 'images/logolandscape.svg' %}" width="50" style="max-width: 5rem;" class="mr-1">
             <img src="{% static 'images/wistron_SVG.svg' %}" width="50" style="max-width: 5rem;" class="mr-2">
-            © 2020 Copyright
+            © 2021 Copyright
         </div>
-        <div class="pt-2 pl-1 pr-1">
+        <div class="row pt-2 ml-1 mr-1" style="font-weight: 500;">
             &emsp;&Iota;&emsp;
-            <a href="http://dqms.wistron.com/">dqms.wistron.com</a>
+            <a href="http://dqms.wistron.com/" class="text-muted">dqms.wistron.com</a>
             &emsp;&Iota;&emsp;
         </div>
-        <div class="pt-2 pl-1 pr-1" style="font-size: .8rem; font-weight: 500;">
+        <div class="row pt-2 ml-1 mr-1" style="font-weight: 500;">
             DQMS Dev team/
-            <a href="http://10.32.20.124:50005/department/ESQD00" class="text-primary ml-1">ESQD00</a>,
-            <a href="http://10.32.20.124:50005/department/ESQE00" class="text-primary">ESQE00</a>
+            <a href="http://10.32.20.124:50005/department/ESQD00" class="text-muted ml-1">ESQD00</a>,
+            <a href="http://10.32.20.124:50005/department/ESQE00" class="text-muted">ESQE00</a>,
+            <a href="http://10.32.20.124:50005/department/ESQT00" class="text-muted">ESQT00</a>
+            &emsp;&Iota;&emsp;
+        </div>
+        <div class="row pt-2 ml-1 mr-1" style="font-weight: 500;">
+            Frontend/
+            <a href="http://10.32.20.124:50005/profile/10712714" class="text-muted ml-1" target="_blank"> Leo Tu</a>&emsp;
+            Backend/
+            <a href="http://10.32.20.124:50005/profile/10612704" class="text-muted ml-1" target="_blank"> Jeff SH Wang</a>
         </div>
     </div>
 </footer>
-
-</body>
