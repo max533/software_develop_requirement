@@ -17,7 +17,7 @@ $(function(){
     //  STICKER to teamroster profile page
     $(document).on('click','.sticker',function(){
         let employee_id=$(this).data('employee_id');
-        let teamroster_profile_path='http://10.32.20.124:50005/profile/'+employee_id;
+        let teamroster_profile_path='http://10.32.48.118:50005/profile/'+employee_id;
         window.open(teamroster_profile_path, '_blank');
     });
 
@@ -615,11 +615,11 @@ $(function(){
                     text_color='color:var(--grey); opacity:.5;';
                     badge_color='background-color:var(--grey); opacity:.5';
                     read=true;
-                } 
+                }
 
                 let order_id=info['link'].split('?order=').pop();
                 let message=info['actor']+' '+info['verb']+' '+info['action_object'];
-                let html_temp=`<div class="dropdown-item d-inline-flex align-items-center notification_item" 
+                let html_temp=`<div class="dropdown-item d-inline-flex align-items-center notification_item"
                                 style=`+text_color+`" data-order_id="`+order_id+`" data-id="`+info['id']+`" data-read="`+read+`"
                                 >
                                     <h6 class="badge badge-secondary mr-3" style="`+badge_color+`"> Form`+order_id+`</h6>
@@ -632,13 +632,13 @@ $(function(){
                                         <h6 class="ellipsis">`+message+`</h6>
                                     </div>
                                 </div>`;
-                $('#notification_div').append(html_temp); 
+                $('#notification_div').append(html_temp);
             }
         });
         // let read_more_temp=`<div class="dropdown-item text-center align-items-baseline" id="notification_read_more">
         //                         <h6 clasee="text-secondary">Read more <i class="fa fa-ellipsis-h ml-1"></i> </h6>
         //                     </div>`;
-        // $('#notification_div').append(read_more_temp);      
+        // $('#notification_div').append(read_more_temp);
     });
     $(document).on('click','#navSelectMessage .notification_item',function(){
         if($(this).data('read')==false ) {
@@ -665,9 +665,9 @@ $(function(){
     });
 
 
-   
 
-    
+
+
 
 });
 
