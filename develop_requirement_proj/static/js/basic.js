@@ -45,7 +45,7 @@ $(function(){
 
     // image prop path
     $('#navUser,#user').find('img').data('employee_id',loginInfo.employee_id).prop('src',images['defaultavatar']);
-    $('#user').prop('href','http://10.32.20.124:50005/profile/'+loginInfo.employee_id);
+    $('#user').prop('href','http://10.32.48.118:50005/profile/'+loginInfo.employee_id);
     avatar_reload($('#navUser').find('img'));
     avatar_reload($('#user').find('img'));
     $('#user,#navUser').find('span').text(loginInfo.display_name.split('/Wistron')[0]);
@@ -147,22 +147,22 @@ $(function(){
                         phase='';
                     switch (p) {
                         case 'P0':
-                            phase='Initiatized order';  
+                            phase='Initiatized order';
                             break;
                         case 'P1':
-                            phase="Initiator's supervisor review"  
+                            phase="Initiator's supervisor review"
                             break;
                         case 'P2':
-                            phase="Receiver accept order"    
+                            phase="Receiver accept order"
                             break;
-                        case 'P3':  
-                            phase="All participates negotiate schedule"  
+                        case 'P3':
+                            phase="All participates negotiate schedule"
                             break;
-                        case 'P4': 
-                            phase="Receiver's supervisor review" 
+                        case 'P4':
+                            phase="Receiver's supervisor review"
                             break;
                         case 'P5':
-                            phase="Developer develop"  
+                            phase="Developer develop"
                             break;
                         default:
                             break;
@@ -170,7 +170,7 @@ $(function(){
                     return phase;
                 },
             },
-            
+
             {
                 field:'status_detail',
                 title:'Status',
@@ -222,7 +222,7 @@ $(function(){
                                     <img class="sticker mr-2" src="`+images['defaultavatar']+`" data-employee_id="`+employee_id+`">
                                     <div class="d-inline-flex align-items-baseline" style="white-space: nowrap;">
                                         <small class="ellipsis text-dark mb-1 mr-1">`+role+`/ `+display_name.split('/')[0]+`</small>
-                                        <small class="`+status_color+`" style="font-weight: 700;">`+status+`</small> 
+                                        <small class="`+status_color+`" style="font-weight: 700;">`+status+`</small>
                                     </div>
                                 </div>`;
                         return html;
