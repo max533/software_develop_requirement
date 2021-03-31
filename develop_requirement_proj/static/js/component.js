@@ -608,9 +608,9 @@
                 $('#sel_accounts').append('<option value="" selected> Select... </option>');
 
                 //  DQMS tricky rule
-                if(sub_function=='QT_DQMS'){
+                if(sub_function=='DSPA_DS'){
                     $.each(accounts,function(){
-                        let account_info=$(this)[0];
+                        let account_info = $(this)[0];
                         if(account_info['code']=='WT-EBG') $('#sel_accounts').append('<option value="'+account_info['id']+'">'+account_info['code']+'</option>');
                     });
                 }else{
@@ -633,7 +633,7 @@
 
                 //  DQMS tricky rule
                 $.each(projects,function(){
-                    let project_info=$(this)[0];
+                    let project_info = $(this)[0];
                     $('#sel_projects').append('<option value="'+project_info['id']+'">'+project_info['name']+'</option>');
                 });
 
@@ -652,6 +652,7 @@
                 $('#sel_assigners').append('<option value="" selected> Select... </option>');
                 if(project_id.length!==0 && sub_function!==0){
                     assigners=get_assigners(sub_function,project_id);
+                    console.log(assigners)
                     $.each(assigners,function(index,v){
                         let name=$(this)[0]['display_name'].split('/Wistron')[0];
                         let phone_extension=$(this)[0]['extension'];
