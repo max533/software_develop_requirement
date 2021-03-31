@@ -265,7 +265,10 @@ $(function(){
                     return (value.id+' _ '+value.code);
                 },
                 formatter:function(value, row, index){
-                    let html=`<span class="ellipsis">`+value.code+`</span>`
+                    let html = '-'
+                    if(value){
+                        html=`<span class="ellipsis">`+value.code+`</span>`
+                    }
                     return html;
                 },
             },
@@ -279,7 +282,10 @@ $(function(){
                     return (value.id+' _ '+value.name);
                 },
                 formatter:function(value, row, index){
-                    let html=`<span class="ellipsis">`+value.name+`</span>`
+                    let html = '-'
+                    if(value){
+                        html=`<span class="ellipsis">`+value.name+`</span>`
+                    }
                     return html;
                 },
             },
@@ -292,7 +298,10 @@ $(function(){
                     return value;
                 },
                 formatter:function(value, row, index){
-                    let html=`<span class="ellipsis">`+value+`</span>`
+                    let html = '-'
+                    if(value){
+                        html=`<span class="ellipsis">`+value+`</span>`
+                    }
                     return html;
                 },
             },
@@ -302,14 +311,19 @@ $(function(){
                 filterControl:'input',
                 filterControlPlaceholder:'Search name',
                 formatter:function(value, row, index){
-                    let html=`<div class="d-inline-flex align-items-top mt-1">
-                                <img class="sticker mr-2" src="`+images['defaultavatar']+`" data-employee_id="`+value.employee_id+`">
-                                <div>
-                                    <small class="ellipsis text-dark mb-1 mr-1">
-                                        `+value.display_name.split('/Wistron')[0]+`
-                                    </small>
-                                </div>
-                            </div>`;
+                    let html = '-'
+                    if(typeof(value)=='string'&&value){
+                        html = `<span>${value}(non-found)</span>`;
+                    }else if(typeof(value)=='object'){
+                        html = `<div class="d-inline-flex align-items-top mt-1">
+                                    <img class="sticker mr-2" src="`+images['defaultavatar']+`" data-employee_id="`+value.employee_id+`">
+                                    <div>
+                                        <small class="ellipsis text-dark mb-1 mr-1">
+                                            `+value.display_name.split('/Wistron')[0]+`
+                                        </small>
+                                    </div>
+                                </div>`;
+                    }
                     return html;
                 },
             },
@@ -319,8 +333,11 @@ $(function(){
                 filterControl:'input',
                 filterControlPlaceholder:'Search name',
                 formatter:function(value, row, index){
-                    let avatar=avatar_get(value.employee_id);
-                    let html=`<div class="d-inline-flex align-items-top mt-1">
+                    let html = '-'
+                    if(typeof(value)=='string'&&value){
+                        html = `<span>${value}(non-found)</span>`;
+                    }else if(typeof(value)=='object'){
+                        html=`<div class="d-inline-flex align-items-top mt-1">
                                     <img class="sticker mr-2" src="`+images['defaultavatar']+`" data-employee_id="`+value.employee_id+`">
                                     <div>
                                         <small class="ellipsis text-dark mb-1 mr-1">
@@ -328,6 +345,7 @@ $(function(){
                                         </small>
                                     </div>
                                 </div>`;
+                    }
                     return html;
                 },
             },
@@ -337,7 +355,10 @@ $(function(){
                 filterControl:'input',
                 filterControlPlaceholder:'Search title',
                 formatter:function(value, row, index){
-                    let html='<div class="ellipsis">'+value+'</div>';
+                    let html = '-'
+                    if(value){
+                        html='<div class="ellipsis">'+value+'</div>';
+                    }
                     return html;
                 },
             },
@@ -347,8 +368,11 @@ $(function(){
                 filterControl:'input',
                 filterControlPlaceholder:'Search',
                 formatter:function(value, row, index){
-                    value=value.replace(/\\/g,'');
-                    let html='<div class="ellipsis">'+value+'</div>';
+                    let html = '-'
+                    if(value){
+                        value=value.replace(/\\/g,'');
+                        html='<div class="ellipsis">'+value+'</div>';
+                    }
                     return html;
                 },
             },
@@ -359,8 +383,11 @@ $(function(){
                 sortable: true,
                 filterControl:'input',
                 formatter:function(value, row, index){
-                    let date = isotime_local(value);
-                    let html='<div class="ellipsis">'+date+'</div>';
+                    let html = '-'
+                    if(value){
+                        let date = isotime_local(value);
+                        html='<div class="ellipsis">'+date+'</div>';
+                    }
                     return html;
                 },
                 filterControlPlaceholder:'2000-01-01 - 2000-01-01',

@@ -499,7 +499,7 @@
         return src_path.toString();
     }
     function avatar_default_get(employee_id){
-        let teamroaster_path='http://10.32.48.118:50005/img/avatar/default-01.svg';
+        let teamroaster_path='http://10.32.48.118:50005/img/avatar/default-1.svg';
         if(employee_id!==undefined){
             employee_id=employee_id.toString();
             let num=(Number(employee_id.substr(-2,2))+Number(employee_id.substr(-4,2)))%100;
@@ -510,7 +510,6 @@
         return teamroaster_path;
     }
     function avatar_reload(target){
-        let teamroaster_profile_path='http://10.32.48.118:50005/profile/';
         target.prop('src',images['defaultavatar']);
         target.one('load',function(){
             let employee_id=$(this).data('employee_id');
@@ -1318,9 +1317,17 @@
                     break;
                 case 'initiator':
                 case 'assigner':
-                    field.text(form_data[field_name]['display_name']);
-                    field.siblings('img').prop('src',images['defaultavatar']).data('employee_id',form_data[field_name]['employee_id']);
-                    avatar_reload(field.siblings('img'));
+                    const name = form_data[field_name]
+                    field.siblings('img').prop('src',images['defaultavatar'])
+                    if(!name){
+                        field.text('-');
+                    }else if(typeof(name)=='string'&&name){
+                        field.text(form_data[field_name]+'(non-found)')
+                    }else if(typeof(name)=='object'){
+                        field.text(form_data[field_name]['display_name']);
+                        field.siblings('img').data('employee_id',form_data[field_name]['employee_id']);
+                        avatar_reload(field.siblings('img'))
+                    }
                     break;
                 case 'developers':
                     if(form_data['developers']['contactor']==''){
