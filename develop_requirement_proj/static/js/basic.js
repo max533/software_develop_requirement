@@ -183,6 +183,9 @@ $(function(){
                             role=d.role,
                             status=d.response,
                             status_color='text-info';
+                        if(!display_name) display_name = "non-found"
+                        else display_name = display_name.split('/')[0]
+
                         switch (status) {
                             case 'Approve':
                                 status='approve';
@@ -218,10 +221,10 @@ $(function(){
                             default:
                                 break;
                         }
-                        let html=`<div class="d-inline-flex align-items-top mt-1">
+                        html=`<div class="d-inline-flex align-items-top mt-1">
                                     <img class="sticker mr-2" src="`+images['defaultavatar']+`" data-employee_id="`+employee_id+`">
                                     <div class="d-inline-flex align-items-baseline" style="white-space: nowrap;">
-                                        <small class="ellipsis text-dark mb-1 mr-1">`+role+`/ `+display_name.split('/')[0]+`</small>
+                                        <small class="ellipsis text-dark mb-1 mr-1">`+role+`/ `+display_name+`</small>
                                         <small class="`+status_color+`" style="font-weight: 700;">`+status+`</small>
                                     </div>
                                 </div>`;
@@ -229,7 +232,7 @@ $(function(){
                     }
                     let html=``
                     $.each(value.action,function(key,whoturn){
-                        html+=status_temp(whoturn);
+                        html += status_temp(whoturn);
                     });
                     html=`<div>`+html+`</div>`
                     return html;
@@ -251,6 +254,33 @@ $(function(){
                                     <span class="col-6">`+value+`</span>
                                     <i class="ml-2 btn btn-success btn-sm fa fa-file-alt ezinfoModal_trigger"  data-id="`+value+`"></i>
                                 </div>`;
+                    }
+                    return html;
+                },
+            },
+            {
+                field:'title',
+                title:'Title',
+                filterControl:'input',
+                filterControlPlaceholder:'Search title',
+                formatter:function(value, row, index){
+                    let html = '-'
+                    if(value){
+                        html='<div class="ellipsis">'+value+'</div>';
+                    }
+                    return html;
+                },
+            },
+            {
+                field:'description',
+                title:'Description',
+                filterControl:'input',
+                filterControlPlaceholder:'Search',
+                formatter:function(value, row, index){
+                    let html = '-'
+                    if(value){
+                        value=value.replace(/\\/g,'');
+                        html='<div class="ellipsis">'+value+'</div>';
                     }
                     return html;
                 },
@@ -345,33 +375,6 @@ $(function(){
                                         </small>
                                     </div>
                                 </div>`;
-                    }
-                    return html;
-                },
-            },
-            {
-                field:'title',
-                title:'Title',
-                filterControl:'input',
-                filterControlPlaceholder:'Search title',
-                formatter:function(value, row, index){
-                    let html = '-'
-                    if(value){
-                        html='<div class="ellipsis">'+value+'</div>';
-                    }
-                    return html;
-                },
-            },
-            {
-                field:'description',
-                title:'Description',
-                filterControl:'input',
-                filterControlPlaceholder:'Search',
-                formatter:function(value, row, index){
-                    let html = '-'
-                    if(value){
-                        value=value.replace(/\\/g,'');
-                        html='<div class="ellipsis">'+value+'</div>';
                     }
                     return html;
                 },
