@@ -78,7 +78,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = [
             'confirm_status',
-            'created_time'
+            'created_time',
             'update_time',
             'version',
         ]
@@ -93,8 +93,8 @@ class ProgressSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        employee_id = ret['editor']
-        ret['editor'] = self.context['employees'][employee_id]
+        employees = self.context['employees']
+        ret['editor'] = employees.get(ret['editor'], ret['editor'])
         return ret
 
     class Meta:
@@ -123,8 +123,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        employee_id = ret['editor']
-        ret['editor'] = self.context['employees'][employee_id]
+        employees = self.context['employees']
+        ret['editor'] = employees.get(ret['editor'], ret['editor'])
         return ret
 
     class Meta:
@@ -170,6 +170,7 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
                 self.fields.pop(field_name)
 
     def get_status_detail(self, obj):
+        employees = self.context['employees']
         for key in obj.status.keys():
             match = re.fullmatch('^P[0-5]$', key)
             if match:
@@ -187,12 +188,16 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
                 employee_id = (getattr(obj, key))['contactor']
                 action.update({'role': key})
                 action.update({'response': obj.status[phase][key]})
-            elif key.isdigit():
+            else:
                 employee_id = key
                 action.update({'role': 'signaturer'})
                 action.update({'response': obj.status[phase][employee_id]})
 
-            employee = self.context['employees'][employee_id]
+            if employee_id in employees:
+                employee = employees.get(employee_id)
+            else:
+                employee = {'employee_id': employee_id}
+
             action.update(employee)
             actions.append(action)
 
@@ -203,43 +208,34 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         """
         Transform account id & project id to account & project information.
-        And transform emeployee_id to employee information.
+        And transform employee_id to employee information.
         """
         ret = super().to_representation(instance)
-        if 'account' in ret:
-            ret['account'] = self.context['accounts'].get(ret['account'], '')
+        accounts = self.context['accounts']
+        employees = self.context['employees']
+        projects = self.context['projects']
+        ret['account'] = accounts.get(ret['account'], ret['account'])
+        ret['initiator'] = employees.get(ret['initiator'], ret['initiator'])
+        ret['project'] = projects.get(ret['project'], ret['project'])
+        ret['assigner'] = employees.get(ret['assigner'], ret['assigner'])
 
-        if 'initiator' in ret:
-            ret['initiator'] = self.context['employees'].get(ret['initiator'], '')
+        developers = ret['developers']
 
-        if 'project' in ret:
-            ret['project'] = self.context['projects'].get(ret['project'], '')
+        if 'member' in developers and developers['member']:
+            result = []
+            member = developers['member']
+            for each_member in member:
+                result.append(employees.get(each_member, each_member))
+            developers['member'] = result
+        else:
+            developers['member'] = []
 
-        if 'assigner' in ret:
-            ret['assigner'] = self.context['employees'].get(ret['assigner'], '')
+        if 'contactor' in developers and developers['contactor']:
+            developers['contactor'] = employees.get(developers['contactor'], developers['contactor'])
+        else:
+            developers['contactor'] = ''
 
-        if 'developers' in ret:
-            if 'member' in ret['developers']:
-                member = ret['developers']['member']
-                if member:
-                    result = []
-                    # Jsonfield will encounter some problem in serializer and it will keep convert data in html render
-                    # The browser show error message that it will not convert data again after converting
-                    # We use data type to check whether convert data or not
-                    first_member = member[0]
-                    if type(first_member) == str:
-                        for each_member in member:
-                            result.append(self.context['employees'].get(each_member, ''))
-                        ret['developers']['member'] = result
-                else:
-                    ret['developers']['member'] = []
-            else:
-                ret['developers']['member'] = []
-            if 'contactor' in ret['developers']:
-                if type(ret['developers']['contactor']) == str:
-                    ret['developers']['contactor'] = self.context['employees'].get(ret['developers']['contactor'], '')
-            else:
-                ret['developers']['contactor'] = ''
+        ret['developers'] = developers
 
         return ret
 
@@ -280,19 +276,20 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('There are not contactor in developers.')
         else:
             if value['contactor'] not in self.context['employees']:
-                raise serializers.ValidationError('There are not such person.')
+                error_message = "There are not such person with developer's contactor field in HR database."
+                raise serializers.ValidationError(error_message)
 
-        if 'member' in value:
+        if 'member' in value and value['member']:
             identity_list = []
             members = value['member']
-            if members:
-                for member in members:
-                    if member not in self.context['employees']:
-                        identity_list.append(False)
-                    else:
-                        identity_list.append(True)
-                if False in identity_list:
-                    raise serializers.ValidationError('There are not such person.')
+            for member in members:
+                if member not in self.context['employees']:
+                    identity_list.append(False)
+                else:
+                    identity_list.append(True)
+            if False in identity_list:
+                error_message = "There are not such person with developer's member field in HR database."
+                raise serializers.ValidationError(error_message)
         return value
 
     def validate_status(self, value):
@@ -532,13 +529,11 @@ class SignatureSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         """
-        Transform emeployee_id to employee information.
+        Transform employee_id to employee information.
         """
         ret = super().to_representation(instance)
-
-        if 'signer' in ret:
-            ret['signer'] = self.context['employees'].get(ret['signer'], '')
-
+        employees = self.context['employees']
+        ret['signer'] = employees.get(ret['signer'], ret['signer'])
         return ret
 
     class Meta:
@@ -557,46 +552,7 @@ class SignatureSerializer(serializers.ModelSerializer):
 class OrderTrackerSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
-        """
-        Transform account id & project id to account & project information.
-        And transform emeployee_id to employee information.
-        """
-        ret = super().to_representation(instance)
-        if 'account' in ret:
-            ret['account'] = self.context['accounts'].get(ret['account'], '')
-
-        if 'initiator' in ret:
-            ret['initiator'] = self.context['employees'].get(ret['initiator'], '')
-
-        if 'project' in ret:
-            ret['project'] = self.context['projects'].get(ret['project'], '')
-
-        if 'assigner' in ret:
-            ret['assigner'] = self.context['employees'].get(ret['assigner'], '')
-
-        if 'developers' in ret:
-            if 'member' in ret['developers']:
-                member = ret['developers']['member']
-                if member:
-                    result = []
-                    # Jsonfield will encounter some problem in serializer and it will keep convert data in html render
-                    # The browser show error message that it will not convert data again after converting
-                    # We use data type to check whether convert data or not
-                    first_member = member[0]
-                    if type(first_member) == str:
-                        for each_member in member:
-                            result.append(self.context['employees'].get(each_member, ''))
-                        ret['developers']['member'] = result
-                else:
-                    ret['developers']['member'] = []
-            else:
-                ret['developers']['member'] = []
-            if 'contactor' in ret['developers']:
-                if type(ret['developers']['contactor']) == str:
-                    ret['developers']['contactor'] = self.context['employees'].get(ret['developers']['contactor'], '')
-            else:
-                ret['developers']['contactor'] = ''
-
+        ret = OrderDynamicSerializer(context=self.context).to_representation(instance)
         return ret
 
     class Meta:
