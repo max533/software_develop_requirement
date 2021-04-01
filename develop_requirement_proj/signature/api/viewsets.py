@@ -133,9 +133,9 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
 
         params = {'bg': 'EBG'}
         assigner_list = []
-        if kwarg['sub_function'] in ['DQMS']:
+        if kwarg['sub_function'] in ['DS']:
             # Use kwarg['sub_function'] to search department id of the assigner
-            params['fn_lvl1'] = 'QT'
+            params['fn_lvl1'] = 'DSPA'
             params['fn_lvl2'] = kwarg['sub_function']
             try:
                 departments = self.get_department_via_search(**params)
