@@ -522,7 +522,7 @@ class OrderViewSet(CacheMixin,
         if order_tracker_serializer.is_valid(raise_exception=True):
             order_tracker_serializer.save()
 
-        link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+        link = f"{self.request.build_absolute_uri(location='/')}?orders={order_id}"
         if 'P0' in order_status:
             direction_flag = order_status['P0'].get('initiator', None)
             if direction_flag == 'Approve':
@@ -533,44 +533,54 @@ class OrderViewSet(CacheMixin,
                     f"skip_signature_flag:'{skip_signature_flag}'"
                 )
                 logger.debug(debug_message)
-                # Find next signer
-                next_signer, next_signer_department_id = self.find_next_signer(order_id, signer=order.initiator)
-                # Create Signature
-                signature_next = {
-                    'sequence': 1,
-                    'signer': next_signer,
-                    'sign_unit': next_signer_department_id,
-                    'status': '',
-                    'comment': '',
-                    'role_group': 'initiator',
-                    'order': order
-                }
-                Signature.objects.create(**signature_next)
-                # Create default schedule
-                schedule_start = {
-                    'event_name': 'Start',
-                    'complete_rate': 0,
-                    'order': order
-                }
-                schedule_end = {
-                    'event_name': 'End',
-                    'complete_rate': 100,
-                    'order': order
-                }
-                Schedule.objects.create(**schedule_start)
-                Schedule.objects.create(**schedule_end)
-                # Order Status Change
-                order.status = {
-                    "P1": {
-                        next_signer: ""
+                if skip_signature_flag:
+                    order.status = {
+                        "P2": {
+                            "assigner": ""
+                        }
                     }
-                }
-                order.save()
-                # Send email to next signer
-                self.send_mail_2_single_user(next_signer, link, category='signing')
+                    order.save()
+                    # Send email to assigner
+                    self.send_mail_2_single_user(order.assigner, link, category='confirm')
+                elif not skip_signature_flag and create_new_signaure_flag:
+                    # Find next signer
+                    next_signer, next_signer_department_id = self.find_next_signer(order_id, signer=order.initiator)
+                    # Create Signature
+                    signature_next = {
+                        'sequence': 1,
+                        'signer': next_signer,
+                        'sign_unit': next_signer_department_id,
+                        'status': '',
+                        'comment': '',
+                        'role_group': 'initiator',
+                        'order': order
+                    }
+                    Signature.objects.create(**signature_next)
+                    # Create default schedule
+                    schedule_start = {
+                        'event_name': 'Start',
+                        'complete_rate': 0,
+                        'order': order
+                    }
+                    schedule_end = {
+                        'event_name': 'End',
+                        'complete_rate': 100,
+                        'order': order
+                    }
+                    Schedule.objects.create(**schedule_start)
+                    Schedule.objects.create(**schedule_end)
+                    # Order Status Change
+                    order.status = {
+                        "P1": {
+                            next_signer: ""
+                        }
+                    }
+                    order.save()
+                    # Send email to next signer
+                    self.send_mail_2_single_user(next_signer, link, category='signing')
 
                 # Send notification to all order attendent
-                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+                link = f"{self.request.build_absolute_uri(location='/')}?orders={order_id}"
                 category = 'initialization'
                 actor = self.request.user.get_english_name()
                 verb = 'initialize'
@@ -605,7 +615,7 @@ class OrderViewSet(CacheMixin,
         if order_tracker_serializer.is_valid(raise_exception=True):
             order_tracker_serializer.save()
 
-        link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+        link = f"{self.request.build_absolute_uri(location='/')}?orders={order_id}"
         if 'P0' in order_status:
             direction_flag = order_status['P0'].get('initiator', None)
             if direction_flag == "Approve":
@@ -863,7 +873,7 @@ class OrderViewSet(CacheMixin,
                 # Send email to assigner
                 self.send_mail_2_single_user(order.assigner, link, category='reschedule')
                 # Send notification to all order attendent
-                link = f"{self.request.build_absolute_uri(location='/')}?order={order_id}"
+                link = f"{self.request.build_absolute_uri(location='/')}?orders={order_id}"
                 category = 'negotiation'
                 actor = self.request.user.get_english_name()
                 verb = 'return'
@@ -1090,7 +1100,7 @@ class SignatureViewSet(CacheMixin,
         if order_tracker_serializer.is_valid(raise_exception=True):
             order_tracker_serializer.save()
 
-        link = f"{self.request.build_absolute_uri(location='/')}?order={order.id}"
+        link = f"{self.request.build_absolute_uri(location='/')}?orders={order.id}"
         if direction_flag == 'Approve':
             if 'P1' in order.status:
                 skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order.id, 'P1')
