@@ -431,13 +431,15 @@
     #TL tbody td:last-child{
         background-color: #fff !important;
     }
-    .modal .table tr:hover td {
+    .modal .table tr td {
         overflow:visible;
         text-overflow: unset;
-        background-color: #f3f3f3;
         word-break: break-word;
         white-space: normal;
-        font-weight: 500;
+        font-size: .8rem;
+    }
+    .modal .table tr:hover td {
+        background-color: #f3f3f3;
     }
     #TL tr td.ellipsis{
       overflow:hidden !important;
