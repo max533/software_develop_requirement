@@ -300,7 +300,7 @@
         let queryParams_temp = {
             page_size: params.limit, //頁面大小
             page: (params.offset / params.limit) + 1, //頁碼
-            sortOrder: params.order, //排位命令（desc，asc）
+            sort_order: '-form_begin_time', //排位命令（desc，asc）
         };
         //  Redefine filter data
         if('filter' in params){

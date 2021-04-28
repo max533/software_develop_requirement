@@ -1,6 +1,6 @@
 $(function(){
     //  Decode URL open coresponding to request
-    let order_id=getUrlParameter('order');
+    let order_id=getUrlParameter('orders');
     if(order_id!==undefined){
         let order_response=get_single_order(order_id);
         indentify_modal_show(order_response);
