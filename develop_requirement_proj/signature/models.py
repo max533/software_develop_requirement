@@ -121,7 +121,7 @@ class Order(MPTTModel):
 class Document(models.Model):
     """ Order's Document Model """
     path = models.FileField(_("document's relative path"), max_length=4000, upload_to=upload_document)
-    name = models.TextField(_("docuemnt's name"))
+    name = models.TextField(_("document's name"))
     description = models.TextField(_("document's description"))
     size = models.PositiveIntegerField()
     update_time = models.DateTimeField(auto_now=True)
@@ -216,7 +216,7 @@ class Comment(models.Model):
 
 
 class Notification(models.Model):
-    """ Order's Notificaiton model """
+    """ Order's Notification model """
     NOTIFICATION_CATEGORY_CHOICE = [
         ('initialization', 'Initialization'),
         ('completion', 'Completion'),

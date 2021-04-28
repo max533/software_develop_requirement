@@ -1,4 +1,4 @@
-""" singature app's api viewsets.py """
+""" signature app's api viewsets.py """
 import logging
 
 from develop_requirement_proj.employee.api.serializers import (
@@ -105,7 +105,7 @@ class OptionView(QueryDataMixin, views.APIView):
         return response.Response(options)
 
 
-class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+class AssignerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
     """ Provide Assigner resource with `list` action """
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
@@ -114,11 +114,11 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
         """
         Get queryset from Account Project System and TeamRoster 2.0 System
 
-        1. DQMS assigner is the deaprtment manager which is belong to department ( QT + DQMS )
+        1. DQMS assigner is the department manager which is belong to department ( QT + DQMS )
 
-        2. TSC, PM, BMC, BIOS assigner is the deaprtment member which is belong to department ( SW + PM )
+        2. TSC, PM, BMC, BIOS assigner is the department member which is belong to department ( SW + PM )
 
-        3. Other project-based assigner is the deparment manager of the project owner
+        3. Other project-based assigner is the department manager of the project owner
         """
         queryset = []
         # Examine the required kwargs information
@@ -179,7 +179,7 @@ class AssginerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericVie
             params['projid'] = kwarg['project_id']
 
             try:
-                projects = self.get_project_via_teamroaster_project_serach(**params)
+                projects = self.get_project_via_teamroaster_project_search(**params)
             except Exception as err:
                 logger.error(err, exc_info=True)
                 raise ServiceUnavailable
@@ -260,7 +260,7 @@ class ScheduleViewSet(SignatureMixin, viewsets.ModelViewSet):
         # If Schedule Add, then Order status rollback to P3 initial status
         order = serializer.instance.order
         # Check whether P4 phase signature is finished or not
-        skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order.id, 'P4')
+        skip_signature_flag, create_new_signature_flag = self.calculate_signature_flag(order.id, 'P4')
         # Order status change
         order.status = {
             'P3': {
@@ -282,7 +282,7 @@ class ScheduleViewSet(SignatureMixin, viewsets.ModelViewSet):
         # If Schedule Add, then Order status rollback to P3 initial status
         order = serializer.instance.order
         # Check whether P4 phase signature is finished or not
-        skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order.id, 'P4')
+        skip_signature_flag, create_new_signature_flag = self.calculate_signature_flag(order.id, 'P4')
         # Order status change
         order.status = {
             'P3': {
@@ -304,7 +304,7 @@ class ScheduleViewSet(SignatureMixin, viewsets.ModelViewSet):
         order = instance.order
         instance.delete()
         # Check whether P4 phase signature is finished or not
-        skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order.id, 'P4')
+        skip_signature_flag, create_new_signature_flag = self.calculate_signature_flag(order.id, 'P4')
         # Order status change
         order.status = {
             'P3': {
@@ -337,7 +337,7 @@ class ProgressViewSet(CacheMixin, viewsets.ModelViewSet):
         return queryset
 
     def get_serializer_context(self):
-        """ Provide the employee inforamtion to use in to_representation() at serializer.py """
+        """ Provide the employee information to use in to_representation() at serializer.py """
         context = super().get_serializer_context()
         context['employees'] = self.fetch_simple_employees_from_cache()
         return context
@@ -358,7 +358,7 @@ class CommentViewSet(CacheMixin, mixins.ListModelMixin, mixins.CreateModelMixin,
         return queryset
 
     def get_serializer_context(self):
-        """ Provide the editor inforamtion to use in to_representation() at serializer.py """
+        """ Provide the editor information to use in to_representation() at serializer.py """
         context = super().get_serializer_context()
         context['employees'] = self.fetch_simple_employees_from_cache()
         return context
@@ -423,7 +423,7 @@ class OrderViewSet(CacheMixin,
         Query account, acccount, employee, function_team and sub_function_team information
         for to_represtation() function
         """
-        # TODO Use asyncio to speed up the reuqest with third-party api
+        # TODO Use asyncio to speed up the resquest with third-party api
         context = super().get_serializer_context()
         # Get project information
         context['projects'] = self.fetch_simple_projects_from_cache()
@@ -526,7 +526,7 @@ class OrderViewSet(CacheMixin,
         if 'P0' in order_status:
             direction_flag = order_status['P0'].get('initiator', None)
             if direction_flag == 'Approve':
-                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P1')
+                skip_signature_flag, create_new_signature_flag = self.calculate_signature_flag(order_id, 'P1')
                 # Debug Code
                 debug_message = (
                     f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
@@ -542,7 +542,7 @@ class OrderViewSet(CacheMixin,
                     order.save()
                     # Send email to assigner
                     self.send_mail_2_single_user(order.assigner, link, category='confirm')
-                elif not skip_signature_flag and create_new_signaure_flag:
+                elif not skip_signature_flag and create_new_signature_flag:
                     # Find next signer
                     next_signer, next_signer_department_id = self.find_next_signer(order_id, signer=order.initiator)
                     # Create Signature
@@ -579,7 +579,7 @@ class OrderViewSet(CacheMixin,
                     # Send email to next signer
                     self.send_mail_2_single_user(next_signer, link, category='signing')
 
-                # Send notification to all order attendent
+                # Send notification to all order attendant
                 link = f"{self.request.build_absolute_uri(location='/')}?orders={order_id}"
                 category = 'initialization'
                 actor = self.request.user.get_english_name()
@@ -619,7 +619,7 @@ class OrderViewSet(CacheMixin,
         if 'P0' in order_status:
             direction_flag = order_status['P0'].get('initiator', None)
             if direction_flag == "Approve":
-                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P1')
+                skip_signature_flag, create_new_signature_flag = self.calculate_signature_flag(order_id, 'P1')
                 # Debug Code
                 debug_message = (
                     f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
@@ -635,7 +635,7 @@ class OrderViewSet(CacheMixin,
                     order.save()
                     # Send email to assigner
                     self.send_mail_2_single_user(order.assigner, link, category='confirm')
-                elif not skip_signature_flag and create_new_signaure_flag:
+                elif not skip_signature_flag and create_new_signature_flag:
                     # Find next signer
                     next_signer, next_signer_department_id = self.find_next_signer(order_id, signer=order.initiator)
                     # Create next Signature
@@ -666,7 +666,7 @@ class OrderViewSet(CacheMixin,
                     logger.error(error_message, exc_info=True)
                     raise Conflict
 
-                # Send notification to all order attendent
+                # Send notification to all order attendant
                 category = 'response'
                 actor = self.request.user.get_english_name()
                 verb = 'approve'
@@ -684,7 +684,7 @@ class OrderViewSet(CacheMixin,
                 order.save()
                 # Send close order mail to all member
                 self.send_mail_2_all(order_id, link, category='close')
-                # Send notification to all order attendent
+                # Send notification to all order attendant
                 category = 'response'
                 actor = self.request.user.get_english_name()
                 verb = 'close'
@@ -694,7 +694,7 @@ class OrderViewSet(CacheMixin,
         elif 'P2' in order_status:
             direction_flag = order_status['P2'].get('assigner', None)
             if direction_flag == "Approve":
-                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P4')
+                skip_signature_flag, create_new_signature_flag = self.calculate_signature_flag(order_id, 'P4')
                 # Debug Code
                 debug_message = (
                     f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
@@ -713,7 +713,7 @@ class OrderViewSet(CacheMixin,
                 order.save()
                 # Send email to assigner
                 self.send_mail_2_single_user(order.assigner, link, category='schedule')
-                # Send notification to all order attendent
+                # Send notification to all order attendant
                 category = 'response'
                 actor = self.request.user.get_english_name()
                 verb = 'approve'
@@ -721,7 +721,7 @@ class OrderViewSet(CacheMixin,
                 self.send_notification(order_id, link, category, actor, verb, action_object)
 
             elif direction_flag == "Return":
-                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P1')
+                skip_signature_flag, create_new_signature_flag = self.calculate_signature_flag(order_id, 'P1')
                 # Debug Code
                 debug_message = (
                     f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
@@ -738,7 +738,7 @@ class OrderViewSet(CacheMixin,
                 order.save()
                 # Send email to assigner
                 self.send_mail_2_single_user(order.initiator, link, category='return')
-                # Send notification to all order attendent
+                # Send notification to all order attendant
                 category = 'response'
                 actor = self.request.user.get_english_name()
                 verb = 'return'
@@ -756,7 +756,7 @@ class OrderViewSet(CacheMixin,
                 order.save()
                 # Send close order mail to all member
                 self.send_mail_2_all(order_id, link, category='close')
-                # Send notification to all order attendent
+                # Send notification to all order attendant
                 category = 'response'
                 actor = self.request.user.get_english_name()
                 verb = 'close'
@@ -781,7 +781,7 @@ class OrderViewSet(CacheMixin,
                 direction_flag = "Wait"
 
             if direction_flag == "Approve":
-                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P4')
+                skip_signature_flag, create_new_signature_flag = self.calculate_signature_flag(order_id, 'P4')
                 # Debug Code
                 debug_message = (
                     f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
@@ -789,7 +789,7 @@ class OrderViewSet(CacheMixin,
                 )
                 logger.debug(debug_message)
                 # Check the all schedule modify or not.
-                # If schedule didn't be modified, It will skip bleow thing.
+                # If schedule didn't be modified, It will skip below thing.
                 # 1. Recalculate the schedule version and record snapshot in ScheduleTracker table
                 # 2. Change schedule's all confirm status to True
                 objs = order.schedule_set.all()
@@ -816,7 +816,7 @@ class OrderViewSet(CacheMixin,
                     order.save()
                     if 'contactor' in order.developers:
                         self.send_mail_2_single_user(order.developers['contactor'], link, category='confirm')
-                elif not skip_signature_flag and create_new_signaure_flag:
+                elif not skip_signature_flag and create_new_signature_flag:
                     # Find next Singer
                     next_signer, next_signer_department_id = self.find_next_signer(order_id, order.assigner)
                     # Order Status Change
@@ -844,7 +844,7 @@ class OrderViewSet(CacheMixin,
                     self.send_mail_2_single_user(next_signer, link, category='confirm')
                 else:
                     pass
-                # Send notification to all order attendent
+                # Send notification to all order attendant
                 category = 'negotiation'
                 actor = self.request.user.get_english_name()
                 verb = 'approve'
@@ -853,7 +853,7 @@ class OrderViewSet(CacheMixin,
                 self.send_notification(order_id, link, category, actor, verb, action_object, target)
 
             elif direction_flag == "Return":
-                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P4')
+                skip_signature_flag, create_new_signature_flag = self.calculate_signature_flag(order_id, 'P4')
                 # Debug Code
                 debug_message = (
                     f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
@@ -872,7 +872,7 @@ class OrderViewSet(CacheMixin,
                 order.save()
                 # Send email to assigner
                 self.send_mail_2_single_user(order.assigner, link, category='reschedule')
-                # Send notification to all order attendent
+                # Send notification to all order attendant
                 link = f"{self.request.build_absolute_uri(location='/')}?orders={order_id}"
                 category = 'negotiation'
                 actor = self.request.user.get_english_name()
@@ -882,7 +882,7 @@ class OrderViewSet(CacheMixin,
                 self.send_notification(order_id, link, category, actor, verb, action_object, target)
 
             elif direction_flag == "Close":
-                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P4')
+                skip_signature_flag, create_new_signature_flag = self.calculate_signature_flag(order_id, 'P4')
                 # Debug Code
                 debug_message = (
                     f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
@@ -901,7 +901,7 @@ class OrderViewSet(CacheMixin,
                 order.save()
                 # Send close order mail to all member
                 self.send_mail_2_all(order_id, link, category='close')
-                # Send notification to all order attendent
+                # Send notification to all order attendant
                 category = 'negotiation'
                 actor = self.request.user.get_english_name()
                 verb = 'close'
@@ -909,7 +909,7 @@ class OrderViewSet(CacheMixin,
                 self.send_notification(order_id, link, category, actor, verb, action_object)
 
             elif direction_flag == "Negotiate":
-                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P4')
+                skip_signature_flag, create_new_signature_flag = self.calculate_signature_flag(order_id, 'P4')
                 # Debug Code
                 debug_message = (
                     f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
@@ -932,7 +932,7 @@ class OrderViewSet(CacheMixin,
                     Employee.objects.using('hr').get(employee_id=order.developers['contactor']).employee_id
                 ]
                 self.send_mail_2_multiple_user(recipient_employee_id_list, link, 'confirm')
-                # Send notification to all order attendent
+                # Send notification to all order attendant
                 category = 'negotiation'
                 actor = self.request.user.get_english_name()
                 verb = 'approve'
@@ -940,7 +940,7 @@ class OrderViewSet(CacheMixin,
                 self.send_notification(order_id, link, category, actor, verb, action_object)
 
             elif direction_flag == "Wait":
-                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order_id, 'P4')
+                skip_signature_flag, create_new_signature_flag = self.calculate_signature_flag(order_id, 'P4')
                 # Debug Code
                 debug_message = (
                     f"Order Status:'{order_status}', direction_flag:'{direction_flag}', " +
@@ -957,7 +957,7 @@ class OrderViewSet(CacheMixin,
                     "signed": skip_signature_flag
                 }
                 order.save()
-                # Send notification to all order attendent
+                # Send notification to all order attendant
                 category = 'negotiation'
                 actor = self.request.user.get_english_name()
                 verb = 'approve'
@@ -983,7 +983,7 @@ class OrderViewSet(CacheMixin,
                     order.save()
                 # Send email to initiator
                 self.send_mail_2_single_user(order.initiator, link, category='confirm')
-                # Send notification to all order attendent
+                # Send notification to all order attendant
                 category = 'response'
                 actor = self.request.user.get_english_name()
                 verb = 'approve'
@@ -1007,7 +1007,7 @@ class OrderViewSet(CacheMixin,
                     order.save()
                     # Send complete order mail to all member
                     self.send_mail_2_all(order_id, link, category='complete')
-                    # Send notification to all order attendent
+                    # Send notification to all order attendant
                     category = 'completion'
                     actor = self.request.user.get_english_name()
                     verb = 'approve'
@@ -1029,7 +1029,7 @@ class OrderViewSet(CacheMixin,
                     if 'member' in order.developers:
                         recipient_employee_id_list.extend(order.developers['member'])
                     self.send_mail_2_multiple_user(recipient_employee_id_list, link, category='return')
-                    # Send notification to all order attendent
+                    # Send notification to all order attendant
                     category = 'response'
                     actor = self.request.user.get_english_name()
                     verb = 'return'
@@ -1047,7 +1047,7 @@ class OrderViewSet(CacheMixin,
                     order.save()
                     # Send close order mail to all member
                     self.send_mail_2_all(order_id, link, category='close')
-                    # Send notification to all order attendent
+                    # Send notification to all order attendant
                     category = 'response'
                     actor = self.request.user.get_english_name()
                     verb = 'close'
@@ -1073,7 +1073,7 @@ class SignatureViewSet(CacheMixin,
         """
         Query accounts, projects and employee information for to_represtation() function
         """
-        # TODO Use asyncio to speed up the reuqest with third-party api
+        # TODO Use asyncio to speed up the request with third-party api
         context = super().get_serializer_context()
         # Get project information
         context['projects'] = self.fetch_simple_projects_from_cache()
@@ -1103,7 +1103,7 @@ class SignatureViewSet(CacheMixin,
         link = f"{self.request.build_absolute_uri(location='/')}?orders={order.id}"
         if direction_flag == 'Approve':
             if 'P1' in order.status:
-                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order.id, 'P1')
+                skip_signature_flag, create_new_signature_flag = self.calculate_signature_flag(order.id, 'P1')
                 # Debug Code
                 debug_message = (
                     f"Order Status: P1, signature_status:'{direction_flag}', " +
@@ -1120,7 +1120,7 @@ class SignatureViewSet(CacheMixin,
                     order.save()
                     # Send email to assigner
                     self.send_mail_2_single_user(order.assigner, link, category='confirm')
-                elif not skip_signature_flag and create_new_signaure_flag:
+                elif not skip_signature_flag and create_new_signature_flag:
                     # Find next signer
                     next_signer, next_signer_department_id = self.find_next_signer(order.id, signature.signer)
                     # Order Status Change
@@ -1146,7 +1146,7 @@ class SignatureViewSet(CacheMixin,
                     # Send email to next signer
                     self.send_mail_2_single_user(next_signer, link, category='signing')
             elif 'P4' in order.status:
-                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order.id, 'P4')
+                skip_signature_flag, create_new_signature_flag = self.calculate_signature_flag(order.id, 'P4')
                 # Debug Code
                 debug_message = (
                     f"Order Phase: P4, signature_status:'{direction_flag}', " +
@@ -1168,7 +1168,7 @@ class SignatureViewSet(CacheMixin,
                     if 'member' in order.developers:
                         recipient_employee_id_list.extend(order.developers['member'])
                     self.send_mail_2_multiple_user(recipient_employee_id_list, link, category='confirm')
-                elif not skip_signature_flag and create_new_signaure_flag:
+                elif not skip_signature_flag and create_new_signature_flag:
                     # Find next signer
                     next_signer, next_signer_department_id = self.find_next_signer(order.id, signature.signer)
                     # Order Status Change
@@ -1193,7 +1193,7 @@ class SignatureViewSet(CacheMixin,
                     Signature.objects.create(**next_signature)
                     # Send email to next signer
                     self.send_mail_2_single_user(next_signer, link, category='signing')
-            # Send notification to all order attendent
+            # Send notification to all order attendant
             category = 'signature'
             actor = self.request.user.get_english_name()
             verb = 'approve'
@@ -1202,7 +1202,7 @@ class SignatureViewSet(CacheMixin,
 
         elif direction_flag == 'Return':
             if 'P1' in order.status:
-                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order.id, 'P1')
+                skip_signature_flag, create_new_signature_flag = self.calculate_signature_flag(order.id, 'P1')
                 # Debug Code
                 debug_message = (
                     f"Order Phase: P1, signature_status:'{direction_flag}', " +
@@ -1219,7 +1219,7 @@ class SignatureViewSet(CacheMixin,
                 # Send mail to initiator
                 self.send_mail_2_single_user(order.initiator, link, category='return')
             elif 'P4' in order.status:
-                skip_signature_flag, create_new_signaure_flag = self.calculate_signature_flag(order.id, 'P4')
+                skip_signature_flag, create_new_signature_flag = self.calculate_signature_flag(order.id, 'P4')
                 # Debug Code
                 debug_message = (
                     f"Order Phase: P4, signature_status:'{direction_flag}', " +
@@ -1238,7 +1238,7 @@ class SignatureViewSet(CacheMixin,
                 # Send mail to assigner
                 self.send_mail_2_single_user(order.assigner, link, category='return')
 
-            # Send notification to all order attendent
+            # Send notification to all order attendant
             category = 'signature'
             actor = self.request.user.get_english_name()
             verb = 'return'
@@ -1257,7 +1257,7 @@ class SignatureViewSet(CacheMixin,
                 # Send close order mail to all member
                 self.send_mail_2_all(order.id, link, category='close')
             elif 'P4' in order.status:
-                # Order staus change
+                # Order status change
                 order.status = {
                     'P4': {
                         signature.signer: 'Close'
@@ -1268,7 +1268,7 @@ class SignatureViewSet(CacheMixin,
                 # Send close order mail to all member
                 self.send_mail_2_all(order.id, link, category='close')
 
-            # Send notification to all order attendent
+            # Send notification to all order attendant
             category = 'signature'
             actor = self.request.user.get_english_name()
             verb = 'close'

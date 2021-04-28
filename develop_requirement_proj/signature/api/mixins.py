@@ -92,12 +92,12 @@ class SignatureMixin(QueryDataMixin):
         if signature_phase in 'P1':
             result = self.check_identity(order.initiator)
             if result:
-                skip_signature_flag, create_new_signaure_flag = True, False
+                skip_signature_flag, create_new_signature_flag = True, False
                 return skip_signature_flag
         elif signature_phase in 'P4':
             result = self.check_identity(order.assigner)
             if result:
-                skip_signature_flag, create_new_signaure_flag = True, False
+                skip_signature_flag, create_new_signature_flag = True, False
                 return skip_signature_flag
         # Rule 2
         if signature_phase in 'P1':
@@ -108,21 +108,21 @@ class SignatureMixin(QueryDataMixin):
         # Check whether next phase signautre exist or not
         max_sequence = order.signature_set.filter(role_group=role_group).aggregate(Max('sequence'))['sequence__max']
         if max_sequence is None:
-            skip_signature_flag, create_new_signaure_flag = False, True
-            return skip_signature_flag, create_new_signaure_flag
+            skip_signature_flag, create_new_signature_flag = False, True
+            return skip_signature_flag, create_new_signature_flag
 
         # Check next phase latest signature's status and singer identity
         last_signature = order.signature_set.get(sequence=max_sequence)
         if last_signature.status == 'Approve':
             result = self.check_identity(last_signature.signer)
             if result:
-                skip_signature_flag, create_new_signaure_flag = True, False
+                skip_signature_flag, create_new_signature_flag = True, False
             else:
-                skip_signature_flag, create_new_signaure_flag = False, True
+                skip_signature_flag, create_new_signature_flag = False, True
         elif last_signature.status == 'Return':
-            skip_signature_flag, create_new_signaure_flag = False, True
+            skip_signature_flag, create_new_signature_flag = False, True
         elif last_signature.status == '':
-            skip_signature_flag, create_new_signaure_flag = False, False
+            skip_signature_flag, create_new_signature_flag = False, False
         elif last_signature.status == 'Close':
             warn_message = "This is a conflict operation."
             logger.warning(warn_message)
@@ -131,21 +131,21 @@ class SignatureMixin(QueryDataMixin):
             warn_message = "This is a wrong operation."
             logger.warning(warn_message)
             raise Conflict
-        return skip_signature_flag, create_new_signaure_flag
+        return skip_signature_flag, create_new_signature_flag
 
     def check_identity(self, employee_id):
         """
         Check identity whether reach function head leader or not
-        Return True  -> It present that identity is higer/equal than function head leader
+        Return True  -> It present that identity is higher/equal than function head leader
         Return False -> It present that identity is below than function head leader
         """
         self_department_id = Employee.objects.using('hr').get(employee_id=employee_id).department_id
 
-        self_count = self.count_zero_occurence(self_department_id)
+        self_count = self.count_zero_occurrence(self_department_id)
 
         if self_count > 4:
-            identitiy_flag = True
-            return identitiy_flag
+            identity_flag = True
+            return identity_flag
 
         try:
             departments = self.get_department_via_query(self_department_id)
@@ -158,23 +158,23 @@ class SignatureMixin(QueryDataMixin):
 
         dm_department_id = Employee.objects.using('hr').get(employee_id=dm_employee_id).department_id
 
-        dm_department_count = self.count_zero_occurence(dm_department_id)
+        dm_department_count = self.count_zero_occurrence(dm_department_id)
 
         # This condiction indicate that himself/herself boss above function head
         if dm_department_count == 5:
-            identitiy_flag = True
+            identity_flag = True
         # This condiction indicate that himself/herself is function head
         elif self_count == 4 and dm_employee_id == employee_id:
-            identitiy_flag = True
+            identity_flag = True
         elif self_count == 4 and dm_employee_id != employee_id:
-            identitiy_flag = False
+            identity_flag = False
         else:
-            identitiy_flag = False
+            identity_flag = False
 
-        return identitiy_flag
+        return identity_flag
 
-    def count_zero_occurence(self, department_id):
-        """ count zero occurence time """
+    def count_zero_occurrence(self, department_id):
+        """ count zero occurrence time """
         count = 0
         for char in department_id[::-1]:
             if char == '0':
@@ -196,7 +196,7 @@ class SignatureMixin(QueryDataMixin):
         if signer_department_id in departments:
             next_signer = departments[signer_department_id].get('dm', None)
         # If signer is equal to next_signer
-        count = self.count_zero_occurence(signer_department_id)
+        count = self.count_zero_occurrence(signer_department_id)
         next_signer_department_id = signer_department_id
         while (signer == next_signer and count < 5):
             non_zero_part = len(signer_department_id) - count - 1
@@ -253,7 +253,7 @@ class MessageMixin:
         email_message = (
             "Dear all,\n" +
             "\n" +
-            f"There is a software developement {status} order.\n" +
+            f"There is a software development {status} order.\n" +
             "You can click below link to check the order detail.\n" +
             f"{link} \n" +
             "\n" +
@@ -261,7 +261,7 @@ class MessageMixin:
             "If you have any question, welcome to contact DQMS Team.\n" +
             "\n" +
             "Best Regard\n" +
-            "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+            "DQMS Software Development Requirement System Service <dqms_service@wistron.com>"
         )
         sender = ""
         send_mail(email_subject, email_message, sender, recipient_list)
@@ -286,7 +286,7 @@ class MessageMixin:
         email_message = (
             f"Dear {recipient_name},\n" +
             "\n" +
-            f"There is a software developement {status} order that is waiting for your {action}.\n" +
+            f"There is a software development {status} order that is waiting for your {action}.\n" +
             "You can click below link to check the order detail.\n" +
             f"{link} \n"
             "\n" +
@@ -294,7 +294,7 @@ class MessageMixin:
             "If you have any question, welcome to contact DQMS Team.\n" +
             "\n" +
             "Best Regard\n" +
-            "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+            "DQMS Software Development Requirement System Service <dqms_service@wistron.com>"
         )
         sender = ""
         send_mail(email_subject, email_message, sender, recipient_list)
@@ -321,7 +321,7 @@ class MessageMixin:
         email_message = (
             "Dear all,\n" +
             "\n" +
-            f"There is a software developement {status} order that is waiting for your {action}.\n" +
+            f"There is a software development {status} order that is waiting for your {action}.\n" +
             "You can click below link to check the order detail.\n" +
             f"{link} \n"
             "\n" +
@@ -329,13 +329,13 @@ class MessageMixin:
             "If you have any question, welcome to contact DQMS Team.\n" +
             "\n" +
             "Best Regard\n" +
-            "DQMS Software Developement Requirement System Administrator <dqms_admin@wistron.com>"
+            "DQMS Software Development Requirement System Service <dqms_service@wistron.com>"
         )
         sender = ""
         send_mail(email_subject, email_message, sender, recipient_list)
 
     def send_notification(self, order_id, link, category, actor, verb, action_object='', target=''):
-        """ Send notification for all order attendent"""
+        """ Send notification for all order attendant"""
         # Find all recipient
         order = Order.objects.get(pk=order_id)
         signer_id_list = list(order.signature_set.order_by('signer').distinct(

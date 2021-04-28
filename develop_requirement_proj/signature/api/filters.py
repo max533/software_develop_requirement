@@ -35,7 +35,7 @@ class OrderFilterBackend(filters.DjangoFilterBackend):
                     raise exceptions.ParseError
 
                 # Convert english name into employee_id with initiator, assigner, developers field
-                # TODO Using serialzier validate query will be clear and better
+                # TODO Using serializer validate query will be clear and better
                 if 'initiator' in query_string:
                     initiator = query_string.get('initiator').strip()
                     if initiator:
