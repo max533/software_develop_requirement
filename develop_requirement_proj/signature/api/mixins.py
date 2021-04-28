@@ -139,27 +139,38 @@ class SignatureMixin(QueryDataMixin):
         Return True  -> It present that identity is higer/equal than function head leader
         Return False -> It present that identity is below than function head leader
         """
-        department_id = Employee.objects.using('hr').get(employee_id=employee_id).department_id
+        self_department_id = Employee.objects.using('hr').get(employee_id=employee_id).department_id
 
-        count = self.count_zero_occurence(department_id)
+        self_count = self.count_zero_occurence(self_department_id)
+
+        if self_count > 4:
+            identitiy_flag = True
+            return identitiy_flag
 
         try:
-            departments = self.get_department_via_query(department_id)
+            departments = self.get_department_via_query(self_department_id)
         except Exception as err:
             logger.warning(err)
             raise ServiceUnavailable
 
-        if department_id in departments:
-            function_head_employee_id = departments[department_id].get('dm', None)
+        if self_department_id in departments:
+            dm_employee_id = departments[self_department_id].get('dm', None)
 
-        if count > 4:
+        dm_department_id = Employee.objects.using('hr').get(employee_id=dm_employee_id).department_id
+
+        dm_department_count = self.count_zero_occurence(dm_department_id)
+
+        # This condiction indicate that himself/herself boss above function head
+        if dm_department_count == 5:
             identitiy_flag = True
-        elif count == 4 and function_head_employee_id == employee_id:
+        # This condiction indicate that himself/herself is function head
+        elif self_count == 4 and dm_employee_id == employee_id:
             identitiy_flag = True
-        elif count == 4 and function_head_employee_id != employee_id:
+        elif self_count == 4 and dm_employee_id != employee_id:
             identitiy_flag = False
         else:
             identitiy_flag = False
+
         return identitiy_flag
 
     def count_zero_occurence(self, department_id):
