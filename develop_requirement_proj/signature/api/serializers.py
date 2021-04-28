@@ -100,7 +100,7 @@ class ProgressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Progress
         fields = "__all__"
-        read_only_fields = ['editor', 'udpate_time']
+        read_only_fields = ['editor', 'update_time']
 
 
 class EmployeeSimpleSerializer(serializers.Serializer):

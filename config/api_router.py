@@ -1,11 +1,12 @@
 """ develop_requirement_proj API URL Configuration """
+from rest_framework_nested import routers
+
 from develop_requirement_proj.employee.api.viewsets import EmployeeViewSet
 from develop_requirement_proj.signature.api.viewsets import (
-    AccountViewSet, AssginerViewSet, CommentViewSet, DocumentViewSet,
+    AccountViewSet, AssignerViewSet, CommentViewSet, DocumentViewSet,
     NotificationVewSet, OptionView, OrderViewSet, ProgressViewSet,
     ProjectViewSet, ScheduleViewSet, SignatureViewSet,
 )
-from rest_framework_nested import routers
 
 from django.conf import settings
 from django.urls import path
@@ -20,7 +21,7 @@ app_name = 'api'
 router.register('employees', EmployeeViewSet)
 router.register('accounts', AccountViewSet, basename='account')
 router.register('projects', ProjectViewSet, basename='project')
-router.register('assigners', AssginerViewSet)
+router.register('assigners', AssignerViewSet)
 router.register('documents', DocumentViewSet)
 router.register('schedules', ScheduleViewSet)
 router.register('progress', ProgressViewSet, basename='progress')

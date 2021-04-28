@@ -45,7 +45,7 @@ class DownloadView(LoginRequiredMixin, View):
             logger.info(message)
             message = '<h1>There is no file which you want to find.</h1>'
             return HttpResponse(message, status=404)
-        # Get user's deafult filename and fielname in system and filesize
+        # Get user's deafult filename and filename in system and filesize
         user_filename, system_filename, size = instance.name, instance.path.name.split('/')[-1], instance.size
 
         # Add filename and size in HTTP header

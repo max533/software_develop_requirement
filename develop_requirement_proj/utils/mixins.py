@@ -203,7 +203,7 @@ class QueryDataMixin:
 
         return departments
 
-    def get_project_via_teamroaster_project_serach(self, *args, **kwargs):
+    def get_project_via_teamroaster_project_search(self, *args, **kwargs):
         """
         Get project information from TeamRoster 2.0 System.
 
@@ -252,7 +252,7 @@ class QueryDataMixin:
         `Args`:
         - department_id ([str], optional): department id. Defaults to None.`
         - department_list ([list], optional): the list of department id. Defaults to None.
-        - field ([dict], optional) : other params. if no kwargs will uese deault_params.
+        - field ([dict], optional) : other params. if no kwargs will ues deault_params.
         The value of department_id nor department_list could not both be None.
 
         `Raises`:
