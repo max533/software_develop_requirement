@@ -88,7 +88,7 @@ $(function(){
     //  Initiate Table
     $('#table').bootstrapTable('destroy').bootstrapTable({
         url:'/api/orders/', //severside 的網址
-        classes: 'table-responsive',
+        classes: 'table-responsive table-bordered',
         theadClasses:'',
         pagination:true,
         paginationVAlign:'bottom',
@@ -100,7 +100,7 @@ $(function(){
         showColumns: true,
         showRefresh: true,
         showToggle: true,
-        detailView:true,
+        // detailView:true,
         sidePagination:'server',
         pageList:[10, 25, 50, 100],
         searchOnEnterKey:false,
@@ -143,6 +143,7 @@ $(function(){
                 field:'status',
                 title:'Phase',
                 class:'pb-2',
+                visible:false,
                 formatter:function(value, row, index){
                     let p=Object.keys(value)[0],
                         phase='';
@@ -291,6 +292,7 @@ $(function(){
             {
                 field:'account',
                 title:'Account',
+                visible:false,
                 filterControl: 'select',
                 filterControlPlaceholder:'Select Account',
                 width:200,
@@ -325,6 +327,7 @@ $(function(){
             {
                 field:'develop_team_sub_function',
                 title:'Developer function',
+                visible:false,
                 filterControl: 'select',
                 filterControlPlaceholder:'Select func',
                 filterDataCollector:function(value, row, index){
@@ -387,7 +390,7 @@ $(function(){
                 field:'form_begin_time',
                 title:'Initial time',
                 align:'left',
-                sortable: true,
+                // sortable: true,
                 filterControl:'input',
                 formatter:function(value, row, index){
                     let html = '-'

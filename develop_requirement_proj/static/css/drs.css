@@ -260,7 +260,6 @@
         overflow: hidden;
     }
 
-
     #filelist tr>td:first-child{padding-left: 1.5rem !important;}
     #filelist tr>td:last-child{padding-right: 1.5rem !important;}
     #filelist tr:hover>td:first-child{
@@ -400,8 +399,8 @@
         padding: 0 1rem;
     }
     #table tr td{
-        border-top:unset;
-        border-bottom:unset;
+        /* border-top:unset; */
+        /* border-bottom:unset; */
         padding: 0 1rem;
     }
     #table tr:hover td{

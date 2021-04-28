@@ -163,8 +163,13 @@
     } */
     /* #developersModal table { border: none;} */
     .table td, .table th {
+        font-weight: 400;
         padding: .25rem;
-        max-height: 5em;
+        max-height: 2rem;
+    }
+    #table .ellipsis{
+        height: 2rem;
+        width: 10rem;
     }
     /* table tr:hover>td .ellipsis {
         overflow: visible;
