@@ -517,12 +517,12 @@ let ezinfoModal=`<div class="modal fade" id="ezinfoModal" tabindex="-1" role="di
                     <div class="row align-items-baseline mt-3">
                         <label class="col-3 text-grey"> Title </label>
                         <div class="col-9 bg-light bd-radius-8 p-1">
-                            <span class="pl-2 text-secondary font-weight-bold" name="title" style="line-break: anywhere;"> - </span>
+                            <span class="pl-2 text-secondary font-weight-bold" name="title" style="white-space: pre-wrap;"> - </span>
                         </div>
                     </div>
                     <div class="row align-items-baseline mt-1">
                         <label class="col-3 text-grey"> Description </label>
-                        <div class="pl-2 col-9 bg-light bd-radius-8 p-1" name="description" style="line-break: anywhere;"> - </div>
+                        <div class="pl-2 col-9 bg-light bd-radius-8 p-1" name="description" style="white-space: pre-wrap;"> - </div>
                     </div>
                     <div class="row align-items-top mt-1">
                         <label class="col-3 text-grey"> Files </label>

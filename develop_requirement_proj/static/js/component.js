@@ -888,7 +888,7 @@
                     field:'name',
                     formatter:function(value, row, index){
                         let filesize=Number(row['size']);
-                        let html=` <p class="font-weight-bold ellipsis pl-2 pr-2 mb-0 filename" style="width:10rem;">`+value+`</p>
+                        let html=` <p class="ellipsis pl-2 pr-2 mb-0 filename" style="width:10rem;">`+value+`</p>
                                     <small class="pl-2">`+bytesChange(filesize)+`</small>`;
                         return html;
                     }
@@ -1383,7 +1383,7 @@
                     }else {
                         $.each(files_data,function(i,info){
                             file_html=`<tr data-id=`+info.id+`>
-                                            <td class="font-weight-bold text-secondary ellipsis">`+info.name+`</td>
+                                            <td class="ellipsis">`+info.name+`</td>
                                             <td class="ellipsis">`+bytesChange(Number(info.size))+`</td>
                                             <td class="ellipsis">`+info.description+`</td>
                                             <td class="text-center"><a href="`+info.path+`" class="fa fa-cloud-download-alt btn btn-info btn-sm p-1 text-light" style="cursor: pointer;" download></a></td>
