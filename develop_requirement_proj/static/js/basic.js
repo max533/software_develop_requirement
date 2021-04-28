@@ -112,7 +112,7 @@ $(function(){
         rowStyle: function(row, index) {
             let status=Object.values(Object.values(row.status)[0])[0];
             if(status=='Close'){
-                return {css:{opacity:.5}};
+                return {css:{'text-decoration':'line-through'}};
             }else{
                 return {};
             }
@@ -133,6 +133,7 @@ $(function(){
                 title:'Form id',
                 filterControl:'input',
                 filterControlPlaceholder:'Search id',
+                visible: false,
                 formatter:function(value, row, index){
                     let html=`<span class="ellipsis">`+value+`</span>`
                     return html;
@@ -241,6 +242,7 @@ $(function(){
             {
                 field:'parent',
                 title:'Parent form',
+                visible: false,
                 filterControl:'input',
                 filterControlPlaceholder:'Search id',
                 filterDataCollector:function(value, row, index){
@@ -274,6 +276,7 @@ $(function(){
             {
                 field:'description',
                 title:'Description',
+                // visible: false,
                 filterControl:'input',
                 filterControlPlaceholder:'Search',
                 formatter:function(value, row, index){
@@ -337,7 +340,7 @@ $(function(){
             },
             {
                 field:'initiator',
-                title:'Initiator',
+                title:'Request',
                 filterControl:'input',
                 filterControlPlaceholder:'Search name',
                 formatter:function(value, row, index){
@@ -359,7 +362,8 @@ $(function(){
             },
             {
                 field:'assigner',
-                title:'Form receiver',
+                title:'Assigner',
+                visible: false,
                 filterControl:'input',
                 filterControlPlaceholder:'Search name',
                 formatter:function(value, row, index){
@@ -398,6 +402,7 @@ $(function(){
             {
                 field:'repository_url',
                 title:'Result',
+                visible: false,
                 hvalign: 'top',
                 class:'pb-2',
                 align:'center',
