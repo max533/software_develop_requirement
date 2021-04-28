@@ -140,6 +140,34 @@ $(function(){
                 },
             },
             {
+                field:'title',
+                title:'Title',
+                filterControl:'input',
+                filterControlPlaceholder:'Search title',
+                formatter:function(value, row, index){
+                    let html = '-'
+                    if(value){
+                        html='<div class="ellipsis">'+value+'</div>';
+                    }
+                    return html;
+                },
+            },
+            {
+                field:'description',
+                title:'Description',
+                // visible: false,
+                filterControl:'input',
+                filterControlPlaceholder:'Search',
+                formatter:function(value, row, index){
+                    let html = '-'
+                    if(value){
+                        value=value.replace(/\\/g,'');
+                        html='<div class="ellipsis">'+value+'</div>';
+                    }
+                    return html;
+                },
+            },
+            {
                 field:'status',
                 title:'Phase',
                 class:'pb-2',
@@ -257,34 +285,6 @@ $(function(){
                                     <span class="col-6">`+value+`</span>
                                     <i class="ml-2 btn btn-success btn-sm fa fa-file-alt ezinfoModal_trigger"  data-id="`+value+`"></i>
                                 </div>`;
-                    }
-                    return html;
-                },
-            },
-            {
-                field:'title',
-                title:'Title',
-                filterControl:'input',
-                filterControlPlaceholder:'Search title',
-                formatter:function(value, row, index){
-                    let html = '-'
-                    if(value){
-                        html='<div class="ellipsis">'+value+'</div>';
-                    }
-                    return html;
-                },
-            },
-            {
-                field:'description',
-                title:'Description',
-                // visible: false,
-                filterControl:'input',
-                filterControlPlaceholder:'Search',
-                formatter:function(value, row, index){
-                    let html = '-'
-                    if(value){
-                        value=value.replace(/\\/g,'');
-                        html='<div class="ellipsis">'+value+'</div>';
                     }
                     return html;
                 },
