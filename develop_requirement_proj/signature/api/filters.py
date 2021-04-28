@@ -2,8 +2,9 @@ import ast
 import json
 import logging
 
-from develop_requirement_proj.employee.models import Employee
 from django_filters import rest_framework as filters, utils
+
+from develop_requirement_proj.employee.models import Employee
 
 from django.db.models import Q
 
@@ -92,6 +93,7 @@ class OrderFilter(filters.FilterSet):
     title = filters.CharFilter(field_name='title', lookup_expr='icontains')
     description = filters.CharFilter(field_name='description', lookup_expr='icontains')
     form_begin_time = filters.IsoDateTimeFromToRangeFilter()
+    sort_order = filters.OrderingFilter(fields=['form_begin_time'])
 
     class Meta:
         model = Order
