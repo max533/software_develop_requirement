@@ -58,11 +58,11 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                         <div class="bg-light bd-radius-8 p-1 d-inline-flex align-items-baseline w-100" id="form_breadcrumb" style="display:none !important;">
                             <span class="col-2 text-grey"> Assign </span>
                             <div class="font-bold-weight pt-2">
-                                <!--<h6 class="badge badge-bluegray badge-pill" title="Initiator">Leo Tu/WHQ</h6> &rsaquo;
+                                <!--<h6 class="badge badge-bluegray badge-pill" title="Request">Leo Tu/WHQ</h6> &rsaquo;
                                 <h6 class="badge badge-bluegray badge-pill" title="Team">DQMS &rsaquo;</h6>
                                 <h6 class="badge badge-bluegray badge-pill" title="Account">WT-EBG</h6> &rsaquo;
                                 <h6 class="badge badge-bluegray badge-pill" title="Project">R360-EBG</h6> &rsaquo;
-                                <h6 class="badge badge-bluegray badge-pill" title="Receiver">Luis Liao/WNH</h6>-->
+                                <h6 class="badge badge-bluegray badge-pill" title="Assigner">Luis Liao/WNH</h6>-->
                             </div>
                         </div>
                         <div class="bg-light bd-radius-8 w-100 mt-2" id="form_info" style="display:none !important;">
@@ -78,14 +78,14 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
     <!-- authors initiator assigner developers -->
                         <div id="authors" class="mt-2 bg-light bd-radius-8 p-1">
                             <div class="d-inline-flex align-items-center w-100 author">
-                                <span class="text-grey col-2"> Initiator </span>
+                                <span class="text-grey col-2"> Request </span>
                                 <div class="d-inline-flex align-items-center" id="form_initiator">
                                     <img class="sticker mr-2" src="">
                                     <span class="text-grey"></span>
                                 </div>
                             </div>
                             <div class="d-inline-flex align-items-center w-100 mt-2 author" style="display:none !important;">
-                                <span class="text-grey col-2"> Receiver </span>
+                                <span class="text-grey col-2"> Assigner </span>
                                 <div class="d-inline-flex align-items-center mr-3" id="form_assigner">
                                     <img class="sticker mr-2" src="">
                                     <span class="text-grey"></span>
@@ -161,7 +161,7 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                             <div class="row align-items-top mt-2">
                                 <label class="col-4 mt-2"> &#9733 Description </label>
                                 <div class="col-8">
-                                    <textarea type="text" class="summernote field-style bd-radius-8" name="description" id="description" data-postion="requestform" placeholder="Develop deatail or purpose" required></textarea>
+                                    <textarea type="text" class="field-style bd-radius-8" name="description" id="description" data-postion="requestform" placeholder="Develop deatail or purpose" required></textarea>
                                 </div>
                             </div>
                             <small class="position-absolute text-secondary" style="bottom: .7rem; right:3rem">
@@ -459,14 +459,14 @@ let ezinfoModal=`<div class="modal fade" id="ezinfoModal" tabindex="-1" role="di
                         </div>
                     </div>
                     <div class="row align-items-baseline mt-1">
-                        <label class="col-3 text-grey"> Initiator </label>
+                        <label class="col-3 text-grey"> Request </label>
                         <div class="pl-2 col-9 bg-light bd-radius-8 p-1">
                             <img class="sticker">
                             <span class="text-secondary font-weight-bold ml-1" name="initiator"> - </span>
                         </div>
                     </div>
                     <div class="row align-items-baseline mt-1">
-                        <label class="col-3 text-grey"> Form recevier </label>
+                        <label class="col-3 text-grey"> Assigner </label>
                         <div class="pl-2 col-9 bg-light bd-radius-8 p-1">
                             <img class="sticker">
                             <span class=" text-secondary font-weight-bold ml-1" name="assigner"> - </span>
@@ -517,12 +517,12 @@ let ezinfoModal=`<div class="modal fade" id="ezinfoModal" tabindex="-1" role="di
                     <div class="row align-items-baseline mt-3">
                         <label class="col-3 text-grey"> Title </label>
                         <div class="col-9 bg-light bd-radius-8 p-1">
-                            <span class="pl-2 text-secondary font-weight-bold" name="title"> - </span>
+                            <span class="pl-2 text-secondary font-weight-bold" name="title" style="line-break: anywhere;"> - </span>
                         </div>
                     </div>
                     <div class="row align-items-baseline mt-1">
                         <label class="col-3 text-grey"> Description </label>
-                        <div class="pl-2 col-9 bg-light bd-radius-8 p-1" name="description"> - </div>
+                        <div class="pl-2 col-9 bg-light bd-radius-8 p-1" name="description" style="line-break: anywhere;"> - </div>
                     </div>
                     <div class="row align-items-top mt-1">
                         <label class="col-3 text-grey"> Files </label>
