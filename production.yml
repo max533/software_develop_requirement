@@ -48,6 +48,11 @@ services:
     ports:
       - ${NGINX_SERVICE_PORT}:80
     command: /start
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    restart: always
 
   django: &django
     build:
@@ -81,6 +86,11 @@ services:
       - frontend
       - backend
     command: /start
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    restart: always
 
   postgres:
     build:
@@ -94,11 +104,21 @@ services:
       - backend
     env_file:
       - ./.envs/.production/.postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    restart: always
 
   redis:
     image: redis:5.0
     networks:
       - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    restart: always
 
   celeryworker:
     <<: *django
