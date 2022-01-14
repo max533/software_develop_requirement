@@ -1,8 +1,9 @@
 """ Employee app's api viewsets.py """
 import logging
 
-from develop_requirement_proj.utils.mixins import QueryDataMixin
 from django_filters import rest_framework as filters
+
+from develop_requirement_proj.utils.mixins import QueryDataMixin
 
 from django.shortcuts import get_object_or_404
 

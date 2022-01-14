@@ -16,6 +16,7 @@ class UnManagedModelTestRunner(DiscoverRunner):
     """
     def setup_test_environment(self, *args, **kwargs):
         from django.apps import apps
+
         # from django.apps.apps import get_models
         self.unmanaged_models = [m for m in apps.get_models() if not m._meta.managed]
         for m in self.unmanaged_models:

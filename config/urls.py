@@ -14,6 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 import django_cas_ng.views
+
 from develop_requirement_proj.signature.views import (
     DownloadView, IndexView, NotificationView,
 )
