@@ -108,6 +108,8 @@ services:
       resources:
         limits:
           cpus: '2'
+          memory: 1000M
+
     restart: always
 
   redis:
@@ -126,6 +128,11 @@ services:
     networks:
       - backend
     command: /start-celeryworker
+    deploy:
+      resources:
+        limits:
+          cpus: '3'
+          memory: 1000M
 
   celerybeat:
     <<: *django
@@ -133,6 +140,11 @@ services:
     networks:
       - backend
     command: /start-celerybeat
+    deploy:
+      resources:
+        limits:
+          cpus: '3'
+          memory: 1000M
 
   flower:
     <<: *django
