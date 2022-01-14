@@ -1,5 +1,6 @@
 """ Employee test """
 import factory
+
 from develop_requirement_proj.employee.models import Employee
 from develop_requirement_proj.users.models import CustomUser
 
