@@ -12,7 +12,7 @@ RUN echo "deb http://opensource.nchc.org.tw/debian/ buster main" > /etc/apt/sour
 
 RUN apt-get update \
   # dependencies for building Python packages
-  && apt-get install --no-install-recommends -y build-essential=12.6 unzip=6.0-23+deb10u1 \
+  && apt-get install --no-install-recommends -y build-essential=12.6 unzip=6.0-23+deb10u2 \
   # Unzip file
   && unzip -d /opt /opt/instantclient-basic-linux.x64-12.2.0.1.0.zip \
   # cleaning up unused files
