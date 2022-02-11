@@ -581,7 +581,8 @@
         $('#requestModal').find('.selectpicker').selectpicker('render');
         //  Form fields - Select Options
             let Obj=get_options();
-            let disabledarr=['BU','EE','ME'];
+            // let disabledarr=['BU','EE','ME'];
+            let disabledarr=[];
             let optionsValue=Object.values(Obj)[0];
             $.each(optionsValue,function(groupname,options){
                 if(disabledarr.includes(groupname)){}
