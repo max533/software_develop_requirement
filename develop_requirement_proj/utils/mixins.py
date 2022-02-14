@@ -455,3 +455,29 @@ class QueryDataMixin:
             raise
 
         return employees
+
+    def get_system_via_search(self, **kwargs):
+        """
+        Get system information from Systems 2 Online
+
+        kwargs (dict) : other params. if no kwargs will use default_params.
+
+        Please refer document of Systems 2 Online on Postman DQMS workspaces.
+        """
+        params = {}
+        if kwargs:
+            params = kwargs
+
+        uri = settings.SYSTEM_URI + 'api/search/systems'
+        headers = {'X-Authorization': settings.SYSTEM_TOKEN}
+
+        r = requests.get(uri, params=params, headers=headers, timeout=3)
+
+        if r.status_code != 200:
+            error_message = (
+                f"Status Code : {r.status_code}. Error Message : " +
+                f"{r.text}. It can't get systems info by <{r.url}>."
+            )
+            logger.warn(error_message)
+            return False, None
+        return True, r.json()
