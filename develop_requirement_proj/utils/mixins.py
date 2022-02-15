@@ -474,10 +474,14 @@ class QueryDataMixin:
         r = requests.get(uri, params=params, headers=headers, timeout=3)
 
         if r.status_code != 200:
-            error_message = (
-                f"Status Code : {r.status_code}. Error Message : " +
-                f"{r.text}. It can't get systems info by <{r.url}>."
-            )
-            logger.warn(error_message)
-            return False, None
-        return True, r.json()
+            message = f"Status Code : {r.status_code}. It can't get systems info by <{r.url}>."
+            logger.warn(message)
+            raise requests.HTTPError
+
+        try:
+            systems = r.json()
+        except Exception as err:
+            logger.warn(err)
+            raise
+
+        return systems
