@@ -35,7 +35,7 @@ from .serializers import (
     AccountSerializer, CommentSerializer, DocumentSerializer,
     NotificationSerializer, OrderDynamicSerializer, OrderTrackerSerializer,
     ProgressSerializer, ProjectSerializer, ScheduleSerializer,
-    SignatureSerializer,
+    SignatureSerializer, SystemSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -1274,3 +1274,23 @@ class SignatureViewSet(CacheMixin,
             verb = 'close'
             action_object = 'order'
             self.send_notification(order.id, link, category, actor, verb, action_object)
+
+
+class SystemViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+    """ Provide system resource with `list` action """
+    serializer_class = SystemSerializer
+
+    def get_queryset(self):
+        """ Get queryset from Systems 2 Online """
+        queryset = []
+        params = self.request.query_params.dict()
+
+        try:
+            systems = self.get_system_via_search(**params)
+        except Exception as err:
+            logger.error(err, exc_info=True)
+            raise ServiceUnavailable
+
+        queryset = systems
+
+        return queryset

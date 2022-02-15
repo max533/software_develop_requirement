@@ -558,3 +558,37 @@ class OrderTrackerSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderTracker
         fields = "__all__"
+
+
+class DevGroupSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    leader = serializers.CharField()
+    redmine_project_id = serializers.IntegerField()
+
+
+class SystemSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    status = serializers.CharField()
+    allow_bg = serializers.IntegerField()
+    allow_bu = serializers.IntegerField()
+    allow_ee = serializers.IntegerField()
+    allow_me = serializers.IntegerField()
+    allow_ds = serializers.IntegerField()
+    allow_pa = serializers.IntegerField()
+    allow_sw = serializers.IntegerField()
+    allow_ew = serializers.IntegerField()
+    dev_group_id = serializers.IntegerField()
+    icon = serializers.CharField()
+    code = serializers.CharField()
+    name = serializers.CharField()
+    domain_oa = serializers.CharField()
+    domain_rd = serializers.CharField()
+    port = serializers.IntegerField()
+    frontend = serializers.ListField(serializers.CharField())
+    backend = serializers.ListField(serializers.CharField())
+    redmine_project_id = serializers.IntegerField()
+    created_at = serializers.DateTimeField()
+    updated_at = serializers.DateTimeField()
+    deleted_at = serializers.DateTimeField()
+    dev_group = DevGroupSerializer()
