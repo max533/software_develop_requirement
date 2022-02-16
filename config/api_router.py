@@ -5,7 +5,7 @@ from develop_requirement_proj.employee.api.viewsets import EmployeeViewSet
 from develop_requirement_proj.signature.api.viewsets import (
     AccountViewSet, AssignerViewSet, CommentViewSet, DocumentViewSet,
     NotificationVewSet, OptionView, OrderViewSet, ProgressViewSet,
-    ProjectViewSet, ScheduleViewSet, SignatureViewSet, SystemViewSet,
+    ProjectViewSet, ScheduleViewSet, SignatureViewSet, SystemView,
 )
 
 from django.conf import settings
@@ -30,10 +30,10 @@ router.register('notifications', NotificationVewSet)
 router.register('orders', OrderViewSet)
 orders_router = routers.NestedDefaultRouter(router, 'orders', lookup='orders')
 orders_router.register('signatures', SignatureViewSet, basename='signatures')
-router.register('systems', SystemViewSet, basename='system')
 
 urlpatterns = [
-    path('options/', OptionView.as_view(), name='option')
+    path('options/', OptionView.as_view(), name='option'),
+    path('systems/', SystemView.as_view(), name='system'),
 ]
 
 urlpatterns += router.urls
