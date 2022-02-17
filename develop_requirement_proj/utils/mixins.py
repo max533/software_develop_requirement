@@ -95,7 +95,7 @@ class QueryDataMixin:
 
     def get_option_value(self, field, *args, **kwargs):
         """
-        Get options value from TeamRoster 2.0 System and Account Project System.
+        Get options value from Team Roster 2 Online, Acc Pro 2 Online and Systems 2 Online.
 
         `Args`:
         - kwargs ([dict], optional) : other params.
@@ -120,9 +120,11 @@ class QueryDataMixin:
             'project_type',
             'project_status',
             'product_line',
-            'business_model'
+            'business_model',
         ]
-
+        systems_options = [
+            'dev_groups',
+        ]
         try:
             field_value = field['field']
         except KeyError as err:
@@ -130,13 +132,15 @@ class QueryDataMixin:
             raise KeyError
 
         # Choose the which uri will send request
-
         if field_value in teamroster_options:
             uri = settings.TEAMROSTER_URI + 'api/get/options'
             headers = {'X-Authorization': settings.TEAMROSTER_TOKEN}
         elif field_value in account_project_options:
             uri = settings.ACCOUNT_PROJECT_URI + 'api/get/options'
             headers = {'X-Authorization': settings.ACCOUNT_PROJECT_TOKEN}
+        elif field_value in systems_options:
+            uri = settings.SYSTEM_URI + 'api/get/options'
+            headers = {'X-Authorization': settings.SYSTEM_TOKEN}
         else:
             logger.warn("There is not correct input with field.")
             raise ValueError
