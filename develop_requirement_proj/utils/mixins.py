@@ -490,3 +490,33 @@ class QueryDataMixin:
             raise
 
         return systems
+
+    def get_schedule_via_search(self, **kwargs):
+        """
+        Get schedule information from Systems 2 Online
+
+        kwargs (dict) : other params. if no kwargs will use default_params.
+
+        Please refer document of Systems 2 Online on Postman DQMS workspaces.
+        """
+        params = {}
+        if kwargs:
+            params = kwargs
+
+        uri = settings.SYSTEM_URI + 'api/search/schedules'
+        headers = {'X-Authorization': settings.SYSTEM_TOKEN}
+
+        r = requests.get(uri, params=params, headers=headers, timeout=3)
+
+        if r.status_code != 200:
+            message = f"Status Code : {r.status_code}. It can't get schedules info by <{r.url}>."
+            logger.warn(message)
+            raise requests.HTTPError
+
+        try:
+            schedules = r.json()
+        except Exception as err:
+            logger.warn(err)
+            raise
+
+        return schedules
