@@ -124,6 +124,7 @@ class QueryDataMixin:
         ]
         systems_options = [
             'dev_groups',
+            'dev_groups_with_leader_info',
         ]
         try:
             field_value = field['field']
