@@ -90,8 +90,8 @@ class Project:
 
 class Order(MPTTModel):
     """ Order Model """
-    account = models.IntegerField(_("order's account"))
-    project = models.IntegerField(_("order's project"))
+    account = models.IntegerField(_("order's account"), null=True)  # deprecated field
+    project = models.IntegerField(_("order's project"), null=True)  # deprecated field
     develop_team_function = models.CharField(_("developer's function team"), max_length=50)
     develop_team_sub_function = models.CharField(_("developer's sub function team"), max_length=50)
     status = fields.JSONField(_("order's current status"))
@@ -108,6 +108,7 @@ class Order(MPTTModel):
     update_time = models.DateTimeField(auto_now=True, null=True)
     update_staff = models.CharField(max_length=50)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+    system = models.IntegerField(_("order's system"), null=True)
 
     class Meta:
         ordering = ['-form_begin_time']
@@ -267,8 +268,8 @@ class Signature(models.Model):
 
 class OrderTracker(models.Model):
     """ Order Tracker Model """
-    account = models.IntegerField(_("order's account"), null=True)
-    project = models.IntegerField(_("order's project"), null=True)
+    account = models.IntegerField(_("order's account"), null=True)  # deprecated field
+    project = models.IntegerField(_("order's project"), null=True)  # deprecated field
     develop_team_function = models.CharField(_("developer's function team"), max_length=50)
     develop_team_sub_function = models.CharField(_("developer's sub function team"), max_length=50)
     status = fields.JSONField(_("order's current status"), default=dict)
@@ -286,6 +287,7 @@ class OrderTracker(models.Model):
     update_staff = models.CharField(max_length=50)
     parent = models.PositiveIntegerField(null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    system = models.IntegerField(_("order's system"), null=True)
 
     class Meta:
         ordering = ['order', '-update_time']
