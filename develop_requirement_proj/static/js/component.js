@@ -178,15 +178,6 @@
         });
         return formdata;
     }
-    // function backend_check_fields(formdata){
-    //     let fields=[];
-    //     if(formdata!==undefined){
-    //          $.each(Object.keys(formdata),function(i,field){
-    //             fields.push(field);
-    //         });
-    //         return fields;
-    //     }else console.log('Data is empty!!')
-    // }
 //  Table setting
     //  click btn to collapse down the more information
     function detailFormatter(index, row) {
@@ -579,97 +570,55 @@
     //  selectpicker(When status==p0/p1)
     function request_selectpicker(){
         $('#requestModal').find('.selectpicker').selectpicker('render');
-        //  Form fields - Select Options
-            let Obj=get_options();
-            // let disabledarr=['BU','EE','ME'];
-            let disabledarr=[];
-            let optionsValue=Object.values(Obj)[0];
-            $.each(optionsValue,function(groupname,options){
-                if(disabledarr.includes(groupname)){}
-                else{
-                    $('#sel_function').append('<optgroup label="'+groupname+'"></optgroup>');
-                    $.each(options,function(i,subfunc){
-                        let el=$('#sel_function').find('optgroup').last()[0];
-                        let func_subfunc=groupname+"_"+subfunc;
-                        $("<option>").text(subfunc).val(func_subfunc).appendTo(el);
-                    })
+        let funOptionArr = ['DS', 'Others']
+        $.grep(funOptionArr, option => {
+            const html = `<option val="${option}">${option}</option>`
+            $('#sel_function').append(html)
+        })
+
+        $('#sel_function').selectpicker('refresh')
+        reset_author('form_assigner')
+        ;(async()=>{
+            const systemResponse = await axios.get('/api/systems/').then(res => res.data)
+            const systemCategory = await axios.get('/api/options', { params:{field:'dev_groups'} }).then(res => res.data)
+
+            const additional_group = { name: 'Others', id: null }
+            systemCategory.push(additional_group)
+
+            $.each(systemCategory, (index, item)=>{
+                const {name, id} = item
+                $('#sel_system').append(`<optgroup label="${name}"></optgroup>`)
+
+                $.each(systemResponse, (i, system)=> {
+                    const el=$('#sel_system').find('optgroup').last()[0]
+                    const system_id = system.id
+                    const system_code = system.code
+                    const system_name = system.name
+
+                    if( system.dev_group === null &&  id!==null ) return
+                    else if( (system.dev_group === null &&  id===null) ||id === system.dev_group.id ) $("<option>").text(`${system_code} - ${system_name}`).val(system_id).appendTo(el)
+                })
+            })
+
+            $('#sel_system').selectpicker('refresh')
+            // show_author('form_assigner', 'employee_information')
+            $('#sel_system').change(function(){
+                if( $(this).val()!=='' ) {
+                    const system_id = $(this).val()
+                    console.log(system_id)
+                    console.log(systemResponse)
+                    const { dev_group_id } = systemResponse.filter(system => system.id == system_id )[0]
+                    if( dev_group_id===null ){
+                        $('#dev_group').text('Others')
+                        $('#dev_leader').text('Others')
+                    }else {
+                        const { leader, name} = systemCategory.filter(devGroup => devGroup.id === dev_group_id )[0]
+                        $('#dev_group').text(name)
+                        $('#dev_leader').text(leader)
+                    }
                 }
-            });
-            $('#sel_function').selectpicker('refresh');
-        //  Form fields - Select accounts
-            $('#sel_function').on('change',function(){
-                let sub_function=$('#sel_function').val();
-                let accounts=get_accounts(sub_function);
-
-                $('#sel_accounts').empty().selectpicker('refresh');
-                $('#sel_projects').empty().selectpicker('refresh');
-                $('#sel_assigners').empty().selectpicker('refresh');
-                reset_author('form_assigner');
-
-                $('#sel_accounts').append('<option value="" selected> Select... </option>');
-
-                //  DQMS tricky rule
-                if(sub_function=='DSPA_DS'){
-                    $.each(accounts,function(){
-                        let account_info = $(this)[0];
-                        if(account_info['code']=='WT-EBG') $('#sel_accounts').append('<option value="'+account_info['id']+'">'+account_info['code']+'</option>');
-                    });
-                }else{
-                    $.each(accounts,function(){
-                        let account_info=$(this)[0];
-                        $('#sel_accounts').append('<option value="'+account_info['id']+'">'+account_info['code']+'</option>');
-                    });
-                }
-                $('#sel_accounts').selectpicker('refresh');
-            });
-        //  Form fields - Select projects
-            $('#sel_accounts').on('change',function(){
-                let acc_id=$('#sel_accounts').val();
-                let projects=get_projects(acc_id);
-                $('#sel_projects').empty().selectpicker('refresh');
-                $('#sel_assigners').empty().selectpicker('refresh');
-                reset_author('form_assigner');
-
-                $('#sel_projects').append('<option value="" selected> Select... </option>');
-
-                //  DQMS tricky rule
-                $.each(projects,function(){
-                    let project_info = $(this)[0];
-                    $('#sel_projects').append('<option value="'+project_info['id']+'">'+project_info['name']+'</option>');
-                });
-
-                $('#sel_projects').selectpicker('refresh');
-            });
-        //  Form fields - Select assigners
-            let assigners='';
-            $('#sel_projects').on('change',function(){
-                let project_id=$('#sel_projects').val();
-                let sub_function='';
-                if($('#sel_function').val().length!==0){
-                    sub_function=$('#sel_function').val().split('_')[1];
-                }
-                reset_author('form_assigner');
-                $('#sel_assigners').empty().selectpicker('refresh');
-                $('#sel_assigners').append('<option value="" selected> Select... </option>');
-                if(project_id.length!==0 && sub_function!==0){
-                    assigners=get_assigners(sub_function,project_id);
-                    console.log(assigners)
-                    $.each(assigners,function(index,v){
-                        let name=$(this)[0]['display_name'].split('/Wistron')[0];
-                        let phone_extension=$(this)[0]['extension'];
-                        let id=$(this)[0]['employee_id'];
-                        $('#sel_assigners').append('<option value="'+id+'" data-index="'+index+'" data-subtext=" #'+phone_extension+'">'+name+'</option>');
-                    });
-                    $('#sel_assigners').selectpicker('refresh');
-                }
-            });
-        //  Show assigner is who
-        $('#sel_assigners').on('change',function(){
-            let assigners_index=$(this).find('option:selected').data('index');
-            let assigner_info=assigners[assigners_index];
-            reset_author('form_assigner');
-            show_author('form_assigner',assigner_info);
-        });
+            })
+        })()
     }
     function show_author(form_role,info){
         let roleinfo;
@@ -701,11 +650,16 @@
         target.parents('.author').fadeIn(0);
     }
     function reset_author(form_role){
-        let target=$('#'+form_role);
+        let target=$('#'+form_role)
+        console.log(target.parents('.author'))
         if(target.parents('.author').css('display')!=='none'){
-            target.find('img').prop('src',images['defaultavatar']);
-            target.find('span').text('');
-            target.parents('.author').prop('style','display:none !important;');
+            target.find('img').prop('src',images['defaultavatar'])
+            target.find('span').text('')
+
+            console.log('-------------------------------------')
+            console.log(target.parents('.author'))
+
+            target.parents('.author').prop('style','display:none !important;')
         }
     }
     function show_request_info(order_data){
@@ -935,7 +889,6 @@
     }
 
     function get_schedulelist(schedule_data){
-        // let schedule=get_current_schedule(order_id);
         $('#schedulelist').bootstrapTable('destroy').bootstrapTable({
             data:schedule_data,
             cache: false,
@@ -1280,7 +1233,7 @@
         let develop_date='-';
         let current_rate=0;
 
-        if(schedule_data[0].timestamp==null){
+        if(!schedule_data.length){
         }else {
             begin=schedule_data[0].timestamp
             end=schedule_data[schedule_data.length-1].timestamp
@@ -1403,7 +1356,7 @@
                                             <td> - </td>
                                         </tr>`;
 
-                    if(schedule_data[0].timestamp==null){
+                    if(!schedule_data.length){
                         field.find('tbody').append(schedule_html);
                     }else {
                         $.each(schedule_data,function(i,info){
@@ -1419,8 +1372,8 @@
                     }
                     break;
                 case 'develop_time':
-                    if( schedule_data[0].timestamp==null ) field.text(' - ');
-                    else {
+                    if(!schedule_data.length) { field.text(' - ');
+                    }else {
                         field.text(days+' days ('+b_day+'~'+e_day+')');
                     }
                     break;
@@ -1484,7 +1437,6 @@
         });
 
         $('#ezinfoModal').modal('show');
-
     }
 
 
@@ -1702,7 +1654,7 @@
             let employee_id=signaturer_info.signer.employee_id;
             signaturer_obj[employee_id]=signaturer_info.id; //signature_id
         });
-        let status=singnature_response[singnature_response.length-1]['status']
+        let status=singnature_response.length?singnature_response[singnature_response.length-1]['status']:''
 
         if(login_id in signaturer_obj){
             Indentification={'identity':['signature'],'index':signaturer_obj[login_id]};
@@ -1748,6 +1700,7 @@
         let schedule_data=get_current_schedule(id);
 
         //initialize_request/waiting_signature/notify_signing/waiting_receiver_accept_request/receiver_assign_developers
+
         if(role=='guest'){
             render_ezinfo(id);
         }else{

@@ -5,14 +5,6 @@ $(function(){
         let order_response=get_single_order(order_id);
         indentify_modal_show(order_response);
     }
-    //  Press shift+mousewheel  <- -> 左右移動
-    // $(document).bind('mousewheel DOMMouseScroll','#table', function (event) {
-    //     if(event.shiftKey === true) {
-    //         $('#table').closest('.fixed-table-body').scrollLeft(
-    //             $('#table').closest('.fixed-table-body').scrollLeft() - event.originalEvent.wheelDelta/4
-    //         );
-    //     }
-    // });
 
     //  STICKER to teamroster profile page
     $(document).on('click','.sticker',function(){
@@ -663,10 +655,4 @@ $(function(){
         $(this).find('span').removeClass('text-info').addClass('text-light');
         msg = get_notifications_currentUser();
     });
-
-
-
-
-
-
 });

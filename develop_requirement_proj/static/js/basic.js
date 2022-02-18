@@ -23,24 +23,11 @@ $(function(){
         $(this).css('z-index', zIndex).data('index',$('.modal:visible').length).addClass('index-'+$('.modal:visible').length);
         setTimeout(function() {
             $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
-            // if($('.modal.show').length>=1){
-                // $('.modal.show').not('.note-modal').not(this).addClass('blur');
-                // $(this).removeClass('blur');
-            // }
         }, 0);
     });
     $(document).on('shown.bs.modal', '.modal', function() {
         if($('body').hasClass('modal-open')==false) $('body').addClass('modal-open');
     });
-
-    // $(document).on('hide.bs.modal', '.modal', function() {
-    //     let index=$(this).data('index');
-    //     let target_index=index-1;
-    //     if(index>=1){
-    //         let target=$('.modal.show.index-'+target_index+'');
-    //         target.removeClass('blur');
-    //     }
-    // });
 
 
     // image prop path
@@ -129,13 +116,21 @@ $(function(){
         },
         columns: [
             {
+                field:'system_id',
+                title:'System id',
+                filterControl:'input',
+                filterControlPlaceholder:'Search id',
+            },
+            {
                 field:'id',
                 title:'Form id',
                 filterControl:'input',
                 filterControlPlaceholder:'Search id',
-                visible: false,
                 formatter:function(value, row, index){
-                    let html=`<span class="ellipsis">`+value+`</span>`
+                    let html=`  <button type="button" class="btn btn-outline-primary btn-sm openOrder">
+                                    Check ${value}
+                                    <i class="fa fa-arrow-circle-right fa-sm ml-2"></i>
+                                </button>`
                     return html;
                 },
             },
@@ -166,6 +161,15 @@ $(function(){
                     }
                     return html;
                 },
+            },
+            {
+                field:'schedule',
+                title:'Schedule',
+                hvalign: 'top',
+                formatter:function(value, row, index){
+                    const options = []
+                    return `<select></select>`
+                }
             },
             {
                 field:'status',
@@ -268,27 +272,27 @@ $(function(){
                     return html;
                 },
             },
-            {
-                field:'parent',
-                title:'Parent form',
-                visible: false,
-                filterControl:'input',
-                filterControlPlaceholder:'Search id',
-                filterDataCollector:function(value, row, index){
-                    return value;
-                },
-                formatter:function(value, row, index){
-                    let html='<span class="text-grey font-weight-bold ml-3"> - </span>';
-                    if(value==null||value==''){
-                    }else{
-                        html = `<div class="ellipsis">
-                                    <span class="col-6">`+value+`</span>
-                                    <i class="ml-2 btn btn-success btn-sm fa fa-file-alt ezinfoModal_trigger"  data-id="`+value+`"></i>
-                                </div>`;
-                    }
-                    return html;
-                },
-            },
+            // {
+            //     field:'parent',
+            //     title:'Parent form',
+            //     visible: false,
+            //     filterControl:'input',
+            //     filterControlPlaceholder:'Search id',
+            //     filterDataCollector:function(value, row, index){
+            //         return value;
+            //     },
+            //     formatter:function(value, row, index){
+            //         let html='<span class="text-grey font-weight-bold ml-3"> - </span>';
+            //         if(value==null||value==''){
+            //         }else{
+            //             html = `<div class="ellipsis">
+            //                         <span class="col-6">`+value+`</span>
+            //                         <i class="ml-2 btn btn-success btn-sm fa fa-file-alt ezinfoModal_trigger"  data-id="`+value+`"></i>
+            //                     </div>`;
+            //         }
+            //         return html;
+            //     },
+            // },
             {
                 field:'account',
                 title:'Account',
@@ -454,8 +458,10 @@ $(function(){
             avatar_reload($('#table').find('img.sticker'));
         },
         onDblClickRow:function(row,$element,field) {},
-        onClickRow:function(row,$element,field) {
-            if(field!=='parent') indentify_modal_show(row);
+        onClickCell:function(field, value, row, $element) {
+            if(field == 'id') {
+                    indentify_modal_show(row);
+            }
         }
     });
 
@@ -463,4 +469,7 @@ $(function(){
     $(document).find('.fixed-table-toolbar').addClass('d-flex align-items-center justify-content-end');
     $('<button class="btn btn-warning text-secondary ml-2" id="addRequestBtn"><i class="fa fa-plus mr-1"></i>Add Request</button>').insertAfter($(document).find('.fixed-table-toolbar .btn-group')[0]);
     $('<button class="btn btn-outline-secondary" id="chart_list" title="Chart"><i class="fa fa-chart-bar"></i></button>').insertAfter($(document).find('.fixed-table-toolbar .btn-group').last()[0]);
+
+
+
 });

@@ -136,8 +136,8 @@
         overflow:hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        max-width: 22em;
-        padding: .3rem;
+        max-width: 22rem;
+        padding: 5px;
     }
     /* .ellipsis:hover{ */
         /* overflow:visable;
@@ -169,7 +169,7 @@
     }
     #table .ellipsis{
         height: 2rem;
-        width: 10rem;
+        /* width: 5rem; */
     }
     /* table tr:hover>td .ellipsis {
         overflow: visible;
