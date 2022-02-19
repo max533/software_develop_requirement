@@ -431,7 +431,9 @@ class OrderViewSet(CacheMixin,
         context['accounts'] = self.fetch_simple_accounts_from_cache()
         # Get employee information
         context['employees'] = self.fetch_simple_employees_from_cache()
-
+        context['systems'] = self.get_system_via_search(**{'group': 'id'})
+        context['schedules'] = self.get_schedule_via_search(**{'group': 'system_id'})
+        # context['schedules'] = dict()
         if self.action in ['create', 'update', 'partial_update']:
             # Get function_team and sub_function information
             function_team_object = cache.get('function_team', None)
