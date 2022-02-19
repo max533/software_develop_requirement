@@ -215,13 +215,10 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
         And transform employee_id to employee information.
         """
         ret = super().to_representation(instance)
-        accounts = self.context['accounts']
+
         employees = self.context['employees']
         systems = self.context['systems']
-        projects = self.context['projects']
-        ret['account'] = accounts.get(ret['account'], ret['account'])
         ret['initiator'] = employees.get(ret['initiator'], ret['initiator'])
-        ret['project'] = projects.get(ret['project'], ret['project'])
         ret['assigner'] = employees.get(ret['assigner'], ret['assigner'])
         try:
             ret['system'] = systems.get(str(ret['system']), ret['system'])[0]
@@ -251,18 +248,6 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
     def validate_system(self, value):
         """ Check whether the system_id is in System 2 Online or not """
         if value not in self.context['systems']:
-            raise serializers.ValidationError('This is not a reasonable value.')
-        return value
-
-    def validate_account(self, value):
-        """ Check whether the account is in AccPro 2.0 System or not """
-        if value not in self.context['accounts']:
-            raise serializers.ValidationError('This is not a reasonable value.')
-        return value
-
-    def validate_project(self, value):
-        """ Check whether the project is in AccPro 2.0 System or not """
-        if value not in self.context['projects']:
             raise serializers.ValidationError('This is not a reasonable value.')
         return value
 

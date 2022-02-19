@@ -425,11 +425,6 @@ class OrderViewSet(CacheMixin,
         """
         # TODO Use asyncio to speed up the resquest with third-party api
         context = super().get_serializer_context()
-        # Get project information
-        context['projects'] = self.fetch_simple_projects_from_cache()
-        # Get account information
-        context['accounts'] = self.fetch_simple_accounts_from_cache()
-        # Get employee information
         context['employees'] = self.fetch_simple_employees_from_cache()
         context['systems'] = self.get_system_via_search(**{'group': 'id'})
         context['schedules'] = self.get_schedule_via_search(**{'group': 'system_id'})
