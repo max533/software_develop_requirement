@@ -24,7 +24,6 @@ class CacheMixin(QueryDataMixin):
         if simple_employees is None:
             instance = Employee.objects.using('hr').all().values()
             serializer = EmployeeSimpleSerializer(instance, many=True)
-
             simple_employees = {}
             for simple_employee in serializer.data:
                 employee_id = simple_employee['employee_id']
