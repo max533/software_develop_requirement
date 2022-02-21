@@ -158,11 +158,17 @@
                             formdata[field]=value;
 
                             if(name=='function'){
-                                let v=$(this).val() // EE_Power
-                                let develop_team_function=v.split('_')[0];
-                                let develop_team_sub_function=v.split('_')[1];
-                                formdata['develop_team_function']=develop_team_function;
-                                formdata['develop_team_sub_function']=develop_team_sub_function;
+                                let fn=$(this).val()
+                                formdata['develop_team_function']=fn
+
+                                // hard code
+                                const fnArr = ['DSPA','Others']
+                                const subFnArr = ['DS','Others']
+
+                                $.each(fnArr, index => {
+                                    if(fn===fnArr[index]) formdata['develop_team_sub_function']=subFnArr[index]
+                                    fnArr.splice(index+1, 1)
+                                })
                                 delete formdata['function']
                             }
                         }
@@ -570,7 +576,7 @@
     //  selectpicker(When status==p0/p1)
     function request_selectpicker(){
         $('#requestModal').find('.selectpicker').selectpicker('render');
-        let funOptionArr = ['DS', 'Others']
+        let funOptionArr = ['DSPA', 'Others']
         $.grep(funOptionArr, option => {
             const html = `<option val="${option}">${option}</option>`
             $('#sel_function').append(html)
@@ -605,8 +611,6 @@
             $('#sel_system').change(function(){
                 if( $(this).val()!=='' ) {
                     const system_id = $(this).val()
-                    console.log(system_id)
-                    console.log(systemResponse)
                     const { dev_group_id } = systemResponse.filter(system => system.id == system_id )[0]
                     if( dev_group_id===null ){
                         $('#dev_group').text('Others')
@@ -616,6 +620,8 @@
                         $('#dev_group').text(name)
                         $('#dev_leader').text(leader)
                     }
+                    const selected_system_name = $( "#sel_system option:selected" ).text()
+                    $('#title').val(selected_system_name)
                 }
             })
         })()
@@ -670,11 +676,10 @@
 
         $('#form_breadcrumb').find('div').empty();
         $('#request_title,#request_description').empty();
+
         let breadcrumb_html=` <h6 class="badge badge-bluegray badge-pill" title="Initiator">`+order_data['initiator']['display_name']+`</h6> &rsaquo;
                                 <h6 class="badge badge-bluegray badge-pill mr-2" title="Team">`+order_data['develop_team_function']+`_`+order_data['develop_team_sub_function']+`</h6> &rsaquo;
-                                <h6 class="badge badge-bluegray badge-pill mr-2" title="Account">`+order_data['account']['code']+`</h6> &rsaquo;
-                                <h6 class="badge badge-bluegray badge-pill mr-2" title="Project">`+order_data['project']['name']+`</h6> &rsaquo;
-                                <h6 class="badge badge-bluegray badge-pill" title="Receiver">`+order_data['assigner']['display_name']+`</h6>`;
+                                <h6 class="badge badge-bluegray badge-pill" title="Assigner">`+order_data['assigner']['display_name']+`</h6>`;
         let title=order_data['title'];
         let description_html=order_data['description'].replace(/\\/g,'');
         let signaturer_target=$('#authors').find('.ReviewerList');
@@ -1257,9 +1262,7 @@
 
         let breadcrumb_html=` <h6 class="badge badge-bluegray badge-pill" title="Initiator">`+initiator+`</h6> &rsaquo;
                                 <h6 class="badge badge-bluegray badge-pill mr-2" title="Team">`+team+`</h6> &rsaquo;
-                                <h6 class="badge badge-bluegray badge-pill mr-2" title="Account">`+account+`</h6> &rsaquo;
-                                <h6 class="badge badge-bluegray badge-pill mr-2" title="Project">`+project+`</h6> &rsaquo;
-                                <h6 class="badge badge-bluegray badge-pill" title="Receiver">`+assigner+`</h6>`;
+                                <h6 class="badge badge-bluegray badge-pill" title="Assigner">`+assigner+`</h6>`;
         $('#ez_breadcrumb').append(breadcrumb_html);
 
         $('#ezinfoModal').find('form').find('[name]').each(function(){

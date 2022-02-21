@@ -28,16 +28,21 @@ $(function(){
             let init_data=package_data('#FormRequest');
             init_data['status']=JSON.stringify(statusObj)
 
-            init_data['initiator']=loginInfo.employee_id;
+            // hard code
+            init_data['account']=null
+            init_data['project']=null
+            init_data['assigner']=$('#dev_leader').text()
 
-            let order_data=post_order(init_data);
-            let order_id=order_data['id'];
+            init_data['initiator']=loginInfo.employee_id
+
+            let order_data=post_order(init_data)
+            let order_id=order_data['id']
             //  Store order_id to requestModal
-            $('#requestModal').data('order_id',order_id);
+            $('#requestModal').data('order_id',order_id)
             //  Collapse Request which team info
             show_request_info(order_data);
             //  Show upload file
-            afterInit(order_id);
+            afterInit(order_id)
             //  image_status
             request_image_module('waiting_signature');
         }else console.log('#FormRequest valid false');
