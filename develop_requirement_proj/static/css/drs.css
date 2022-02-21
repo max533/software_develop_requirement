@@ -1,5 +1,9 @@
 
 /* Animate css */
+    .openOrder{
+        white-space: nowrap;
+    }
+
     .animated{
         animation-duration: .5s;
     }

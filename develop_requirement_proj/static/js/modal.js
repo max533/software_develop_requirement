@@ -132,7 +132,7 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                             </div>
                             <div class="row align-items-center mt-3">
                                 <label class="col-4"> &#9733 System </label>
-                                <select type="select" class="selectpicker col-8" name="project" id="sel_system" data-width="auto" data-size="7" title="Select ..." data-live-search="true" required>
+                                <select type="select" class="selectpicker col-8" name="system_id" id="sel_system" data-width="auto" data-size="7" title="Select ..." data-live-search="true" required>
                                     <option value=""> Select... </option>
                                 </select>
                             </div>

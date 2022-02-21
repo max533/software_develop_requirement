@@ -116,12 +116,6 @@ $(function(){
         },
         columns: [
             {
-                field:'system_id',
-                title:'System id',
-                filterControl:'input',
-                filterControlPlaceholder:'Search id',
-            },
-            {
                 field:'id',
                 title:'Form id',
                 filterControl:'input',
@@ -266,7 +260,7 @@ $(function(){
                     }
                     let html=``
                     $.each(value.action,function(key,whoturn){
-                        html += status_temp(whoturn);
+                        if( whoturn.response==='' ) html += status_temp(whoturn)
                     });
                     html=`<div>`+html+`</div>`
                     return html;
@@ -293,41 +287,41 @@ $(function(){
             //         return html;
             //     },
             // },
-            {
-                field:'account',
-                title:'Account',
-                visible:false,
-                filterControl: 'select',
-                filterControlPlaceholder:'Select Account',
-                width:200,
-                filterDataCollector:function(value, row, index){
-                    return (value.id+' _ '+value.code);
-                },
-                formatter:function(value, row, index){
-                    let html = '-'
-                    if(value){
-                        html=`<span class="ellipsis">`+value.code+`</span>`
-                    }
-                    return html;
-                },
-            },
-            {
-                field:'project',
-                title:'Project',
-                filterControl: 'select',
-                filterControlPlaceholder:'Select project',
-                width:200,
-                filterDataCollector:function(value, row, index){
-                    return (value.id+' _ '+value.name);
-                },
-                formatter:function(value, row, index){
-                    let html = '-'
-                    if(value){
-                        html=`<span class="ellipsis">`+value.name+`</span>`
-                    }
-                    return html;
-                },
-            },
+            // {
+            //     field:'account',
+            //     title:'Account',
+            //     visible:false,
+            //     filterControl: 'select',
+            //     filterControlPlaceholder:'Select Account',
+            //     width:200,
+            //     filterDataCollector:function(value, row, index){
+            //         return (value.id+' _ '+value.code);
+            //     },
+            //     formatter:function(value, row, index){
+            //         let html = '-'
+            //         if(value){
+            //             html=`<span class="ellipsis">`+value.code+`</span>`
+            //         }
+            //         return html;
+            //     },
+            // },
+            // {
+            //     field:'project',
+            //     title:'Project',
+            //     filterControl: 'select',
+            //     filterControlPlaceholder:'Select project',
+            //     width:200,
+            //     filterDataCollector:function(value, row, index){
+            //         return (value.id+' _ '+value.name);
+            //     },
+            //     formatter:function(value, row, index){
+            //         let html = '-'
+            //         if(value){
+            //             html=`<span class="ellipsis">`+value.name+`</span>`
+            //         }
+            //         return html;
+            //     },
+            // },
             {
                 field:'develop_team_sub_function',
                 title:'Developer function',
