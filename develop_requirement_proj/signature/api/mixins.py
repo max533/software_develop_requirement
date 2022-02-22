@@ -89,12 +89,12 @@ class SignatureMixin(QueryDataMixin):
 
         # Rule 1
         if signature_phase in 'P1':
-            result = self.check_identity(order.initiator)
+            result = self.is_position_higher_function_head(order.initiator)
             if result:
                 skip_signature_flag, create_new_signature_flag = True, False
                 return skip_signature_flag
         elif signature_phase in 'P4':
-            result = self.check_identity(order.assigner)
+            result = self.is_position_higher_function_head(order.assigner)
             if result:
                 skip_signature_flag, create_new_signature_flag = True, False
                 return skip_signature_flag
@@ -113,7 +113,7 @@ class SignatureMixin(QueryDataMixin):
         # Check next phase latest signature's status and singer identity
         last_signature = order.signature_set.get(sequence=max_sequence)
         if last_signature.status == 'Approve':
-            result = self.check_identity(last_signature.signer)
+            result = self.is_position_higher_function_head(last_signature.signer)
             if result:
                 skip_signature_flag, create_new_signature_flag = True, False
             else:
@@ -132,43 +132,18 @@ class SignatureMixin(QueryDataMixin):
             raise Conflict
         return skip_signature_flag, create_new_signature_flag
 
-    def check_identity(self, employee_id):
+    def is_position_higher_function_head(self, employee_id):
         """
-        Check identity whether reach function head leader or not
-        Return True  -> It present that identity is higher/equal than function head leader
-        Return False -> It present that identity is below than function head leader
+        Check employee identity whether is position higher than function head or not
+        Return True  -> It present that employee identity is higher than function head
+        Return False -> It present that employee identity is equal/below than function head
         """
+
         self_department_id = Employee.objects.using('hr').get(employee_id=employee_id).department_id
 
-        self_count = self.count_zero_occurrence_times(self_department_id)
+        self_department_id_count = self.count_zero_occurrence_times(self_department_id)
 
-        if self_count > 4:
-            identity_flag = True
-            return identity_flag
-
-        try:
-            departments = self.get_department_via_query(self_department_id)
-        except Exception as err:
-            logger.warning(err)
-            raise ServiceUnavailable
-
-        if self_department_id in departments:
-            dm_employee_id = departments[self_department_id].get('dm', None)
-
-        dm_department_id = Employee.objects.using('hr').get(employee_id=dm_employee_id).department_id
-
-        dm_department_count = self.count_zero_occurrence_times(dm_department_id)
-
-        # This condiction indicate that himself/herself boss above function head
-        if dm_department_count == 5:
-            identity_flag = True
-        # This condiction indicate that himself/herself is function head
-        elif self_count == 4 and dm_employee_id == employee_id:
-            identity_flag = True
-        elif self_count == 4 and dm_employee_id != employee_id:
-            identity_flag = False
-        else:
-            identity_flag = False
+        identity_flag = True if self_department_id_count > 4 else False
 
         return identity_flag
 
