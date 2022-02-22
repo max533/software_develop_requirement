@@ -140,7 +140,7 @@ class SignatureMixin(QueryDataMixin):
         """
         self_department_id = Employee.objects.using('hr').get(employee_id=employee_id).department_id
 
-        self_count = self.count_zero_occurrence(self_department_id)
+        self_count = self.count_zero_occurrence_times(self_department_id)
 
         if self_count > 4:
             identity_flag = True
@@ -157,7 +157,7 @@ class SignatureMixin(QueryDataMixin):
 
         dm_department_id = Employee.objects.using('hr').get(employee_id=dm_employee_id).department_id
 
-        dm_department_count = self.count_zero_occurrence(dm_department_id)
+        dm_department_count = self.count_zero_occurrence_times(dm_department_id)
 
         # This condiction indicate that himself/herself boss above function head
         if dm_department_count == 5:
@@ -172,8 +172,8 @@ class SignatureMixin(QueryDataMixin):
 
         return identity_flag
 
-    def count_zero_occurrence(self, department_id):
-        """ count zero occurrence time """
+    def count_zero_occurrence_times(self, department_id):
+        """ count zero number occurrence times in department id """
         count = 0
         for char in department_id[::-1]:
             if char == '0':
@@ -195,7 +195,7 @@ class SignatureMixin(QueryDataMixin):
         if signer_department_id in departments:
             next_signer = departments[signer_department_id].get('dm', None)
         # If signer is equal to next_signer
-        count = self.count_zero_occurrence(signer_department_id)
+        count = self.count_zero_occurrence_times(signer_department_id)
         next_signer_department_id = signer_department_id
         while (signer == next_signer and count < 5):
             non_zero_part = len(signer_department_id) - count - 1
