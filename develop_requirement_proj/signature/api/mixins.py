@@ -141,11 +141,9 @@ class SignatureMixin(QueryDataMixin):
 
         self_department_id = Employee.objects.using('hr').get(employee_id=employee_id).department_id
 
-        self_department_id_count = self.count_zero_occurrence_times(self_department_id)
+        zero_count = self.count_zero_occurrence_times(self_department_id)
 
-        identity_flag = True if self_department_id_count > 4 else False
-
-        return identity_flag
+        return True if zero_count > 4 else False
 
     def count_zero_occurrence_times(self, department_id):
         """ count zero number occurrence times in department id """
