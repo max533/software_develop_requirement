@@ -151,7 +151,7 @@ class SignatureMixin(QueryDataMixin):
         for char in department_id[::-1]:
             if char == '0':
                 count += 1
-            elif char != '0':
+            else:
                 break
         return count
 
