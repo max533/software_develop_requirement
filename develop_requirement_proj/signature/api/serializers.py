@@ -11,37 +11,6 @@ from ..models import (
 )
 
 
-class AccountBaseSerializer(serializers.Serializer):
-    """ Account Base Serializer """
-    id = serializers.IntegerField(read_only=True)
-    name = serializers.CharField(read_only=True)
-    code = serializers.CharField(read_only=True)
-    business_unit = serializers.IntegerField(read_only=True)
-
-
-class AccountSerializer(AccountBaseSerializer):
-    """ Account Serializer """
-    project_count = serializers.IntegerField(read_only=True)
-
-
-class ProjectSerializer(serializers.Serializer):
-    """ Project Serializer """
-    id = serializers.IntegerField(read_only=True)
-    wistron_name = serializers.CharField(read_only=True)
-    customer_name = serializers.CharField(read_only=True)
-    wistron_code = serializers.CharField(read_only=True)
-    plm_code_1 = serializers.CharField(read_only=True)
-    plm_code_2 = serializers.CharField(read_only=True)
-    deleted_at = serializers.CharField(read_only=True)
-    name = serializers.CharField(read_only=True)
-    plm_code = serializers.CharField(read_only=True)
-    type = serializers.CharField(read_only=True)
-    status = serializers.CharField(read_only=True)
-    product_line = serializers.CharField(read_only=True)
-    business_model = serializers.CharField(read_only=True)
-    account = AccountBaseSerializer()
-
-
 class DocumentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
@@ -211,7 +180,7 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         """
-        Transform account id & project id to account & project information.
+        Transform system_id to system information.
         And transform employee_id to employee information.
         """
         ret = super().to_representation(instance)
@@ -506,16 +475,6 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
             'update_staff',
             'status_detail'
         ]
-
-
-class ProjectSimpleSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    name = serializers.CharField()
-
-
-class AccountSimpleSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    code = serializers.CharField()
 
 
 class SignatureSerializer(serializers.ModelSerializer):

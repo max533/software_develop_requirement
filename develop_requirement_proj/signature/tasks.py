@@ -1,4 +1,4 @@
-from celery import chain, shared_task
+from celery import shared_task
 
 from develop_requirement_proj.employee.models import Employee
 from develop_requirement_proj.signature.api.mixins import MessageMixin
@@ -7,60 +7,7 @@ from develop_requirement_proj.signature.models import Signature
 from django.conf import settings
 from django.core.cache import cache
 
-from .api.mixins import QueryDataMixin
-from .api.serializers import (
-    AccountSimpleSerializer, EmployeeSimpleSerializer, ProjectSimpleSerializer,
-)
-
-
-@shared_task(autoretry_for=(Exception,), retry_kwargs={'max_retries': 3})
-def update_simple_accounts_cache(self):
-    t1 = fetch_simple_accounts_data.s()
-    t2 = store_simple_accounts_data.s()
-    chain(t1, t2).delay()
-
-
-@shared_task(autoretry_for=(Exception,), retry_backoff=True)
-def fetch_simple_accounts_data():
-    accounts = QueryDataMixin().get_account_via_search()
-    return accounts
-
-
-@shared_task(retry_kwargs={'max_retries': 3})
-def store_simple_accounts_data(accounts):
-    cache.delete('simple_accounts', None)
-    simple_accounts = {}
-    serializer = AccountSimpleSerializer(accounts, many=True)
-    for simple_account in serializer.data:
-        account_id = simple_account['id']
-        if account_id not in simple_accounts:
-            simple_accounts[account_id] = simple_account
-    cache.set('simple_accounts', simple_accounts, 60 * 60)
-
-
-@shared_task(autoretry_for=(Exception,), retry_kwargs={'max_retries': 3})
-def update_simple_projects_cache(self):
-    t1 = fetch_simple_projects_data.s()
-    t2 = store_simple_projects_data.s()
-    chain(t1, t2).delay()
-
-
-@shared_task(autoretry_for=(Exception,), retry_backoff=True)
-def fetch_simple_projects_data(self):
-    projects = QueryDataMixin().get_project_via_search()
-    return projects
-
-
-@shared_task(retry_kwargs={'max_retries': 3})
-def store_simple_projects_data(projects):
-    cache.delete('simple_projects', None)
-    simple_projects = {}
-    serializer = ProjectSimpleSerializer(projects, many=True)
-    for simple_account in serializer.data:
-        account_id = simple_account['id']
-        if account_id not in simple_projects:
-            simple_projects[account_id] = simple_account
-    cache.set('simple_projects', simple_projects, 60 * 60)
+from .api.serializers import EmployeeSimpleSerializer
 
 
 @shared_task(autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})

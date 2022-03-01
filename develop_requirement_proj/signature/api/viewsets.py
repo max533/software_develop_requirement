@@ -20,8 +20,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from ..models import (
-    Account, Comment, Document, Notification, Order, Progress, Project,
-    Schedule, ScheduleTracker, Signature,
+    Comment, Document, Notification, Order, Progress, Schedule,
+    ScheduleTracker, Signature,
 )
 from .filters import OrderFilter, OrderFilterBackend
 from .mixins import CacheMixin, MessageMixin, SignatureMixin
@@ -32,59 +32,19 @@ from .permissions import (
     SignaturePermission,
 )
 from .serializers import (
-    AccountSerializer, CommentSerializer, DocumentSerializer,
-    NotificationSerializer, OrderDynamicSerializer, OrderTrackerSerializer,
-    ProgressSerializer, ProjectSerializer, ScheduleSerializer,
-    SignatureSerializer,
+    CommentSerializer, DocumentSerializer, NotificationSerializer,
+    OrderDynamicSerializer, OrderTrackerSerializer, ProgressSerializer,
+    ScheduleSerializer, SignatureSerializer,
 )
 
 logger = logging.getLogger(__name__)
-
-
-class AccountViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
-    """ Provide Account resource with `list` action """
-    serializer_class = AccountSerializer
-
-    def get_queryset(self):
-        """ Get queryset from Account Project System """
-        queryset = []
-        params = self.request.query_params.dict()
-        try:
-            accounts = self.get_account_via_search(**params)
-        except Exception as err:
-            logger.error(err, exc_info=True)
-            raise ServiceUnavailable
-
-        queryset = [Account(**account) for account in accounts]
-
-        return queryset
-
-
-class ProjectViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
-    """ Provide Project resource with `list` action """
-    serializer_class = ProjectSerializer
-
-    def get_queryset(self):
-        """ Get queryset from Account Project System """
-        queryset = []
-        params = self.request.query_params.dict()
-
-        try:
-            projects = self.get_project_via_search(**params)
-        except Exception as err:
-            logger.error(err, exc_info=True)
-            raise ServiceUnavailable
-
-        queryset = [Project(**project) for project in projects]
-
-        return queryset
 
 
 class OptionView(QueryDataMixin, views.APIView):
     """ Provide Option resource """
 
     def get(self, request, *args, **kwargs):
-        """ Get result from TeamRoster 2.0 System and Account Project System """
+        """ Get result from TeamRoster 2.0 Online, AccPro 2.0 Online and System 2.0 Online """
         options = {}
         params = self.request.query_params.dict()
 
@@ -420,7 +380,7 @@ class OrderViewSet(CacheMixin,
 
     def get_serializer_context(self):
         """
-        Query account, acccount, employee, function_team and sub_function_team information
+        Query employee, function_team and sub_function_team information
         for to_represtation() function
         """
         # TODO Use asyncio to speed up the resquest with third-party api
@@ -1068,14 +1028,10 @@ class SignatureViewSet(CacheMixin,
 
     def get_serializer_context(self):
         """
-        Query accounts, projects and employee information for to_represtation() function
+        Query employee information for to_represtation() function
         """
         # TODO Use asyncio to speed up the request with third-party api
         context = super().get_serializer_context()
-        # Get project information
-        context['projects'] = self.fetch_simple_projects_from_cache()
-        # Get account information
-        context['accounts'] = self.fetch_simple_accounts_from_cache()
         # Get employee information
         context['employees'] = self.fetch_simple_employees_from_cache()
         return context

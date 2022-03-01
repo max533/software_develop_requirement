@@ -256,14 +256,6 @@ CELERY_TASK_SOFT_TIME_LIMIT = 60
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 # https://docs.celeryproject.org/en/latest/userguide/configuration.html#beat-schedule
 CELERY_BEAT_SCHEDULE = {
-    "update-simple-accounts-cache": {
-        "task": 'develop_requirement_proj.signature.tasks.update_simple_accounts_cache',
-        "schedule": crontab(minute=0, hour='*'),
-    },
-    "update-simple-projects-cache": {
-        "task": 'develop_requirement_proj.signature.tasks.update_simple_projects_cache',
-        "schedule": crontab(minute=0, hour='*'),
-    },
     "update-simple-employees-cache": {
         "task": 'develop_requirement_proj.signature.tasks.update_simple_employees_cache',
         "schedule": crontab(minute=0, hour='*'),
@@ -314,10 +306,6 @@ SESSION_COOKIE_NAME = 'session_drs'
 # TeamRoster 2.0 System
 TEAMROSTER_URI = env("DJANGO_TEAMROSTER_URI")
 TEAMROSTER_TOKEN = env("DJANGO_TEAMROSTER_TOKEN")
-
-# Account Project System
-ACCOUNT_PROJECT_URI = env("DJANGO_ACCOUNT_PROJECT_URI")
-ACCOUNT_PROJECT_TOKEN = env("DJANGO_ACCOUNT_PROJECT_TOKEN")
 
 # System 2 Online
 SYSTEM_URI = env("DJANGO_SYSTEM_URI")
