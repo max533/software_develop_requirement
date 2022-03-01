@@ -248,10 +248,16 @@ class Notification(models.Model):
 
 class Signature(models.Model):
     """ Order's Signature Model """
+    SIGNATURE_STATUS_CHOICE = [
+        ('Approve', 'Approve'),
+        ('Return', 'Return'),
+        ('Close', 'Close'),
+        ('', ''),
+    ]
     sequence = models.PositiveIntegerField(null=True)
     signer = models.CharField(max_length=50)
     sign_unit = models.CharField(_('the department of signing'), max_length=50)
-    status = models.CharField(max_length=50)
+    status = models.CharField(max_length=50, choices=SIGNATURE_STATUS_CHOICE)
     comment = models.TextField()
     signed_time = models.DateTimeField(null=True)
     role_group = models.CharField(max_length=50)
