@@ -74,62 +74,59 @@ class SignatureMixin(QueryDataMixin):
 
     def calculate_signature_flag(self, order_id, signature_phase):
         """
-        1. Check initiator/assigner job position reach function head leader. (Rule 1)
+        1. Check initiator/assigner job position reach function head. (Rule 1)
         2. Check whether signature stage is finished or not. (Rule 2)
             Finished condition:
-                (1) There are no any signature in signature_phase.
-                (2) The last signature's signer reach function head leader.
+                (1) Initiator / Asssigner is equal or above function head.
+                (2) The last signature's signer reach function head
                     and last signature's status is "Approve".
-                (3) The last signature's signer didn't reach function head leader.
         """
-        if signature_phase not in ['P1', 'P4']:
+        signature_phase_with_role_group = {
+            'P1': 'initiator',
+            'P4': 'assigner',
+        }
+        role_group = signature_phase_with_role_group[signature_phase]
+        if signature_phase not in signature_phase_with_role_group.keys():
             return None, None
-
         order = Order.objects.get(pk=order_id)
-
+        role_employee_id = getattr(order, role_group)
         # Rule 1
-        if signature_phase in 'P1':
-            result = self.is_position_higher_function_head(order.initiator)
-            if result:
-                skip_signature_flag, create_new_signature_flag = True, False
-                return skip_signature_flag
-        elif signature_phase in 'P4':
-            result = self.is_position_higher_function_head(order.assigner)
-            if result:
-                skip_signature_flag, create_new_signature_flag = True, False
-                return skip_signature_flag
-        # Rule 2
-        if signature_phase in 'P1':
-            role_group = 'initiator'
-        elif signature_phase in 'P4':
-            role_group = 'assigner'
-
-        # Check whether next phase signautre exist or not
-        max_sequence = order.signature_set.filter(role_group=role_group).aggregate(Max('sequence'))['sequence__max']
-        if max_sequence is None:
-            skip_signature_flag, create_new_signature_flag = False, True
+        if self.is_position_higher_function_head(role_employee_id):
+            skip_signature_flag, create_new_signature_flag = True, False
             return skip_signature_flag, create_new_signature_flag
 
-        # Check next phase latest signature's status and singer identity
-        last_signature = order.signature_set.get(sequence=max_sequence)
-        if last_signature.status == 'Approve':
-            result = self.is_position_higher_function_head(last_signature.signer)
-            if result:
+        # Rule 2
+        # Check whether the signautre of the next phase exist or not
+        max_sequence = order.signature_set.filter(role_group=role_group).aggregate(Max('sequence'))['sequence__max']
+        if max_sequence is None:
+            next_signer, _ = self.find_next_signer(order_id, role_employee_id)
+            if self.is_position_higher_function_head(next_signer):
                 skip_signature_flag, create_new_signature_flag = True, False
             else:
                 skip_signature_flag, create_new_signature_flag = False, True
-        elif last_signature.status == 'Return':
+            return skip_signature_flag, create_new_signature_flag
+
+        # Check latest signature's status of the next phase and signer identity
+        lastest_signature = order.signature_set.get(sequence=max_sequence)
+        if role_group == 'initiator' and lastest_signature.status == 'Approve':
+            next_signer, _ = self.find_next_signer(order_id, lastest_signature.signer)
+            if self.is_position_higher_function_head(next_signer):
+                skip_signature_flag, create_new_signature_flag = True, False
+            else:
+                skip_signature_flag, create_new_signature_flag = False, True
+        elif role_group == 'assigner' and lastest_signature.status == 'Approve':
+            skip_signature_flag, create_new_signature_flag = True, False
+        elif lastest_signature.status == 'Return':
             skip_signature_flag, create_new_signature_flag = False, True
-        elif last_signature.status == '':
+        elif lastest_signature.status == 'Close':
             skip_signature_flag, create_new_signature_flag = False, False
-        elif last_signature.status == 'Close':
-            warn_message = "This is a conflict operation."
-            logger.warning(warn_message)
-            raise Conflict
+        elif lastest_signature.status == '':
+            skip_signature_flag, create_new_signature_flag = False, False
         else:
             warn_message = "This is a wrong operation."
             logger.warning(warn_message)
             raise Conflict
+
         return skip_signature_flag, create_new_signature_flag
 
     def is_position_higher_function_head(self, employee_id):
@@ -138,7 +135,7 @@ class SignatureMixin(QueryDataMixin):
         Return True  -> It present that employee identity is higher than function head
         Return False -> It present that employee identity is equal/below than function head
         """
-
+        print(employee_id, type(employee_id))
         self_department_id = Employee.objects.using('hr').get(employee_id=employee_id).department_id
 
         zero_count = self.count_zero_occurrence_times(self_department_id)
