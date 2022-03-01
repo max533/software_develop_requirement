@@ -247,7 +247,7 @@ class OrderDynamicSerializer(serializers.ModelSerializer):
 
     def validate_system(self, value):
         """ Check whether the system_id is in System 2 Online or not """
-        if value not in self.context['systems']:
+        if str(value) not in self.context['systems']:
             raise serializers.ValidationError('This is not a reasonable value.')
         return value
 
