@@ -11,9 +11,7 @@ from django.core.mail import send_mail
 from django.db.models import Max
 
 from ..models import Notification, Order
-from .serializers import (
-    AccountSimpleSerializer, EmployeeSimpleSerializer, ProjectSimpleSerializer,
-)
+from .serializers import EmployeeSimpleSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -31,43 +29,6 @@ class CacheMixin(QueryDataMixin):
                     simple_employees[employee_id] = simple_employee
             cache.set('simple_employees', simple_employees, 60 * 60)
         return simple_employees
-
-    def fetch_simple_accounts_from_cache(self):
-        simple_accounts = cache.get('simple_accounts', None)
-        if simple_accounts is None:
-            simple_accounts = {}
-            try:
-                accounts = self.get_account_via_search()
-            except Exception as err:
-                logger.error(err)
-                raise ServiceUnavailable
-
-            serializer = AccountSimpleSerializer(accounts, many=True)
-
-            for simple_account in serializer.data:
-                account_id = simple_account['id']
-                if account_id not in simple_accounts:
-                    simple_accounts[account_id] = simple_account
-            cache.set('simple_accounts', simple_accounts, 60 * 60)
-        return simple_accounts
-
-    def fetch_simple_projects_from_cache(self):
-        simple_projects = cache.get('simple_projects', None)
-        if simple_projects is None:
-            simple_projects = {}
-            try:
-                projects = self.get_project_via_search()
-            except Exception as err:
-                logger.error(err)
-                raise ServiceUnavailable
-
-            serializer = ProjectSimpleSerializer(projects, many=True)
-            for simple_project in serializer.data:
-                project_id = simple_project['id']
-                if project_id not in simple_projects:
-                    simple_projects[project_id] = simple_project
-            cache.set('simple_projects', simple_projects, 60 * 60)
-        return simple_projects
 
 
 class SignatureMixin(QueryDataMixin):
