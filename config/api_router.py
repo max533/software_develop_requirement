@@ -3,9 +3,9 @@ from rest_framework_nested import routers
 
 from develop_requirement_proj.employee.api.viewsets import EmployeeViewSet
 from develop_requirement_proj.signature.api.viewsets import (
-    AssignerViewSet, CommentViewSet, DocumentViewSet, NotificationVewSet,
-    OptionView, OrderViewSet, ProgressViewSet, ScheduleViewSet,
-    SignatureViewSet, SystemView,
+    CommentViewSet, DocumentViewSet, NotificationVewSet, OptionView,
+    OrderViewSet, ProgressViewSet, ScheduleViewSet, SignatureViewSet,
+    SystemView,
 )
 
 from django.conf import settings
@@ -19,7 +19,6 @@ else:
 app_name = 'api'
 
 router.register('employees', EmployeeViewSet)
-router.register('assigners', AssignerViewSet)
 router.register('documents', DocumentViewSet)
 router.register('schedules', ScheduleViewSet)
 router.register('progress', ProgressViewSet, basename='progress')
