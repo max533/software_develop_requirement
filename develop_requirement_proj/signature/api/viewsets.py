@@ -1,9 +1,6 @@
 """ signature app's api viewsets.py """
 import logging
 
-from develop_requirement_proj.employee.api.serializers import (
-    EmployeeSerializer,
-)
 from develop_requirement_proj.employee.models import Employee
 from develop_requirement_proj.utils.exceptions import (
     Conflict, ServiceUnavailable,
@@ -63,110 +60,6 @@ class OptionView(QueryDataMixin, views.APIView):
             raise ServiceUnavailable
 
         return response.Response(options)
-
-
-class AssignerViewSet(QueryDataMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
-    """ Provide Assigner resource with `list` action """
-    queryset = Employee.objects.all()
-    serializer_class = EmployeeSerializer
-
-    def get_queryset(self):
-        """
-        Get queryset from Account Project System and TeamRoster 2.0 System
-
-        1. DQMS assigner is the department manager which is belong to department ( QT + DQMS )
-
-        2. TSC, PM, BMC, BIOS assigner is the department member which is belong to department ( SW + PM )
-
-        3. Other project-based assigner is the department manager of the project owner
-        """
-        queryset = []
-        # Examine the required kwargs information
-        kwarg, error = {}, {}
-        kwarg['sub_function'] = self.request.query_params.get('sub_function', None)
-        kwarg['project_id'] = self.request.query_params.get('project_id', None)
-        for key, value in kwarg.items():
-            if value is None:
-                error.update({key: 'This parameter is required.'})
-        if error:
-            raise serializers.ValidationError(error)
-
-        params = {'bg': 'EBG'}
-        assigner_list = []
-        if kwarg['sub_function'] in ['DS']:
-            # Use kwarg['sub_function'] to search department id of the assigner
-            params['fn_lvl1'] = 'DSPA'
-            params['fn_lvl2'] = kwarg['sub_function']
-            try:
-                departments = self.get_department_via_search(**params)
-            except Exception as err:
-                logger.error(err, exc_info=True)
-                raise ServiceUnavailable
-
-            department_list = departments
-            # Use department_id to query employee_id of the department manager
-            try:
-                departments = self.get_department_via_query(department_list=department_list)
-            except Exception as err:
-                logger.error(err, exc_info=True)
-                raise ServiceUnavailable
-
-            if not departments:
-                return Employee.objects.none()
-
-            for department_id, department in departments.items():
-                assigner_list.append(department.get('dm', ''))
-            # Query the assigner via assigner_list
-            queryset.extend(Employee.objects.using('hr').filter(employee_id__in=assigner_list))
-
-        elif kwarg['sub_function'] in ['TSC', 'PM', 'BMC', 'BIOS']:
-            # Use kwarg['sub_function'] to search department id of the assigner
-            params['fn_lvl1'] = 'SW'
-            params['fn_lvl2'] = 'PM'
-
-            try:
-                departments = self.get_department_via_search(**params)
-            except Exception as err:
-                logger.error(err, exc_info=True)
-                raise ServiceUnavailable
-
-            # Query the assigner via assigner_dept_list
-            queryset.extend(Employee.objects.using('hr').filter(department_id__in=departments))
-
-        else:
-            # Use kwarg['sub_function'] and kwarg['project_id'] to get the project leader
-            params['fn_lvl2'] = kwarg['sub_function']
-            params['projid'] = kwarg['project_id']
-
-            try:
-                projects = self.get_project_via_teamroaster_project_search(**params)
-            except Exception as err:
-                logger.error(err, exc_info=True)
-                raise ServiceUnavailable
-
-            if not projects:
-                return Employee.objects.none()
-
-            assigner_dept_list = []
-            assigner_dept_list.extend([project['lead_dept'] for project in projects])
-
-            # Get the department list of the project leader
-            try:
-                departments = self.get_department_via_query(department_list=assigner_dept_list)
-            except Exception as err:
-                logger.error(err, exc_info=True)
-                raise ServiceUnavailable
-
-            if not departments:
-                return Employee.objects.none()
-
-            for department_id, department in departments.items():
-                assigner_list.append(department.get('dm', ''))
-
-            # Query the assigner via asssigner_list
-            queryset.extend(Employee.objects.using('hr').filter(employee_id__in=assigner_list))
-
-        return queryset
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
