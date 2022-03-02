@@ -104,8 +104,7 @@
         let path='/api/orders/';
         let res='';
         $.ajax({
-            // url:path,
-            url:'path',
+            url:path,
             method:"POST",
             data:formdata,
             dataType: "json",

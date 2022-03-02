@@ -125,12 +125,6 @@ let requestModal=`<div class="modal fade" id="requestModal" tabindex="-1" data-b
                             <!-- Assign which team -->
                             <h6 class="text-secondary font-weight-bold"> Request which team</h6>
                             <div class="row align-items-center mt-3">
-                                <label class="col-4"> &#9733 Dev Team </label>
-                                <select type="select" class="selectpicker col-8" name="function" id="sel_function" data-width="auto" data-size="7" data-live-search="true" title="Select ..." required>
-                                    <option value=""> Select... </option>
-                                </select>
-                            </div>
-                            <div class="row align-items-center mt-3">
                                 <label class="col-4"> &#9733 System </label>
                                 <select type="select" class="selectpicker col-8" name="system_id" id="sel_system" data-width="auto" data-size="7" title="Select ..." data-live-search="true" required>
                                     <option value=""> Select... </option>

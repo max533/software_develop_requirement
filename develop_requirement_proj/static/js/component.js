@@ -135,54 +135,43 @@
     }
     //  Modal package data
     function package_data(form){
-        let formdata={};
+        let formdata = {
+            develop_team_function: 'DSPA',
+            develop_team_sub_function: 'DS'
+        }
+
         $(form).find('[name]').each( function () {
             if($(this).prop('required')){
-                let field=$(this).prop('name');
-                let value=$(this).val();
+                let field=$(this).prop('name')
+                let value=$(this).val()
 
                 switch( $(this).attr('type') ){
                     case 'radio':
                         if( $(this).prop('checked') ){
-                            formdata[field]=value;
+                            formdata[field]=value
                         }
                         break;
                     case 'textarea':
                         if ($(this).val()!==null){
-                            formdata[field]=value;
+                            formdata[field]=value
                         }
                         break;
                     case 'select':
                         if ($(this).val()!==null){
-                            let name=$(this).prop('name');
-                            formdata[field]=value;
-
-                            if(name=='function'){
-                                let fn=$(this).val()
-                                formdata['develop_team_function']=fn
-
-                                // hard code
-                                const fnArr = ['DSPA','Others']
-                                const subFnArr = ['DS','Others']
-
-                                $.each(fnArr, index => {
-                                    if(fn===fnArr[index]) formdata['develop_team_sub_function']=subFnArr[index]
-                                    fnArr.splice(index+1, 1)
-                                })
-                                delete formdata['function']
-                            }
+                            let name=$(this).prop('name')
+                            formdata[field]=value
                         }
                         break;
                     case 'file':
                         break;
                     default:
-                        formdata[field]=value;
+                        formdata[field]=value
                         break;
                 }
             }
 
         });
-        return formdata;
+        return formdata
     }
 //  Table setting
     //  click btn to collapse down the more information
@@ -576,13 +565,7 @@
     //  selectpicker(When status==p0/p1)
     function request_selectpicker(){
         $('#requestModal').find('.selectpicker').selectpicker('render');
-        let funOptionArr = ['DSPA', 'Others']
-        $.grep(funOptionArr, option => {
-            const html = `<option val="${option}">${option}</option>`
-            $('#sel_function').append(html)
-        })
 
-        $('#sel_function').selectpicker('refresh')
         reset_author('form_assigner')
         ;(async()=>{
             const systemResponse = await axios.get('/api/systems/').then(res => res.data)
@@ -1222,8 +1205,8 @@
         let initiator=form_data.initiator.display_name;
         let assigner=form_data.assigner.display_name;
         let team=form_data.develop_team_function+'_'+form_data.develop_team_sub_function;
-        let account=form_data.account.code;
-        let project=form_data.project.name;
+        // let account=form_data.account.code;
+        // let project=form_data.project.name;
         let begin;
         let end;
         let days;
@@ -1725,7 +1708,7 @@
                             $('#Reinit_div').fadeIn(0);
                             get_filelist(id);
                             $('#tag_div').parent('div').fadeIn(0);
-                            // $('#FormUpload').fadeIn(0);
+
                             $('#initialize_btn').siblings('button').fadeIn(0);
                         }else if(singnature_status==''){}
                     }else{
