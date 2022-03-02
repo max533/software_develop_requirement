@@ -392,10 +392,6 @@
     }
 
 
-    #table tr{
-        cursor: pointer;
-    }
-
     #table tr th {
         white-space: nowrap;
         text-align: left !important;

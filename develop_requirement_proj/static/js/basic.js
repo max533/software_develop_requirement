@@ -1,3 +1,10 @@
+function toggleSchedule (t){
+    const target = $(t).parents('ul')
+    console.log(target)
+    $(t).toggleClass('fa-chevron-down').toggleClass('fa-chevron-up')
+    target.find('.schedule-li').toggleClass('d-none')
+}
+
 $(function(){
 //  General setting
     SCHEDULEstart='Estimated beginning';
@@ -161,8 +168,19 @@ $(function(){
                 title:'Schedule',
                 hvalign: 'top',
                 formatter:function(value, row, index){
-                    const options = []
-                    return `<select></select>`
+                    if(!value.length) return '-'
+                    value=value.reverse()
+                    const htmlArr = $.map(value, (schedule, index)=>{
+                        const {name, date_start, date_end}=schedule
+                        return `<li class="${index!==0?'d-none schedule-li':''}">
+                                    <span style="width:6rem; display:inline-block;">${name}</span>
+                                    ${date_start} ~ ${date_end}
+                                    ${index===0?'<i class="ml-2 text-primary fa fa-chevron-down" style="cursor:pointer;" onclick="toggleSchedule(this)"></i>':''}
+                                </li>`
+                    })
+                    return `<ul class="m-1" style="list-style-type: none; padding-inline-start: 0;">
+                                ${htmlArr.join('')}
+                            </ul>`
                 }
             },
             {

@@ -1205,8 +1205,7 @@
         let initiator=form_data.initiator.display_name;
         let assigner=form_data.assigner.display_name;
         let team=form_data.develop_team_function+'_'+form_data.develop_team_sub_function;
-        // let account=form_data.account.code;
-        // let project=form_data.project.name;
+
         let begin;
         let end;
         let days;
