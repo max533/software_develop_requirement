@@ -31,7 +31,7 @@ $(function(){
             // hard code
             init_data['account']=null
             init_data['project']=null
-            init_data['assigner']=$('#dev_leader').text()
+            init_data['assigner']=$('#dev_leader').data('leader')
 
             init_data['initiator']=loginInfo.employee_id
 

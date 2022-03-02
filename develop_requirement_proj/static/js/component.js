@@ -569,10 +569,7 @@
         reset_author('form_assigner')
         ;(async()=>{
             const systemResponse = await axios.get('/api/systems/').then(res => res.data)
-            const systemCategory = await axios.get('/api/options', { params:{field:'dev_groups'} }).then(res => res.data)
-
-            const additional_group = { name: 'Others', id: null }
-            systemCategory.push(additional_group)
+            const systemCategory = await axios.get('/api/options', { params:{field:'dev_groups_with_leader_info'} }).then(res => res.data)
 
             $.each(systemCategory, (index, item)=>{
                 const {name, id} = item
@@ -595,14 +592,11 @@
                 if( $(this).val()!=='' ) {
                     const system_id = $(this).val()
                     const { dev_group_id } = systemResponse.filter(system => system.id == system_id )[0]
-                    if( dev_group_id===null ){
-                        $('#dev_group').text('Others')
-                        $('#dev_leader').text('Others')
-                    }else {
-                        const { leader, name} = systemCategory.filter(devGroup => devGroup.id === dev_group_id )[0]
-                        $('#dev_group').text(name)
-                        $('#dev_leader').text(leader)
-                    }
+
+                    const { leader, name} = systemCategory.filter(devGroup => devGroup.id === dev_group_id )[0]
+                    $('#dev_group').text(name)
+                    $('#dev_leader').text(`${leader.enName}-${leader.site} #${leader.phone}`)
+                    $('#dev_leader').data('leader', leader.emplId)
                     const selected_system_name = $( "#sel_system option:selected" ).text()
                     $('#title').val(selected_system_name)
                 }
