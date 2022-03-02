@@ -70,13 +70,13 @@ class SignatureMixin(QueryDataMixin):
         # Check latest signature's status of the next phase and signer identity
         lastest_signature = order.signature_set.get(sequence=max_sequence)
         if role_group == 'initiator' and lastest_signature.status == 'Approve':
+            skip_signature_flag, create_new_signature_flag = True, False
+        elif role_group == 'assigner' and lastest_signature.status == 'Approve':
             next_signer, _ = self.find_next_signer(order_id, lastest_signature.signer)
             if self.is_position_higher_function_head(next_signer):
                 skip_signature_flag, create_new_signature_flag = True, False
             else:
                 skip_signature_flag, create_new_signature_flag = False, True
-        elif role_group == 'assigner' and lastest_signature.status == 'Approve':
-            skip_signature_flag, create_new_signature_flag = True, False
         elif lastest_signature.status == 'Return':
             skip_signature_flag, create_new_signature_flag = False, True
         elif lastest_signature.status == 'Close':
