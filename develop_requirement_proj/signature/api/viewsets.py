@@ -849,6 +849,7 @@ class OrderViewSet(CacheMixin,
                 logger.debug(debug_message)
                 if direction_flag == "Approve":
                     # Order status change
+                    order.form_end_time = timezone.now()
                     order.status = {
                         "P5": {
                             "initiator": "Approve"
