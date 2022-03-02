@@ -420,7 +420,6 @@ let dayNames = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 let scheduleStart='2019-05-20T08:26:38.093183Z';
 let scheduleEnd='2020-08-20T08:26:38.093183Z';
 
-progress_json=get_progress();
 
 
 
