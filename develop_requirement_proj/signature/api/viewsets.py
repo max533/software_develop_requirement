@@ -621,7 +621,7 @@ class OrderViewSet(CacheMixin,
 
             if "Return" in status_list:
                 direction_flag = "Return"
-            elif all(status == "Approve" for status in status_list):
+            elif all([status == "Approve" for status in status_list]):
                 direction_flag = "Approve"
             elif status_list[1] == "Close":
                 direction_flag = "Close"
