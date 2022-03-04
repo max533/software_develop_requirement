@@ -96,7 +96,6 @@ class SignatureMixin(QueryDataMixin):
         Return True  -> It present that employee identity is higher than function head
         Return False -> It present that employee identity is equal/below than function head
         """
-        print(employee_id, type(employee_id))
         self_department_id = Employee.objects.using('hr').get(employee_id=employee_id).department_id
 
         zero_count = self.count_zero_occurrence_times(self_department_id)
