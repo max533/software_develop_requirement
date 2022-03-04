@@ -16,7 +16,6 @@ class EmployeeViewSetTestCase(APITestCase):
     databases = {'default', 'hr'}
 
     def setUp(self):
-        print(self.id())
         user_content = {
             'username': 'Z10612777',
             'password': 'test_123',

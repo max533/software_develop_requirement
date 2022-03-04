@@ -12,7 +12,6 @@ class OptionViewTestCase(APITestCase):
 
     def setUp(self):
         """ Setup test environment """
-        print(self.id())
         self.users_content = {
             'username': 'Z10612777',
             'password': 'test_123',

@@ -8,8 +8,6 @@ class CustomUserModelTest(TestCase):
 
     def setUp(self):
         """Setup test environment"""
-        print(self.id())
-        # print(self.shortDescription())
         content = {
             'username': 'Z10612704',
             'email': 'Wistron Stark@wistron.com',
