@@ -522,31 +522,6 @@
         return res;
     }
 
-
-
-
-//  Options Operation(function team)
-    function get_options(){
-        let path='/api/options/?field=dept_category';
-        let res='';
-        $.ajax({
-            url:path,
-            method:"GET",
-            dataType: "json",
-            data: {},
-            async: false,
-            timeout: 5000,
-            beforeSend: function ( XMLHttpRequest ){},
-            error: function ( jqXHR, textStatus, errorThrown,exception ){ errormsg( jqXHR, textStatus, errorThrown,exception) },
-            success: function ( result, textStatus, XMLHttpRequest ){
-                res=result;
-            }
-        });
-        return res;
-    }
-
-
-
 //  Assigners Operation
     function get_assigners(sub_function,project_id){
         let path='/api/assigners/';

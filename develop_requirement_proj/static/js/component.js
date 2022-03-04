@@ -568,8 +568,9 @@
 
         reset_author('form_assigner')
         ;(async()=>{
-            const systemResponse = await axios.get('/api/systems/').then(res => res.data)
-            const systemCategory = await axios.get('/api/options', { params:{field:'dev_groups_with_leader_info'} }).then(res => res.data)
+            const response = await Promise.all( [axios.get('/api/systems/'), axios.get('/api/options/', { params:{field:'dev_groups_with_leader_info'} })] )
+            const systemResponse = response[0].data
+            const systemCategory = response[1].data
 
             $.each(systemCategory, (index, item)=>{
                 const {name, id} = item
@@ -1006,8 +1007,9 @@
             }
         });
     }
-    function get_readonly_schedule(order_id){
-        let schedule_data=get_current_schedule(order_id);
+    function get_readonly_schedule(order_id, schedule_data={}){
+        if(order_id) schedule_data=get_current_schedule(order_id)
+
         $('#readonly_schedule').bootstrapTable('destroy').bootstrapTable({
             data:schedule_data,
             classes:'',
@@ -1592,8 +1594,6 @@
             role_arr=JSON.parse(role_arr);
             $.each(role_arr,function (i,role){
                 if(role=='contactor'){role='developers'}
-                console.log(status['P3'])
-                console.log(role)
                 status['P3'][role]=decide;
             })
             formdata=JSON.stringify(status);
@@ -1790,7 +1790,7 @@
                                 avatar_reload($(this));
                             });
                             $('#schedule_area').fadeOut(0);
-                            get_readonly_schedule(id);
+                            get_readonly_schedule(0, schedule_data);
                             $('#readonly_schedule_div').fadeIn(0);
                             request_image_module('pending_schedule');
 
@@ -1865,7 +1865,7 @@
                     $('#requestModal').data('schedule',schedule);
 
                     $('#schedule_area').fadeOut(0);
-                    get_readonly_schedule(id);
+                    get_readonly_schedule(0, schedule_data);
                     $('#readonly_schedule_div').fadeIn(0);
                     $('#schedule_status').parent('div').prop('style','display:none !important;');
 
