@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+envsubst < /etc/nginx/conf.d/my_nginx.conf.template > /etc/nginx/conf.d/my_nginx.conf && exec nginx -g 'daemon off;'

@@ -29,13 +29,11 @@ class CustomUserManager(BaseUserManager):
         Create and save a SuperUser with the given username and password.
         """
         extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
 
         if extra_fields.get('is_staff') is not True:
             raise ValueError(_('Superuser must have is_staff=True.'))
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError(_('Superuser must have is_superuser=True.'))
+
         return self.create_user(username, email, password, **extra_fields)
 
 
@@ -106,28 +104,28 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def get_chinese_name(self):
         """
         Return the chinese name of the user.
-        Ex/ 王大明
+        Ex/ 王大衛
         """
         return self.chinese_name
 
     def get_english_name(self):
         """
         Return the english name of the user.
-        Ex/ Jeff SH Wang
+        Ex/ David Wang
         """
         return self.english_name
 
     def get_email(self):
         """
         Return the email of the user.
-        Ex/ jeff_sh_wang@wistron.com
+        Ex/ David_Wang@wistron.com
         """
         return self.email
 
     def get_display_name(self):
         """
         Return the display name of the user.
-        Ex/ Jeff SH Wang/WHQ/Wistron
+        Ex/ David Wang/WHQ/Wistron
         """
         return self.display_name
 
@@ -137,6 +135,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         Ex/ Neihu W-3F W1W2
         """
         return self.location
+
+    def get_extension(self):
+        """
+        Return the extension of the user.
+        Ex/ +8501-5791
+        """
+        return self.extension
 
     def get_joined_time(self):
         """

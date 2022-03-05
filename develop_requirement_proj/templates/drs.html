@@ -1,0 +1,457 @@
+{% load static %}
+<!DOCTYPE html>
+<head>
+	<meta name="Author" content="Leo Tu" />
+	<meta name="Copyright" content="&copy; 2021 Leo Tu" />
+	<meta http-equiv="Content-Type" content="text/html"; charset="uft-8" />
+	<meta http-equiv="Content-Language" content="en-US" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no" />
+	<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+
+	<title>System Develop Requirement Management</title>
+
+	<link rel="shortcut icon" href="{% static '/images/logoico.ico' %}" type="image/x-icon">
+	<link rel="icon" href="{% static '/images/logoico.ico' %}" type="image/x-icon">
+<!-- common cdn -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui@1.12.1/themes/base/all.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xbrain-bootstrap-xxl@1.0.1/css/xbrain-bootstrap-xxl.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.12.1/jquery-ui.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.18.0/dist/bootstrap-table.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:700i&display=swap">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:400i&display=swap">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karla" >
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fredoka+One&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/cheet.js@0.3.3/cheet.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/js/bootstrap-datepicker.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.12.1/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.7/dist/js/bootstrap-select.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.18.0/dist/bootstrap-table.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.17.1/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/additional-methods.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-numerator@0.2.1/jquery-numerator.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/filesize@6.1.0/lib/filesize.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-easing@0.0.1/dist/jquery.easing.1.3.umd.min.js"></script>
+
+	<script type="text/javascript">
+		let images={
+			"logoportrait":"{% static '/images/logoportrait.svg' %}",
+			"defaultavatar":"{% static '/images/defaultsticker.png' %}",
+			"loadinggif_path":"{% static '/images/loading.svg' %}",
+			"404":"{% static '/images/404.png' %}",
+			"upload":"{% static '/images/upload.svg' %}",
+			"document":"{% static '/images/document.svg' %}",
+			"status":"{% static '/images/service.png' %}",
+			"pending":"{% static '/images/pending.png' %}",
+			"approve":"{% static '/images/approve.png' %}",
+			"assigndev":"{% static '/images/assigndev.png' %}",
+			"signerwait":"{% static '/images/signerwait.PNG' %}",
+			"schedule":"{% static '/images/schedule.png' %}",
+			"pend_schedule":"{% static '/images/pend_schedule.png' %}",
+			"ajaxfail":"{% static '/images/ajaxfail.png' %}",
+			"reject":"{% static '/images/reject.png' %}",
+			"closed":"{% static '/images/closed.png' %}",
+			"developing":"{% static '/images/developing.png' %}",
+			"finalcheck":"{% static '/images/finalcheck.png' %}",
+			"completed":"{% static '/images/completed.png' %}",
+		};
+		let file_template_path="{% static '/images/template_systems_architecture_and_benefit_assessment_new_requirement.pptx' %}";
+	</script>
+	<script type="text/javascript">
+		{% autoescape off %}
+		$.ajaxSetup({
+			headers: {'X-CSRFToken': "{{ csrf_token }}"},
+		});
+		{% endautoescape %}
+	</script>
+	<link rel="stylesheet" href="{% static '/css/basic.css' %}"/>
+	<link rel="stylesheet" href="{% static '/css/datepicker.css' %}"/>
+	<link rel="stylesheet" href="{% static '/css/progress.css' %}"/>
+	<link rel="stylesheet" href="{% static '/css/drs.css' %}"/>
+	<link rel="stylesheet" href="{% static '/css/rwd.css' %}"/>
+	<script type="text/javascript" src="{% static '/js/fakedata.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/modal.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/component.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/backend.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/progress.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/basic.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/tag_modal.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/dev_modal.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/drs.js' %}"></script>
+	<script type="text/javascript" src="{% static '/js/flow.js' %}"></script>
+</head>
+<body class="bg-light">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light d-flex justify-content-between" id="navbar">
+			<div class="d-inline-flex align-items-center">
+				<a class="navbar-brand" href="">
+					<img width="75" src="{% static '/images/logolandscape.svg' %}">
+				</a>
+				<!-- title -->
+				<h4 class="text-secondary pt-3" id="pagetitle"> System Develop Requirement Management/ List </h4>
+			</div>
+
+            <div class="d-inline-flex align-items-center" id="navBTNs">
+                <form class="form-inline my-2 my-lg-0" >
+					<div class="dropdown ml-3 mr-3" id="navSelectMessage">
+						<button class="btn btn-outline-light dropdown-toggle" type="button" data-toggle="dropdown" id="message"> <i class="fa fa-bell fa-lg"></i> </button>
+						<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end"  id="notification_div">
+							<!-- <div class="dropdown-item text-center align-items-baseline">
+								<h6>Read more <i class="fa fa-ellipsis-h ml-1"></i> </h6>
+							</div> -->
+						</div>
+						<span id="messageCount" style="display:none;"> 0 </span>
+					</div>
+
+                    <div class="dropdown" id="navSelectUser">
+                        <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" data-toggle="dropdown" id="navUser">
+						<!-- <img class="sticker" onerror="this.src='{% static '/images/defaultsticker.png' %}'" > -->
+							<img class="sticker bg-light mr-2">
+							<span style="font-size: .9rem;font-weight: 600;"> </span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item align-items-center d-flex" id ="user" target="_blank" style="cursor: pointer;">
+								<img class="sticker mr-2">
+								<span> </span>
+							</a>
+							<a class="dropdown-item" data-toggle="modal" data-target="#instructionModal" style="cursor: pointer;"> <i class="fas fa-chalkboard-teacher" style="width: 1.5rem;"></i> Instruction </i></a>
+                            <a class="dropdown-divider"></a>
+                            <a class="dropdown-item" id ="logout" href="./cas/logout"> <i class="fas fa-sign-out-alt fa-fw" style="width: 1.5rem;"></i> Log Out </i></a>
+                        </div>
+					</div>
+
+                </form>
+            </div>
+        </nav>
+        <div class="pb-2 mt-2">
+			<div class="col-12 bg-white bd-radius-8 p-3" style="box-shadow: 0.05rem 0.05rem 0.55rem rgba(14, 14, 14, 0.18);">
+				<div id="chartDiv" class="mb-5 mt-3" style="display: none;">
+					<iframe class="chart-container" id="chart" frameborder="0" allowFullScreen="true" responsive="true" maintainAspectRatio="false" ></iframe>
+				</div>
+				<!-- main table -->
+				<table class="table" id="table">
+				</table>
+			</div>
+        </div>
+	</div>
+
+<!-- RequestModal form -->
+
+
+<!-- tagModal -->
+	<div class="modal fade" id="tagModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		  	<div class="modal-content p-3">
+				<div class="modal-body">
+					<div class="col-12 bg-white">
+						<div class="d-flex justify-content-between align-items-start">
+							<div class="">
+								<h5 class="text-bluegray"> Depending on which form</h5>
+							</div>
+							<button type="button" class="close" data-dismiss="modal">
+								<span> &times; </span>
+							</button>
+						</div>
+
+						<div class="d-inline-flex align-items-baseline w-100 ">
+							<h6 class="modal-title text-secondary text-center font-weight-bold"> At present, depened-on form parents record </h6>
+							<button type="button" class="btn btn-danger btn-sm ml-2" id="remove_tag"><i class="fas fa-trash-alt"></i> Remove parent tag</button>
+						</div>
+						<div id="present_tag_table_div">
+							<table class="table table-borderless mt-1" id="present_tag_table"></table>
+						</div>
+
+						<hr>
+						<form id="FormTag" class="w-100">
+							<!-- Assign which team -->
+							<h6 class="text-secondary font-weight-bold"> Search depend-on form </h6>
+							<div class="row align-items-baseline mt-3">
+								<label class="col-3"> Search field </label>
+								<div class="btn-group btn-group-toggle col-9" data-toggle="buttons" id="search_tag_field">
+									<label class="btn btn-outline-secondary">
+										<input type="radio" name="field" value="title" required> Title
+									</label>
+									<label class="btn btn-outline-secondary">
+										<input type="radio" name="field" value="initiator" required> Initator
+									</label>
+									<label class="btn btn-outline-secondary">
+										<input type="radio" name="field" value="assigner" required> Form receiver
+									</label>
+									<label class="btn btn-outline-secondary">
+										<input type="radio" name="field" value="developers" required> Developers
+									</label>
+								</div>
+							</div>
+							<div class="row align-items-center mt-3">
+								<label class="col-3"> Search </label>
+								<div class="input-group mb-2 col-9">
+									<input type="text" class="field-style form-control" name="search_keywords" placeholder="Search..." id="search_tag">
+									<div class="input-group-append">
+										<button class="btn btn-secondary" type="button" id="search_tag_btn"> <i class="fa fa-search"></i> </button>
+									</div>
+								</div>
+							</div>
+							<hr class="devsearch_fade" style="display: none;">
+							<!-- Assign content -->
+							<h6 class="text-secondary font-weight-bold mt-3 devsearch_fade" style="display: none;"> Search result </h6>
+							<div id="result_tag_table_div">
+								<table class="table table-borderless mt-1 devsearch_fade" id="result_tag_table" style="display: none;"></table>
+							</div>
+						</form>
+					</div>
+				</div>
+		  	</div>
+		</div>
+	</div>
+
+	<!-- record tag_info_Modal -->
+
+
+	<!-- developersModal -->
+	<div class="modal fade" id="developersModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content p-3">
+				<div class="modal-body">
+					<div class="col-12 bg-white">
+						<div class="d-flex justify-content-between align-items-start">
+							<div>
+								<h5 class="text-bluegray"> Assign developers </h5>
+								<p class="text-secondary"> The form is divided to two parts. One show the current developers list. Another part provide you to search member to join your developers list.</br>
+															<strong>Rule: You need to select one developer from developers as contact window.</strong></p>
+							</div>
+							<button type="button" class="close" data-dismiss="modal">
+								<span> &times; </span>
+							</button>
+						</div>
+						<hr>
+						<div class="mt-2">
+							<h6 class="modal-title text-secondary font-weight-bold"> At present, Developer team member list </h6>
+							<div class="row align-items-baseline mt-3">
+								<label class="col-3">&#9733 Developer contact windaw </label>
+								<div class="btn-group btn-group-toggle col-9" data-toggle="buttons" id="sel_devcontacter_div">
+									<select class="field-style form-control selectpicker" title="Select contact window..."></select>
+								</div>
+							</div>
+						</div>
+						<hr>
+						<div id="present_dev_table_div">
+							<table class="table table-borderless mt-1" id="present_dev_table">
+								<tbody></tbody>
+							</table>
+						</div>
+						<hr>
+						<form id="FormDevelopers" class="w-100">
+							<!-- Assign which team -->
+							<h6 class="text-secondary font-weight-bold"> Search developer to add </h6>
+							<small class="font-weight-bold text-secondary mr-2 mt-2" id="developers_limit"> Current team member
+								<span class="badge badge-light badge-pill p-1 pr-2 font-weight-bold">
+									<i class="fa fa-users mr-1 ml-2 text-secondary"></i><!-- current developers number -->
+								</span>
+								<span class="badge badge-light badge-pill p-1 pr-2"><!-- Limitation 15 --></span>
+							</small>
+							<div class="row align-items-baseline mt-3">
+								<label class="col-3">&#9733 Which site </label>
+								<div class="btn-group btn-group-toggle col-9" data-toggle="buttons" id="search_dev_site">
+									<select class="field-style form-control selectpicker" name="site__exact" title="Select site..." required>
+										<option value=""> Select... </option>
+										<option value="WHQ"> WHQ </option>
+										<option value="WZS"> WZS </option>
+										<option value="WNH"> WNH </option>
+									</select>
+								</div>
+							</div>
+							<div class="row align-items-baseline mt-3">
+								<label class="col-3">&#9733 Search field </label>
+								<div class="btn-group btn-group-toggle col-9" data-toggle="buttons" id="search_dev_field">
+									<label class="btn btn-outline-secondary">
+										<input type="radio" name="field" value="employee_id" required> Id
+									</label>
+									<label class="btn btn-outline-secondary">
+										<input type="radio" name="field" value="english_name" required> Name
+									</label>
+									<label class="btn btn-outline-secondary">
+										<input type="radio" name="field" value="department_id" required> Department
+									</label>
+								</div>
+							</div>
+							<div class="row align-items-center mt-3">
+								<label class="col-3">&#9733 Search </label>
+								<div class="input-group mb-2 col-9">
+									<input type="text" class="field-style form-control" name="search_keywords" placeholder="Search..." id="search_dev" required>
+									<div class="input-group-append">
+										<button class="btn btn-secondary" type="button" id="search_dev_btn"><i class="fa fa-search"></i></button>
+									</div>
+								</div>
+							</div>
+							<hr class="devsearch_fade">
+							<!-- Assign content -->
+							<h6 class="text-secondary font-weight-bold mt-3 devsearch_fade"> Search result </h6>
+							<div id="result_tag_table_div">
+								<table class="table table-borderless mt-1 devsearch_fade" id="result_dev_table"></table>
+							</div>
+							<hr>
+						</form>
+					</div>
+					<div class="d-flex justify-content-end mt-2">
+						<button type="button" class="btn btn-info" id="update_dev_btn"> <i class="far fa-paper-plane mr-1" ></i> Save </button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--Alert Modal -- permission denied-->
+	<div class="modal fade" id="alertModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content modal-content-body bg-grey">
+				<div class="mt-2 mb-3">
+					<div class="cover mx-auto mb-2">
+						<img id="alert_img">
+					</div>
+					<h3 class="ml-3 text-secondary text-center" id="alert_title"> -- Upload Denied -- </h3>
+					<hr class="text-secondary">
+					<p class="text-secondary">
+						<i class="fa fa-bullhorn text-danger mr-2"></i>
+						<span id="alert_content"> Upload file selected is oversize. Max-allowed-uploaded-file size is <strong>10 Mb</strong>.</span></br>
+					</p>
+					<div style="max-height:12em; overflow:auto;">
+						<p id="alert_detail" class="text-secondary mt-2" style="word-break: break-all;"></p>
+					</div>
+					<hr>
+					<div class="col-6">
+
+						<h6 class="text-secondary">Free to contact:</h6></br>
+						<small class="mt-2 text-grey">
+							<a href="http://10.32.48.118:50005/profile/9505005" target="_blank" class="fa fa-external-link-alt mr-2"></a>Luis Liao    #25610</br>
+							<a href="http://10.32.48.118:50005/profile/10612704" target="_blank" class="fa fa-external-link-alt mr-2"></a>Jeff SH Wang #14815</br>
+							<a href="http://10.32.48.118:50005/profile/10712714" target="_blank" class="fa fa-external-link-alt mr-2"></a>Leo Tu       #26207
+						</small>
+					</div>
+					<div class="text-center mt-3 mb-3">
+						<button class="btn btn-outline-secondary" type="button" data-dismiss="modal"> <i class="fa fa-exclamation-triangle"></i> Cancel </button>
+					</div>
+					<small class="text-grey d-flex justify-content-center"> Copyright © 2021 Wistron </small>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+<!-- Progress modal -->
+	<div id="TimelineHint" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Timeline Hint</h5>
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body px-0">
+					<table class="table table-borderless text-nowrap lead mb-0">
+						<tr>
+							<td class="text-center"><span style="border-left: 2px dashed red;"></span></td>
+							<td>Today mark</td>
+						</tr>
+						<tr>
+							<td class="text-center"><span style="border-left: 3px dashed black;"></span></td>
+							<td>Milestone mark</td>
+						</tr>
+						<tr>
+							<td class="text-center"><i class="fas fa-undo-alt fa-fw"></i></td>
+							<td>Reset to default scale</td>
+						</tr>
+						<tr>
+							<td><i class="fas fa-search-minus fa-fw"></i><i class="fas fa-search-plus fa-fw"></i></td>
+							<td>Zoom-out / Zoom-in</td>
+						</tr>
+						<tr>
+							<td><i class="fas fa-chevron-left fa-fw"></i><i class="fas fa-chevron-right fa-fw"></i></td>
+							<td>Scroll left / right</td>
+						</tr>
+						<tr>
+							<td><i class="fas fa-angle-double-left fa-fw"></i><i class="fas fa-angle-double-right fa-fw"></i></td>
+							<td>Scroll left / right faster</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal" id="loadingModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content modal-content-body bg-transparent" style="box-shadow: none;">
+				<div class="text-center">
+					<div class="spinner-border text-white" role="status">
+						<span class="sr-only">Loading...</span>
+					</div>
+					<span class="d-flex justify-content-center text-white"> Loading ... </span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal fade" id="instructionModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content modal-content-body bg-transparent" style="box-shadow: none;">
+				<div class="d-flex justify-content-end">
+					<button type="button" class="close" data-dismiss="modal">
+						<span class="text-white">&times;</span>
+					</button>
+				</div>
+				<div class="text-center">
+					<img src="{% static '/images/instruction.svg' %}" style="width: 80%;">
+					<hr>
+					<small class="d-flex justify-content-center text-white"> Copyright © 2021 Wistron </small>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<footer class="footer">
+    <div class="footer-copyright text-secondary d-xl-flex align-items-center justify-content-center font-weight-bold mt-3" style="margin-top: auto;">
+        <div class="d-flex justify-content-center align-items-lg-baseline pl-1 pr-1 pt-2" style="font-weight: 500;">
+            <img src="{% static 'images/logoportrait.svg' %}" width="12" style="max-width: 5rem;" class="mr-1">
+            <img src="{% static 'images/wistron_SVG.svg' %}" width="50" style="max-width: 5rem;" class="mr-2">
+            © 2021 Copyright
+        </div>
+        <div class="d-flex justify-content-center pt-2 ml-1 mr-1" style="font-weight: 500;">
+            &emsp;&Iota;&emsp;
+            <a href="http://dqms.wistron.com/" class="text-muted">dqms.wistron.com</a>
+            &emsp;&Iota;&emsp;
+        </div>
+        <div class="d-flex justify-content-center pt-2 ml-1 mr-1" style="font-weight: 500;">
+            DQMS Dev team/
+            <a href="http://10.32.48.118:50005/department/EQD000" class="text-muted ml-1" target="_blank">EQD000</a>,
+            <a href="http://10.32.48.118:50005/department/EQD100" class="text-muted" target="_blank">EQD100</a>,
+            <a href="http://10.32.48.118:50005/department/EQD200" class="text-muted" target="_blank">EQD200</a>
+        </div>
+        <div class="d-flex justify-content-center pt-2 ml-1 mr-1" style="font-weight: 500;">
+            Frontend/
+            <a href="http://10.32.48.118:50005/profile/10712714" class="text-muted ml-1" target="_blank"> Leo Tu</a>&emsp;
+            Backend/
+            <a href="http://10.32.48.118:50005/profile/10612704" class="text-muted ml-1" target="_blank"> Jeff SH Wang</a>
+        </div>
+    </div>
+</footer>

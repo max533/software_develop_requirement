@@ -1,0 +1,203 @@
+    #ezinfoModal_timeline {
+        width: 50%;
+        min-width: 27rem;
+        margin-left: 11rem;
+        position: relative;
+    }
+    .bTimeline {
+        display: flex;
+        align-items: center;
+        /* justify-content: center; */
+        position: relative;
+    }
+    .bLeft {
+        padding: 1.2rem 2.5rem;
+        transform: scale(0);
+        -webkit-animation: scaleBounce .6s .3s forwards; /* Safari 4+ */
+        -moz-animation:    scaleBounce .6s .3s forwards; /* Fx 5+ */
+        -o-animation:      scaleBounce .6s .3s forwards; /* Opera 12+ */
+        animation:         scaleBounce .6s .3s forwards; /* IE 10+, Fx 29+ */
+    }
+    .bLeft > i { font-size: 20px; }
+    .bRight {
+        text-align: left;
+        padding: 0;
+        -webkit-animation: leftToRight .2s forwards; /* Safari 4+ */
+        -moz-animation:    leftToRight .2s forwards; /* Fx 5+ */
+        -o-animation:      leftToRight .2s forwards; /* Opera 12+ */
+        animation:         leftToRight .2s forwards; /* IE 10+, Fx 29+ */
+        opacity: 0;
+    }
+    .colorBlue {
+        color: var(--grey);
+    }
+    .bRight > label {
+        font-size: .9rem;
+        font-weight: bold;
+        margin-bottom: 0;
+        margin-top: .5rem;
+        color: var(--secondary);
+    }
+    .bRight > p {
+        font-size: .8rem;
+        color: var(--secondary);
+        font-weight: 500;
+    }
+
+    .lineTime {
+        position: absolute;
+        top: 0;
+        left: -1px;
+        width: 2px;
+        height: 0px;
+        background-color: var(--gray);
+        transition: all .1s;
+    }
+    .lineTimePoint {
+        position: absolute;
+        top: -50px;
+        left: -8px;
+        width: .9rem;
+        height: .9rem;
+        background-color: var(--light);
+        border-radius: 50%;
+        opacity: 0;
+        transition: all .2s .1s;
+    }
+    .lineTimePoint::after {
+        content: "";
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: .9rem;
+        height: .9rem;
+        background-color: transparent;
+        border: 1px solid var(--gray);
+        border-radius: 50%;
+
+        -webkit-animation: bounceCircle 1.6s .4s 5; /* Safari 4+ */
+        -moz-animation:    bounceCircle 1.6s .4s 5; /* Fx 5+ */
+        -o-animation:      bounceCircle 1.6s .4s 5; /* Opera 12+ */
+        animation:         bounceCircle 1.6s .4s 5; /* IE 10+, Fx 29+ */
+    }
+    .lineTimePoint::before {
+        content: "";
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: .9rem;
+        height: .9rem;
+        background-color: var(--gray);
+        border: 1px solid var(--grey);
+        border-radius: 50%;
+
+        -webkit-animation: bounceCircle .8s .4s 5; /* Safari 4+ */
+        -moz-animation:    bounceCircle .8s .4s 5; /* Fx 5+ */
+        -o-animation:      bounceCircle .8s .4s 5; /* Opera 12+ */
+        animation:         bounceCircle .8s .4s 5; /* IE 10+, Fx 29+ */
+    }
+    .lineTimePoint.active {
+        opacity: 1;
+        top: -1rem;
+        left:-7px;
+    }
+    .bPoint {
+        display: block;
+        width: .5rem;
+        height: .5rem;
+        background-color: var(--secondary);
+        border: 1px solid var(--light);
+        border-radius: 50%;
+        position: absolute;
+        top: calc(50% - .62rem);
+        left: -0.25rem;
+        opacity: 0;
+        -webkit-animation: rightToLeft .2s forwards; /* Safari 4+ */
+        -moz-animation:    rightToLeft .2s forwards; /* Fx 5+ */
+        -o-animation:      rightToLeft .2s forwards; /* Opera 12+ */
+        animation:         rightToLeft .2s forwards; /* IE 10+, Fx 29+ */
+    }
+
+    @-webkit-keyframes leftToRight {
+        0%   { opacity: 0; transform: translateX(-30px);}
+        100% { opacity: 1; transform: translateX(0px);}
+    }
+    @-moz-keyframes leftToRight {
+        0%   { opacity: 0; transform: translateX(-30px);}
+        100% { opacity: 1; transform: translateX(0px);}
+    }
+    @-o-keyframes leftToRight {
+        0%   { opacity: 0; transform: translateX(-30px);}
+        100% { opacity: 1; transform: translateX(0px);}
+    }
+    @keyframes leftToRight {
+        0%   { opacity: 0; transform: translateX(-30px);}
+        100% { opacity: 1; transform: translateX(0px);}
+    }
+
+    @-webkit-keyframes bounceCircle {
+        0%   { opacity: 1; transform: scale(0);}
+        100% { opacity: 0; transform: scale(2);}
+    }
+    @-moz-keyframes bounceCircle {
+        0%   { opacity: 1; transform: scale(0);}
+        100% { opacity: 0; transform: scale(2);}
+    }
+    @-o-keyframes bounceCircle {
+        0%   { opacity: 1; transform: scale(0);}
+        100% { opacity: 0; transform: scale(2);}
+    }
+    @keyframes bounceCircle {
+        0%   { opacity: 1; transform: scale(0);}
+        100% { opacity: 0; transform: scale(2);}
+    }
+
+    @-webkit-keyframes rightToLeft {
+        0%   { opacity: 0; transform: translateX(30px);}
+        100% { opacity: 1; transform: translateX(0px);}
+    }
+    @-moz-keyframes rightToLeft {
+        0%   { opacity: 0; transform: translateX(30px);}
+        100% { opacity: 1; transform: translateX(0px);}
+    }
+    @-o-keyframes rightToLeft {
+        0%   { opacity: 0; transform: translateX(30px);}
+        100% { opacity: 1; transform: translateX(0px);}
+    }
+    @keyframes rightToLeft {
+        0%   { opacity: 0; transform: translateX(30px);}
+        100% { opacity: 1; transform: translateX(0px);}
+    }
+
+    @-webkit-keyframes scaleBounce {
+        0%   { transform: scale(0);}
+        20%   { transform: scale(1.2);}
+        40%   { transform: scale(.8);}
+        60%   { transform: scale(1.1);}
+        80%   { transform: scale(.9);}
+        100%   { transform: scale(1);}
+    }
+    @-moz-keyframes scaleBounce {
+        0%   { transform: scale(0);}
+        20%   { transform: scale(1.2);}
+        40%   { transform: scale(.8);}
+        60%   { transform: scale(1.1);}
+        80%   { transform: scale(.9);}
+        100%   { transform: scale(1);}
+    }
+    @-o-keyframes scaleBounce {
+        0%   { transform: scale(0);}
+        20%   { transform: scale(1.2);}
+        40%   { transform: scale(.8);}
+        60%   { transform: scale(1.1);}
+        80%   { transform: scale(.9);}
+        100%   { transform: scale(1);}
+    }
+    @keyframes scaleBounce {
+        0%   { transform: scale(0);}
+        20%   { transform: scale(1.2);}
+        40%   { transform: scale(.8);}
+        60%   { transform: scale(1.1);}
+        80%   { transform: scale(.9);}
+        100%   { transform: scale(1);}
+    }

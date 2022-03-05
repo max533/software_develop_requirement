@@ -1,0 +1,53 @@
+@media (min-width: 0px){
+    #comment_area{ display: none !important; }
+}
+@media (min-width: 576px){
+    .modal-dialog.modal-lg {
+        max-width: 88vw;
+    }
+    #requestModal .modal-dialog.modal-lg {
+        max-width: 90vw;
+    }
+}
+
+@media (min-width: 991px){
+    #comment_area{ display: block !important; }
+    .modal-dialog.modal-lg {
+        max-width: 90vw;
+    }
+    #requestModal .modal-dialog.modal-lg {
+        max-width: 95vw;
+    }
+}
+@media (min-width: 1200px){
+    .modal-dialog.modal-lg {
+        max-width: 90vw;
+    }
+    #requestModal .modal-dialog.modal-lg {
+        max-width: 95vw;
+        width: fit-content;
+    }
+}
+@media (min-width: 1300px){
+    .modal-dialog.modal-lg {
+        max-width: 65vw;
+    }
+    #requestModal .modal-dialog.modal-lg {
+        width: 75vw;
+    }
+    .container {
+        max-width: 95vw;
+    }
+}
+@media (min-width: 3000px){
+    #requestModal .modal-dialog.modal-lg {
+        width: 42vw;
+    }
+    .modal-dialog.modal-lg {
+        max-width: 45vw;
+    }
+    .container {
+        max-width: 85vw;
+    }
+
+}

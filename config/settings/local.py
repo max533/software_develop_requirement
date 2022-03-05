@@ -9,13 +9,17 @@ from .base import env
 
 # GENERAL
 # ------------------------------------------------------------------------------
+# SECURITY WARNING: keep the secret key used in production secret!
+# https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
+SECRET_KEY = env("DJANGO_SECRET_KEY", default="&&0&0ir50svj3m7dp-lx5i5wm_a0@-$-ov^j76woh5af-(de_o")
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
-SECRET_KEY = env("DJANGO_SECRET_KEY")
-
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", '10.32.20.123']
+ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]
+
+DEVELOP_HOST = env('DJANGO_DEVELOP_HOST', default="0.0.0.0")
+
+ALLOWED_HOSTS.append(DEVELOP_HOST)
 
 
 # CACHES
@@ -35,6 +39,9 @@ CACHES = {
 EMAIL_BACKEND = env(
     "DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"
 )
+DEFAULT_FROM_EMAIL = env(
+    "DJANGO_DEFAULT_FROM_EMAIL", default="Softwore Development Requirement System <no_reply@dqms.wistron.com>"
+)
 
 
 # django-debug-toolbar
@@ -49,10 +56,31 @@ DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TEMPLATE_CONTEXT": True,
 }
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#internal-ips
-INTERNAL_IPS = ["127.0.0.1", "10.32.20.123"]
+INTERNAL_IPS = ["127.0.0.1"]
+
+INTERNAL_IPS.append(DEVELOP_HOST)
 
 
 # django-extensions
 # ------------------------------------------------------------------------------
 # https://django-extensions.readthedocs.io/en/latest/installation_instructions.html#configuration
 INSTALLED_APPS += ["django_extensions"]  # noqa F405
+
+
+# Migrations Settings
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
+MIGRATION_MODULES = {
+    'employee': 'develop_requirement_proj.employee.migrations.0001_initial',
+}
+
+
+# Celery
+# ------------------------------------------------------------------------------
+# http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-eager-propagates
+CELERY_TASK_EAGER_PROPAGATES = True
+
+
+# Authentication
+# ------------------------------------------------------------------------------
+DJANGO_FORCE_LOGIN_USERNAME = env('DJANGO_FORCE_LOGIN_USERNAME', default='')

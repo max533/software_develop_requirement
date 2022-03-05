@@ -1,0 +1,83 @@
+
+version: '3.6'
+
+volumes:
+  local_postgres_data: {}
+  local_postgres_data_backups: {}
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: ${PROJECT_SLUG}_local_django
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - .:/app
+    networks:
+      - frontend
+      - backend
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+      - ./.envs/.local/.oracle
+    ports:
+      - "8000:8000"
+    command: /start
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: ${PROJECT_SLUG}_production_postgres
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+      - local_postgres_data_backups:/backups
+    networks:
+      - backend
+    env_file:
+      - ./.envs/.local/.postgres
+
+  redis:
+    image: redis:5.0
+    networks:
+      - backend
+
+  celeryworker:
+    <<: *django
+    image: ${PROJECT_SLUG}_local_celeryworker
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - backend
+    ports: []
+    command: /start-celeryworker
+
+  celerybeat:
+    <<: *django
+    image: ${PROJECT_SLUG}_local_celerybeat
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - backend
+    ports: []
+    command: /start-celerybeat
+
+  flower:
+    <<: *django
+    image: ${PROJECT_SLUG}_local_flower
+    networks:
+      - backend
+    ports:
+      - "5555:5555"
+    command: /start-flower
