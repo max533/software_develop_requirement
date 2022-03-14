@@ -1734,7 +1734,6 @@
 //  Assigner assign developers
                 case 'P2':
                     $('#FormRequest').fadeOut(0);
-                    $('#FormUpload').prop('style','display:none !important;');
                     get_filelist(id);
                     $('#tag_div').parent('div').fadeIn(0);
                     if(role.includes('assigner')){
